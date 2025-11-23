@@ -23,6 +23,7 @@ import { Loader2, Sparkles, Wand2, User, Save, ArrowLeft, Trash2, Camera, Eye } 
 
 export default function CharacterEditor() {
     const navigate = useNavigate();
+    const { toast } = useToast();
     
     const [character, setCharacter] = useState({
         id: null, // New: character ID, null for new characters
