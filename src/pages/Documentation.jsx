@@ -90,38 +90,58 @@ const workPlanMarkdown = `
 #### **מטרה:** הפיכת התהליך לחוויה חכמה ואינטואיטיבית
 
 **2.1 AI Story Arc Suggestions:**
-- ✅ ניתוח אוטומטי של העלילה והצעת קשתות סיפור - הושלם
-- ✅ "Story Doctor" - AI שמציע שיפורים עם ניקוד - הושלם
-- ✅ זיהוי בעיות בעלילה והצעת פתרונות - הושלם
-- 📅 המלצות דינמיות בזמן אמת - בתהליך
+- ✅ ניתוח אוטומטי של העלילה והצעת קשתות סיפור - **הושלם**
+- ✅ "Story Doctor" - AI שמציע שיפורים עם ניקוד - **הושלם**
+- ✅ זיהוי בעיות בעלילה והצעת פתרונות - **הושלם**
+- 📅 המלצות דינמיות בזמן אמת
 - 📅 Real-time Writing Assistant
 
 **2.2 Enhanced Character Arcs:**
-- 📅 **Character Arc Tracker** - מעקב ויזואלי אחר התפתחות הדמות בכל סצנה
-- 📅 **Personality Consistency Checker** - בדיקה אוטומטית של עקביות אופי
-- 📅 **Relationship Map** - מפת קשרים אינטראקטיבית בין דמויות
-- 📅 **Emotion Timeline** - גרף רגשי אינטראקטיבי לכל דמות
-- 📅 **Character Voice Analysis** - ניתוח סגנון דיבור ייחודי
-- 📅 **Growth Indicators** - נקודות מפתח בהתפתחות הדמות
+- ✅ **Character Arc Tracker** - מעקב ויזואלי אחר התפתחות הדמות בכל סצנה - **הושלם**
+  - ✅ ניתוח מסע רגשי (Emotional Journey) עם עוצמה לכל סצנה
+  - ✅ צמיחה אישיותית (Personality Growth) - התחלה vs סוף
+  - ✅ ציון עקביות (Consistency Score) 0-100
+  - ✅ רמת התפתחות (Development Level): Low/Medium/High
+  - ✅ נקודות מפתח (Milestones) עם impact score
+  - ✅ תובנות AI מפורטות לשיפור הדמות
+- 📅 **Personality Consistency Checker** - בדיקה אוטומטית של עקביות אופי בזמן כתיבה
+- 🔄 **Interactive Relationship Map** - מפת קשרים ויזואלית אינטראקטיבית בין דמויות - **בפיתוח**
+- 📅 **Emotion Timeline Graph** - גרף רגשי אינטראקטיבי עם ציר זמן
+- 📅 **Character Voice Analysis** - ניתוח סגנון דיבור ייחודי לכל דמות
+- 📅 **Growth Indicators** - סימון ויזואלי של נקודות צמיחה על ציר הזמן
 
-**2.3 Visual Scene Editor:**
-- 📅 **Interactive Scene Canvas** - עריכה ויזואלית של סצנות בממשק גרור-שחרר
-- 📅 **Real-time Preview** - תצוגה מקדימה חיה של שינויים
-- 📅 **A/B Testing** - יצירת 2-3 גרסאות לבחירה עם השוואה צד-לצד
-- 📅 **Style Transfer** - שינוי סגנון אמנותי בדיעבד עם slider
-- 📅 **Composition Guide** - הנחיות AI לקומפוזיציה מוצלחת
-- 📅 **AI Feedback** - הערכה אוטומטית של איכות האיור
-- 📅 **Element Library** - ספרייה של אלמנטים ניתנים לגרירה
-- 📅 **Scene Templates** - תבניות מוכנות לסצנות נפוצות
+**2.3 Enhanced Scene Editing:**
+- 🔄 **Visual Scene Editor** - עריכה משופרת של סצנות עם UI אינטואיטיבי - **בפיתוח**
+  - 📅 עריכת תיאור, מיקום, דמויות, mood בכרטיס אחד
+  - 📅 Drag & Drop לסידור מחדש של סצנות
+  - 📅 Auto-save בעדכון שדות
+  - 📅 תצוגה מקדימה של סקיצה במקום נפרד
+- 📅 **Scene Sketch A/B Testing** - יצירת 2-3 גרסאות סקיצה לסצנה אחת
+- 📅 **Style Transfer for Scenes** - שינוי סגנון אמנותי של סקיצה קיימת
+- 📅 **Composition AI Guide** - הנחיות אוטומטיות לקומפוזיציה מוצלחת
+- 📅 **Scene Quality Feedback** - ציון AI לאיכות התיאור והסקיצה
+- 📅 **Element Library** - ספרייה של אלמנטים ניתנים להוספה לסצנות
+- 📅 **Scene Templates** - תבניות מוכנות (פתיחה, שיא, סיום)
 
 **2.4 Advanced AI Story Tools:**
-- 📅 **Plot Twist Generator** - יצירת טוויסטים מפתיעים
-- 📅 **Dialogue Enhancer** - שיפור דיאלוגים עם המלצות
-- 📅 **Pacing Optimizer** - ניתוח וייעוץ על קצב הסיפור
-- 📅 **Theme Consistency** - בדיקת עקביות הנושא הראשי
-- 📅 **Age Appropriateness** - וידוא התאמה לגיל היעד
-- 📅 **Reading Level Analysis** - ניתוח רמת הקושי בקריאה
-- 📅 **Conflict Escalation** - עזרה בבניית קונפליקט הולך וגובר
+- 🔄 **Plot Twist Generator** - יצירת טוויסטים מפתיעים מבוססי הקשר - **בפיתוח**
+- 🔄 **Dialogue Enhancer** - שיפור דיאלוגים עם המלצות AI - **בפיתוח**
+  - 📅 ניתוח טבעיות הדיאלוג
+  - 📅 התאמה לגיל הדמות
+  - 📅 שיפור סגנון דיבור ייחודי
+- 📅 **Pacing Optimizer** - ניתוח קצב הסיפור עם המלצות
+  - 📅 זיהוי סצנות איטיות/מהירות מדי
+  - 📅 המלצה על חיתוך/הרחבה
+  - 📅 איזון בין אקשן לדיאלוג
+- 📅 **Theme Consistency Checker** - בדיקת עקביות הנושא המרכזי
+- 📅 **Age Appropriateness Validator** - וידוא התאמה לגיל היעד
+  - 📅 בדיקת מורכבות שפה
+  - 📅 התאמת תוכן (פחדים, אלימות)
+  - 📅 אורך סצנות מומלץ
+- 📅 **Reading Level Analysis** - ניתוח רמת קושי הקריאה (Flesch-Kincaid)
+- 📅 **Conflict Escalation Guide** - עזרה בבניית קונפליקט הולך וגובר
+  - 📅 זיהוי נקודת השיא הרגשית
+  - 📅 המלצות לחיזוק הקונפליקט
 
 ---
 
