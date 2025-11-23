@@ -178,7 +178,11 @@ export default function StoryStructureBuilder({
         Full scene illustration, not character portrait.`;
       }
 
-      const result = await GenerateImage({ prompt });
+      // Use Gemini 3 Pro Nano Banana as default for scene sketches
+      const result = await GenerateImage({ 
+        prompt,
+        model: 'gemini-3-pro-nano-banana'
+      });
       
       if (result && result.url) {
         const updatedScenes = scenes.map(s => 

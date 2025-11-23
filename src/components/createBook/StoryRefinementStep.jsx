@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -134,7 +133,12 @@ export default function StoryRefinementStep({ bookData, updateBookData, currentL
       if (!character) return;
 
       const prompt = getCharacterPrompt(character.name, character.age, character.gender);
-      const result = await GenerateImage({ prompt });
+      
+      // Use Gemini 3 Pro Nano Banana as default for character avatars
+      const result = await GenerateImage({ 
+        prompt,
+        model: 'gemini-3-pro-nano-banana'
+      });
 
       if (result && result.url) {
         const currentCharacters = [...(bookData.selectedCharacters || [])];
@@ -307,48 +311,82 @@ export default function StoryRefinementStep({ bookData, updateBookData, currentL
   const getCharacterPrompt = (characterName, age = 5, gender = 'neutral') => {
     const language = bookData.language || currentLanguage;
     const isHebrew = language === 'hebrew';
+    const artStyle = bookData.art_style || 'cartoon';
 
+    // Handle special ages
     const actualAge = parseInt(age);
-    const effectiveAge = isNaN(actualAge) ? 5 : actualAge; // Default to 5 if age is '???' or invalid
+    const isSpecialAge = age === '???' || age === 'Ancient' || isNaN(actualAge);
+    const effectiveAge = isSpecialAge ? 25 : actualAge; // Default to adult if special
 
     let ageGroup = '';
+    let ageDescriptor = '';
     let characterType = '';
 
-    if (effectiveAge <= 3) {
-      ageGroup = isHebrew ? 'פעוט קטן' : 'toddler';
-    } else if (effectiveAge <= 7) {
-      ageGroup = isHebrew ? 'ילד קטן' : 'young child';
-    } else if (effectiveAge <= 12) {
+    // More nuanced age groups
+    if (isSpecialAge) {
+      ageGroup = isHebrew ? 'יצור מיסטי' : 'mystical being';
+      ageDescriptor = isHebrew ? 'בעל גיל לא ידוע או עתיק' : 'ageless or ancient';
+    } else if (effectiveAge <= 2) {
+      ageGroup = isHebrew ? 'תינוק' : 'baby';
+      ageDescriptor = isHebrew ? 'תינוק חמוד' : 'cute baby';
+    } else if (effectiveAge <= 5) {
+      ageGroup = isHebrew ? 'פעוט' : 'toddler';
+      ageDescriptor = isHebrew ? 'פעוט קטן ושובב' : 'small playful toddler';
+    } else if (effectiveAge <= 10) {
       ageGroup = isHebrew ? 'ילד' : 'child';
-    } else if (effectiveAge <= 17) {
-      ageGroup = isHebrew ? 'נער' : 'teenager';
-    } else {
+      ageDescriptor = isHebrew ? 'ילד עליז' : 'cheerful child';
+    } else if (effectiveAge <= 15) {
+      ageGroup = isHebrew ? 'נער צעיר' : 'young teen';
+      ageDescriptor = isHebrew ? 'נער צעיר' : 'young teenager';
+    } else if (effectiveAge <= 25) {
+      ageGroup = isHebrew ? 'צעיר' : 'young adult';
+      ageDescriptor = isHebrew ? 'אדם צעיר' : 'young adult person';
+    } else if (effectiveAge <= 50) {
       ageGroup = isHebrew ? 'מבוגר' : 'adult';
+      ageDescriptor = isHebrew ? 'אדם בוגר' : 'mature adult';
+    } else if (effectiveAge <= 80) {
+      ageGroup = isHebrew ? 'מבוגר מנוסה' : 'experienced elder';
+      ageDescriptor = isHebrew ? 'אדם מבוגר עם חוכמת חיים' : 'elderly person with wisdom';
+    } else {
+      ageGroup = isHebrew ? 'זקן נכבד' : 'venerable elder';
+      ageDescriptor = isHebrew ? 'זקן מכובד ומנוסה' : 'very old respected elder';
     }
 
+    // Check for special character types
     const lowerName = characterName.toLowerCase();
     if (lowerName.includes('wizard') || lowerName.includes('קוסם')) {
-      characterType = isHebrew ? 'קוסם מחכים' : 'wise wizard';
+      characterType = isHebrew ? 'קוסם חכם' : 'wise wizard';
+      ageDescriptor = isHebrew ? 'קוסם מבוגר ומיסטי' : 'old mystical wizard';
     } else if (lowerName.includes('princess') || lowerName.includes('נסיכה')) {
-      characterType = isHebrew ? 'נסיכה' : 'princess';
+      characterType = isHebrew ? 'נסיכה יפה' : 'beautiful princess';
     } else if (lowerName.includes('dragon') || lowerName.includes('דרקון')) {
       characterType = isHebrew ? 'דרקון ידידותי' : 'friendly dragon';
+      ageDescriptor = isHebrew ? 'דרקון עתיק וחכם' : 'ancient wise dragon';
+    } else if (lowerName.includes('fairy') || lowerName.includes('פיה')) {
+      characterType = isHebrew ? 'פיה קסומה' : 'magical fairy';
     } else {
       characterType = ageGroup;
     }
 
+    // Enhanced prompt with art style and better age representation
     if (isHebrew) {
-      return `דמות לספר ילדים: ${characterType} בשם ${characterName}, בן/בת ${effectiveAge}.
-      סגנון: איור ילדים חמוד ומזמין, צבעוני ועדין.
-      הדמות צריכה להיראות ${ageGroup} ולא תינוק.
-      ביטוי פנים חמוד וידידותי, מתאים לילדים.
-      ללא רקע, רק הדמות עצמה.`;
+      return `דמות לספר ילדים בסגנון ${artStyle}: ${characterType} בשם ${characterName}.
+      גיל: ${age === '???' ? 'לא ידוע, מיסטי' : `${effectiveAge} שנים`}.
+      תיאור הדמות: ${ageDescriptor}, ${gender === 'boy' ? 'זכר' : gender === 'girl' ? 'נקבה' : 'ניטרלי'}.
+      סגנון האיור: ${artStyle}, חמוד ומזמין, צבעוני ועדין, מתאים לספרי ילדים.
+      הדמות חייבת להיראות כמו ${ageGroup} אמיתי, לא תינוק.
+      ביטוי פנים חמוד, ידידותי וחם, מתאים לילדים.
+      רקע נקי ופשוט או ללא רקע לגמרי - רק הדמות במרכז.
+      איכות גבוהה, פרטים עדינים, תאורה רכה.`;
     } else {
-      return `Children's book character: ${characterType} named ${characterName}, age ${effectiveAge}.
-      Style: cute and inviting children's book illustration, colorful and gentle.
-      The character should look like a proper ${ageGroup}, not a baby.
-      Friendly and warm facial expression, appropriate for children.
-      No background, just the character.`;
+      return `Children's book character in ${artStyle} style: ${characterType} named ${characterName}.
+      Age: ${age === '???' ? 'unknown, mystical' : `${effectiveAge} years old`}.
+      Character description: ${ageDescriptor}, ${gender === 'boy' ? 'male' : gender === 'girl' ? 'female' : 'gender-neutral'}.
+      Art style: ${artStyle}, cute and inviting, colorful and gentle, suitable for children's books.
+      The character MUST look like an actual ${ageGroup}, NOT a baby.
+      Friendly, warm, and cheerful facial expression, appropriate for children.
+      Clean simple background or no background - character centered.
+      High quality, fine details, soft lighting.`;
     }
   };
 
