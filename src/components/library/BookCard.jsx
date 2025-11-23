@@ -1,0 +1,325 @@
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { 
+  BookOpen, 
+  Eye, 
+  Clock, 
+  CheckCircle, 
+  RotateCw, 
+  Users, 
+  Edit,
+  MessageSquare,
+  Star,
+  Share2
+} from "lucide-react";
+import { motion } from "framer-motion";
+
+export default function BookCard({ book, viewType = "grid" }) {
+  const [currentLanguage, setCurrentLanguage] = useState("english");
+  const [isHovered, setIsHovered] = useState(false);
+  
+  // Load language preference
+  useEffect(() => {
+    const storedLanguage = localStorage.getItem("appLanguage");
+    if (storedLanguage) {
+      setCurrentLanguage(storedLanguage);
+    }
+    
+    const handleStorageChange = (e) => {
+      if (e.key === "appLanguage") {
+        setCurrentLanguage(e.newValue || "english");
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+  
+  // Translations dictionary
+  const translations = {
+    english: {
+      "bookCard.draft": "Draft",
+      "bookCard.generating": "Generating",
+      "bookCard.complete": "Complete",
+      "bookCard.for": "For",
+      "bookCard.years": "years",
+      "bookCard.view": "View",
+      "bookCard.edit": "Edit",
+      "bookCard.feedback": "Feedback",
+      "bookCard.share": "Share"
+    },
+    hebrew: {
+      "bookCard.draft": "טיוטה",
+      "bookCard.generating": "בתהליך יצירה",
+      "bookCard.complete": "הושלם",
+      "bookCard.for": "עבור",
+      "bookCard.years": "שנים",
+      "bookCard.view": "צפייה",
+      "bookCard.edit": "עריכה",
+      "bookCard.feedback": "משוב",
+      "bookCard.share": "שיתוף"
+    },
+    yiddish: {
+      "bookCard.draft": "אנטווורף",
+      "bookCard.complete": "פארטיק",
+      "bookCard.for": "פאר",
+      "bookCard.years": "יאר",
+      "bookCard.view": "קוקן",
+      "bookCard.edit": "רעדאקטירן",
+      "bookCard.share": "טיילן"
+    }
+  };
+  
+  // Translation function
+  const t = (key) => {
+    return translations[currentLanguage]?.[key] || translations.english[key] || key;
+  };
+  
+  // Determine text direction
+  const isRTL = currentLanguage === "hebrew" || currentLanguage === "yiddish";
+  
+  const statusIcons = {
+    draft: <Clock className="h-4 w-4 text-yellow-500" />,
+    generating: <RotateCw className="h-4 w-4 text-blue-500 animate-spin" />,
+    complete: <CheckCircle className="h-4 w-4 text-green-500" />
+  };
+
+  const statusStyles = {
+    draft: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300 border-yellow-200 dark:border-yellow-800",
+    generating: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 border-blue-200 dark:border-blue-800",
+    complete: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border-green-200 dark:border-green-800"
+  };
+
+  const formatGenre = (genre) => {
+    return genre.replace(/_/g, ' ');
+  };
+  
+  const statusLabels = {
+    draft: t("bookCard.draft"),
+    generating: t("bookCard.generating"),
+    complete: t("bookCard.complete")
+  };
+
+  if (viewType === "grid") {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={{ duration: 0.3 }}
+        whileHover={{ y: -5 }}
+        className="h-full"
+        dir={isRTL ? "rtl" : "ltr"}
+      >
+        <Card 
+          className="overflow-hidden h-full transition-all duration-300 hover:shadow-xl border-gray-200 dark:border-gray-800 hover:border-purple-200 dark:hover:border-purple-800"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <Link to={`${createPageUrl("BookView")}?id=${book.id}`}>
+            <div className="aspect-[3/4] relative overflow-hidden bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-950 dark:to-gray-900">
+              {book.cover_image ? (
+                <img
+                  src={book.cover_image}
+                  alt={book.title}
+                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center">
+                  <BookOpen className="h-16 w-16 text-purple-300 dark:text-purple-800 mb-4" />
+                  <p className="font-medium text-purple-600 dark:text-purple-400">{book.title || "Untitled Book"}</p>
+                </div>
+              )}
+              <Badge className={`absolute top-2 ${isRTL ? 'left-2' : 'right-2'} shadow-md ${statusStyles[book.status]}`}>
+                <span className="flex items-center gap-1">
+                  {statusIcons[book.status]}
+                  {statusLabels[book.status]}
+                </span>
+              </Badge>
+              
+              {isHovered && (
+                <motion.div 
+                  className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end justify-center p-4"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="w-full">
+                    <p className="text-white font-bold truncate mb-1">{book.title}</p>
+                    <p className="text-white/80 text-sm">{t("bookCard.for")} {book.child_name}</p>
+                  </div>
+                </motion.div>
+              )}
+            </div>
+          </Link>
+          <CardFooter className="p-4 flex-col items-start">
+            <div className="space-y-1 mb-3 w-full">
+              <h3 className="font-semibold text-gray-900 dark:text-white truncate">
+                {book.title}
+              </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {t("bookCard.for")} {book.child_name}, {book.child_age} {t("bookCard.years")}
+              </p>
+              <div className="flex flex-wrap gap-2 mt-1">
+                <Badge variant="outline" className="text-xs border-purple-200 dark:border-purple-900 text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-900/30">
+                  {formatGenre(book.genre)}
+                </Badge>
+                {book.language && book.language !== "english" && (
+                  <Badge variant="outline" className="text-xs border-blue-200 dark:border-blue-900 text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/30">
+                    {book.language}
+                  </Badge>
+                )}
+              </div>
+            </div>
+            
+            <div className="flex flex-wrap gap-2 w-full">
+              <Link to={`${createPageUrl("BookView")}?id=${book.id}`} className="flex-1">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="w-full gap-1 hover:bg-purple-50 dark:hover:bg-purple-900/30 border-purple-200 dark:border-purple-900 hover:text-purple-700 dark:hover:text-purple-300"
+                >
+                  <Eye className="h-3.5 w-3.5" />
+                  <span>{t("bookCard.view")}</span>
+                </Button>
+              </Link>
+              
+              {book.status !== "generating" && (
+                <Link to={`${createPageUrl("BookCreation")}?id=${book.id}`} className="flex-1">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="w-full gap-1 hover:bg-blue-50 dark:hover:bg-blue-900/30 border-blue-200 dark:border-blue-900 hover:text-blue-700 dark:hover:text-blue-300"
+                  >
+                    <Edit className="h-3.5 w-3.5" />
+                    <span>{t("bookCard.edit")}</span>
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </CardFooter>
+        </Card>
+      </motion.div>
+    );
+  }
+  
+  // List view
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: isRTL ? 20 : -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+      dir={isRTL ? "rtl" : "ltr"}
+    >
+      <Card className={`mb-4 overflow-hidden hover:shadow-md transition-all duration-200 border-gray-200 dark:border-gray-800 hover:border-purple-200 dark:hover:border-purple-800`}>
+        <div className="flex flex-col sm:flex-row">
+          <div className="sm:w-36 md:w-48 aspect-[4/3] overflow-hidden bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-950 dark:to-gray-900">
+            {book.cover_image ? (
+              <img
+                src={book.cover_image}
+                alt={book.title}
+                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <BookOpen className="h-12 w-12 text-purple-300 dark:text-purple-800" />
+              </div>
+            )}
+          </div>
+          
+          <div className="flex-1 p-4">
+            <div className="flex flex-wrap justify-between items-start gap-2 mb-2">
+              <div>
+                <h3 className="font-semibold text-lg text-gray-900 dark:text-white">
+                  {book.title}
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {t("bookCard.for")} {book.child_name}, {book.child_age} {t("bookCard.years")}
+                </p>
+              </div>
+              <Badge className={`${statusStyles[book.status]}`}>
+                <span className="flex items-center gap-1">
+                  {statusIcons[book.status]}
+                  {statusLabels[book.status]}
+                </span>
+              </Badge>
+            </div>
+            
+            <div className="flex flex-wrap gap-2 my-3">
+              <Badge variant="outline" className="text-xs border-purple-200 dark:border-purple-900 text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-900/30">
+                {formatGenre(book.genre)}
+              </Badge>
+              {book.art_style && (
+                <Badge variant="outline" className="text-xs border-indigo-200 dark:border-indigo-900 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30">
+                  {book.art_style}
+                </Badge>
+              )}
+              {book.language && book.language !== "english" && (
+                <Badge variant="outline" className="text-xs border-blue-200 dark:border-blue-900 text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/30">
+                  {book.language}
+                </Badge>
+              )}
+            </div>
+            
+            <div className="flex flex-wrap gap-2 mt-4">
+              <Link to={`${createPageUrl("BookView")}?id=${book.id}`}>
+                <Button 
+                  size="sm"
+                  className="gap-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-sm hover:shadow transition-all duration-200"
+                >
+                  <Eye className="h-3.5 w-3.5" />
+                  <span>{t("bookCard.view")}</span>
+                </Button>
+              </Link>
+              
+              {book.status !== "generating" && (
+                <Link to={`${createPageUrl("BookCreation")}?id=${book.id}`}>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="gap-1 border-purple-200 dark:border-purple-900 hover:bg-purple-50 dark:hover:bg-purple-900/30"
+                  >
+                    <Edit className="h-3.5 w-3.5" />
+                    <span>{t("bookCard.edit")}</span>
+                  </Button>
+                </Link>
+              )}
+              
+              <Link to={`${createPageUrl("Feedback")}?id=${book.id}`}>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="gap-1 border-blue-200 dark:border-blue-900 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                >
+                  <MessageSquare className="h-3.5 w-3.5" />
+                  <span>{t("bookCard.feedback")}</span>
+                </Button>
+              </Link>
+              
+              {book.status === "complete" && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="gap-1 border-green-200 dark:border-green-900 hover:bg-green-50 dark:hover:bg-green-900/30"
+                >
+                  <Share2 className="h-3.5 w-3.5" />
+                  <span>{t("bookCard.share")}</span>
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      </Card>
+    </motion.div>
+  );
+}
