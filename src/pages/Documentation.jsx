@@ -90,23 +90,38 @@ const workPlanMarkdown = `
 #### **מטרה:** הפיכת התהליך לחוויה חכמה ואינטואיטיבית
 
 **2.1 AI Story Arc Suggestions:**
-- 📅 ניתוח אוטומטי של העלילה והצעת קשתות סיפור
-- 📅 המלצות דינמיות בזמן אמת
-- 📅 "Story Doctor" - AI שמציע שיפורים בזמן כתיבה
-- 📅 זיהוי חורים בעלילה והצעת פתרונות
+- ✅ ניתוח אוטומטי של העלילה והצעת קשתות סיפור - הושלם
+- ✅ "Story Doctor" - AI שמציע שיפורים עם ניקוד - הושלם
+- ✅ זיהוי בעיות בעלילה והצעת פתרונות - הושלם
+- 📅 המלצות דינמיות בזמן אמת - בתהליך
+- 📅 Real-time Writing Assistant
 
-**2.2 Enhanced Character Development:**
-- 📅 Character Arc Tracker - מעקב אחר התפתחות הדמות
-- 📅 Personality Consistency Checker - בדיקת עקביות אופי
-- 📅 Relationship Map - מפת קשרים ויזואלית בין דמויות
-- 📅 Emotion Timeline - ציר זמן רגשי לכל דמות
+**2.2 Enhanced Character Arcs:**
+- 📅 **Character Arc Tracker** - מעקב ויזואלי אחר התפתחות הדמות בכל סצנה
+- 📅 **Personality Consistency Checker** - בדיקה אוטומטית של עקביות אופי
+- 📅 **Relationship Map** - מפת קשרים אינטראקטיבית בין דמויות
+- 📅 **Emotion Timeline** - גרף רגשי אינטראקטיבי לכל דמות
+- 📅 **Character Voice Analysis** - ניתוח סגנון דיבור ייחודי
+- 📅 **Growth Indicators** - נקודות מפתח בהתפתחות הדמות
 
-**2.3 Scene Illustration Refinement:**
-- 📅 עריכה ויזואלית של סקיצות לפני יצירה סופית
-- 📅 A/B testing - יצירת 2-3 גרסאות לבחירה
-- 📅 Style Transfer - שינוי סגנון אמנותי בדיעבד
-- 📅 Composition Guide - הנחיות לקומפוזיציה מוצלחת
-- 📅 AI Feedback על איכות האיור
+**2.3 Visual Scene Editor:**
+- 📅 **Interactive Scene Canvas** - עריכה ויזואלית של סצנות בממשק גרור-שחרר
+- 📅 **Real-time Preview** - תצוגה מקדימה חיה של שינויים
+- 📅 **A/B Testing** - יצירת 2-3 גרסאות לבחירה עם השוואה צד-לצד
+- 📅 **Style Transfer** - שינוי סגנון אמנותי בדיעבד עם slider
+- 📅 **Composition Guide** - הנחיות AI לקומפוזיציה מוצלחת
+- 📅 **AI Feedback** - הערכה אוטומטית של איכות האיור
+- 📅 **Element Library** - ספרייה של אלמנטים ניתנים לגרירה
+- 📅 **Scene Templates** - תבניות מוכנות לסצנות נפוצות
+
+**2.4 Advanced AI Story Tools:**
+- 📅 **Plot Twist Generator** - יצירת טוויסטים מפתיעים
+- 📅 **Dialogue Enhancer** - שיפור דיאלוגים עם המלצות
+- 📅 **Pacing Optimizer** - ניתוח וייעוץ על קצב הסיפור
+- 📅 **Theme Consistency** - בדיקת עקביות הנושא הראשי
+- 📅 **Age Appropriateness** - וידוא התאמה לגיל היעד
+- 📅 **Reading Level Analysis** - ניתוח רמת הקושי בקריאה
+- 📅 **Conflict Escalation** - עזרה בבניית קונפליקט הולך וגובר
 
 ---
 
@@ -266,11 +281,12 @@ AI בוחר אוטומטית את המודל הטוב ביותר לפי:
 3. ✅ **Rate Limiting:** retry logic חכם ותורים נפרדים - הושלם
 4. ✅ **פרומפטים משופרים:** התאמה מדויקת לגילאים ולסגנונות - הושלם
 5. ✅ **AI Story Doctor:** ניתוח קשת סיפור אוטומטי עם המלצות - הושלם
+6. ✅ **Character Arc Tracker:** מעקב ויזואלי אחר התפתחות דמויות - הושלם
 
 ### **השבועיים הבאים:**
-1. 📅 Character Arc Tracker + Personality Consistency
-2. 📅 Relationship Map ויזואלי
-3. 📅 Scene Refinement עם עריכה ויזואלית
+1. 🔄 Relationship Map אינטראקטיבי - בפיתוח
+2. 📅 Visual Scene Editor עם גרור-שחרר
+3. 📅 Advanced AI Story Tools (Plot Twist, Dialogue Enhancer)
 
 ### **החודש הבא:**
 1. 📅 ShareHub מלא + ייצוא לפורמטים

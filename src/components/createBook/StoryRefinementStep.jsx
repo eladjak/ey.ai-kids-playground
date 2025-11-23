@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Users, Plus, X, Sparkles, Wand2, BookOpen, Loader2 } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import StoryStructureBuilder from "../storyBuilder/StoryStructureBuilder";
+import CharacterArcTracker from "../characterDevelopment/CharacterArcTracker";
 
 // Helper component for inline name editing
 const EditableCharacterName = ({ character, onNameChange, isRTL }) => {
@@ -221,6 +222,7 @@ export default function StoryRefinementStep({ bookData, updateBookData, currentL
       "refine.gender": "מין",
       "refine.generateTitle": "צור כותרת",
       "refine.storyStructure": "מבנה הסיפור",
+      "refine.characterArc": "קשת הדמות",
       "refine.saving": "שומר...",
       "refine.saved": "נשמר",
       "refine.error": "שגיאה בשמירה"
@@ -707,6 +709,30 @@ export default function StoryRefinementStep({ bookData, updateBookData, currentL
           />
         </CardContent>
       </Card>
+
+      {/* Character Arc Tracker */}
+      {mainCharacters.length > 0 && bookData.scenes && bookData.scenes.length > 2 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
+              <Users className="h-5 w-5 text-indigo-500" />
+              {t("refine.characterArc")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {mainCharacters.map(character => (
+              <CharacterArcTracker
+                key={character.name}
+                character={character}
+                scenes={bookData.scenes}
+                bookData={bookData}
+                currentLanguage={currentLanguage}
+                isRTL={isRTL}
+              />
+            ))}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
