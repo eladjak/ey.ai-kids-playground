@@ -266,10 +266,11 @@ AI בוחר אוטומטית את המודל הטוב ביותר לפי:
 2. ✅ **שדרוג Gemini 3 Pro:** הגדרה כמודל ברירת מחדל - הושלם
 3. ✅ **Rate Limiting:** retry logic חכם ותורים נפרדים - הושלם
 4. ✅ **פרומפטים משופרים:** התאמה מדויקת לגילאים ולסגנונות - הושלם
+5. ✅ **AI Story Doctor:** ניתוח קשת סיפור אוטומטי עם המלצות - הושלם
 
 ### **השבועיים הבאים:**
-1. 📅 AI Story Arc Suggestions
-2. 📅 Character Development Flow משופר
+1. 📅 Character Arc Tracker + Personality Consistency
+2. 📅 Relationship Map ויזואלי
 3. 📅 Scene Refinement עם עריכה ויזואלית
 
 ### **החודש הבא:**

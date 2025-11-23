@@ -235,5 +235,297 @@ export default function StoryStructureBuilder({
     }
   }, [bookData.plot_points, bookData.scenes, bookData.selectedCharacters, currentLanguage]);
 
-  // ... keep rest of existing code unchanged
+  const handleApplySuggestion = (suggestion) => {
+    if (suggestion.scene && scenes[suggestion.scene - 1]) {
+      toast({
+        title: isRTL ? 'הצעה הוחלה' : 'Suggestion Applied',
+        description: isRTL ? 'הסצנה עודכנה בהתאם להצעה' : 'Scene updated according to suggestion'
+      });
+    }
+  };
+
+  const generateStoryStructure = async () => {
+    setIsGeneratingStructure(true);
+    try {
+      const language = bookData.language || currentLanguage;
+      const isHebrew = language === 'hebrew';
+      
+      const charactersInfo = bookData.selectedCharacters?.map(c => 
+        `${c.name} (${c.age}, ${c.gender})`
+      ).join(', ') || bookData.child_name || 'main character';
+
+      const prompt = isHebrew ?
+        `אתה כותב מקצועי לספרי ילדים. צור מבנה סיפור מפורט:
+
+**פרטי הסיפור:**
+- כותרת: ${bookData.title || 'ללא כותרת'}
+- דמויות: ${charactersInfo}
+- ז'אנר: ${bookData.genre || 'הרפתקאות'}
+- גיל יעד: ${bookData.age_range || '5-7'}
+- אורך: ${bookData.length || 'בינוני'} (short=5-8 סצנות, medium=9-12, long=13-16)
+- טון: ${bookData.tone || 'מרגש'}
+- מוסר השכל: ${bookData.moral || 'חברות'}
+
+צור ${bookData.length === 'short' ? '5-8' : bookData.length === 'long' ? '13-16' : '9-12'} סצנות עם מבנה ברור של התחלה-אמצע-סוף.
+
+החזר JSON בלבד:
+{
+  "scenes": [
+    {
+      "title": "כותרת הסצנה",
+      "description": "תיאור מפורט של מה קורה",
+      "location": "מיקום",
+      "characters": ["שם דמות"],
+      "mood": "positive/tense/calm/exciting",
+      "pacing": "slow/medium/fast",
+      "content": "תוכן הסצנה המלא"
+    }
+  ]
+}` :
+        `You are a professional children's book writer. Create a detailed story structure:
+
+**Story Details:**
+- Title: ${bookData.title || 'Untitled'}
+- Characters: ${charactersInfo}
+- Genre: ${bookData.genre || 'adventure'}
+- Target Age: ${bookData.age_range || '5-7'}
+- Length: ${bookData.length || 'medium'} (short=5-8 scenes, medium=9-12, long=13-16)
+- Tone: ${bookData.tone || 'exciting'}
+- Moral: ${bookData.moral || 'friendship'}
+
+Create ${bookData.length === 'short' ? '5-8' : bookData.length === 'long' ? '13-16' : '9-12'} scenes with clear beginning-middle-end structure.
+
+Return ONLY JSON:
+{
+  "scenes": [
+    {
+      "title": "Scene title",
+      "description": "Detailed description of what happens",
+      "location": "location",
+      "characters": ["character name"],
+      "mood": "positive/tense/calm/exciting",
+      "pacing": "slow/medium/fast",
+      "content": "Full scene content"
+    }
+  ]
+}`;
+
+      const result = await InvokeLLM({
+        prompt,
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            scenes: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  title: { type: 'string' },
+                  description: { type: 'string' },
+                  location: { type: 'string' },
+                  characters: { type: 'array', items: { type: 'string' } },
+                  mood: { type: 'string' },
+                  pacing: { type: 'string' },
+                  content: { type: 'string' }
+                }
+              }
+            }
+          }
+        }
+      });
+
+      if (result?.scenes) {
+        const newScenes = result.scenes.map((scene, idx) => ({
+          ...scene,
+          id: `scene-${Date.now()}-${idx}`,
+          sketch_url: null
+        }));
+        
+        setScenes(newScenes);
+        updateBookData('scenes', newScenes);
+        setStructureGenerated(true);
+        setActiveTab('scenes');
+        
+        toast({
+          title: isHebrew ? 'מבנה הסיפור נוצר!' : 'Story Structure Created!',
+          description: isHebrew ? `${newScenes.length} סצנות מוכנות` : `${newScenes.length} scenes ready`
+        });
+      }
+    } catch (error) {
+      console.error('Error generating structure:', error);
+      toast({
+        title: isRTL ? 'שגיאה' : 'Error',
+        description: isRTL ? 'לא הצלחנו ליצור את מבנה הסיפור' : 'Failed to generate story structure',
+        variant: 'destructive'
+      });
+    } finally {
+      setIsGeneratingStructure(false);
+    }
+  };
+
+  const handleSceneDragEnd = (result) => {
+    if (!result.destination) return;
+    
+    const items = Array.from(scenes);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    
+    setScenes(items);
+    updateBookData('scenes', items);
+  };
+
+  return (
+    <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+        <div className={isRTL ? 'text-right' : 'text-left'}>
+          <h2 className="text-2xl font-bold">{t('builder.title')}</h2>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">{t('builder.subtitle')}</p>
+        </div>
+        <Button
+          onClick={generateStoryStructure}
+          disabled={isGeneratingStructure}
+          className="bg-gradient-to-r from-purple-600 to-indigo-600"
+        >
+          {isGeneratingStructure ? (
+            <>
+              <Sparkles className={`h-4 w-4 animate-spin ${isRTL ? 'ml-2' : 'mr-2'}`} />
+              {t('builder.generating')}
+            </>
+          ) : (
+            <>
+              <Wand2 className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+              {structureGenerated ? t('builder.regenerate') : t('builder.generate')}
+            </>
+          )}
+        </Button>
+      </div>
+
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className={`grid w-full grid-cols-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <TabsTrigger value="story">{t('builder.tabs.story')}</TabsTrigger>
+          <TabsTrigger value="scenes">{t('builder.tabs.scenes')}</TabsTrigger>
+          <TabsTrigger value="arc">{t('builder.tabs.arc')}</TabsTrigger>
+          <TabsTrigger value="settings">{t('builder.tabs.settings')}</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="story" className="space-y-4 mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className={isRTL ? 'text-right' : 'text-left'}>
+                {t('story.moral')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Textarea
+                value={bookData.moral || ''}
+                onChange={(e) => updateBookData('moral', e.target.value)}
+                placeholder={t('story.moral.placeholder')}
+                className="min-h-[80px]"
+                dir={isRTL ? 'rtl' : 'ltr'}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="scenes" className="mt-6">
+          {scenes.length > 0 ? (
+            <DragDropContext onDragEnd={handleSceneDragEnd}>
+              <Droppable droppableId="scenes">
+                {(provided) => (
+                  <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-4">
+                    {scenes.map((scene, index) => (
+                      <Draggable key={scene.id} draggableId={scene.id} index={index}>
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <SceneCard
+                              scene={scene}
+                              index={index}
+                              onGenerateSketch={handleGenerateSketch}
+                              currentLanguage={currentLanguage}
+                              isRTL={isRTL}
+                            />
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
+          ) : (
+            <Card className="p-12">
+              <div className="text-center space-y-3">
+                <BookOpen className="h-12 w-12 mx-auto text-gray-400" />
+                <h3 className="text-lg font-semibold">{t('builder.noScenes')}</h3>
+                <p className="text-gray-500">{t('builder.noScenes.desc')}</p>
+              </div>
+            </Card>
+          )}
+        </TabsContent>
+
+        <TabsContent value="arc" className="mt-6">
+          <StoryArcSuggestions
+            bookData={bookData}
+            scenes={scenes}
+            onApplySuggestion={handleApplySuggestion}
+            currentLanguage={currentLanguage}
+            isRTL={isRTL}
+          />
+        </TabsContent>
+
+        <TabsContent value="settings" className="space-y-4 mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className={isRTL ? 'text-right' : 'text-left'}>
+                {t('settings.title')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>{t('settings.tone')}</Label>
+                  <Select
+                    value={bookData.tone || 'exciting'}
+                    onValueChange={(val) => updateBookData('tone', val)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="humorous">Humorous</SelectItem>
+                      <SelectItem value="whimsical">Whimsical</SelectItem>
+                      <SelectItem value="calming">Calming</SelectItem>
+                      <SelectItem value="exciting">Exciting</SelectItem>
+                      <SelectItem value="educational">Educational</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>{t('settings.length')}</Label>
+                  <Select
+                    value={bookData.length || 'medium'}
+                    onValueChange={(val) => updateBookData('length', val)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="short">Short (5-8 scenes)</SelectItem>
+                      <SelectItem value="medium">Medium (9-12 scenes)</SelectItem>
+                      <SelectItem value="long">Long (13-16 scenes)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
 }
