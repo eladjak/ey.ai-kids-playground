@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import SceneCard from './SceneCard';
+import StoryArcSuggestions from './StoryArcSuggestions';
 import { GenerateImage, InvokeLLM } from '@/integrations/Core';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -49,6 +50,7 @@ export default function StoryStructureBuilder({
       'builder.generating': 'Creating your story structure...',
       'builder.tabs.story': 'Story Details',
       'builder.tabs.scenes': 'Scene Overview',
+      'builder.tabs.arc': 'AI Story Doctor',
       'builder.tabs.settings': 'Story Settings',
       'builder.scenes.count': 'scenes',
       'builder.progress.analyzing': 'Analyzing your story elements...',
@@ -84,6 +86,7 @@ export default function StoryStructureBuilder({
       'builder.generating': 'יוצר את מבנה הסיפור שלך...',
       'builder.tabs.story': 'פרטי הסיפור',
       'builder.tabs.scenes': 'סקירת סצנות',
+      'builder.tabs.arc': 'רופא הסיפורים AI',
       'builder.tabs.settings': 'הגדרות סיפור',
       'builder.scenes.count': 'סצנות',
       'builder.progress.analyzing': 'מנתח את רכיבי הסיפור שלך...',
