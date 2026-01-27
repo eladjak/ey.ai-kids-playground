@@ -1,45 +1,45 @@
-import Home from './pages/Home';
-import Library from './pages/Library';
+import App from './pages/App';
 import BookCreation from './pages/BookCreation';
 import BookView from './pages/BookView';
-import Settings from './pages/Settings';
+import CharacterEditor from './pages/CharacterEditor';
+import Characters from './pages/Characters';
+import Collaborate from './pages/Collaborate';
 import Community from './pages/Community';
 import CommunityPost from './pages/CommunityPost';
-import Collaborate from './pages/Collaborate';
-import Feedback from './pages/Feedback';
-import index from './pages/index';
-import App from './pages/App';
-import Profile from './pages/Profile';
-import Documentation from './pages/Documentation';
-import Leaderboard from './pages/Leaderboard';
-import Characters from './pages/Characters';
-import CharacterEditor from './pages/CharacterEditor';
-import CreativeStoryStudio from './pages/CreativeStoryStudio';
 import CreateBook from './pages/CreateBook';
+import CreativeStoryStudio from './pages/CreativeStoryStudio';
+import Documentation from './pages/Documentation';
+import Feedback from './pages/Feedback';
+import Home from './pages/Home';
+import Leaderboard from './pages/Leaderboard';
+import Library from './pages/Library';
+import Profile from './pages/Profile';
+import Settings from './pages/Settings';
 import StoryIdeas from './pages/StoryIdeas';
+import index from './pages/index';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Home": Home,
-    "Library": Library,
+    "App": App,
     "BookCreation": BookCreation,
     "BookView": BookView,
-    "Settings": Settings,
+    "CharacterEditor": CharacterEditor,
+    "Characters": Characters,
+    "Collaborate": Collaborate,
     "Community": Community,
     "CommunityPost": CommunityPost,
-    "Collaborate": Collaborate,
-    "Feedback": Feedback,
-    "index": index,
-    "App": App,
-    "Profile": Profile,
-    "Documentation": Documentation,
-    "Leaderboard": Leaderboard,
-    "Characters": Characters,
-    "CharacterEditor": CharacterEditor,
-    "CreativeStoryStudio": CreativeStoryStudio,
     "CreateBook": CreateBook,
+    "CreativeStoryStudio": CreativeStoryStudio,
+    "Documentation": Documentation,
+    "Feedback": Feedback,
+    "Home": Home,
+    "Leaderboard": Leaderboard,
+    "Library": Library,
+    "Profile": Profile,
+    "Settings": Settings,
     "StoryIdeas": StoryIdeas,
+    "index": index,
 }
 
 export const pagesConfig = {
