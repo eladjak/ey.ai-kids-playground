@@ -11,6 +11,10 @@ import { Users, Plus, X, Sparkles, Wand2, BookOpen, Loader2 } from "lucide-react
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import StoryStructureBuilder from "../storyBuilder/StoryStructureBuilder";
 import CharacterArcTracker from "../characterDevelopment/CharacterArcTracker";
+import StoryPacingAnalyzer from "../storyAnalysis/StoryPacingAnalyzer";
+import RelationshipMap from "../characterDevelopment/RelationshipMap";
+import ThemeConsistencyChecker from "../storyAnalysis/ThemeConsistencyChecker";
+import DialogueEnhancer from "../storyBuilder/DialogueEnhancer";
 
 // Helper component for inline name editing
 const EditableCharacterName = ({ character, onNameChange, isRTL }) => {
@@ -223,6 +227,10 @@ export default function StoryRefinementStep({ bookData, updateBookData, currentL
       "refine.generateTitle": "צור כותרת",
       "refine.storyStructure": "מבנה הסיפור",
       "refine.characterArc": "קשת הדמות",
+      "refine.storyPacing": "קצב הסיפור",
+      "refine.relationships": "יחסים",
+      "refine.themeConsistency": "עקביות נושא",
+      "refine.dialogueEnhancer": "כלי דיאלוג",
       "refine.saving": "שומר...",
       "refine.saved": "נשמר",
       "refine.error": "שגיאה בשמירה"
@@ -730,6 +738,87 @@ export default function StoryRefinementStep({ bookData, updateBookData, currentL
                 isRTL={isRTL}
               />
             ))}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Story Pacing Analyzer */}
+      {bookData.scenes && bookData.scenes.length > 2 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
+              <Sparkles className="h-5 w-5 text-blue-500" />
+              {t("refine.storyPacing")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <StoryPacingAnalyzer
+              bookData={bookData}
+              scenes={bookData.scenes}
+              currentLanguage={currentLanguage}
+              isRTL={isRTL}
+            />
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Relationship Map */}
+      {mainCharacters.length > 1 && bookData.scenes && bookData.scenes.length > 2 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
+              <Users className="h-5 w-5 text-pink-500" />
+              {t("refine.relationships")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RelationshipMap
+              characters={mainCharacters}
+              scenes={bookData.scenes}
+              bookData={bookData}
+              currentLanguage={currentLanguage}
+              isRTL={isRTL}
+            />
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Theme Consistency Checker */}
+      {bookData.scenes && bookData.scenes.length > 2 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
+              <BookOpen className="h-5 w-5 text-green-500" />
+              {t("refine.themeConsistency")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ThemeConsistencyChecker
+              bookData={bookData}
+              scenes={bookData.scenes}
+              currentLanguage={currentLanguage}
+              isRTL={isRTL}
+            />
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Dialogue Enhancer */}
+      {mainCharacters.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
+              <Sparkles className="h-5 w-5 text-purple-500" />
+              {t("refine.dialogueEnhancer")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <DialogueEnhancer
+              bookData={bookData}
+              characters={mainCharacters}
+              currentLanguage={currentLanguage}
+              isRTL={isRTL}
+            />
           </CardContent>
         </Card>
       )}
