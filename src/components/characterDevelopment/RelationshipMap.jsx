@@ -139,7 +139,7 @@ Return all possible character pairs.`;
 
       setRelationships(result.relationships || []);
     } catch (error) {
-      console.error("Error analyzing relationships:", error);
+      // silently handled
     } finally {
       setAnalyzing(false);
     }

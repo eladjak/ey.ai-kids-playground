@@ -121,7 +121,6 @@ export default function FeedbackPage() {
       
       setIsLoading(false);
     } catch (error) {
-      console.error("Error loading book data:", error);
       toast({
         variant: "destructive",
         description: "Failed to load book. Please try again."
@@ -129,7 +128,7 @@ export default function FeedbackPage() {
       navigate(createPageUrl("Library"));
     }
   };
-  
+
   const loadAllFeedback = async () => {
     try {
       // Get all feedback for this book
@@ -160,7 +159,6 @@ export default function FeedbackPage() {
         loadPageFeedback(currentPage.id);
       }
     } catch (error) {
-      console.error("Error loading feedback:", error);
       toast({
         variant: "destructive",
         description: "Failed to load feedback. Please try again."
@@ -218,7 +216,6 @@ export default function FeedbackPage() {
       
       return true;
     } catch (error) {
-      console.error("Error adding feedback:", error);
       toast({
         variant: "destructive",
         description: "Failed to submit feedback. Please try again."
@@ -254,7 +251,6 @@ export default function FeedbackPage() {
         description: statusMessages[newStatus] || "Feedback status updated."
       });
     } catch (error) {
-      console.error("Error updating feedback status:", error);
       toast({
         variant: "destructive",
         description: "Failed to update feedback status. Please try again."

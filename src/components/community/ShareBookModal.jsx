@@ -61,7 +61,7 @@ export default function ShareBookModal({ isOpen, onClose, onShare }) {
       setBooks(userBooks);
       setIsLoading(false);
     } catch (error) {
-      console.error("Error loading books:", error);
+      // silently handled
       setIsLoading(false);
     }
   };

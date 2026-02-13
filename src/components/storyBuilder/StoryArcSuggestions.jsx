@@ -222,7 +222,7 @@ Return ONLY JSON in this format:
         setSuggestions(result.suggestions || []);
       }
     } catch (error) {
-      console.error('Error analyzing story arc:', error);
+      // silently handled
     } finally {
       setIsAnalyzing(false);
     }

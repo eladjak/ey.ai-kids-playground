@@ -128,7 +128,7 @@ Return:
 
       setResult(result);
     } catch (error) {
-      console.error("Error enhancing dialogue:", error);
+      // silently handled
     } finally {
       setEnhancing(false);
     }

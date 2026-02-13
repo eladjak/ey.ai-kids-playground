@@ -158,7 +158,6 @@ export default function AIStudio({
 
     try {
       setIsGenerating(true);
-      console.log("Generating image with model:", currentModel?.id, "Prompt:", prompt);
 
       // Use the actual GenerateImage integration
       const result = await GenerateImage({
@@ -170,7 +169,6 @@ export default function AIStudio({
       setGeneratedImageUrl(result.url); // Assuming result has a 'url' property
       setShowOverlay(true);
     } catch (error) {
-      console.error("Error generating image:", error);
       alert("Failed to generate image. Please try again.");
     } finally {
       setIsGenerating(false);
@@ -179,14 +177,10 @@ export default function AIStudio({
 
   const handleSaveOverlay = async (data) => {
     try {
-      console.log("Saving image with text overlay data:", data);
-
       // Upload the final image blob
       const uploadResult = await UploadFile({
         file: data.imageBlob // Assuming data.imageBlob is a File or Blob object
       });
-
-      console.log("Image saved successfully:", uploadResult.file_url);
 
       setShowOverlay(false);
       setGeneratedImageUrl(null);
@@ -196,7 +190,6 @@ export default function AIStudio({
       alert("Image with text saved successfully!");
 
     } catch (error) {
-      console.error("Error saving image:", error);
       alert("Failed to save image. Please try again.");
     }
   };

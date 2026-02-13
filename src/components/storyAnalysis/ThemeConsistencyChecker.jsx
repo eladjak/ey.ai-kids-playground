@@ -155,7 +155,7 @@ Provide 5-7 suggestions to strengthen theme consistency.`;
 
       setAnalysis(result);
     } catch (error) {
-      console.error("Error analyzing theme:", error);
+      // silently handled
     } finally {
       setAnalyzing(false);
     }

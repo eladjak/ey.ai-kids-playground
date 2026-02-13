@@ -412,8 +412,8 @@ export default function VisualEditAgent() {
 		};
 
 		const handleMessage = (event) => {
-			// Check origin if desired
-			//if (event.origin !== 'parent-origin') return;
+			// Validate message structure to prevent processing of unexpected messages
+			if (!event.data || typeof event.data !== 'object' || !event.data.type) return;
 
 			const message = event.data;
 
@@ -432,7 +432,7 @@ export default function VisualEditAgent() {
 							message.data.replace || false
 						);
 					} else {
-						console.warn('[Agent] Invalid update-classes message:', message);
+						// invalid update-classes message
 					}
 					break;
 
@@ -451,7 +451,7 @@ export default function VisualEditAgent() {
 							message.data.content
 						);
 					} else {
-						console.warn('[Agent] Invalid update-content message:', message);
+						// invalid update-content message
 					}
 					break;
 

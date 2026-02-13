@@ -43,7 +43,6 @@ export default function BookView() {
         const pagesData = await Page.filter({ book_id: bookId }, "page_number");
         setPages(pagesData);
       } catch (error) {
-        console.error("Error loading book:", error);
         toast({
           variant: "destructive",
           description: "Failed to load book. Please try again.",

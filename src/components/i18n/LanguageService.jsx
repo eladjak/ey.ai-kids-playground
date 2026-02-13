@@ -435,7 +435,6 @@ const getCurrentLanguage = () => {
  */
 const setLanguage = (language) => {
   if (!AVAILABLE_LANGUAGES[language]) {
-    console.error(`Invalid language: ${language}`);
     return;
   }
   

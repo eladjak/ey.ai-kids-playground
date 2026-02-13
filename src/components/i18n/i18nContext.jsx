@@ -52,7 +52,7 @@ export const I18nProvider = ({ children }) => {
           document.documentElement.lang = LANGUAGES[user.language].code;
         }
       } catch (error) {
-        console.error("Error loading user language preference:", error);
+        // silently handled
       } finally {
         setLoading(false);
       }
@@ -93,7 +93,7 @@ export const I18nProvider = ({ children }) => {
           language: newLanguage
         });
       } catch (error) {
-        console.error("Error saving language preference:", error);
+        // silently handled
       }
     }
   };

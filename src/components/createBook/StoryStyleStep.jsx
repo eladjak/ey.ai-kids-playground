@@ -120,7 +120,7 @@ export default function StoryStyleStep({ bookData, updateBookData }) {
         }));
       }
     } catch (error) {
-      console.error(`Error generating ${style} style image:`, error);
+      // silently handled
     } finally {
       setLoadingStyles(prev => ({...prev, [style]: false}));
     }

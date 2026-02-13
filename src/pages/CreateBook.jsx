@@ -59,7 +59,7 @@ export default function CreateBook() {
           language: storedLanguage
         }));
       } catch (error) {
-        console.error("Error loading user settings:", error);
+        // silently handled
       }
     };
     
@@ -145,7 +145,6 @@ export default function CreateBook() {
       
       navigate(`${createPageUrl("BookCreation")}?id=${createdBook.id}`);
     } catch (error) {
-      console.error("Error creating book:", error);
       toast({
         variant: "destructive",
         description: t("createBook.error")

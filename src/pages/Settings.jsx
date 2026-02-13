@@ -175,7 +175,7 @@ export default function Settings() {
       setUserData(settings);
       setTempSettings(settings);
     } catch (error) {
-      console.error("Error loading settings:", error);
+      // silently handled
     } finally {
       setIsLoading(false);
     }
@@ -205,9 +205,8 @@ export default function Settings() {
         }
       }
       
-      console.log(t("settings.saved"));
     } catch (error) {
-      console.error("Error saving settings:", error);
+      // silently handled
     } finally {
       setIsSaving(false);
     }
@@ -452,7 +451,7 @@ export default function Settings() {
         <TabsContent value="ai">
           <AIStudio
             currentModel={null}
-            onModelChange={(model) => console.log('Model changed:', model)}
+            onModelChange={() => {}}
             userTier="premium" // For developer, access to all models
             credits={{ used: 25, total: 1000 }} // High credits for testing
             currentLanguage={currentLanguage}

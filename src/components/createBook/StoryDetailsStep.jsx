@@ -137,7 +137,7 @@ export default function StoryDetailsStep({ bookData, updateBookData, onGenerateT
           updateBookData('title', result.trim());
         }
       } catch (error) {
-        console.error('Error generating title:', error);
+        // silently handled
       }
     } else {
       onGenerateTitle();

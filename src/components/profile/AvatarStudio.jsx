@@ -127,7 +127,7 @@ export default function AvatarStudio({ currentAvatar, onAvatarSelected, onClose,
         setSelectedAvatar(result.url);
       }
     } catch (error) {
-      console.error("Error generating avatar:", error);
+      // silently handled
     } finally {
       setIsGenerating(false);
     }
@@ -145,7 +145,7 @@ export default function AvatarStudio({ currentAvatar, onAvatarSelected, onClose,
         setSelectedAvatar(result.file_url);
       }
     } catch (error) {
-      console.error("Error uploading avatar:", error);
+      // silently handled
     } finally {
       setIsLoading(false);
     }

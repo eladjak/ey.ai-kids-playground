@@ -193,7 +193,6 @@ export default function Collaborate() {
       
       setIsLoading(false);
     } catch (error) {
-      console.error("Error loading book data:", error);
       toast({
         variant: "destructive",
         description: "Failed to load book. Please try again."
@@ -234,7 +233,7 @@ export default function Collaborate() {
       
       setCollaborators(enhancedCollabs);
     } catch (error) {
-      console.error("Error loading collaborators:", error);
+      // silently handled
     }
   };
   
@@ -264,7 +263,7 @@ export default function Collaborate() {
       
       setRevisions(enhancedRevs);
     } catch (error) {
-      console.error("Error loading revisions:", error);
+      // silently handled
     }
   };
   
@@ -315,7 +314,7 @@ export default function Collaborate() {
       
       setComments(commentTree);
     } catch (error) {
-      console.error("Error loading comments:", error);
+      // silently handled
     }
   };
   
@@ -344,7 +343,7 @@ export default function Collaborate() {
         });
       }
     } catch (error) {
-      console.error("Error refreshing page content:", error);
+      // silently handled
     }
   };
   
@@ -388,7 +387,6 @@ export default function Collaborate() {
         description: "Page saved successfully."
       });
     } catch (error) {
-      console.error("Error saving page:", error);
       toast({
         variant: "destructive",
         description: "Failed to save page. Please try again."
@@ -420,7 +418,6 @@ export default function Collaborate() {
       
       return true;
     } catch (error) {
-      console.error("Error adding comment:", error);
       toast({
         variant: "destructive",
         description: "Failed to add comment. Please try again."
@@ -451,7 +448,6 @@ export default function Collaborate() {
       
       return true;
     } catch (error) {
-      console.error("Error adding reply:", error);
       toast({
         variant: "destructive",
         description: "Failed to add reply. Please try again."
@@ -471,7 +467,6 @@ export default function Collaborate() {
         description: "Comment marked as resolved."
       });
     } catch (error) {
-      console.error("Error resolving comment:", error);
       toast({
         variant: "destructive",
         description: "Failed to resolve comment. Please try again."
@@ -518,7 +513,7 @@ export default function Collaborate() {
           `
         });
       } catch (error) {
-        console.error("Error sending invitation email:", error);
+        // silently handled
       }
       
       // Refresh collaborators
@@ -530,7 +525,6 @@ export default function Collaborate() {
       
       return true;
     } catch (error) {
-      console.error("Error inviting collaborator:", error);
       toast({
         variant: "destructive",
         description: "Failed to send invitation. Please try again."
@@ -550,7 +544,6 @@ export default function Collaborate() {
         description: `Collaborator ${newStatus === "revoked" ? "removed" : newStatus}.`
       });
     } catch (error) {
-      console.error("Error updating collaborator status:", error);
       toast({
         variant: "destructive",
         description: "Failed to update collaboration status. Please try again."

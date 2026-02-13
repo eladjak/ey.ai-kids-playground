@@ -55,7 +55,6 @@ export default function CharacterEditor() {
                 const fetchedCharacter = await Character.get(characterId);
                 setCharacter(fetchedCharacter);
             } catch (error) {
-                console.error("Error loading character:", error);
                 toast({
                     title: "Error",
                     description: "Failed to load character.",
@@ -73,7 +72,7 @@ export default function CharacterEditor() {
                 const parsedData = JSON.parse(decodeURIComponent(data));
                 setCharacter(prev => ({ ...prev, ...parsedData }));
             } catch (error) {
-                console.error("Error parsing character data from URL:", error);
+                // silently handled
             } finally {
                 setIsLoading(false);
             }
@@ -185,7 +184,6 @@ export default function CharacterEditor() {
                 description: "The character's image has been updated.",
             });
         } catch (error) {
-            console.error("Failed to generate image:", error);
             toast({
                 variant: "destructive",
                 title: "Failed to generate image",
@@ -222,7 +220,6 @@ export default function CharacterEditor() {
                 description: "The character's details have been updated.",
             });
         } catch (error) {
-            console.error("Failed to generate details:", error);
             toast({
                 variant: "destructive",
                 title: "Failed to generate details",
@@ -260,7 +257,6 @@ export default function CharacterEditor() {
                 });
             }
         } catch (error) {
-            console.error("Failed to save character:", error);
             toast({ 
                 variant: "destructive", 
                 title: (character.id === null) ? t("characterEditor.errorCreate") : t("characterEditor.errorUpdate")
@@ -280,7 +276,6 @@ export default function CharacterEditor() {
                 });
                 navigate(createPageUrl('Characters'));
             } catch (error) {
-                console.error("Failed to delete character:", error);
                 toast({ 
                     variant: "destructive", 
                     title: t("characterEditor.errorDelete")

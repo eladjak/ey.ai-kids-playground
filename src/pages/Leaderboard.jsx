@@ -63,7 +63,7 @@ export default function Leaderboard() {
         generateMockLeaderboardData();
         
       } catch (error) {
-        console.error("Error loading leaderboard data:", error);
+        // silently handled
       } finally {
         setIsLoading(false);
       }

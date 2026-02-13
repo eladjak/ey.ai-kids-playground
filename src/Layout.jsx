@@ -75,8 +75,6 @@ export default function Layout({ children, currentPageName }) {
         }
 
       } catch (error) {
-        console.error("Error loading user and settings:", error);
-
         const storedLanguage = localStorage.getItem("appLanguage");
         if (storedLanguage) {
           setCurrentLanguage(storedLanguage);
@@ -189,7 +187,7 @@ export default function Layout({ children, currentPageName }) {
       await User.logout();
       window.location.reload();
     } catch (error) {
-      console.error("Error logging out:", error);
+      // silently handled
     }
   };
 

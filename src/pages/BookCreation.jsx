@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Book } from "@/entities/Book";
 import { Page } from "@/entities/Page";
 import { GenerateImage, InvokeLLM } from "@/integrations/Core";
+import { buildSafetyPromptPrefix, sanitizeAIOutput } from "@/utils/content-moderation";
 import { createPageUrl } from "@/utils";
 import { 
   ArrowLeft, 
@@ -190,7 +191,6 @@ export default function BookCreation() {
       
       setIsLoading(false);
     } catch (error) {
-      console.error("Error loading book data:", error);
       toast({
         variant: "destructive",
         description: "Failed to load book data. Please try again."
@@ -295,7 +295,6 @@ export default function BookCreation() {
         className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100"
       });
     } catch (error) {
-      console.error("Error generating book:", error);
       toast({
         variant: "destructive",
         description: "Failed to generate book. Please try again."
@@ -310,12 +309,14 @@ export default function BookCreation() {
   
   const getStoryOutlinePrompt = () => {
     const { title, child_name, child_age, genre, age_range, tone, moral, length, interests, family_members } = book;
-    
+
     let pageCount = 10;
     if (length === "short") pageCount = 6;
     if (length === "long") pageCount = 15;
-    
-    return `Create a detailed outline for a personalized children's book with the following details:
+
+    const safetyPrefix = buildSafetyPromptPrefix(age_range || '5-10');
+
+    return `${safetyPrefix}Create a detailed outline for a personalized children's book with the following details:
       - Title: ${title || "Generate a catchy title"}
       - Main character: ${child_name}, age ${child_age}
       - Genre: ${genre}
@@ -339,8 +340,9 @@ export default function BookCreation() {
   
   const getPageTextPrompt = (pageDescription, pageNumber) => {
     const { child_name, child_age, genre, age_range, art_style } = book;
-    
-    return `Write the text content for page ${pageNumber} of a children's story based on this description: "${pageDescription}"
+    const safetyPrefix = buildSafetyPromptPrefix(age_range || '5-10');
+
+    return `${safetyPrefix}Write the text content for page ${pageNumber} of a children's story based on this description: "${pageDescription}"
     
     Story details:
     - Main character: ${child_name}, age ${child_age}
@@ -375,7 +377,7 @@ export default function BookCreation() {
     
     const styleGuide = `Illustration style: ${art_style || style || "disney"}, consistent character appearances throughout the story, high quality children's book illustration`;
     
-    return `${basePrompt}\n\n${characterDescription}. ${secondaryDescriptions}\n\n${styleGuide}\n\nBright, vibrant colors, child-friendly, appealing to children in the age range ${book.age_range}, emotive and expressive.`;
+    return `${basePrompt}\n\n${characterDescription}. ${secondaryDescriptions}\n\n${styleGuide}\n\nBright, vibrant colors, child-friendly, appealing to children in the age range ${book.age_range}, emotive and expressive. IMPORTANT: The image must be completely child-safe, age-appropriate, non-violent, and non-scary.`;
   };
   
   const getLayoutForPageNumber = (pageNumber) => {
@@ -404,7 +406,6 @@ export default function BookCreation() {
         className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100"
       });
     } catch (error) {
-      console.error("Error updating page text:", error);
       toast({
         variant: "destructive",
         description: "Failed to update page text. Please try again."
@@ -445,7 +446,6 @@ export default function BookCreation() {
         className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100"
       });
     } catch (error) {
-      console.error("Error updating page image:", error);
       toast({
         variant: "destructive",
         description: "Failed to update page image. Please try again."
@@ -476,7 +476,6 @@ export default function BookCreation() {
         className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100"
       });
     } catch (error) {
-      console.error("Error updating page layout:", error);
       toast({
         variant: "destructive",
         description: "Failed to update page layout. Please try again."
@@ -506,7 +505,6 @@ export default function BookCreation() {
         });
       }
     } catch (error) {
-      console.error("Error adding nikud:", error);
       toast({
         variant: "destructive",
         description: "שגיאה בהוספת ניקוד. אנא נסה שוב."
@@ -542,7 +540,6 @@ export default function BookCreation() {
         });
       }
     } catch (error) {
-      console.error("Error converting to rhyme:", error);
       toast({
         variant: "destructive",
         description: "Failed to convert text to rhyme. Please try again."

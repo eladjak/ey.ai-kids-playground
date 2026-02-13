@@ -148,23 +148,17 @@ export default function AvatarSelector({
       const tempUrl = URL.createObjectURL(file);
       setTempPreviewUrl(tempUrl);
       
-      console.log("Starting file upload to server");
-      
       const response = await UploadFile({
         file: file
       });
 
-      console.log("Upload response:", response);
-      
       if (response?.file_url) {
         setPreviewUrl(response.file_url);
         onSelectAvatar(response.file_url);
-        console.log("New avatar URL set:", response.file_url);
       } else {
         throw new Error('No URL in response');
       }
     } catch (error) {
-      console.error('Upload error:', error);
       setError(t("avatar.error.upload"));
     } finally {
       setIsUploading(false);
@@ -203,23 +197,17 @@ export default function AvatarSelector({
       // Use a more direct, focused prompt for the avatar generation
       const prompt = `Create a professional profile picture avatar of a ${generationPrompt}. Style: ${selectedStyle}. Square format with face clearly visible, centered composition, high quality.`;
       
-      console.log("Generating avatar with prompt:", prompt);
-      
       const result = await GenerateImage({
         prompt: prompt
       });
 
-      console.log("Generation result:", result);
-      
       if (result?.url) {
         setPreviewUrl(result.url);
         onSelectAvatar(result.url);
-        console.log("New avatar URL set:", result.url);
       } else {
         throw new Error('No URL in response');
       }
     } catch (error) {
-      console.error('Generation error:', error);
       setError(t("avatar.error.generation"));
     } finally {
       setIsGenerating(false);
@@ -348,7 +336,6 @@ export default function AvatarSelector({
                       alt="Avatar preview"
                       className="object-cover"
                       onError={(e) => {
-                        console.error("Error loading image:", e);
                         setError(t("avatar.error.loading"));
                       }}
                     />

@@ -68,7 +68,7 @@ export default function CommunityPost() {
         const user = await User.me();
         setCurrentUser(user);
       } catch (error) {
-        console.error("Error loading user:", error);
+        // silently handled
       }
       
       // Load post data
@@ -91,7 +91,6 @@ export default function CommunityPost() {
       await loadComments();
       
     } catch (error) {
-      console.error("Error loading post data:", error);
       toast({
         variant: "destructive",
         description: "Failed to load post data. Please try again.",
@@ -120,7 +119,6 @@ export default function CommunityPost() {
               user
             };
           } catch (error) {
-            console.error("Error fetching user for comment:", error);
             return {
               ...comment,
               user: { full_name: "Unknown User" }
@@ -142,7 +140,6 @@ export default function CommunityPost() {
       
       setComments(commentTree);
     } catch (error) {
-      console.error("Error loading comments:", error);
       toast({
         variant: "destructive",
         description: "Failed to load comments. Please try again.",
@@ -168,7 +165,6 @@ export default function CommunityPost() {
         description: "Thanks for liking this post!",
       });
     } catch (error) {
-      console.error("Error liking post:", error);
       toast({
         variant: "destructive",
         description: "Failed to like post. Please try again.",
@@ -202,7 +198,6 @@ export default function CommunityPost() {
         description: "Comment added successfully!",
       });
     } catch (error) {
-      console.error("Error adding comment:", error);
       toast({
         variant: "destructive",
         description: "Failed to add comment. Please try again.",
@@ -235,7 +230,6 @@ export default function CommunityPost() {
       
       return true;
     } catch (error) {
-      console.error("Error adding reply:", error);
       toast({
         variant: "destructive",
         description: "Failed to add reply. Please try again.",

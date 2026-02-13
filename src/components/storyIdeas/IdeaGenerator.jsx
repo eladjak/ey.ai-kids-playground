@@ -26,8 +26,6 @@ export default function IdeaGenerator({
   isRTL = false,
   existingChildrenNames = []
 }) {
-  console.log("IdeaGenerator rendered with ideaParams:", ideaParams); // Debug log
-
   const [availableCharacters, setAvailableCharacters] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -49,7 +47,7 @@ export default function IdeaGenerator({
       const characters = await Character.list("-created_date");
       setAvailableCharacters(characters);
     } catch (error) {
-      console.error("Failed to load characters:", error);
+      // silently handled
     }
   };
 
@@ -316,8 +314,6 @@ export default function IdeaGenerator({
 
   // Tag Input Component with fixed state management
   const TagInput = ({ field, label, placeholder, suggestions = [], inputValue, setInputValue }) => {
-    console.log(`TagInput rendered for field: ${field}, inputValue: ${inputValue}`); // Debug log
-    
     return (
     <div className="space-y-2">
       <Label>{label}</Label>
@@ -347,12 +343,10 @@ export default function IdeaGenerator({
             placeholder={placeholder}
             value={inputValue}
             onChange={(e) => {
-              console.log(`Input changed for ${field}:`, e.target.value); // Debug log
               setInputValue(e.target.value);
             }}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && inputValue.trim()) {
-                console.log(`Enter pressed for ${field} with value:`, inputValue); // Debug log
                 e.preventDefault();
                 handleAddTag(field, inputValue.trim(), inputValue.trim());
                 setInputValue('');
@@ -365,7 +359,6 @@ export default function IdeaGenerator({
               type="button"
               size="sm"
               onClick={() => {
-                console.log(`Add button clicked for ${field} with value:`, inputValue); // Debug log
                 handleAddTag(field, inputValue.trim(), inputValue.trim());
                 setInputValue('');
               }}
@@ -404,10 +397,7 @@ export default function IdeaGenerator({
   )};
 
   const handleGenerateIdea = async () => {
-    console.log("handleGenerateIdea called with ideaParams:", ideaParams); // Debug log
-    
     if (!onGenerate) {
-      console.error("onGenerate prop is missing!");
       return;
     }
     
@@ -415,9 +405,6 @@ export default function IdeaGenerator({
       setIsGenerating(true);
       const targetLanguage = currentLanguage;
       const prompt = constructPromptForIdea(ideaParams, targetLanguage);
-      
-      console.log("Generated prompt:", prompt); // Debug log
-      console.log("Target language:", targetLanguage); // Debug log
       
       const { InvokeLLM } = await import('@/integrations/Core');
       
@@ -436,8 +423,6 @@ export default function IdeaGenerator({
         }
       });
 
-      console.log("LLM result:", result); // Debug log
-
       if (result) {
         const ideaWithMetadata = {
           ...result,
@@ -446,11 +431,10 @@ export default function IdeaGenerator({
           plot_points: Array.isArray(result.plot_points) ? result.plot_points : [result.plot_points]
         };
         
-        console.log("Calling onGenerate with:", ideaWithMetadata); // Debug log
         onGenerate(ideaWithMetadata);
       }
     } catch (error) {
-      console.error("Error generating story idea:", error);
+      // silently handled
     } finally {
       setIsGenerating(false);
     }
@@ -755,7 +739,7 @@ export default function IdeaGenerator({
                     onInputChange("additionalDetails", dailyPrompt.title);
                   }
                 } catch (e) {
-                  console.error("Error using daily prompt", e);
+                  // silently handled
                 }
               }}
             >

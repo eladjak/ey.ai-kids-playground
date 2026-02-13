@@ -38,7 +38,7 @@ export default function SceneCard({
     try {
       await onGenerateSketch(scene); // Pass the whole scene object
     } catch (error) {
-      console.error('Error generating sketch:', error);
+      // silently handled
     } finally {
       setIsGeneratingSketch(false);
     }

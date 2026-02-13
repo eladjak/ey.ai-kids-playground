@@ -85,7 +85,6 @@ export default function StoryRefinementStep({ bookData, updateBookData, currentL
         setAutoSaveStatus('saved');
         setLastSaved(new Date());
       } catch (error) {
-        console.error('Auto-save failed:', error);
         setAutoSaveStatus('error');
       }
     };
@@ -110,7 +109,6 @@ export default function StoryRefinementStep({ bookData, updateBookData, currentL
           avatarQueue.current.push({ characterName, retryCount: retryCount + 1 });
           await new Promise(resolve => setTimeout(resolve, 8000 * (retryCount + 1))); // Longer wait for retries
         } else {
-          console.error(`Failed to generate avatar for ${characterName} after retries:`, error);
           setLoadingAvatars(prev => {
             const newSet = new Set(prev);
             newSet.delete(characterName);
@@ -154,7 +152,6 @@ export default function StoryRefinementStep({ bookData, updateBookData, currentL
         }
       }
     } catch (e) {
-      console.error(`Error generating avatar for ${characterName}:`, e);
       throw e;
     } finally {
       setLoadingAvatars(prev => {
@@ -314,7 +311,7 @@ export default function StoryRefinementStep({ bookData, updateBookData, currentL
         updateBookData('title', result.trim());
       }
     } catch (error) {
-      console.error('Error generating title:', error);
+      // silently handled
     }
   };
 

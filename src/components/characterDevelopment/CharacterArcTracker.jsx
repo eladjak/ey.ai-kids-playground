@@ -221,7 +221,7 @@ Return ONLY JSON:
         setArcData(result);
       }
     } catch (error) {
-      console.error('Error analyzing character arc:', error);
+      // silently handled
     } finally {
       setIsAnalyzing(false);
     }

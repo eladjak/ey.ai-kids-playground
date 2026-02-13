@@ -140,7 +140,7 @@ export default function StoryStructureBuilder({
           // Wait even longer for retries
           await new Promise(resolve => setTimeout(resolve, 10000 * (retryCount + 1)));
         } else {
-          console.error(`Failed to generate sketch for scene ${scene.id} after retries:`, error);
+          // failed to generate sketch after retries
         }
       }
     }
@@ -203,7 +203,6 @@ export default function StoryStructureBuilder({
         throw new Error("Image generation failed to return a URL.");
       }
     } catch (e) {
-      console.error("Error generating sketch:", e);
       throw e;
     }
   };
@@ -352,7 +351,6 @@ Return ONLY JSON:
         });
       }
     } catch (error) {
-      console.error('Error generating structure:', error);
       toast({
         title: isRTL ? 'שגיאה' : 'Error',
         description: isRTL ? 'לא הצלחנו ליצור את מבנה הסיפור' : 'Failed to generate story structure',

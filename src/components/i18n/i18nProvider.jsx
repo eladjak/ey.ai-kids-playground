@@ -77,7 +77,7 @@ export const I18nProvider = ({ children }) => {
           localStorage.setItem('language', user.language);
         }
       } catch (error) {
-        console.error("Error loading language preferences:", error);
+        // silently handled
       } finally {
         setLoading(false);
         setIsReady(true);
@@ -103,7 +103,7 @@ export const I18nProvider = ({ children }) => {
     try {
       await User.updateMyUserData({ language: newLanguage });
     } catch (error) {
-      console.error("Error saving language preference:", error);
+      // silently handled
     }
   };
 

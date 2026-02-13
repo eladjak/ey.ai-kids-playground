@@ -141,7 +141,7 @@ export default function Library() {
       const loadedBooks = await Book.list();
       setBooks(loadedBooks);
     } catch (error) {
-      console.error("Error loading books:", error);
+      // silently handled
     } finally {
       setIsLoading(false);
     }

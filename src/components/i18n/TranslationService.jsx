@@ -270,7 +270,6 @@ function initialize() {
   // Apply language settings
   changeLanguage(currentLanguage);
   
-  console.log(`Translation service initialized with language: ${currentLanguage}`);
 }
 
 // Initialize when the file is imported

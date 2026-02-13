@@ -32,11 +32,8 @@ export default function ChildInfoStep({ bookData, updateBookData }) {
 
   // NEW: Initialize data from bookData when component loads
   useEffect(() => {
-    console.log("ChildInfoStep received bookData:", bookData); // Debug log
-
     // If we already have childNames and selectedCharacters, we're good
     if (bookData.childNames && bookData.childNames.length > 0) {
-      console.log("Using existing childNames:", bookData.childNames);
       // Ensure we have a primary child_name
       if (!bookData.child_name && bookData.childNames.length > 0) {
         updateBookData("child_name", bookData.childNames[0]);
@@ -46,7 +43,6 @@ export default function ChildInfoStep({ bookData, updateBookData }) {
 
     // If bookData has child_name but no childNames, convert
     if (bookData.child_name && (!bookData.childNames || bookData.childNames.length === 0)) {
-      console.log("Converting child_name to childNames:", bookData.child_name);
       updateBookData("childNames", [bookData.child_name]);
 
       // Create a character object for consistency
@@ -66,7 +62,7 @@ export default function ChildInfoStep({ bookData, updateBookData }) {
       const characters = await Character.list("-created_date");
       setAvailableCharacters(characters);
     } catch (error) {
-      console.error("Failed to load characters:", error);
+      // silently handled
     }
   };
 

@@ -170,7 +170,7 @@ Provide 3-5 general recommendations for improving pacing.`;
 
       setAnalysis(result);
     } catch (error) {
-      console.error("Error analyzing pacing:", error);
+      // silently handled
     } finally {
       setAnalyzing(false);
     }

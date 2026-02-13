@@ -72,7 +72,7 @@ export default function ShareOptions({ book, bookId }) {
         tags: ["story", "children"]
       });
     } catch (error) {
-      console.error("Error sharing book:", error);
+      // silently handled
       toast({
         variant: "destructive",
         title: "Error sharing book",

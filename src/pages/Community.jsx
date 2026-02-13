@@ -147,7 +147,7 @@ export default function CommunityPage() {
         const user = await User.me();
         setCurrentUser(user);
       } catch (error) {
-        console.error("Error loading user:", error);
+        // silently handled
       }
       
       // Load featured posts
@@ -174,7 +174,6 @@ export default function CommunityPage() {
       // Load initial posts
       await loadFilteredPosts();
     } catch (error) {
-      console.error("Error loading community data:", error);
       toast({
         variant: "destructive",
         description: "Failed to load community data. Please try again.",
@@ -241,7 +240,6 @@ export default function CommunityPage() {
       
       setPosts(searchResults);
     } catch (error) {
-      console.error("Error loading posts:", error);
       toast({
         variant: "destructive",
         description: "Failed to load posts. Please try again.",
@@ -294,7 +292,6 @@ export default function CommunityPage() {
         description: "You liked this post!",
       });
     } catch (error) {
-      console.error("Error liking post:", error);
       toast({
         variant: "destructive",
         description: "Failed to like post. Please try again.",
@@ -326,7 +323,6 @@ export default function CommunityPage() {
         description: "Your book has been shared with the community!",
       });
     } catch (error) {
-      console.error("Error sharing book:", error);
       toast({
         variant: "destructive",
         description: "Failed to share book. Please try again.",

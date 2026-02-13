@@ -234,7 +234,6 @@ export default function Profile() {
         loadRecentActivityData();
         
       } catch (error) {
-        console.error("Error loading user data:", error);
         showToast("Failed to load profile", "error");
       } finally {
         setIsLoading(false);
@@ -420,7 +419,6 @@ export default function Profile() {
       
       showToast(t("profile.saved"), "success");
     } catch (error) {
-      console.error("Error saving profile:", error);
       showToast(t("profile.error"), "error");
     } finally {
       setIsSaving(false);
@@ -430,8 +428,6 @@ export default function Profile() {
   const handleAvatarUpdate = async (newAvatarUrl) => {
     try {
       setIsSaving(true);
-      
-      console.log("Updating avatar with URL:", newAvatarUrl);
       
       await User.updateMyUserData({
         avatar_url: newAvatarUrl
@@ -445,7 +441,6 @@ export default function Profile() {
       showToast(t("profile.avatar.updated"), "success");
       setAvatarEditorOpen(false);
     } catch (error) {
-      console.error("Error updating avatar:", error);
       showToast(t("profile.avatar.error"), "error");
     } finally {
       setIsSaving(false);

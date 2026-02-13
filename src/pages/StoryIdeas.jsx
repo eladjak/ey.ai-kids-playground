@@ -2,9 +2,10 @@
 import React, { useState, useEffect } from "react";
 import { StoryIdea } from "@/entities/StoryIdea";
 import { User } from "@/entities/User";
-import { 
-  InvokeLLM 
+import {
+  InvokeLLM
 } from "@/integrations/Core";
+import { moderateInput, buildSafetyPromptPrefix } from "@/utils/content-moderation";
 import { 
   Lightbulb, 
   Sparkles, 
@@ -57,7 +58,7 @@ export default function StoryIdeas() {
         setSavedIdeas(ideas);
         
       } catch (error) {
-        console.error("Error loading user settings:", error);
+        // silently handled
       } finally {
         setIsLoading(false);
       }
@@ -113,47 +114,59 @@ export default function StoryIdeas() {
       const ideas = await StoryIdea.list("-created_date", 20);
       setSavedIdeas(ideas);
     } catch (error) {
-      console.error("Error reloading ideas:", error);
+      // silently handled
     }
   };
   
   const constructPromptForIdea = (params, targetLanguage) => {
-    const languageInstruction = targetLanguage === "hebrew" ? 
-      "יש ליצור את כל התוכן בעברית בלבד. " : 
-      targetLanguage === "yiddish" ? 
+    // Moderate free-text user input
+    const moderatedDetails = params.additionalDetails
+      ? moderateInput(params.additionalDetails, 'additionalDetails')
+      : null;
+
+    if (moderatedDetails && moderatedDetails.blocked) {
+      toast({ variant: "destructive", description: "Some input contains inappropriate content. Please revise." });
+      return null;
+    }
+
+    const languageInstruction = targetLanguage === "hebrew" ?
+      "יש ליצור את כל התוכן בעברית בלבד. " :
+      targetLanguage === "yiddish" ?
       "Create all content in Yiddish only. " :
       "Create all content in English only. ";
-    
-    let prompt = `${languageInstruction}Create a detailed children's story idea with the following parameters:\n\n`;
-    
+
+    const safetyPrefix = buildSafetyPromptPrefix(params.childAge || '5-10');
+
+    let prompt = `${safetyPrefix}${languageInstruction}Create a detailed children's story idea with the following parameters:\n\n`;
+
     if (params.childNames && params.childNames.length > 0) {
       prompt += `Main characters: ${params.childNames.join(', ')}\n`;
     }
-    
+
     if (params.childAge) {
       prompt += `Target age: ${params.childAge} years old\n`;
     }
-    
+
     if (params.genres && params.genres.length > 0) {
       prompt += `Genre: ${params.genres.join(', ')}\n`;
     }
-    
+
     if (params.themes && params.themes.length > 0) {
       prompt += `Themes: ${params.themes.join(', ')}\n`;
     }
-    
+
     if (params.characters && params.characters.length > 0) {
       prompt += `Additional characters: ${params.characters.join(', ')}\n`;
     }
-    
+
     if (params.setting && params.setting.length > 0) {
       prompt += `Setting: ${params.setting.join(', ')}\n`;
     }
-    
-    if (params.additionalDetails) {
-      prompt += `Additional details: ${params.additionalDetails}\n`;
+
+    if (moderatedDetails?.sanitized) {
+      prompt += `Additional details: ${moderatedDetails.sanitized}\n`;
     }
-    
+
     prompt += `\nPlease provide:\n1. A catchy, age-appropriate title\n2. A brief but engaging description (2-3 sentences)\n3. 3-5 key plot points that create a complete story arc\n4. Character development opportunities\n5. A clear moral lesson or educational value\n\nMake sure everything is appropriate for children and engaging for the target age group.`;
 
     return prompt;
@@ -165,7 +178,13 @@ export default function StoryIdeas() {
       setGeneratedIdea(null); // Clear previous idea
       const targetLanguage = currentLanguage;
       const prompt = constructPromptForIdea(ideaParams, targetLanguage);
-      
+
+      // Content moderation blocked the input
+      if (!prompt) {
+        setIsGenerating(false);
+        return;
+      }
+
       const result = await InvokeLLM({
         prompt: prompt,
         response_json_schema: {
@@ -189,7 +208,6 @@ export default function StoryIdeas() {
         });
       }
     } catch (error) {
-      console.error("Error generating story idea:", error);
       toast({ variant: "destructive", description: "Error generating idea. Please try again." });
     } finally {
       setIsGenerating(false);
@@ -204,7 +222,6 @@ export default function StoryIdeas() {
           handleIdeaSaved(); // Reload saved ideas
           setGeneratedIdea(null); // Clear generated idea after saving
       } catch (error) {
-          console.error("Failed to save idea", error);
           toast({ variant: "destructive", description: t("storyIdeas.saveFailed") });
       }
   };

@@ -112,7 +112,7 @@ export default function Characters() {
       const data = await Character.list("-created_date");
       setCharacters(data);
     } catch (error) {
-      console.error("Error loading characters:", error);
+      // silently handled
     } finally {
       setIsLoading(false);
     }

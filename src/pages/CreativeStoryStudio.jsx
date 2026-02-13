@@ -18,24 +18,19 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress"; // This import is no longer strictly needed for the progress bar itself, but might be used elsewhere. Keeping it for now.
 import { useToast } from "@/components/ui/use-toast";
 
-// Import existing components
 import IdeaGenerator from "../components/storyIdeas/IdeaGenerator";
 import SavedIdeas from "../components/storyIdeas/SavedIdeas";
-import ChildInfoStep from "../components/createBook/ChildInfoStep"; // This component is effectively removed from the flow, but the import remains. Removing it might cause linting issues if not checked globally. Keeping it as it doesn't harm.
 import StoryDetailsStep from "../components/createBook/StoryDetailsStep";
 import StoryStyleStep from "../components/createBook/StoryStyleStep";
-import LanguageStep from "../components/createBook/LanguageStep"; // This component is not used in the provided outline or current file flow, can be removed if not used elsewhere.
 import BookPreview from "../components/createBook/BookPreview";
-import AIStudio from "../components/ai/AIStudio"; // This component is not used in the provided outline or current file flow, can be removed if not used elsewhere.
 import { InvokeLLM, GenerateImage } from "@/integrations/Core";
-import IdeaResult from "../components/storyIdeas/IdeaResult"; // Import the new component
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"; // New import for modal
-import IdeaEditor from "../components/storyIdeas/IdeaEditor"; // NEW IMPORT
-import StoryRefinementStep from "../components/createBook/StoryRefinementStep"; // ENSURING THIS IS USED
-// Removed: import StoryStructureBuilder from "../components/storyBuilder/StoryStructureBuilder";
+import IdeaResult from "../components/storyIdeas/IdeaResult";
+import { moderateInput, buildSafetyPromptPrefix, sanitizeAIOutput } from "@/utils/content-moderation";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import IdeaEditor from "../components/storyIdeas/IdeaEditor";
+import StoryRefinementStep from "../components/createBook/StoryRefinementStep";
 
 export default function CreativeStoryStudio() {
   const navigate = useNavigate();
@@ -109,7 +104,7 @@ export default function CreativeStoryStudio() {
         await loadSavedIdeas();
 
       } catch (error) {
-        console.error("Error loading initial data:", error);
+        // silently handled
       }
     };
 
@@ -121,7 +116,7 @@ export default function CreativeStoryStudio() {
       const ideas = await StoryIdea.list("-created_date", 20);
       setSavedIdeas(ideas);
     } catch(e) {
-      console.error("failed to load saved ideas", e)
+      // silently handled
     }
   }
 
@@ -317,17 +312,29 @@ export default function CreativeStoryStudio() {
     </div>
   );
 
-  // Helper function to construct prompt
+  // Helper function to construct prompt with content moderation
   function constructPromptForIdea(params, targetLanguage) {
+    // Moderate user inputs before including in prompt
+    const moderatedDetails = params.additionalDetails
+      ? moderateInput(params.additionalDetails, 'additionalDetails')
+      : null;
+
+    // Block if inappropriate content detected in free-text fields
+    if (moderatedDetails && moderatedDetails.blocked) {
+      toast({ variant: "destructive", title: t("studio.idea.error.title"), description: "Some input contains inappropriate content. Please revise." });
+      return null;
+    }
+
     const isHebrew = targetLanguage === "hebrew";
     const languageInstruction = isHebrew ? "יש ליצור את כל התוכן בעברית בלבד. " : "Create all content in English only. ";
-    // Simplified prompt construction logic
-    let prompt = `${languageInstruction}Create a story idea for a child named ${params.childNames?.[0] || 'a child'}. `;
+    const safetyPrefix = buildSafetyPromptPrefix(params.childAge || '5-10');
+
+    let prompt = `${safetyPrefix}${languageInstruction}Create a story idea for a child named ${params.childNames?.[0] || 'a child'}. `;
     if (params.genres?.length > 0) prompt += `The genre should be ${params.genres.join(', ')}. `;
     if (params.themes?.length > 0) prompt += `It should explore themes of ${params.themes.join(', ')}. `;
     if (params.characters?.length > 0) prompt += `Key characters include ${params.characters.join(', ')}. `;
     if (params.setting?.length > 0) prompt += `The setting is ${params.setting.join(', ')}. `;
-    if (params.additionalDetails) prompt += `Additional details: ${params.additionalDetails}. `;
+    if (moderatedDetails?.sanitized) prompt += `Additional details: ${moderatedDetails.sanitized}. `;
 
     prompt += `Please provide a title, a short description, 3-5 key plot points, character development ideas, and a moral lesson.`;
 
@@ -336,14 +343,10 @@ export default function CreativeStoryStudio() {
 
   // Helper function to convert idea (from LLM or saved) to book data
   const convertIdeaToBookData = (idea, generationParams = null) => {
-    console.log("convertIdeaToBookData called with:", { idea, generationParams }); // Debug log
-
     try {
       // If it's a saved idea, its parameters are stored within `idea.parameters`
       // If it's a newly generated idea, the `generationParams` (i.e., `ideaParams` state) are passed directly
       const effectiveParams = generationParams || (typeof idea.parameters === 'string' ? JSON.parse(idea.parameters) : idea.parameters) || {};
-
-      console.log("Effective params for conversion:", effectiveParams); // Debug log
 
       // Extract character names from multiple sources
       let characterNames = [];
@@ -363,8 +366,6 @@ export default function CreativeStoryStudio() {
 
       // Remove duplicates
       characterNames = [...new Set(characterNames)];
-
-      console.log("Extracted character names:", characterNames); // Debug log
 
       // Extract genre information
       let genres = [];
@@ -422,12 +423,10 @@ export default function CreativeStoryStudio() {
         }))
       };
 
-      console.log("Updated book data:", updatedBookData); // Debug log
       setBookData(updatedBookData);
       setIdeaParams(effectiveParams);
 
     } catch (error) {
-      console.error("Error converting idea to book data:", error);
       toast({
         variant: "destructive",
         title: "Conversion Error",
@@ -438,15 +437,17 @@ export default function CreativeStoryStudio() {
 
   // This is a combination of logic from old CreateBook and StoryIdeas pages
   const generateIdea = async () => {
-    console.log("generateIdea called in CreativeStoryStudio with ideaParams:", ideaParams); // Debug log
-
     try {
       setIsGenerating(true);
       setGeneratedIdea(null); // Clear previous idea when generating a new one
       const targetLanguage = bookData?.language || currentLanguage;
       const prompt = constructPromptForIdea(ideaParams, targetLanguage);
 
-      console.log("Prompt being sent to LLM:", prompt); // Debug log
+      // Content moderation blocked the input
+      if (!prompt) {
+        setIsGenerating(false);
+        return;
+      }
 
       const result = await InvokeLLM({
         prompt,
@@ -463,8 +464,6 @@ export default function CreativeStoryStudio() {
         }
       });
 
-      console.log("Result from InvokeLLM:", result); // Debug log
-
       if (result) {
         const ideaWithMetadata = {
           ...result,
@@ -472,13 +471,11 @@ export default function CreativeStoryStudio() {
           parameters: JSON.stringify(ideaParams)
         };
 
-        console.log("Setting generatedIdea to:", ideaWithMetadata); // Debug log
         setGeneratedIdea(ideaWithMetadata);
         convertIdeaToBookData(ideaWithMetadata, ideaParams);
         toast({ title: t("studio.idea.generated.title"), description: t("studio.idea.generated.desc") });
       }
     } catch (error) {
-      console.error("Error generating story idea:", error);
       toast({ variant: "destructive", title: t("studio.idea.error.title"), description: t("studio.idea.error.desc") });
     } finally {
       setIsGenerating(false);
@@ -486,7 +483,6 @@ export default function CreativeStoryStudio() {
   };
 
   const saveIdea = async (idea) => {
-    console.log("saveIdea called with:", idea); // Debug log
     try {
       setIsGenerating(true);
       await StoryIdea.create(idea);
@@ -494,7 +490,6 @@ export default function CreativeStoryStudio() {
       // Optionally refresh saved ideas after saving
       await loadSavedIdeas();
     } catch (error) {
-      console.error("Error saving idea:", error);
       toast({ variant: "destructive", title: t("studio.idea.saveError.title"), description: t("studio.idea.saveError.desc") });
     } finally {
       setIsGenerating(false);
@@ -502,37 +497,31 @@ export default function CreativeStoryStudio() {
   };
 
   const saveIdeaAndContinue = async (idea) => {
-    console.log("saveIdeaAndContinue called with:", idea); // Debug log
     await saveIdea(idea);
     nextStep();
   };
 
   const editIdea = (editedIdea) => {
-    console.log("editIdea called in parent with:", editedIdea); // Debug log
     setGeneratedIdea(editedIdea); // This is the fix for saving edits
     convertIdeaToBookData(editedIdea, ideaParams);
     toast({ title: "Idea Updated", description: "Your changes have been saved locally." });
   };
 
   const deleteIdea = () => {
-    console.log("deleteIdea called"); // Debug log
     setGeneratedIdea(null);
   };
 
   const handleUseIdea = (idea) => {
-    console.log("handleUseIdea called with:", idea); // Debug log
     setSelectedIdea(idea);
     convertIdeaToBookData(idea);
     nextStep();
   };
 
   const handleEditSavedIdea = (idea) => {
-    console.log("handleEditSavedIdea called with:", idea); // Debug log
     setEditingIdea(idea);
   };
 
   const handleUpdateSavedIdea = async (updatedIdea) => {
-    console.log("handleUpdateSavedIdea called with:", updatedIdea); // Debug log
     try {
       setIsGenerating(true);
       await StoryIdea.update(updatedIdea.id, updatedIdea);
@@ -540,7 +529,6 @@ export default function CreativeStoryStudio() {
       setEditingIdea(null);
       toast({ title: "Idea Updated", description: "Your changes have been saved." });
     } catch (error) {
-      console.error("Failed to update idea:", error);
       toast({ variant: "destructive", title: "Update Error", description: "Failed to save your changes." });
     } finally {
       setIsGenerating(false);
@@ -548,14 +536,12 @@ export default function CreativeStoryStudio() {
   };
 
   const handleDeleteIdea = async (ideaId) => {
-    console.log("handleDeleteIdea called with:", ideaId); // Debug log
     try {
       setIsGenerating(true);
       await StoryIdea.delete(ideaId);
       await loadSavedIdeas(); // Refresh list
       toast({ title: "Idea Deleted", description: "The story idea has been removed." });
     } catch (error) {
-      console.error("Failed to delete idea:", error);
       toast({ variant: "destructive", title: "Delete Error", description: "Could not delete the idea." });
     } finally {
       setIsGenerating(false);
@@ -578,7 +564,7 @@ export default function CreativeStoryStudio() {
           finalBookData = { ...finalBookData, cover_image: coverResult.url };
           setBookData(finalBookData); // Update state with cover image
         } else {
-          console.warn("Failed to generate cover image, proceeding without it.");
+          // failed to generate cover image, proceeding without it
         }
       }
 
@@ -591,7 +577,6 @@ export default function CreativeStoryStudio() {
 
       navigate(`${createPageUrl("BookCreation")}?id=${createdBook.id}`);
     } catch (error) {
-      console.error("Error creating book:", error);
       toast({
         variant: "destructive",
         description: t("studio.book.create.error"),
@@ -603,18 +588,12 @@ export default function CreativeStoryStudio() {
 
   // Idea Generation Step
   const IdeaGenerationStep = () => {
-    console.log("IdeaGenerationStep rendering"); // Debug log
-    console.log("startingPoint:", startingPoint); // Debug log
-    console.log("generatedIdea:", generatedIdea); // Debug log
-    console.log("savedIdeas:", savedIdeas); // Debug log
-
     if (startingPoint === 'new-idea') {
       return (
         <div className="space-y-6">
           <IdeaGenerator
             ideaParams={ideaParams}
             onInputChange={(field, value) => {
-              console.log("IdeaGenerator onInputChange:", field, value); // Debug log
               setIdeaParams(prev => ({ ...prev, [field]: value }));
             }}
             onGenerate={generateIdea} // Use the new local generateIdea function
@@ -628,27 +607,22 @@ export default function CreativeStoryStudio() {
               <IdeaResult
                 idea={generatedIdea}
                 onContinue={() => {
-                  console.log("IdeaResult onContinue called"); // Debug log
                   // Convert idea to book data before moving to the next step
                   convertIdeaToBookData(generatedIdea, ideaParams);
                   nextStep();
                 }}
                 onRegenerate={() => {
-                  console.log("IdeaResult onRegenerate called"); // Debug log
                   setGeneratedIdea(null); // Clear current idea
                   generateIdea(); // Generate new one
                 }}
                 onSave={() => {
-                  console.log("IdeaResult onSave called"); // Debug log
                   saveIdea(generatedIdea);
                 }}
                 onSaveAndContinue={() => {
-                  console.log("IdeaResult onSaveAndContinue called"); // Debug log
                   saveIdeaAndContinue(generatedIdea);
                 }}
                 onEdit={editIdea} // Pass the corrected edit function
                 onDelete={() => {
-                  console.log("IdeaResult onDelete called"); // Debug log
                   deleteIdea();
                 }}
                 isRegenerating={isGenerating}
@@ -665,7 +639,6 @@ export default function CreativeStoryStudio() {
           <SavedIdeas
             ideas={savedIdeas}
             onUseIdea={(idea) => {
-              console.log("handleUseIdea called with:", idea); // Debug log
               handleUseIdea(idea);
             }}
             onEditIdea={handleEditSavedIdea}
@@ -769,23 +742,6 @@ export default function CreativeStoryStudio() {
         >
           {renderCurrentStep()}
 
-          {/* Debug info - can be removed later */}
-          <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-xs opacity-50 hover:opacity-100 transition-opacity">
-            <p>Debug Info:</p>
-            <pre className="whitespace-pre-wrap">{JSON.stringify({
-              currentStep: currentStep,
-              currentStepComponent: currentStepData?.component,
-              startingPoint: startingPoint,
-              hasGeneratedIdea: !!generatedIdea,
-              hasSelectedIdea: !!selectedIdea,
-              editingIdeaId: editingIdea?.id || 'none',
-              ideaParams: ideaParams,
-              bookDataTitle: bookData.title,
-              bookDataLanguage: bookData.language,
-              bookDataChildNames: bookData.childNames,
-              isGenerating: isGenerating
-            }, null, 2)}</pre>
-          </div>
         </motion.div>
       </AnimatePresence>
 
