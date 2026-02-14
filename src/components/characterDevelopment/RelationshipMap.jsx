@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, Users2, Heart, Swords, Users, Sparkles, AlertTriangle } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { buildSafetyPromptPrefix } from "@/utils/content-moderation";
 
 export default function RelationshipMap({ characters = [], scenes = [], bookData, currentLanguage = "english", isRTL = false }) {
   const [analyzing, setAnalyzing] = useState(false);
@@ -68,7 +69,8 @@ export default function RelationshipMap({ characters = [], scenes = [], bookData
       const language = bookData.language || currentLanguage;
       const isHebrew = language === "hebrew";
 
-      const prompt = isHebrew ?
+      const safetyPrefix = buildSafetyPromptPrefix(bookData?.age_range || '5-10');
+      const prompt = safetyPrefix + (isHebrew ?
         `נתח את היחסים בין הדמויות בסיפור זה בעברית.
 
 **דמויות:**
@@ -108,7 +110,7 @@ For each character pair, analyze:
 4. **Key moments**: 2-3 scenes affecting the relationship
 5. **Description**: brief description of the relationship
 
-Return all possible character pairs.`;
+Return all possible character pairs.`);
 
       const result = await base44.integrations.Core.InvokeLLM({
         prompt,

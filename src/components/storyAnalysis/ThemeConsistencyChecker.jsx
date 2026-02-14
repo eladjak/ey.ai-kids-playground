@@ -7,6 +7,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Target, CheckCircle2, AlertTriangle, TrendingUp } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { buildSafetyPromptPrefix } from "@/utils/content-moderation";
 
 export default function ThemeConsistencyChecker({ bookData, scenes = [], currentLanguage = "english", isRTL = false }) {
   const [analyzing, setAnalyzing] = useState(false);
@@ -67,7 +68,8 @@ export default function ThemeConsistencyChecker({ bookData, scenes = [], current
       const language = bookData.language || currentLanguage;
       const isHebrew = language === "hebrew";
 
-      const prompt = isHebrew ?
+      const safetyPrefix = buildSafetyPromptPrefix(bookData.child_age || '5-10');
+      const prompt = safetyPrefix + (isHebrew ?
         `נתח את עקביות הנושא המרכזי בסיפור זה בעברית.
 
 **פרטי הסיפור:**
@@ -119,7 +121,7 @@ For each scene:
 - Alignment with main theme (strong/moderate/weak)
 - Brief explanation
 
-Provide 5-7 suggestions to strengthen theme consistency.`;
+Provide 5-7 suggestions to strengthen theme consistency.`);
 
       const result = await base44.integrations.Core.InvokeLLM({
         prompt,

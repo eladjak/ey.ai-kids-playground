@@ -25,7 +25,7 @@ export default function FeedbackContext({ book, pages, currentPageIndex, setCurr
   const truncateText = (text, maxLength = 80) => {
     if (!text) return "No content";
     if (text.length <= maxLength) return text;
-    return text.substr(0, maxLength).trim() + "...";
+    return text.slice(0, maxLength).trim() + "...";
   };
   
   return (

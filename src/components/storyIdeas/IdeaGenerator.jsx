@@ -16,6 +16,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { buildSafetyPromptPrefix } from "@/utils/content-moderation";
 
 
 export default function IdeaGenerator({
@@ -448,7 +449,8 @@ export default function IdeaGenerator({
       "Create all content in Yiddish only. " :
       "Create all content in English only. ";
     
-    let prompt = `${languageInstruction}Create a detailed children's story idea with the following parameters:\n\n`;
+    const safetyPrefix = buildSafetyPromptPrefix(params.childAge || '5-10');
+    let prompt = `${safetyPrefix}${languageInstruction}Create a detailed children's story idea with the following parameters:\n\n`;
     
     if (params.childNames && params.childNames.length > 0) {
       prompt += `Main characters: ${params.childNames.join(', ')}\n`;

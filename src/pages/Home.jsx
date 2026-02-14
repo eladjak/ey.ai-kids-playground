@@ -5,6 +5,7 @@ import { createPageUrl } from "@/utils";
 import { User } from "@/entities/User";
 import { Book } from "@/entities/Book";
 import { GenerateImage, InvokeLLM } from "@/integrations/Core";
+import { buildSafetyPromptPrefix } from "@/utils/content-moderation";
 import { 
   BookOpen, 
   Sparkles, 
@@ -153,12 +154,13 @@ export default function Home() {
           return;
         }
         
-        const languagePrompt = storedLanguage === "hebrew" ? 
+        const safetyPrefix = buildSafetyPromptPrefix('5-10');
+        const languagePrompt = storedLanguage === "hebrew" ?
           "צור רעיון קצר לסיפור ילדים בעברית לגילאי 5-10. הרעיון צריך להיות מעורר דמיון ומהנה. כלול כותרת קצרה ותיאור קצר של הרעיון (1-2 משפטים). החזר כ-JSON עם השדות title ו-description. שמור על כותרת קצרה (3-6 מילים) והתיאור עד 20 מילים." :
           "Generate a creative, child-friendly, short story prompt for children aged 5-10. The prompt should be imaginative, fun, and spark creativity. Include a story title and a brief (1-2 sentence) description. Return as JSON with title and description fields. Keep the title short (3-6 words) and the description to max 20 words.";
-        
+
         const result = await InvokeLLM({
-          prompt: languagePrompt,
+          prompt: safetyPrefix + languagePrompt,
           response_json_schema: {
             type: "object",
             properties: {

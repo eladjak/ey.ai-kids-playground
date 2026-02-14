@@ -27,7 +27,7 @@ export default function CommunityPost({ post, onLike, isOwner = false }) {
   const truncate = (text, maxLength = 150) => {
     if (!text) return '';
     if (text.length <= maxLength) return text;
-    return text.substr(0, maxLength).trim() + '...';
+    return text.slice(0, maxLength).trim() + '...';
   };
   
   return (

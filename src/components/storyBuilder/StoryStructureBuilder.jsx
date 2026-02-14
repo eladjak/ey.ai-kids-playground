@@ -27,6 +27,7 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import SceneCard from './SceneCard';
 import StoryArcSuggestions from './StoryArcSuggestions';
 import { GenerateImage, InvokeLLM } from '@/integrations/Core';
+import { buildSafetyPromptPrefix } from '@/utils/content-moderation';
 import { useToast } from '@/components/ui/use-toast';
 
 export default function StoryStructureBuilder({ 
@@ -253,7 +254,8 @@ export default function StoryStructureBuilder({
         `${c.name} (${c.age}, ${c.gender})`
       ).join(', ') || bookData.child_name || 'main character';
 
-      const prompt = isHebrew ?
+      const safetyPrefix = buildSafetyPromptPrefix(bookData.age_range || '5-7');
+      const prompt = safetyPrefix + (isHebrew ?
         `אתה כותב מקצועי לספרי ילדים. צור מבנה סיפור מפורט:
 
 **פרטי הסיפור:**
@@ -307,7 +309,7 @@ Return ONLY JSON:
       "content": "Full scene content"
     }
   ]
-}`;
+}`);
 
       const result = await InvokeLLM({
         prompt,

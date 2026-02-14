@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Sparkles, Lightbulb, TrendingUp, AlertCircle, CheckCircle, Wand2, RefreshCw } from 'lucide-react';
 import { InvokeLLM } from '@/integrations/Core';
+import { buildSafetyPromptPrefix } from '@/utils/content-moderation';
 
 export default function StoryArcSuggestions({ 
   bookData, 
@@ -79,7 +80,8 @@ export default function StoryArcSuggestions({
         `${c.name} (${c.age}, ${c.gender})`
       ).join(', ') || 'main character';
 
-      const prompt = isHebrew ? 
+      const safetyPrefix = buildSafetyPromptPrefix(bookData.age_range || '5-10');
+      const prompt = safetyPrefix + (isHebrew ?
         `אתה Story Doctor מומחה לספרי ילדים. נתח את המבנה הבא של הסיפור וספק תובנות מקצועיות:
 
 **פרטי הסיפור:**
@@ -147,7 +149,7 @@ Return ONLY JSON in this format:
   "suggestions": [
     {"title": "suggestion title", "description": "detailed description", "priority": "low/medium/high", "scene": scene_number_or_null}
   ]
-}`;
+}`);
 
       const result = await InvokeLLM({
         prompt,

@@ -119,14 +119,16 @@ export default function StoryDetailsStep({ bookData, updateBookData, onGenerateT
         const charactersInfo = bookData.childNames ? bookData.childNames.join(', ') : (bookData.child_name || 'a child');
         const themesInfo = bookData.interests || 'adventure and friendship';
 
-        const prompt = `${languageInstruction}Create a creative and engaging book title for a children's story with these details:
+        const { buildSafetyPromptPrefix } = await import('@/utils/content-moderation');
+        const safetyPrefix = buildSafetyPromptPrefix(bookData.child_age || '5-10');
+        const prompt = safetyPrefix + `${languageInstruction}Create a creative and engaging book title for a children's story with these details:
         - Main characters: ${charactersInfo}
         - Age: ${bookData.child_age || 5} years old
         - Genre: ${bookData.genre}
         - Theme/Moral: ${bookData.moral || themesInfo}
         - Tone: ${bookData.tone}
         - Child's interests: ${bookData.interests || 'general'}
-        
+
         The title should be catchy, age-appropriate, and reflect the story's theme. Return only the title, nothing else.`;
 
         const result = await InvokeLLM({

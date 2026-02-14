@@ -142,7 +142,7 @@ export default function ShareOptions({
         return;
     }
     
-    window.open(shareUrl, '_blank');
+    window.open(shareUrl, '_blank', 'noopener,noreferrer');
     
     // Call the onShare callback if provided
     if (onShare) {

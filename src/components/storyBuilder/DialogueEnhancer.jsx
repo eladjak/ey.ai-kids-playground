@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, MessageSquare, Sparkles, Copy, Check } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { buildSafetyPromptPrefix, moderateInput } from "@/utils/content-moderation";
 
 export default function DialogueEnhancer({ bookData, characters = [], currentLanguage = "english", isRTL = false }) {
   const [inputDialogue, setInputDialogue] = useState("");
@@ -53,14 +54,21 @@ export default function DialogueEnhancer({ bookData, characters = [], currentLan
   const enhanceDialogue = async () => {
     if (!inputDialogue.trim()) return;
 
+    // Moderate user input before sending to AI
+    const moderation = moderateInput(inputDialogue, 'prompt');
+    if (moderation.blocked) {
+      return;
+    }
+
     setEnhancing(true);
     try {
       const language = bookData.language || currentLanguage;
       const isHebrew = language === "hebrew";
+      const safetyPrefix = buildSafetyPromptPrefix(bookData.child_age || '5-10');
 
       const characterInfo = characters.map(c => `${c.name} (${c.age} years old, ${c.gender})`).join(', ');
 
-      const prompt = isHebrew ?
+      const prompt = safetyPrefix + (isHebrew ?
         `שפר את הדיאלוג הבא לספר ילדים בעברית.
 
 **פרטי הסיפור:**
@@ -106,7 +114,7 @@ Return:
 - Age appropriateness score (0-100)
 - Character voice score (0-100)
 - List of key improvements (3-5)
-- Brief explanation of changes`;
+- Brief explanation of changes`);
 
       const result = await base44.integrations.Core.InvokeLLM({
         prompt,

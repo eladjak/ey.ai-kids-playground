@@ -7,6 +7,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Gauge, TrendingUp, TrendingDown, Minus, AlertTriangle, CheckCircle2, Zap } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { buildSafetyPromptPrefix } from "@/utils/content-moderation";
 
 export default function StoryPacingAnalyzer({ bookData, scenes = [], currentLanguage = "english", isRTL = false }) {
   const [analyzing, setAnalyzing] = useState(false);
@@ -77,7 +78,8 @@ export default function StoryPacingAnalyzer({ bookData, scenes = [], currentLang
       const language = bookData.language || currentLanguage;
       const isHebrew = language === "hebrew";
 
-      const prompt = isHebrew ? 
+      const safetyPrefix = buildSafetyPromptPrefix(bookData.child_age || '5-10');
+      const prompt = safetyPrefix + (isHebrew ?
         `נתח את קצב הסיפור הבא בעברית. הסיפור מיועד לגיל ${bookData.child_age || 5} בסגנון ${bookData.tone}.
 
 **פרטי הסיפור:**
@@ -135,7 +137,7 @@ For each scene:
 - Dialogue ratio (0-100)
 - Specific recommendation
 
-Provide 3-5 general recommendations for improving pacing.`;
+Provide 3-5 general recommendations for improving pacing.`);
 
       const result = await base44.integrations.Core.InvokeLLM({
         prompt,

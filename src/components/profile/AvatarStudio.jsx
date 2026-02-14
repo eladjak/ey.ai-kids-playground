@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { GenerateImage } from "@/integrations/Core";
+import { buildSafetyPromptPrefix, moderateInput } from "@/utils/content-moderation";
 import { 
   Camera, 
   Wand2,
@@ -117,7 +118,14 @@ export default function AvatarStudio({ currentAvatar, onAvatarSelected, onClose,
         fantasy: "magical fantasy character"
       };
 
-      const prompt = `Create a ${stylePrompts[generationStyle]} avatar showing a ${typePrompts[characterType]}. ${aiGenerationPrompt}`;
+      // Moderate user's custom prompt input if provided
+      const safePrompt = aiGenerationPrompt ? moderateInput(aiGenerationPrompt, 'prompt') : { sanitized: '', blocked: false };
+      if (safePrompt.blocked) {
+        return;
+      }
+
+      const safetyPrefix = buildSafetyPromptPrefix('5-10');
+      const prompt = safetyPrefix + `Create a ${stylePrompts[generationStyle]} avatar showing a ${typePrompts[characterType]}. ${safePrompt.sanitized || ''} Child-friendly, wholesome illustration.`;
 
       const result = await GenerateImage({
         prompt: prompt

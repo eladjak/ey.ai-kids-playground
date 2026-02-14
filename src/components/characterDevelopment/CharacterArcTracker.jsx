@@ -16,6 +16,7 @@ import {
   LineChart
 } from 'lucide-react';
 import { InvokeLLM } from '@/integrations/Core';
+import { buildSafetyPromptPrefix } from '@/utils/content-moderation';
 
 export default function CharacterArcTracker({ 
   character, 
@@ -85,7 +86,8 @@ export default function CharacterArcTracker({
         `Scene ${idx + 1}: ${scene.title} - ${scene.description}`
       ).join('\n');
 
-      const prompt = isHebrew ?
+      const safetyPrefix = buildSafetyPromptPrefix(bookData.age_range || '5-10');
+      const prompt = safetyPrefix + (isHebrew ?
         `אתה מומחה לפיתוח דמויות בספרות ילדים. נתח את קשת הדמות:
 
 **פרטי הדמות:**
@@ -161,7 +163,7 @@ Return ONLY JSON:
   "consistencyScore": 0-100,
   "developmentLevel": "low/medium/high",
   "insights": ["insight 1", "insight 2", "insight 3"]
-}`;
+}`);
 
       const result = await InvokeLLM({
         prompt,

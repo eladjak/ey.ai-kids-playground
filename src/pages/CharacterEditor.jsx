@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Character } from '@/entities/Character';
 import { GenerateImage, InvokeLLM } from '@/integrations/Core';
+import { buildSafetyPromptPrefix, moderateInput } from '@/utils/content-moderation';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -172,7 +173,8 @@ export default function CharacterEditor() {
     const generateCharacterImage = useCallback(async () => {
         setIsGeneratingImage(true);
         try {
-            const prompt = `A ${character.gender === 'boy' ? 'boy' : character.gender === 'girl' ? 'girl' : 'child'} character named ${character.name}, age ${character.age}, with ${character.appearance}. Style: ${character.art_style}.`;
+            const safetyPrefix = buildSafetyPromptPrefix('5-10');
+            const prompt = safetyPrefix + `A ${character.gender === 'boy' ? 'boy' : character.gender === 'girl' ? 'girl' : 'child'} character named ${character.name}, age ${character.age}, with ${character.appearance}. Style: ${character.art_style}. Child-friendly, wholesome illustration.`;
             const imageUrl = await GenerateImage({
                 prompt: prompt,
                 quality: 'standard',
@@ -197,7 +199,8 @@ export default function CharacterEditor() {
     const generateCharacterDetails = useCallback(async () => {
         setIsGeneratingDetails(true);
         try {
-            const prompt = `Generate a name, age (a number between 4 and 10), gender (boy/girl/neutral), personality, and appearance for a fictional child character. Focus on positive, child-friendly traits. Provide the output as a JSON object with keys: "name", "age", "gender", "personality", "appearance". Example: {"name": "Lily", "age": 7, "gender": "girl", "personality": "Brave and adventurous, loves to explore.", "appearance": "Long brown hair, big blue eyes, wears a red dress."}`;
+            const safetyPrefix = buildSafetyPromptPrefix('5-10');
+            const prompt = safetyPrefix + `Generate a name, age (a number between 4 and 10), gender (boy/girl/neutral), personality, and appearance for a fictional child character. Focus on positive, child-friendly traits. Provide the output as a JSON object with keys: "name", "age", "gender", "personality", "appearance". Example: {"name": "Lily", "age": 7, "gender": "girl", "personality": "Brave and adventurous, loves to explore.", "appearance": "Long brown hair, big blue eyes, wears a red dress."}`;
             
             const generatedJson = await InvokeLLM({
                 prompt: prompt,
@@ -434,7 +437,7 @@ export default function CharacterEditor() {
                                     <Button 
                                         variant="outline" 
                                         className="flex-1" 
-                                        onClick={() => window.open(character.primary_image_url, '_blank')} 
+                                        onClick={() => window.open(character.primary_image_url, '_blank', 'noopener,noreferrer')}
                                         disabled={!character.primary_image_url}
                                     >
                                         <Eye className="mr-2 h-4 w-4" /> View

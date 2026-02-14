@@ -112,7 +112,7 @@ export default function ShareOptions({ book, bookId }) {
         return;
     }
     
-    window.open(shareUrl, '_blank', 'width=600,height=400');
+    window.open(shareUrl, '_blank', 'noopener,noreferrer,width=600,height=400');
   };
   
   return (

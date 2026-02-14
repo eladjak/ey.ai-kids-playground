@@ -26,30 +26,44 @@ export default class ErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
+      // Detect language from localStorage to determine direction
+      const storedLanguage = typeof window !== 'undefined'
+        ? localStorage.getItem('appLanguage') || 'hebrew'
+        : 'hebrew';
+      const isRTL = storedLanguage === 'hebrew' || storedLanguage === 'yiddish';
+      const isHebrew = storedLanguage === 'hebrew';
+
       return (
-        <div className="min-h-dvh flex items-center justify-center bg-gradient-to-b from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 p-4" dir="rtl">
+        <div
+          className="min-h-dvh flex items-center justify-center bg-gradient-to-b from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 p-4"
+          dir={isRTL ? "rtl" : "ltr"}
+          role="alert"
+          aria-live="assertive"
+        >
           <div className="max-w-md w-full text-center space-y-6">
             <div className="mx-auto w-20 h-20 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center">
-              <AlertTriangle className="w-10 h-10 text-amber-500" />
+              <AlertTriangle className="w-10 h-10 text-amber-500" aria-hidden="true" />
             </div>
 
             <div className="space-y-2">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                אופס! משהו השתבש
+                {isHebrew ? 'אופס! משהו השתבש' : 'Oops! Something went wrong'}
               </h1>
               <p className="text-gray-600 dark:text-gray-400">
-                לא לדאוג, זה קורה לפעמים. בואו ננסה שוב!
+                {isHebrew
+                  ? 'לא לדאוג, זה קורה לפעמים. בואו ננסה שוב!'
+                  : "Don't worry, this happens sometimes. Let's try again!"}
               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button onClick={this.handleReset} variant="default" className="gap-2">
-                <RefreshCw className="w-4 h-4" />
-                נסה שוב
+              <Button onClick={this.handleReset} variant="default" className="gap-2" aria-label={isHebrew ? 'נסה שוב' : 'Try again'}>
+                <RefreshCw className="w-4 h-4" aria-hidden="true" />
+                {isHebrew ? 'נסה שוב' : 'Try Again'}
               </Button>
-              <Button onClick={this.handleGoHome} variant="outline" className="gap-2">
-                <Home className="w-4 h-4" />
-                חזרה הביתה
+              <Button onClick={this.handleGoHome} variant="outline" className="gap-2" aria-label={isHebrew ? 'חזרה הביתה' : 'Go home'}>
+                <Home className="w-4 h-4" aria-hidden="true" />
+                {isHebrew ? 'חזרה הביתה' : 'Go Home'}
               </Button>
             </div>
           </div>
