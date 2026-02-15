@@ -10,6 +10,7 @@ import CreateBook from './pages/CreateBook';
 import CreativeStoryStudio from './pages/CreativeStoryStudio';
 import Documentation from './pages/Documentation';
 import Feedback from './pages/Feedback';
+import Games from './pages/Games';
 import Home from './pages/Home';
 import Leaderboard from './pages/Leaderboard';
 import Library from './pages/Library';
@@ -33,6 +34,7 @@ export const PAGES = {
     "CreativeStoryStudio": CreativeStoryStudio,
     "Documentation": Documentation,
     "Feedback": Feedback,
+    "Games": Games,
     "Home": Home,
     "Leaderboard": Leaderboard,
     "Library": Library,

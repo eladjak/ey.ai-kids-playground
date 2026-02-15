@@ -19,7 +19,8 @@ import {
   Lightbulb,
   FileText,
   User as UserIcon,
-  Users2
+  Users2,
+  Gamepad2
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -109,7 +110,8 @@ export default function Layout({ children, currentPageName }) {
       "common.explore": "Explore",
       "common.system": "System",
       "common.myProfile": "My Profile",
-      "common.characters": "My Characters"
+      "common.characters": "My Characters",
+      "common.games": "Games"
     },
     hebrew: {
       "common.home": "דף הבית",
@@ -127,7 +129,8 @@ export default function Layout({ children, currentPageName }) {
       "common.explore": "גלה עוד",
       "common.system": "מערכת",
       "common.myProfile": "הפרופיל שלי",
-      "common.characters": "הדמויות שלי"
+      "common.characters": "הדמויות שלי",
+      "common.games": "משחקים"
     }
   };
 
@@ -148,6 +151,7 @@ export default function Layout({ children, currentPageName }) {
       { href: "/Characters", label: t("common.characters"), icon: Users2, pageName: "Characters" },
     ],
     explore: [
+      { href: "/Games", label: t("common.games"), icon: Gamepad2, pageName: "Games" },
       { href: "/Documentation", label: t("common.documentation"), icon: FileText, pageName: "Documentation" },
     ],
     system: [
