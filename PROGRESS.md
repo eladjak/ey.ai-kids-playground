@@ -1,13 +1,13 @@
 # EY.AI Kids Playground - Progress & Analysis Report
 
-## Status: Active - Educational Games Feature
+## Status: Active - Book Creation Refactor & UX Simplification
 ## Last Updated: 2026-02-15
 
 ---
 
 ## Current State Summary
 
-Educational mini-games feature added. Full codebase analysis completed with 4 specialized agents covering:
+Major BookCreation refactor completed. The monolithic 1,329-line BookCreation.jsx has been split into 11 focused components. UX simplified from 7 tabs to 3 tabs. Auto-save system added. Hebrew RTL support improved throughout all new components. Full codebase analysis completed with 4 specialized agents covering:
 1. User Flow & UX
 2. Frontend Architecture & Code Quality
 3. Backend/API & Security
@@ -435,17 +435,108 @@ Added a complete educational games section with 3 mini-games for kids ages 4-10.
 
 ---
 
+## Completed Work (Session 6 - 2026-02-15)
+
+### BookCreation.jsx Refactor (1,329 -> 694 lines, 48% reduction)
+Split the monolithic BookCreation.jsx into 11 focused, reusable components:
+
+#### New Components Created
+| File | Lines | Purpose |
+|------|-------|---------|
+| `src/components/bookCreation/BookEditorTab.jsx` | 111 | Main editor tab combining preview, text, image, layout editors |
+| `src/components/bookCreation/BookStylingTab.jsx` | 97 | Text styling + rhyming options (combined from separate sections) |
+| `src/components/bookCreation/DraftView.jsx` | 256 | Pre-generation view with character consistency settings |
+| `src/components/bookCreation/PagePreview.jsx` | 110 | Single page preview with RTL support |
+| `src/components/bookCreation/PageNavigation.jsx` | 46 | Page prev/next navigation with RTL |
+| `src/components/bookCreation/PageTextEditor.jsx` | 80 | Page text editing card with nikud + rhyme buttons |
+| `src/components/bookCreation/PageImageEditor.jsx` | 117 | Image prompt editing (simple + advanced modes) |
+| `src/components/bookCreation/PageLayoutEditor.jsx` | 81 | Layout selection with visual thumbnails |
+| `src/components/bookCreation/AutoSaveIndicator.jsx` | 37 | Auto-save status indicator (saving/saved/error) |
+| `src/hooks/useAutoSave.js` | 137 | Reusable auto-save hook (localStorage + optional DB) |
+| `src/utils/book-translations.js` | 216 | Centralized Hebrew/English translations for BookCreation |
+
+#### UX Simplification: 7 Tabs -> 3 Tabs
+- [x] **Before:** Editor, Preview, Styling, Interactive, Collaborate, Visualize, Share (7 tabs)
+- [x] **After:** Edit (includes text/image/layout + styling), Preview, Share & Export (3 tabs)
+- [x] Styling section moved into the Edit tab as a collapsible section below the editor
+- [x] Removed separate Interactive, Collaborate, and Visualize tabs (can be re-added as sub-features later)
+- [x] Tab labels now use proper Hebrew translations
+
+#### Auto-Save System (NEW)
+- [x] Created `useAutoSave` hook with debounced localStorage saves (3-second delay)
+- [x] Created `loadAutoSaved` utility to restore saved state
+- [x] Auto-save tracks: current page text, image prompt, layout, text styles, rhyme settings, character consistency
+- [x] Visual auto-save indicator in header (saving spinner / green checkmark / red error)
+- [x] Auto-restore: on page load, restores text styles, rhyme settings, and character consistency from localStorage
+- [x] Force save option for explicit DB persistence
+- [x] Auto-save only active when book status is "complete" (not during generation)
+
+#### Hebrew RTL Improvements
+- [x] All new components accept `isRTL` prop and apply `dir="rtl"` where needed
+- [x] Flex direction reversal (`flex-row-reverse`) for RTL in navigation, headers, buttons
+- [x] Icon margin flipping (`mr-2` -> `ml-2`) for RTL layouts
+- [x] Text alignment defaults to `right` for Hebrew content
+- [x] Textarea and Input fields get `dir="rtl"` for Hebrew/Yiddish
+- [x] Tab bar respects RTL direction
+- [x] Page navigation buttons swap correctly in RTL mode
+- [x] All UI text uses centralized translation system (100+ translation keys)
+
+#### Translation System
+- [x] Created `getBookTranslation(language)` function returning a `t(key, params)` translator
+- [x] 60+ translation keys for Hebrew and English
+- [x] Template parameter support: `t("book.pageOf", { current: 3, total: 10 })`
+- [x] Extracted `translateGenre()` and `translateArtStyle()` from inline functions
+- [x] Exported `ART_STYLE_OPTIONS` constant for reuse across components
+
+#### Tests
+- [x] 17 new tests in `src/hooks/useAutoSave.test.js`:
+  - 7 tests for `loadAutoSaved` (null key, missing data, corrupted JSON, partial data)
+  - 10 tests for book-translations (`getBookTranslation`, `translateGenre`, `translateArtStyle`, template params)
+- [x] Total project tests: 90 passing (was 73, +17 new)
+
+### Updated Scores (Estimated)
+| Area | Previous | Current | Change |
+|------|----------|---------|--------|
+| Architecture | B+ (78/100) | A- (85/100) | +7 (split monolith, reusable components) |
+| User Flow / UX | C+ (65/100) | B- (72/100) | +7 (7 tabs to 3, cleaner layout) |
+| Code Quality | B- (73/100) | B (78/100) | +5 (useCallback, translation system, smaller files) |
+| Testing | C- (38/100) | C (45/100) | +7 (17 new tests, 90 total) |
+
+### Verification
+- [x] `npx vite build` passes (exit code 0)
+- [x] All 90 tests pass (5 test files)
+- [x] No new console.log statements
+
+### Files Modified
+| File | Change |
+|------|--------|
+| `src/pages/BookCreation.jsx` | Refactored from 1,329 to 694 lines, uses extracted components |
+
+### Files Created (12 files)
+| File | Lines | Purpose |
+|------|-------|---------|
+| `src/components/bookCreation/BookEditorTab.jsx` | 111 | Editor tab content |
+| `src/components/bookCreation/BookStylingTab.jsx` | 97 | Styling tab content |
+| `src/components/bookCreation/DraftView.jsx` | 256 | Pre-generation view |
+| `src/components/bookCreation/PagePreview.jsx` | 110 | Page preview |
+| `src/components/bookCreation/PageNavigation.jsx` | 46 | Page navigation |
+| `src/components/bookCreation/PageTextEditor.jsx` | 80 | Text editor card |
+| `src/components/bookCreation/PageImageEditor.jsx` | 117 | Image editor |
+| `src/components/bookCreation/PageLayoutEditor.jsx` | 81 | Layout editor |
+| `src/components/bookCreation/AutoSaveIndicator.jsx` | 37 | Auto-save status |
+| `src/hooks/useAutoSave.js` | 137 | Auto-save hook |
+| `src/utils/book-translations.js` | 216 | Translation utils |
+| `src/hooks/useAutoSave.test.js` | 102 | Tests for auto-save + translations |
+
+---
+
 ## Remaining Action Plan
 
-### Next: Auto-save for BookCreation
-- Add auto-save like StoryRefinementStep has
-
-### Week 3: UX Simplification
-1. Reduce wizard to 3 steps
-2. Reduce edit tabs to 3
-3. Simplify idea generation form
-4. Add onboarding flow
-5. Add sample books
+### Next Priority: CreativeStoryStudio Wizard Simplification
+- Reduce wizard from 5 steps to 3 (combine start+idea, refine+style, create)
+- Simplify idea generation form (reduce from 7 fields to 3-4)
+- Add onboarding flow for new users
+- Add sample books to demonstrate
 
 ### Week 4: Testing & Performance
 1. ~~Set up vitest~~ DONE
@@ -490,20 +581,29 @@ Added a complete educational games section with 3 mini-games for kids ages 4-10.
 | Letters Game | `src/components/games/LettersGame.jsx` |
 | Colors Game | `src/components/games/ColorsGame.jsx` |
 | Game Utilities | `src/components/games/gameUtils.js` |
+| Auto-Save Hook | `src/hooks/useAutoSave.js` |
+| Book Translations | `src/utils/book-translations.js` |
+| Book Editor Tab | `src/components/bookCreation/BookEditorTab.jsx` |
+| Book Styling Tab | `src/components/bookCreation/BookStylingTab.jsx` |
+| Draft View | `src/components/bookCreation/DraftView.jsx` |
+| Page Preview | `src/components/bookCreation/PagePreview.jsx` |
+| Page Navigation | `src/components/bookCreation/PageNavigation.jsx` |
+| Page Text Editor | `src/components/bookCreation/PageTextEditor.jsx` |
+| Page Image Editor | `src/components/bookCreation/PageImageEditor.jsx` |
+| Page Layout Editor | `src/components/bookCreation/PageLayoutEditor.jsx` |
+| Auto-Save Indicator | `src/components/bookCreation/AutoSaveIndicator.jsx` |
 
 ---
 
 ## Notes for Next Session
-- Session 5 (2026-02-15): Educational mini-games feature - 3 games + hub page + tests
-- Week 1 critical fixes COMPLETE (except auto-save)
-- Week 2 cleanup MOSTLY DONE (except i18n consolidation and localStorage)
-- Content moderation now covers ALL 14 AI-calling locations (was only 3)
-- Safety prompt prefix added to every InvokeLLM/GenerateImage call
-- All window.open() calls now have noopener,noreferrer
-- ErrorBoundary is now language-aware and accessible
-- 73 tests passing (4 test files) - up from 49
-- Build passes successfully
+- Session 6 (2026-02-15): BookCreation refactor - split monolith, auto-save, UX simplification, RTL improvements
+- BookCreation.jsx reduced from 1,329 to 694 lines (48% smaller)
+- Edit tabs reduced from 7 to 3 (Edit, Preview, Share)
+- Auto-save system working: debounced localStorage + optional DB persistence
+- Full Hebrew/English translation system with 60+ keys
+- 90 tests passing (5 test files) - up from 73
+- Week 1 critical fixes ALL COMPLETE (including auto-save)
+- Week 3 UX simplification STARTED (edit tabs done, wizard steps still TODO)
+- Next priority: CreativeStoryStudio wizard simplification (5 steps to 3), more games
 - Games accessible at /Games route, linked from sidebar under "Explore"
 - Sound effects are placeholder stubs (dispatch CustomEvents) - add real audio files later
-- Games designed for ages 4-10 with Hebrew-first UI
-- Next priority: auto-save for BookCreation, more games (shapes, animals), UX simplification
