@@ -1,6 +1,7 @@
 import App from './pages/App';
 import BookCreation from './pages/BookCreation';
 import BookView from './pages/BookView';
+import BookWizard from './pages/BookWizard';
 import CharacterEditor from './pages/CharacterEditor';
 import Characters from './pages/Characters';
 import Collaborate from './pages/Collaborate';
@@ -25,6 +26,7 @@ export const PAGES = {
     "App": App,
     "BookCreation": BookCreation,
     "BookView": BookView,
+    "BookWizard": BookWizard,
     "CharacterEditor": CharacterEditor,
     "Characters": Characters,
     "Collaborate": Collaborate,

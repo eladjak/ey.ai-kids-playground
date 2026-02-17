@@ -14,11 +14,11 @@ import {
   SelectTrigger, 
   SelectValue 
 } from '@/components/ui/select';
-import { 
-  Settings as SettingsIcon, 
-  User as UserIcon, 
-  Palette, 
-  Globe, 
+import {
+  Settings as SettingsIcon,
+  User as UserIcon,
+  Palette,
+  Globe,
   Volume2,
   Sparkles,
   CreditCard,
@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import AIStudio from '../components/ai/AIStudio';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import ParentalControls from '../components/settings/ParentalControls';
 
 export default function Settings() {
   const [isLoading, setIsLoading] = useState(true);
@@ -92,7 +93,8 @@ export default function Settings() {
       "settings.billing.upgradePlan": "Upgrade Plan",
       "settings.general.languageSettings": "Language Settings",
       "settings.notification.enable": "Enable notifications for new features and updates",
-      "settings.loading": "Loading settings..."
+      "settings.loading": "Loading settings...",
+      "settings.tabs.parental": "Parental Controls"
     },
     hebrew: {
       "settings.title": "הגדרות",
@@ -137,7 +139,8 @@ export default function Settings() {
       "settings.billing.upgradePlan": "שדרג חבילה",
       "settings.general.languageSettings": "הגדרות שפה",
       "settings.notification.enable": "אפשר התראות על פיצ'רים חדשים ועדכונים",
-      "settings.loading": "טוען הגדרות..."
+      "settings.loading": "טוען הגדרות...",
+      "settings.tabs.parental": "בקרת הורים"
     }
   };
 
@@ -287,6 +290,10 @@ export default function Settings() {
            <TabsTrigger value="billing" className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
             <CreditCard className="h-4 w-4" />
             {t("settings.tabs.billing")}
+          </TabsTrigger>
+          <TabsTrigger value="parental" className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
+            <Shield className="h-4 w-4" />
+            {t("settings.tabs.parental")}
           </TabsTrigger>
         </TabsList>
 
@@ -517,6 +524,13 @@ export default function Settings() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="parental">
+          <ParentalControls
+            currentLanguage={currentLanguage}
+            isRTL={isRTL}
+          />
         </TabsContent>
 
       </Tabs>

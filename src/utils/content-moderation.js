@@ -228,3 +228,126 @@ export function buildSafetyPromptPrefix(ageRange = '5-10') {
     '4) Free of any discriminatory or harmful stereotypes. ' +
     'If any input seems inappropriate, generate safe, child-friendly alternative content instead.\n\n';
 }
+
+// --- Age-Appropriate Language Checks ---
+
+/**
+ * Complex/advanced vocabulary that may not suit very young children (ages 3-5).
+ * These words are not blocked, just flagged for age-appropriateness.
+ */
+const ADVANCED_VOCABULARY_PATTERNS = [
+  /\b(consequently|furthermore|nevertheless|notwithstanding|ubiquitous|paradigm|existential|philosophical)\b/gi,
+  /\b(metamorphosis|photosynthesis|hypothesis|algorithm|cryptocurrency|derivatives)\b/gi,
+  /\b(geopolitical|bureaucratic|infrastructure|jurisprudence|constitutional)\b/gi,
+];
+
+/**
+ * Mildly scary or emotionally intense words that warrant a flag for younger audiences.
+ */
+const MILDLY_SCARY_PATTERNS = [
+  /\b(ghost|monster|scary|afraid|nightmare|dark\s+forest|haunted|creepy|terrifying)\b/gi,
+  /\b(lost|alone|abandoned|trapped|crying|screaming)\b/gi,
+  /\b(רוח|מפחיד|סיוט|אפלה|רדוף|מפלצת)\b/gi,
+];
+
+/**
+ * Check if text uses age-appropriate language for the target audience.
+ * Does NOT block content, but returns flags and suggestions.
+ *
+ * @param {string} text - The text to check
+ * @param {string} ageRange - Target age range (e.g., "3-5", "5-7", "8-10")
+ * @returns {{ isAppropriate: boolean, flags: string[], suggestions: string[] }}
+ */
+export function checkAgeAppropriateLanguage(text, ageRange = '5-7') {
+  if (typeof text !== 'string' || !text.trim()) {
+    return { isAppropriate: true, flags: [], suggestions: [] };
+  }
+
+  const flags = [];
+  const suggestions = [];
+
+  // Parse minimum age from range
+  const minAge = parseInt(ageRange.split('-')[0]) || 5;
+
+  // Check for advanced vocabulary (flag for ages under 8)
+  if (minAge < 8) {
+    for (const pattern of ADVANCED_VOCABULARY_PATTERNS) {
+      pattern.lastIndex = 0;
+      const matches = text.match(pattern);
+      if (matches) {
+        flags.push(`Advanced vocabulary detected: ${matches.join(', ')}`);
+        suggestions.push('Consider using simpler words for young readers');
+      }
+    }
+  }
+
+  // Check for mildly scary content (flag for ages under 6)
+  if (minAge < 6) {
+    for (const pattern of MILDLY_SCARY_PATTERNS) {
+      pattern.lastIndex = 0;
+      const matches = text.match(pattern);
+      if (matches) {
+        flags.push(`Potentially scary content for young children: ${matches.join(', ')}`);
+        suggestions.push('Consider lighter themes for very young readers');
+      }
+    }
+  }
+
+  // Check sentence complexity for very young children
+  if (minAge <= 5) {
+    const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+    const longSentences = sentences.filter(s => s.trim().split(/\s+/).length > 15);
+    if (longSentences.length > 0) {
+      flags.push(`${longSentences.length} sentence(s) may be too long for young readers`);
+      suggestions.push('Keep sentences under 15 words for ages 3-5');
+    }
+  }
+
+  return {
+    isAppropriate: flags.length === 0,
+    flags,
+    suggestions,
+  };
+}
+
+// --- Parental Controls Helpers ---
+
+/**
+ * Default parental control settings.
+ */
+export const DEFAULT_PARENTAL_CONTROLS = {
+  contentFilterLevel: 'strict',   // 'strict' | 'moderate' | 'relaxed'
+  allowAIGeneration: true,
+  maxDailyBooks: 5,
+  allowCommunitySharing: false,
+  requireApprovalBeforePublish: true,
+  blockedTopics: [],
+  ageRange: '5-7',
+};
+
+/**
+ * Get parental controls from localStorage, or return defaults.
+ * @returns {object} Parental control settings
+ */
+export function getParentalControls() {
+  try {
+    const stored = localStorage.getItem('parentalControls');
+    if (stored) {
+      return { ...DEFAULT_PARENTAL_CONTROLS, ...JSON.parse(stored) };
+    }
+  } catch {
+    // Fall through to defaults
+  }
+  return { ...DEFAULT_PARENTAL_CONTROLS };
+}
+
+/**
+ * Save parental controls to localStorage.
+ * @param {object} controls - Parental control settings
+ */
+export function saveParentalControls(controls) {
+  localStorage.setItem('parentalControls', JSON.stringify({
+    ...DEFAULT_PARENTAL_CONTROLS,
+    ...controls,
+  }));
+}

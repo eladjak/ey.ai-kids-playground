@@ -111,7 +111,8 @@ export default function Layout({ children, currentPageName }) {
       "common.system": "System",
       "common.myProfile": "My Profile",
       "common.characters": "My Characters",
-      "common.games": "Games"
+      "common.games": "Games",
+      "common.bookWizard": "Book Wizard"
     },
     hebrew: {
       "common.home": "דף הבית",
@@ -130,7 +131,8 @@ export default function Layout({ children, currentPageName }) {
       "common.system": "מערכת",
       "common.myProfile": "הפרופיל שלי",
       "common.characters": "הדמויות שלי",
-      "common.games": "משחקים"
+      "common.games": "משחקים",
+      "common.bookWizard": "אשף יצירת ספר"
     }
   };
 
@@ -146,8 +148,8 @@ export default function Layout({ children, currentPageName }) {
       { href: "/Profile", label: t("common.myProfile"), icon: UserIcon, pageName: "Profile" }
     ],
     create: [
-      { href: "/CreativeStoryStudio", label: t("common.createBook"), icon: PlusCircle, pageName: "CreativeStoryStudio" }, // Updated href, label, and pageName
-      // { href: "/StoryIdeas", label: t("common.storyIdeas"), icon: Lightbulb, pageName: "StoryIdeas" }, // Removed
+      { href: "/CreativeStoryStudio", label: t("common.createBook"), icon: PlusCircle, pageName: "CreativeStoryStudio" },
+      { href: "/BookWizard", label: t("common.bookWizard"), icon: BookOpen, pageName: "BookWizard" },
       { href: "/Characters", label: t("common.characters"), icon: Users2, pageName: "Characters" },
     ],
     explore: [
