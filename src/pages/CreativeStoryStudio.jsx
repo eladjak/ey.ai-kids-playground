@@ -8,29 +8,26 @@ import { createPageUrl } from "@/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles,
-  BookOpen,
   Lightbulb,
   ChevronLeft,
   ChevronRight,
   Wand2,
-  Settings,
   Play
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 
 import IdeaGenerator from "../components/storyIdeas/IdeaGenerator";
 import SavedIdeas from "../components/storyIdeas/SavedIdeas";
-import StoryDetailsStep from "../components/createBook/StoryDetailsStep";
-import StoryStyleStep from "../components/createBook/StoryStyleStep";
 import BookPreview from "../components/createBook/BookPreview";
 import { InvokeLLM, GenerateImage } from "@/integrations/Core";
 import IdeaResult from "../components/storyIdeas/IdeaResult";
-import { moderateInput, buildSafetyPromptPrefix, sanitizeAIOutput } from "@/utils/content-moderation";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { moderateInput, buildSafetyPromptPrefix } from "@/utils/content-moderation";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import IdeaEditor from "../components/storyIdeas/IdeaEditor";
 import StoryRefinementStep from "../components/createBook/StoryRefinementStep";
+import ArtStyleSection from "../components/createBook/ArtStyleSection";
 
 export default function CreativeStoryStudio() {
   const navigate = useNavigate();
@@ -44,14 +41,14 @@ export default function CreativeStoryStudio() {
   const [selectedIdea, setSelectedIdea] = useState(null);
   const [savedIdeas, setSavedIdeas] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [editingIdea, setEditingIdea] = useState(null); // For the edit modal
+  const [editingIdea, setEditingIdea] = useState(null);
 
   // Book Data State
   const [bookData, setBookData] = useState({
     title: "",
-    description: "", // Added for story description
-    plot_points: [], // Added for story plot points
-    character_development: "", // Added for character development
+    description: "",
+    plot_points: [],
+    character_development: "",
     child_name: "",
     child_age: 5,
     child_gender: "neutral",
@@ -66,8 +63,8 @@ export default function CreativeStoryStudio() {
     family_members: "",
     status: "draft",
     cover_image: "",
-    childNames: [], // Added for array of child names/characters
-    selectedCharacters: [] // Added for detailed character objects
+    childNames: [],
+    selectedCharacters: []
   });
 
   // Idea Generation State
@@ -100,16 +97,14 @@ export default function CreativeStoryStudio() {
           language: storedLanguage
         }));
 
-        // Always load fresh ideas on mount
         await loadSavedIdeas();
-
       } catch (error) {
         // silently handled
       }
     };
 
     loadInitialData();
-  }, []); // Empty dependency array ensures it runs only once on mount
+  }, []);
 
   const loadSavedIdeas = async () => {
     try {
@@ -118,18 +113,16 @@ export default function CreativeStoryStudio() {
     } catch(e) {
       // silently handled
     }
-  }
+  };
 
-  // Translation system
+  // Translation system - simplified for 3 steps
   const translations = {
     english: {
       "studio.title": "Creative Story Studio",
       "studio.subtitle": "Create amazing personalized children's books",
-      "studio.step.start": "Choose Starting Point",
-      "studio.step.idea": "Generate Ideas",
-      "studio.step.refine": "Refine Story", // REVERTED
-      "studio.step.style": "Art Style",
-      "studio.step.create": "Create Book",
+      "studio.step.idea": "Get Started",
+      "studio.step.refine": "Refine & Style",
+      "studio.step.create": "Preview & Create",
       "studio.start.title": "How would you like to start?",
       "studio.start.subtitle": "Choose the path that best suits you for creating the book",
       "studio.start.new": "Generate New Ideas",
@@ -137,7 +130,7 @@ export default function CreativeStoryStudio() {
       "studio.start.existing": "Use Saved Idea",
       "studio.start.existing.desc": "Pick from your previously generated story ideas",
       "studio.start.direct": "I Know What I Want",
-      "studio.start.direct.desc": "Jump straight to book creation",
+      "studio.start.direct.desc": "Jump straight to story refinement",
       "studio.back": "Back",
       "studio.next": "Next Step",
       "studio.create": "Create My Book",
@@ -157,11 +150,9 @@ export default function CreativeStoryStudio() {
     hebrew: {
       "studio.title": "סטודיו יצירת סיפורים",
       "studio.subtitle": "צור ספרי ילדים מותאמים אישית מדהימים",
-      "studio.step.start": "בחר נקודת התחלה",
-      "studio.step.idea": "יצירת רעיונות",
-      "studio.step.refine": "עידון הרעיון", // REVERTED
-      "studio.step.style": "סגנון אומנותי",
-      "studio.step.create": "יצירת הספר",
+      "studio.step.idea": "בואו נתחיל",
+      "studio.step.refine": "עידון וסגנון",
+      "studio.step.create": "תצוגה מקדימה ויצירה",
       "studio.start.title": "איך תרצה להתחיל?",
       "studio.start.subtitle": "בחר את הדרך שהכי מתאימה לך ליצירת הספר",
       "studio.start.new": "צור רעיונות חדשים",
@@ -169,7 +160,7 @@ export default function CreativeStoryStudio() {
       "studio.start.existing": "השתמש ברעיון קיים",
       "studio.start.existing.desc": "בחר מהרעיונות שכבר יצרת בעבר",
       "studio.start.direct": "אני יודע מה אני רוצה",
-      "studio.start.direct.desc": "עבור ישירות ליצירת הספר",
+      "studio.start.direct.desc": "עבור ישירות לעידון הסיפור",
       "studio.back": "חזור",
       "studio.next": "השלב הבא",
       "studio.create": "צור את הספר שלי",
@@ -194,16 +185,13 @@ export default function CreativeStoryStudio() {
 
   const isRTL = currentLanguage === "hebrew" || currentLanguage === "yiddish";
 
-  // Step configuration - REVERTING TO PREVIOUS WORKING VERSION
+  // Step configuration - SIMPLIFIED: 3 steps instead of 5
   const steps = [
-    { id: 'start', title: t("studio.step.start"), component: 'StartingPoint' },
-    { id: 'idea', title: t("studio.step.idea"), component: 'IdeaGeneration' },
-    { id: 'refine', title: t("studio.step.refine"), component: 'StoryRefinement' }, // REVERTED
-    { id: 'style', title: t("studio.step.style"), component: 'StoryStyle' },
+    { id: 'idea', title: t("studio.step.idea"), component: 'IdeaStep' },
+    { id: 'refine', title: t("studio.step.refine"), component: 'RefineStyleStep' },
     { id: 'create', title: t("studio.step.create"), component: 'CreateBook' }
   ];
 
-  // Define currentStepData here to be accessible throughout the component
   const currentStepData = steps[currentStep];
 
   // Navigation functions
@@ -223,103 +211,12 @@ export default function CreativeStoryStudio() {
     setCurrentStep(stepIndex);
   };
 
-  // Starting Point Selection Component
-  const StartingPointStep = () => (
-    <div className="space-y-6">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-          {t("studio.start.title")}
-        </h2>
-        <p className="text-gray-600 dark:text-gray-400">
-          {t("studio.start.subtitle")}
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-          <Card
-            className={`cursor-pointer transition-all duration-200 ${
-              startingPoint === 'new-idea' ? 'ring-2 ring-purple-500 shadow-xl' : 'hover:shadow-lg'
-            }`}
-            onClick={() => {
-              setStartingPoint('new-idea');
-              setTimeout(() => jumpToStep(1), 300);
-            }}
-          >
-            <CardHeader>
-              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mb-4">
-                <Wand2 className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-              </div>
-              <CardTitle className="text-lg">{t("studio.start.new")}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {t("studio.start.new.desc")}
-              </p>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-          <Card
-            className={`cursor-pointer transition-all duration-200 ${
-              startingPoint === 'existing-idea' ? 'ring-2 ring-purple-500 shadow-xl' : 'hover:shadow-lg'
-            }`}
-            onClick={() => {
-              setStartingPoint('existing-idea');
-              setTimeout(() => jumpToStep(1), 300);
-            }}
-          >
-            <CardHeader>
-              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-4">
-                <Lightbulb className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-              </div>
-              <CardTitle className="text-lg">{t("studio.start.existing")}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {t("studio.start.existing.desc")}
-              </p>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-          <Card
-            className={`cursor-pointer transition-all duration-200 ${
-              startingPoint === 'direct-create' ? 'ring-2 ring-purple-500 shadow-xl' : 'hover:shadow-lg'
-            }`}
-            onClick={() => {
-              setStartingPoint('direct-create');
-              // The original jumped to 2 (Develop Story/Refine). Now jump to step 2 which is 'StoryRefinement'
-              setTimeout(() => jumpToStep(2), 300);
-            }}
-          >
-            <CardHeader>
-              <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4">
-                <Play className="h-6 w-6 text-green-600 dark:text-green-400" />
-              </div>
-              <CardTitle className="text-lg">{t("studio.start.direct")}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {t("studio.start.direct.desc")}
-              </p>
-            </CardContent>
-          </Card>
-        </motion.div>
-      </div>
-    </div>
-  );
-
   // Helper function to construct prompt with content moderation
   function constructPromptForIdea(params, targetLanguage) {
-    // Moderate user inputs before including in prompt
     const moderatedDetails = params.additionalDetails
       ? moderateInput(params.additionalDetails, 'additionalDetails')
       : null;
 
-    // Block if inappropriate content detected in free-text fields
     if (moderatedDetails && moderatedDetails.blocked) {
       toast({ variant: "destructive", title: t("studio.idea.error.title"), description: "Some input contains inappropriate content. Please revise." });
       return null;
@@ -341,33 +238,23 @@ export default function CreativeStoryStudio() {
     return prompt;
   }
 
-  // Helper function to convert idea (from LLM or saved) to book data
+  // Helper function to convert idea to book data
   const convertIdeaToBookData = (idea, generationParams = null) => {
     try {
-      // If it's a saved idea, its parameters are stored within `idea.parameters`
-      // If it's a newly generated idea, the `generationParams` (i.e., `ideaParams` state) are passed directly
       const effectiveParams = generationParams || (typeof idea.parameters === 'string' ? JSON.parse(idea.parameters) : idea.parameters) || {};
 
-      // Extract character names from multiple sources
       let characterNames = [];
-
-      // 1. From direct childNames (if exists)
       if (effectiveParams?.childNames && effectiveParams.childNames.length > 0) {
         characterNames = [...effectiveParams.childNames];
       }
-
-      // 2. From characters array (convert {value, display} to names)
       if (effectiveParams?.characters && effectiveParams.characters.length > 0) {
         const characterDisplayNames = effectiveParams.characters.map(char =>
           typeof char === 'string' ? char : char.display || char.value
         );
         characterNames = [...characterNames, ...characterDisplayNames];
       }
-
-      // Remove duplicates
       characterNames = [...new Set(characterNames)];
 
-      // Extract genre information
       let genres = [];
       if (effectiveParams?.genres && effectiveParams.genres.length > 0) {
         genres = effectiveParams.genres;
@@ -379,7 +266,6 @@ export default function CreativeStoryStudio() {
         genres = [...genres, ...customGenreNames];
       }
 
-      // Extract other theme information for interests
       let interests = "";
       if (effectiveParams?.themes && effectiveParams.themes.length > 0) {
         const themeNames = effectiveParams.themes.map(theme =>
@@ -388,7 +274,6 @@ export default function CreativeStoryStudio() {
         interests = themeNames.join(', ');
       }
 
-      // Extract setting information for family_members or additional context
       let settingInfo = "";
       if (effectiveParams?.setting && effectiveParams.setting.length > 0) {
         const settingNames = effectiveParams.setting.map(setting =>
@@ -400,21 +285,20 @@ export default function CreativeStoryStudio() {
       const updatedBookData = {
         ...bookData,
         title: idea.title || bookData.title,
-        description: idea.description || bookData.description, // Added description
-        plot_points: idea.plot_points || bookData.plot_points, // Added plot points
-        character_development: idea.character_development || bookData.character_development, // Added char dev
+        description: idea.description || bookData.description,
+        plot_points: idea.plot_points || bookData.plot_points,
+        character_development: idea.character_development || bookData.character_development,
         moral: idea.moral_lesson || bookData.moral,
         language: idea.language || bookData.language,
-        child_name: characterNames[0] || bookData.child_name, // First character as primary
-        childNames: characterNames, // All characters
+        child_name: characterNames[0] || bookData.child_name,
+        childNames: characterNames,
         child_age: effectiveParams?.childAge ? parseInt(String(effectiveParams.childAge).split('-')[0]) : bookData.child_age,
-        genre: genres[0] || bookData.genre, // First genre as primary
+        genre: genres[0] || bookData.genre,
         age_range: effectiveParams?.childAge || bookData.age_range,
         tone: effectiveParams?.tone || bookData.tone,
         interests: interests || effectiveParams?.interests || bookData.interests,
         family_members: settingInfo || effectiveParams?.family_members || bookData.family_members,
         child_gender: effectiveParams?.childGender || bookData.child_gender,
-        // Create selectedCharacters array for consistency
         selectedCharacters: characterNames.map(name => ({
           name: name,
           age: effectiveParams?.childAge ? parseInt(String(effectiveParams.childAge).split('-')[0]) : 5,
@@ -425,7 +309,6 @@ export default function CreativeStoryStudio() {
 
       setBookData(updatedBookData);
       setIdeaParams(effectiveParams);
-
     } catch (error) {
       toast({
         variant: "destructive",
@@ -435,15 +318,13 @@ export default function CreativeStoryStudio() {
     }
   };
 
-  // This is a combination of logic from old CreateBook and StoryIdeas pages
   const generateIdea = async () => {
     try {
       setIsGenerating(true);
-      setGeneratedIdea(null); // Clear previous idea when generating a new one
+      setGeneratedIdea(null);
       const targetLanguage = bookData?.language || currentLanguage;
       const prompt = constructPromptForIdea(ideaParams, targetLanguage);
 
-      // Content moderation blocked the input
       if (!prompt) {
         setIsGenerating(false);
         return;
@@ -487,7 +368,6 @@ export default function CreativeStoryStudio() {
       setIsGenerating(true);
       await StoryIdea.create(idea);
       toast({ title: t("studio.idea.saved.title"), description: t("studio.idea.saved.desc") });
-      // Optionally refresh saved ideas after saving
       await loadSavedIdeas();
     } catch (error) {
       toast({ variant: "destructive", title: t("studio.idea.saveError.title"), description: t("studio.idea.saveError.desc") });
@@ -502,7 +382,7 @@ export default function CreativeStoryStudio() {
   };
 
   const editIdea = (editedIdea) => {
-    setGeneratedIdea(editedIdea); // This is the fix for saving edits
+    setGeneratedIdea(editedIdea);
     convertIdeaToBookData(editedIdea, ideaParams);
     toast({ title: "Idea Updated", description: "Your changes have been saved locally." });
   };
@@ -525,7 +405,7 @@ export default function CreativeStoryStudio() {
     try {
       setIsGenerating(true);
       await StoryIdea.update(updatedIdea.id, updatedIdea);
-      await loadSavedIdeas(); // Refresh the list
+      await loadSavedIdeas();
       setEditingIdea(null);
       toast({ title: "Idea Updated", description: "Your changes have been saved." });
     } catch (error) {
@@ -539,7 +419,7 @@ export default function CreativeStoryStudio() {
     try {
       setIsGenerating(true);
       await StoryIdea.delete(ideaId);
-      await loadSavedIdeas(); // Refresh list
+      await loadSavedIdeas();
       toast({ title: "Idea Deleted", description: "The story idea has been removed." });
     } catch (error) {
       toast({ variant: "destructive", title: "Delete Error", description: "Could not delete the idea." });
@@ -552,19 +432,16 @@ export default function CreativeStoryStudio() {
     try {
       setIsGenerating(true);
 
-      // Ensure cover image is generated if not present
       let finalBookData = { ...bookData };
       if (!finalBookData.cover_image) {
         const coverPrompt = `Children's book cover for "${finalBookData.title}", featuring a child named ${finalBookData.child_name} in a ${finalBookData.genre} setting. Illustrated in ${finalBookData.art_style} style.`;
         const coverResult = await GenerateImage({
           prompt: coverPrompt,
-          model: aiSettings.imageModel // Use selected image model
+          model: aiSettings.imageModel
         });
         if (coverResult && coverResult.url) {
           finalBookData = { ...finalBookData, cover_image: coverResult.url };
-          setBookData(finalBookData); // Update state with cover image
-        } else {
-          // failed to generate cover image, proceeding without it
+          setBookData(finalBookData);
         }
       }
 
@@ -586,8 +463,87 @@ export default function CreativeStoryStudio() {
     }
   };
 
-  // Idea Generation Step
-  const IdeaGenerationStep = () => {
+  // Step 1: Combined Start + Idea Generation
+  const IdeaStep = () => {
+    // If no starting point chosen yet, show selection
+    if (!startingPoint) {
+      return (
+        <div className="space-y-6">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              {t("studio.start.title")}
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400">
+              {t("studio.start.subtitle")}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Card
+                className={`cursor-pointer transition-all duration-200 hover:shadow-lg`}
+                onClick={() => setStartingPoint('new-idea')}
+              >
+                <CardHeader>
+                  <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mb-4">
+                    <Wand2 className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <CardTitle className="text-lg">{t("studio.start.new")}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {t("studio.start.new.desc")}
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Card
+                className={`cursor-pointer transition-all duration-200 hover:shadow-lg`}
+                onClick={() => setStartingPoint('existing-idea')}
+              >
+                <CardHeader>
+                  <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-4">
+                    <Lightbulb className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <CardTitle className="text-lg">{t("studio.start.existing")}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {t("studio.start.existing.desc")}
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Card
+                className={`cursor-pointer transition-all duration-200 hover:shadow-lg`}
+                onClick={() => {
+                  setStartingPoint('direct-create');
+                  nextStep();
+                }}
+              >
+                <CardHeader>
+                  <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4">
+                    <Play className="h-6 w-6 text-green-600 dark:text-green-400" />
+                  </div>
+                  <CardTitle className="text-lg">{t("studio.start.direct")}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {t("studio.start.direct.desc")}
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+        </div>
+      );
+    }
+
+    // Show idea generation or saved ideas
     if (startingPoint === 'new-idea') {
       return (
         <div className="space-y-6">
@@ -596,24 +552,23 @@ export default function CreativeStoryStudio() {
             onInputChange={(field, value) => {
               setIdeaParams(prev => ({ ...prev, [field]: value }));
             }}
-            onGenerate={generateIdea} // Use the new local generateIdea function
+            onGenerate={generateIdea}
             isGenerating={isGenerating}
             currentLanguage={currentLanguage}
             isRTL={isRTL}
-            existingChildrenNames={bookData.childNames} // Passing childNames from bookData
+            existingChildrenNames={bookData.childNames}
           />
           {generatedIdea && (
-            <div className="mt-6"> {/* Added wrapper div as per outline's structure */}
+            <div className="mt-6">
               <IdeaResult
                 idea={generatedIdea}
                 onContinue={() => {
-                  // Convert idea to book data before moving to the next step
                   convertIdeaToBookData(generatedIdea, ideaParams);
                   nextStep();
                 }}
                 onRegenerate={() => {
-                  setGeneratedIdea(null); // Clear current idea
-                  generateIdea(); // Generate new one
+                  setGeneratedIdea(null);
+                  generateIdea();
                 }}
                 onSave={() => {
                   saveIdea(generatedIdea);
@@ -621,7 +576,7 @@ export default function CreativeStoryStudio() {
                 onSaveAndContinue={() => {
                   saveIdeaAndContinue(generatedIdea);
                 }}
-                onEdit={editIdea} // Pass the corrected edit function
+                onEdit={editIdea}
                 onDelete={() => {
                   deleteIdea();
                 }}
@@ -633,9 +588,11 @@ export default function CreativeStoryStudio() {
           )}
         </div>
       );
-    } else if (startingPoint === 'existing-idea') {
+    }
+
+    if (startingPoint === 'existing-idea') {
       return (
-        <div className="space-y-6"> {/* Added wrapper div as per outline */}
+        <div className="space-y-6">
           <SavedIdeas
             ideas={savedIdeas}
             onUseIdea={(idea) => {
@@ -649,38 +606,40 @@ export default function CreativeStoryStudio() {
         </div>
       );
     }
+
     return null;
   };
 
-  // Render current step - REVERTED to include StoryRefinementStep
+  // Step 2: Combined Refine + Style
+  const RefineStyleStepComponent = () => (
+    <div className="space-y-8">
+      <StoryRefinementStep
+        bookData={bookData}
+        updateBookData={(field, value) => setBookData(prev => ({ ...prev, [field]: value }))}
+        currentLanguage={currentLanguage}
+        isRTL={isRTL}
+      />
+      <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+        <ArtStyleSection
+          bookData={bookData}
+          updateBookData={(field, value) => setBookData(prev => ({ ...prev, [field]: value }))}
+          currentLanguage={currentLanguage}
+          isRTL={isRTL}
+        />
+      </div>
+    </div>
+  );
+
+  // Render current step
   const renderCurrentStep = () => {
     switch (currentStepData.component) {
-      case 'StartingPoint':
-        return <StartingPointStep />;
-      case 'IdeaGeneration':
-        return <IdeaGenerationStep />;
-      case 'StoryRefinement': // REVERTED
-        return (
-          <StoryRefinementStep
-            bookData={bookData}
-            updateBookData={(field, value) => setBookData(prev => ({ ...prev, [field]: value }))}
-            currentLanguage={currentLanguage}
-            isRTL={isRTL}
-          />
-        );
-      case 'StoryStyle':
-        return (
-          <StoryStyleStep
-            bookData={bookData}
-            updateBookData={(field, value) => setBookData(prev => ({ ...prev, [field]: value }))}
-            currentLanguage={currentLanguage}
-            isRTL={isRTL}
-          />
-        );
+      case 'IdeaStep':
+        return <IdeaStep />;
+      case 'RefineStyleStep':
+        return <RefineStyleStepComponent />;
       case 'CreateBook':
         return <BookPreview bookData={bookData} coverImage={bookData.cover_image} isGenerating={isGenerating} />;
       default:
-        // REMOVING the new StoryStructureBuilder for now to ensure stability
         return <div>Step not implemented</div>;
     }
   };
@@ -712,7 +671,7 @@ export default function CreativeStoryStudio() {
         </motion.p>
       </div>
 
-      {/* Progress Bar */}
+      {/* Progress Bar - 3 steps */}
       <div className={`mb-8 ${isRTL ? 'rtl' : ''}`}>
         <div className={`flex ${isRTL ? 'flex-row-reverse' : 'flex-row'} justify-between items-center mb-4`}>
           <span className="text-sm text-gray-500 dark:text-gray-400">
@@ -741,7 +700,6 @@ export default function CreativeStoryStudio() {
           className="mb-8"
         >
           {renderCurrentStep()}
-
         </motion.div>
       </AnimatePresence>
 
@@ -749,7 +707,7 @@ export default function CreativeStoryStudio() {
       <Dialog open={!!editingIdea} onOpenChange={(isOpen) => !isOpen && setEditingIdea(null)}>
         <DialogContent className="max-w-4xl max-h-[90vh] p-0">
           <DialogHeader className="p-4 border-b">
-            <DialogTitle>עריכת רעיון הסיפור</DialogTitle>
+            <DialogTitle>{isRTL ? "עריכת רעיון הסיפור" : "Edit Story Idea"}</DialogTitle>
           </DialogHeader>
           {editingIdea && (
             <IdeaEditor
@@ -769,7 +727,7 @@ export default function CreativeStoryStudio() {
         <Button
           variant="outline"
           onClick={prevStep}
-          disabled={currentStep === 0 || (currentStep === 1 && startingPoint === 'direct-create')}
+          disabled={currentStep === 0}
           className="flex items-center gap-2"
         >
           {isRTL ? (
@@ -798,8 +756,7 @@ export default function CreativeStoryStudio() {
           <Button
             onClick={nextStep}
             disabled={
-              (currentStepData.id === 'idea' && startingPoint !== 'direct-create' && !generatedIdea && !selectedIdea) ||
-              (currentStepData.id === 'start' && startingPoint === null)
+              (currentStepData.id === 'idea' && !startingPoint && !generatedIdea && !selectedIdea)
             }
             className="bg-purple-600 hover:bg-purple-700 flex items-center gap-2"
           >

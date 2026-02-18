@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback } from "react";
-import { Wand2, Loader2, Lightbulb, X, Plus, ChevronDown, Users2, Sparkles } from "lucide-react";
+import { Wand2, Loader2, Lightbulb, X, Plus, ChevronDown, ChevronUp, Users2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -29,6 +29,7 @@ export default function IdeaGenerator({
 }) {
   const [availableCharacters, setAvailableCharacters] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showMoreOptions, setShowMoreOptions] = useState(false);
 
   // Individual input states to avoid re-render issues
   const [newChildName, setNewChildName] = useState("");
@@ -85,7 +86,9 @@ export default function IdeaGenerator({
       "ideaGenerator.useDailyPrompt": "Use Today's Prompt",
       "ideaGenerator.addTag": "Add",
       "ideaGenerator.suggestedTags": "Suggested:",
-      "ideaGenerator.customGenres.placeholder": "Add custom genres..."
+      "ideaGenerator.customGenres.placeholder": "Add custom genres...",
+      "ideaGenerator.moreOptions": "More Options",
+      "ideaGenerator.lessOptions": "Less Options"
     },
     hebrew: {
       "ideaGenerator.title": "מחולל רעיונות לסיפור",
@@ -119,7 +122,9 @@ export default function IdeaGenerator({
       "ideaGenerator.useDailyPrompt": "השתמש ברעיון היומי",
       "ideaGenerator.addTag": "הוסף",
       "ideaGenerator.suggestedTags": "הצעות:",
-      "ideaGenerator.customGenres.placeholder": "הוסף ז'אנרים מותאמים אישית..."
+      "ideaGenerator.customGenres.placeholder": "הוסף ז'אנרים מותאמים אישית...",
+      "ideaGenerator.moreOptions": "אפשרויות נוספות",
+      "ideaGenerator.lessOptions": "פחות אפשרויות"
     }
   };
 
@@ -661,43 +666,6 @@ export default function IdeaGenerator({
           />
         </div>
 
-        {/* Themes */}
-        <TagInput
-          field="themes"
-          label={t("ideaGenerator.themes")}
-          placeholder={t("ideaGenerator.themes.placeholder")}
-          suggestions={suggestedTags.themes[currentLanguage] || suggestedTags.themes.english}
-          inputValue={newThemeInput}
-          setInputValue={setNewThemeInput}
-        />
-
-        {/* Characters */}
-        <TagInput
-          field="characters"
-          label={t("ideaGenerator.characters")}
-          placeholder={t("ideaGenerator.characters.placeholder")}
-          suggestions={[
-            ...availableCharacters.map(c => ({
-              display: c.name,
-              value: c.name.toLowerCase()
-            })),
-            ...(suggestedTags.characters[currentLanguage] || suggestedTags.characters.english)
-              .filter(sugItem => !availableCharacters.some(ac => ac.name.toLowerCase() === sugItem.value.toLowerCase()))
-          ]}
-          inputValue={newCharacterInput}
-          setInputValue={setNewCharacterInput}
-        />
-
-        {/* Settings */}
-        <TagInput
-          field="setting"
-          label={t("ideaGenerator.setting")}
-          placeholder={t("ideaGenerator.setting.placeholder")}
-          suggestions={suggestedTags.setting[currentLanguage] || suggestedTags.setting.english}
-          inputValue={newSettingInput}
-          setInputValue={setNewSettingInput}
-        />
-
         {/* Additional Details */}
         <div className="space-y-2">
           <Label htmlFor="details">{t("ideaGenerator.additional")}</Label>
@@ -709,6 +677,67 @@ export default function IdeaGenerator({
             className={isRTL ? "text-right" : ""}
           />
         </div>
+
+        {/* More Options Toggle */}
+        <Button
+          type="button"
+          variant="ghost"
+          className="w-full flex items-center justify-center gap-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          onClick={() => setShowMoreOptions(!showMoreOptions)}
+        >
+          {showMoreOptions ? (
+            <>
+              <ChevronUp className="h-4 w-4" />
+              {t("ideaGenerator.lessOptions")}
+            </>
+          ) : (
+            <>
+              <ChevronDown className="h-4 w-4" />
+              {t("ideaGenerator.moreOptions")}
+            </>
+          )}
+        </Button>
+
+        {showMoreOptions && (
+          <div className="space-y-6 pt-2 border-t border-gray-200 dark:border-gray-700">
+            {/* Themes */}
+            <TagInput
+              field="themes"
+              label={t("ideaGenerator.themes")}
+              placeholder={t("ideaGenerator.themes.placeholder")}
+              suggestions={suggestedTags.themes[currentLanguage] || suggestedTags.themes.english}
+              inputValue={newThemeInput}
+              setInputValue={setNewThemeInput}
+            />
+
+            {/* Characters */}
+            <TagInput
+              field="characters"
+              label={t("ideaGenerator.characters")}
+              placeholder={t("ideaGenerator.characters.placeholder")}
+              suggestions={[
+                ...availableCharacters.map(c => ({
+                  display: c.name,
+                  value: c.name.toLowerCase()
+                })),
+                ...(suggestedTags.characters[currentLanguage] || suggestedTags.characters.english)
+                  .filter(sugItem => !availableCharacters.some(ac => ac.name.toLowerCase() === sugItem.value.toLowerCase()))
+              ]}
+              inputValue={newCharacterInput}
+              setInputValue={setNewCharacterInput}
+            />
+
+            {/* Settings */}
+            <TagInput
+              field="setting"
+              label={t("ideaGenerator.setting")}
+              placeholder={t("ideaGenerator.setting.placeholder")}
+              suggestions={suggestedTags.setting[currentLanguage] || suggestedTags.setting.english}
+              inputValue={newSettingInput}
+              setInputValue={setNewSettingInput}
+            />
+          </div>
+        )}
 
         {/* Generate Button */}
         <div className="pt-4 flex flex-wrap gap-3">
