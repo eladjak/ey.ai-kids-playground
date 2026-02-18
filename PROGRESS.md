@@ -830,13 +830,88 @@ Created a complete 4-step book creation wizard at `/BookWizard` route:
 
 ---
 
+## Completed Work (Session 9 - 2026-02-18)
+
+### Deliverable 1: Skeleton Loading States (3 views)
+
+#### Characters Page (`src/pages/Characters.jsx`)
+- [x] Replaced spinner (`Loader2`) with full-page skeleton matching the actual character grid layout
+- [x] Header skeleton: title + subtitle + create button shapes
+- [x] Search bar skeleton
+- [x] 8 skeleton character cards: circular avatar, name, badges, description lines
+- [x] `aria-busy="true"`, `role="status"`, `sr-only` text for accessibility
+- [x] Removed unused `Loader2` import
+
+#### Home Page (`src/pages/Home.jsx`)
+- [x] Added `Skeleton` import
+- [x] Featured Books tab now shows 3 skeleton book cards while `isLoading=true`
+- [x] Each skeleton card matches the real book card structure: image area, title, description, badge+button row
+
+#### BookCreation Page (`src/pages/BookCreation.jsx`)
+- [x] Added `Skeleton` and `Card`/`CardContent` imports
+- [x] Replaced spinner with structured skeleton matching the full editor layout:
+  - Header: back button + book title + save indicator
+  - Tab bar: 3 tab shapes
+  - Two-column layout: page thumbnail strip (5 items) + editor area (image preview + text editor card)
+- [x] `aria-busy="true"`, `role="status"`, `sr-only` message for accessibility
+
+### Deliverable 2: Child Safety Content Filter (`src/utils/contentFilter.js`)
+New standalone content filtering utility (separate from content-moderation.js):
+- [x] `checkAbsoluteBlocklist(text)` - 6 categories: violence, explicit, drugs, profanity, Hebrew profanity, self-harm, manipulation
+- [x] `checkAgeConditionalContent(text, ageMax)` - flags scary/war content for under-8, preteen topics for under-11
+- [x] `checkVocabularyComplexity(text, ageMax)` - detects complex words for under-7 + replacement suggestions
+- [x] `isTopicAppropriate(topic)` - validates against 30+ approved children's topics list
+- [x] `filterContent(text, ageMax)` - full pipeline: returns `{ isAllowed, level, reason, blockedTerms, ageWarnings, vocabularySuggestions }`
+- [x] `isSafeForChildren(text)` - quick boolean check
+- [x] `getFilterMessage(result, isRTL)` - bilingual (English/Hebrew) user-facing messages
+- [x] `AGE_GROUPS` constants: TODDLER(2-4), YOUNG_CHILD(5-7), CHILD(8-10), PRETEEN(11-12)
+- [x] `APPROPRIATE_TOPICS` array: 30+ approved story topics
+
+### Deliverable 3: Tests (43 new, 199 total)
+Created `src/utils/contentFilter.test.js` with 43 meaningful tests across 8 describe blocks:
+- [x] `checkAbsoluteBlocklist` - 9 tests (safe content, violence, profanity, Hebrew, drugs, self-harm, edge cases, dedup)
+- [x] `checkAgeConditionalContent` - 6 tests (age 10 allows mild, age 7 flags scary, age 4 flags war, preteen under-11, preteen 12+, empty)
+- [x] `checkVocabularyComplexity` - 5 tests (age cutoff 7+, detection for under-7, replacement suggestions, simple vocab, null input)
+- [x] `isTopicAppropriate` - 5 tests (approved, multi-match, empty, null, blocked topics)
+- [x] `filterContent` - 6 tests (clean, blocked, warning-age, warning-vocab, default age, blocklist wins over age)
+- [x] `isSafeForChildren` - 3 tests (safe, blocked, Hebrew safe)
+- [x] `getFilterMessage` - 5 tests (blocked EN/HE, warning EN/HE, clean)
+- [x] `Constants` - 4 tests (AGE_GROUPS structure, non-overlapping ranges, APPROPRIATE_TOPICS array, key topics)
+
+### Updated Scores (Estimated)
+| Area | Previous | Current | Change |
+|------|----------|---------|--------|
+| Child Safety | A (92/100) | A+ (95/100) | +3 (standalone filter utility, age-group vocabulary) |
+| Testing | B- (62/100) | B (70/100) | +8 (43 new tests, 199 total) |
+| User Flow / UX | A- (88/100) | A (90/100) | +2 (skeleton loading in 3 key views) |
+
+### Verification
+- [x] All 199 tests pass (8 test files)
+- [x] Build verified: `npx vite build` passes (dist/ with assets + index.html)
+- [x] No new console.log statements
+- [x] No existing functionality broken
+
+### Files Created (2 files)
+| File | Purpose |
+|------|---------|
+| `src/utils/contentFilter.js` | Standalone child safety content filter |
+| `src/utils/contentFilter.test.js` | 43 tests for content filter |
+
+### Files Modified (3 files)
+| File | Change |
+|------|--------|
+| `src/pages/Characters.jsx` | Skeleton loading state (replaced spinner) |
+| `src/pages/Home.jsx` | Skeleton loading for featured books section |
+| `src/pages/BookCreation.jsx` | Skeleton loading state (replaced spinner) |
+
+---
+
 ## Notes for Next Session
-- Session 8 (2026-02-18): CreativeStoryStudio simplified to 3 steps, 2 new games, PIN protection
-- CreativeStoryStudio now has 3 steps: Story Idea -> Refine & Style -> Preview & Create
-- Word Scramble game: arrange scrambled Hebrew letters into words (3 difficulty levels)
-- Story Completion game: fill in blanks in Hebrew stories (3 difficulty levels)
-- PIN code protection added to Parental Controls (4-6 digit PIN, stored hashed in localStorage)
-- 156 tests passing (7 test files) - up from 127
-- Build verified: `npx vite build` passes
-- My Library page already existed at `/Library` with full functionality
-- Games page now shows 5 games (Math, Letters, Colors, Word Scramble, Story Completion)
+- Session 9 (2026-02-18): Skeleton loading in 3 views, new contentFilter.js utility, 43 new tests
+- 199 tests passing (8 test files) - up from 156
+- contentFilter.js is standalone from content-moderation.js (different concerns: semantic vs sanitization)
+- Characters page: skeleton matches 4-column grid with circular avatar + card
+- Home page: featured tab shows 3 book card skeletons during load
+- BookCreation: full editor skeleton with 2-column layout
+- Games page still shows 5 games (Math, Letters, Colors, Word Scramble, Story Completion)
+- Build verified passing
