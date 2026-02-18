@@ -351,3 +351,64 @@ export function saveParentalControls(controls) {
     ...controls,
   }));
 }
+
+// --- PIN Code Protection ---
+
+/**
+ * Hash a PIN code using a simple but effective approach.
+ * Uses btoa encoding with a salt for basic protection.
+ * (In production, use bcrypt/argon2 on the server side.)
+ *
+ * @param {string} pin - The 4-6 digit PIN code
+ * @returns {string} Hashed PIN
+ */
+export function hashPin(pin) {
+  if (typeof pin !== 'string' || pin.length < 4) return '';
+  // Simple hash: reverse + salt + base64
+  const salted = `eyai_kids_${pin.split('').reverse().join('')}_${pin.length}`;
+  return btoa(salted);
+}
+
+/**
+ * Check if a parental PIN has been set.
+ * @returns {boolean}
+ */
+export function isPinSet() {
+  return !!localStorage.getItem('parentalPin');
+}
+
+/**
+ * Set or update the parental PIN code.
+ * @param {string} pin - 4-6 digit PIN
+ * @returns {boolean} Whether the PIN was set successfully
+ */
+export function setParentalPin(pin) {
+  if (typeof pin !== 'string' || !/^\d{4,6}$/.test(pin)) {
+    return false;
+  }
+  localStorage.setItem('parentalPin', hashPin(pin));
+  return true;
+}
+
+/**
+ * Verify a PIN against the stored hash.
+ * @param {string} pin - PIN to verify
+ * @returns {boolean} Whether the PIN matches
+ */
+export function verifyParentalPin(pin) {
+  if (typeof pin !== 'string') return false;
+  const storedHash = localStorage.getItem('parentalPin');
+  if (!storedHash) return true; // No PIN set = always pass
+  return hashPin(pin) === storedHash;
+}
+
+/**
+ * Remove the parental PIN (requires correct PIN first).
+ * @param {string} currentPin - Current PIN for verification
+ * @returns {boolean} Whether the PIN was removed
+ */
+export function removeParentalPin(currentPin) {
+  if (!verifyParentalPin(currentPin)) return false;
+  localStorage.removeItem('parentalPin');
+  return true;
+}

@@ -17,6 +17,8 @@ import {
 import MathGame from "@/components/games/MathGame";
 import LettersGame from "@/components/games/LettersGame";
 import ColorsGame from "@/components/games/ColorsGame";
+import WordScrambleGame from "@/components/games/WordScrambleGame";
+import StoryCompletionGame from "@/components/games/StoryCompletionGame";
 
 const GAMES = [
   {
@@ -65,6 +67,38 @@ const GAMES = [
     badge: "צבעים",
     badgeColor:
       "bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200",
+  },
+  {
+    id: "word-scramble",
+    title: "סדרו את המילה",
+    subtitle: "אותיות מבולבלות",
+    description: "סדרו את האותיות המבולבלות למילה הנכונה!",
+    icon: BookOpen,
+    color: "from-emerald-400 to-teal-500",
+    bgLight: "from-emerald-50 to-teal-50",
+    bgDark: "dark:from-emerald-950 dark:to-teal-950",
+    borderColor: "border-emerald-200 dark:border-emerald-800",
+    textColor: "text-emerald-700 dark:text-emerald-300",
+    component: WordScrambleGame,
+    badge: "אוצר מילים",
+    badgeColor:
+      "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200",
+  },
+  {
+    id: "story-completion",
+    title: "השלימו את הסיפור",
+    subtitle: "מילים חסרות",
+    description: "מלאו את המילים החסרות והשלימו את הסיפור!",
+    icon: BookOpen,
+    color: "from-orange-400 to-amber-500",
+    bgLight: "from-orange-50 to-amber-50",
+    bgDark: "dark:from-orange-950 dark:to-amber-950",
+    borderColor: "border-orange-200 dark:border-orange-800",
+    textColor: "text-orange-700 dark:text-orange-300",
+    component: StoryCompletionGame,
+    badge: "סיפורים",
+    badgeColor:
+      "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
   },
 ];
 
@@ -138,7 +172,7 @@ export default function Games() {
       </motion.div>
 
       {/* Games Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
         {GAMES.map((game, idx) => (
           <motion.div
             key={game.id}

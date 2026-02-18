@@ -11,19 +11,42 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { Shield, Save, Lock, AlertTriangle } from "lucide-react";
+import { Shield, Save, Lock, AlertTriangle, KeyRound, Check, X } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { getParentalControls, saveParentalControls } from "@/utils/content-moderation";
+import {
+  getParentalControls,
+  saveParentalControls,
+  isPinSet,
+  setParentalPin,
+  verifyParentalPin,
+  removeParentalPin,
+} from "@/utils/content-moderation";
 
 /**
- * ParentalControls - Parental controls settings panel.
- * Manages content filtering level, daily limits, sharing permissions, etc.
+ * ParentalControls - Parental controls settings panel with PIN protection.
+ * PIN code required to view/modify settings when set.
  */
 export default function ParentalControls({ currentLanguage, isRTL }) {
   const { toast } = useToast();
   const isHebrew = currentLanguage === "hebrew";
   const [controls, setControls] = useState(getParentalControls());
   const [isSaving, setIsSaving] = useState(false);
+
+  // PIN state
+  const [hasPinSet, setHasPinSet] = useState(isPinSet());
+  const [isUnlocked, setIsUnlocked] = useState(!isPinSet());
+  const [pinInput, setPinInput] = useState("");
+  const [pinError, setPinError] = useState(false);
+
+  // PIN setup state
+  const [isSettingPin, setIsSettingPin] = useState(false);
+  const [newPin, setNewPin] = useState("");
+  const [confirmPin, setConfirmPin] = useState("");
+  const [pinSetupError, setPinSetupError] = useState("");
+
+  // PIN removal state
+  const [isRemovingPin, setIsRemovingPin] = useState(false);
+  const [removeConfirmPin, setRemoveConfirmPin] = useState("");
 
   const t = (he, en) => (isHebrew ? he : en);
 
@@ -44,6 +67,116 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
     }, 300);
   };
 
+  const handlePinUnlock = () => {
+    if (verifyParentalPin(pinInput)) {
+      setIsUnlocked(true);
+      setPinError(false);
+      setPinInput("");
+    } else {
+      setPinError(true);
+      setPinInput("");
+    }
+  };
+
+  const handleSetPin = () => {
+    setPinSetupError("");
+    if (!/^\d{4,6}$/.test(newPin)) {
+      setPinSetupError(t("קוד PIN חייב להיות 4-6 ספרות", "PIN must be 4-6 digits"));
+      return;
+    }
+    if (newPin !== confirmPin) {
+      setPinSetupError(t("קודי ה-PIN לא תואמים", "PIN codes do not match"));
+      return;
+    }
+    const success = setParentalPin(newPin);
+    if (success) {
+      setHasPinSet(true);
+      setIsSettingPin(false);
+      setNewPin("");
+      setConfirmPin("");
+      toast({
+        title: t("קוד PIN נקבע", "PIN code set"),
+        description: t("ההגדרות מוגנות כעת בקוד PIN", "Settings are now protected with a PIN"),
+        className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100"
+      });
+    }
+  };
+
+  const handleRemovePin = () => {
+    const success = removeParentalPin(removeConfirmPin);
+    if (success) {
+      setHasPinSet(false);
+      setIsRemovingPin(false);
+      setRemoveConfirmPin("");
+      toast({
+        title: t("קוד PIN הוסר", "PIN removed"),
+        description: t("ההגדרות אינן מוגנות יותר בקוד PIN", "Settings are no longer PIN-protected"),
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        title: t("קוד PIN שגוי", "Wrong PIN"),
+        description: t("הקוד שהוזן אינו נכון", "The PIN entered is incorrect"),
+      });
+      setRemoveConfirmPin("");
+    }
+  };
+
+  // --- PIN unlock screen ---
+  if (!isUnlocked) {
+    return (
+      <div className="space-y-6" dir={isRTL ? "rtl" : "ltr"}>
+        <Card className="border-amber-200 dark:border-amber-800">
+          <CardContent className="p-8">
+            <div className="flex flex-col items-center text-center space-y-4">
+              <div className="w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                <Lock className="h-8 w-8 text-amber-600" />
+              </div>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                {t("בקרת הורים מוגנת", "Parental Controls Protected")}
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {t("הזן קוד PIN כדי לגשת להגדרות", "Enter PIN code to access settings")}
+              </p>
+
+              <div className="w-full max-w-[200px] space-y-3">
+                <Input
+                  type="password"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={6}
+                  placeholder={t("קוד PIN", "PIN code")}
+                  value={pinInput}
+                  onChange={(e) => {
+                    setPinInput(e.target.value.replace(/\D/g, ''));
+                    setPinError(false);
+                  }}
+                  onKeyDown={(e) => e.key === 'Enter' && handlePinUnlock()}
+                  className={`text-center text-2xl tracking-[0.5em] ${pinError ? 'border-red-500' : ''}`}
+                  aria-label={t("הזן קוד PIN", "Enter PIN code")}
+                />
+                {pinError && (
+                  <p className="text-sm text-red-500" role="alert">
+                    {t("קוד PIN שגוי", "Incorrect PIN")}
+                  </p>
+                )}
+                <Button
+                  onClick={handlePinUnlock}
+                  disabled={pinInput.length < 4}
+                  className="w-full bg-purple-600 hover:bg-purple-700"
+                >
+                  <KeyRound className="h-4 w-4 ml-2" aria-hidden="true" />
+                  {t("פתח", "Unlock")}
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // --- Main controls (unlocked) ---
   return (
     <div className="space-y-6" dir={isRTL ? "rtl" : "ltr"}>
       {/* Header info */}
@@ -57,12 +190,143 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
               </p>
               <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
                 {t(
-                  "הגדרות אלו מאפשרות לך לשלוט בתוכן שהילד שלך יכול ליצור ולצפות. בגרסה עתידית תוכל להגן על ההגדרות עם סיסמה.",
-                  "These settings let you control what content your child can create and view. In a future version, you'll be able to protect these settings with a password."
+                  "הגדרות אלו מאפשרות לך לשלוט בתוכן שהילד שלך יכול ליצור ולצפות.",
+                  "These settings let you control what content your child can create and view."
                 )}
               </p>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* PIN Management */}
+      <Card>
+        <CardHeader>
+          <CardTitle className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse text-right" : ""}`}>
+            <KeyRound className="h-5 w-5 text-indigo-600" />
+            {t("הגנת קוד PIN", "PIN Code Protection")}
+          </CardTitle>
+          <CardDescription className={isRTL ? "text-right" : ""}>
+            {hasPinSet
+              ? t("ההגדרות מוגנות בקוד PIN", "Settings are protected with a PIN code")
+              : t("הגדר קוד PIN כדי להגן על ההגדרות מפני שינוי על ידי ילדים", "Set a PIN code to protect settings from being changed by children")
+            }
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {!hasPinSet && !isSettingPin && (
+            <Button
+              onClick={() => setIsSettingPin(true)}
+              variant="outline"
+              className="gap-2"
+            >
+              <Lock className="h-4 w-4" aria-hidden="true" />
+              {t("הגדר קוד PIN", "Set PIN Code")}
+            </Button>
+          )}
+
+          {isSettingPin && (
+            <div className="space-y-3 max-w-xs">
+              <div>
+                <Label>{t("קוד PIN חדש (4-6 ספרות)", "New PIN (4-6 digits)")}</Label>
+                <Input
+                  type="password"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={6}
+                  value={newPin}
+                  onChange={(e) => setNewPin(e.target.value.replace(/\D/g, ''))}
+                  placeholder="****"
+                  className="text-center tracking-widest"
+                  aria-label={t("קוד PIN חדש", "New PIN code")}
+                />
+              </div>
+              <div>
+                <Label>{t("אשר קוד PIN", "Confirm PIN")}</Label>
+                <Input
+                  type="password"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={6}
+                  value={confirmPin}
+                  onChange={(e) => setConfirmPin(e.target.value.replace(/\D/g, ''))}
+                  placeholder="****"
+                  className="text-center tracking-widest"
+                  aria-label={t("אשר קוד PIN", "Confirm PIN")}
+                />
+              </div>
+              {pinSetupError && (
+                <p className="text-sm text-red-500" role="alert">{pinSetupError}</p>
+              )}
+              <div className="flex gap-2">
+                <Button onClick={handleSetPin} className="bg-purple-600 hover:bg-purple-700 gap-1">
+                  <Check className="h-4 w-4" aria-hidden="true" />
+                  {t("שמור", "Save")}
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setIsSettingPin(false);
+                    setNewPin("");
+                    setConfirmPin("");
+                    setPinSetupError("");
+                  }}
+                >
+                  <X className="h-4 w-4" aria-hidden="true" />
+                  {t("ביטול", "Cancel")}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {hasPinSet && !isRemovingPin && (
+            <div className="flex items-center gap-3">
+              <Badge variant="outline" className="border-green-300 text-green-700 dark:text-green-300 gap-1">
+                <Check className="h-3 w-3" />
+                {t("PIN פעיל", "PIN Active")}
+              </Badge>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsRemovingPin(true)}
+                className="text-red-500 hover:text-red-700"
+              >
+                {t("הסר PIN", "Remove PIN")}
+              </Button>
+            </div>
+          )}
+
+          {isRemovingPin && (
+            <div className="space-y-3 max-w-xs">
+              <Label>{t("הזן קוד PIN הנוכחי כדי להסיר", "Enter current PIN to remove")}</Label>
+              <Input
+                type="password"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={6}
+                value={removeConfirmPin}
+                onChange={(e) => setRemoveConfirmPin(e.target.value.replace(/\D/g, ''))}
+                placeholder="****"
+                className="text-center tracking-widest"
+                aria-label={t("קוד PIN נוכחי", "Current PIN")}
+              />
+              <div className="flex gap-2">
+                <Button onClick={handleRemovePin} variant="destructive" size="sm" className="gap-1">
+                  {t("הסר", "Remove")}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setIsRemovingPin(false);
+                    setRemoveConfirmPin("");
+                  }}
+                >
+                  {t("ביטול", "Cancel")}
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -133,7 +397,6 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Allow AI generation */}
           <div className={`flex items-center justify-between ${isRTL ? "flex-row-reverse" : ""}`}>
             <Label className={isRTL ? "text-right" : ""}>
               {t("אפשר יצירת תוכן עם AI", "Allow AI content generation")}
@@ -144,8 +407,6 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
               aria-label={t("אפשר יצירת תוכן עם AI", "Allow AI content generation")}
             />
           </div>
-
-          {/* Allow community sharing */}
           <div className={`flex items-center justify-between ${isRTL ? "flex-row-reverse" : ""}`}>
             <Label className={isRTL ? "text-right" : ""}>
               {t("אפשר שיתוף בקהילה", "Allow community sharing")}
@@ -156,8 +417,6 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
               aria-label={t("אפשר שיתוף בקהילה", "Allow community sharing")}
             />
           </div>
-
-          {/* Require approval before publish */}
           <div className={`flex items-center justify-between ${isRTL ? "flex-row-reverse" : ""}`}>
             <Label className={isRTL ? "text-right" : ""}>
               {t("דרוש אישור הורה לפני פרסום", "Require parent approval before publishing")}
@@ -211,4 +470,12 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
       </Button>
     </div>
   );
+}
+
+// Badge component used above (inline since we only need it here)
+function Badge({ children, variant = "default", className = "" }) {
+  const baseClass = variant === "outline"
+    ? "border rounded-full px-2 py-0.5 text-xs inline-flex items-center"
+    : "rounded-full px-2 py-0.5 text-xs inline-flex items-center";
+  return <span className={`${baseClass} ${className}`}>{children}</span>;
 }
