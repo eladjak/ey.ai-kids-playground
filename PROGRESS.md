@@ -1,7 +1,52 @@
 # EY.AI Kids Playground - Progress & Analysis Report
 
-## Status: Active - Book Creation Refactor & UX Simplification
-## Last Updated: 2026-02-15
+## Status: Active - Master Refocus (Back to Core)
+## Last Updated: 2026-02-18
+
+---
+
+## Session 11: Master Refocus - Phase 1 & 2 (Feb 18, 2026)
+
+### What Was Done
+Executed "Back to Core" refocus plan - stripped all non-essential features to focus on the core book creation mission.
+
+**Phase 1: Dead Code Removal (~370KB removed)**
+- Deleted entire `src/components/games/` directory (10 files) + `src/pages/Games.jsx`
+- Deleted disconnected pages: `Collaborate.jsx`, `Documentation.jsx`, `CreateBook.jsx`
+- Deleted `src/components/collaborate/` directory (5 files)
+- Deleted 11 orphaned components across 6 directories (~107KB)
+- Removed empty directories: `interactive/`, `social/`, `home/`
+- Rescued 22 tests before deletion: PIN code tests -> content-moderation.test.js, wizard tests -> CreativeStudioWizard.test.js
+- Staged `src/utils/rateLimiter.js` (kept for future AI rate limiting)
+
+**Phase 2: Sidebar Restructuring**
+- Removed "Explore" section entirely (Games + Documentation gone)
+- Renamed "Creative Studio" -> "Create Book" / "יצירת ספר"
+- Renamed "Book Wizard" -> "Quick Create" / "יצירה מהירה"
+- Added new "My Space" / "המרחב שלי" section with Profile + Leaderboard
+- Moved Profile from Main to My Space
+- Cleaned up unused icons (Gamepad2, Lightbulb, FileText), added Trophy + Sparkles
+- Updated hebrewPageNames and getCurrentPageFromPath for all remaining pages
+
+**Results:**
+- Pages: 21 -> 17
+- Tests: 170 passing (7 test files, 0 failures)
+- Build: passes (vite build exit code 0)
+- Zero broken imports verified via grep
+
+### Files Modified
+- `src/pages.config.js` - Removed 4 page registrations
+- `src/Layout.jsx` - Full sidebar restructure
+- `src/utils/content-moderation.test.js` - Added 14 PIN code tests
+- `src/components/wizard/CreativeStudioWizard.test.js` - New file (9 wizard tests)
+
+### Next Steps (Phases 3-6)
+1. Character Entity Integration (CharacterPicker component)
+2. Cross-flow awareness (links between creation flows)
+3. Home page overhaul (remove AI hero, add community highlights)
+4. StoryIdeas merge into CreativeStoryStudio
+5. PDF export + Text-to-Speech
+6. Rate limiter integration
 
 ---
 

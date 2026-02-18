@@ -125,3 +125,20 @@ Before designing ANY UI component, page, or layout:
 - `/omc-frontend-ui-ux` - Designer-developer UI/UX agent
 
 ### Rule: NEVER design UI from scratch with Claude tokens. Always use Stitch MCP or v0.dev first!
+
+## Design & Quality Stack (Feb 2026)
+
+### Mandatory Design Workflow
+1. **Stitch MCP** - Design screens BEFORE coding UI
+2. **ReactBits** (reactbits.dev) - Animated interactive components
+3. **shadcn/ui** - Base UI primitives
+
+### Quality Gates (run before completing ANY UI task)
+- React Doctor: `npx -y react-doctor@latest .` (security, perf, correctness, architecture)
+- TypeScript: `bunx tsc --noEmit`
+- Accessibility: check aria-labels, keyboard nav, focus states
+
+### Animation Rules
+- Framer Motion or CSS transforms only
+- Max 200ms for feedback animations
+- No width/height/top/left animations - use transform/opacity

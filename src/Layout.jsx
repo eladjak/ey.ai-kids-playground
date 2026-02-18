@@ -16,11 +16,10 @@ import {
   Moon,
   Sun,
   Users,
-  Lightbulb,
-  FileText,
   User as UserIcon,
   Users2,
-  Gamepad2
+  Trophy,
+  Sparkles
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -96,43 +95,39 @@ export default function Layout({ children, currentPageName }) {
   const translations = {
     english: {
       "common.home": "Home",
-      "common.createBook": "Creative Studio", // Changed from "Create New Book"
+      "common.createBook": "Create Book",
       "common.myLibrary": "My Library",
       "common.community": "Community",
-      // "common.storyIdeas": "Story Ideas", // Removed
       "common.settings": "Settings",
       "common.logout": "Logout",
       "common.darkMode": "Dark Mode",
       "common.lightMode": "Light Mode",
-      "common.documentation": "Documentation",
       "common.main": "Main",
       "common.create": "Create",
-      "common.explore": "Explore",
+      "common.mySpace": "My Space",
       "common.system": "System",
       "common.myProfile": "My Profile",
       "common.characters": "My Characters",
-      "common.games": "Games",
-      "common.bookWizard": "Book Wizard"
+      "common.quickCreate": "Quick Create",
+      "common.leaderboard": "Leaderboard"
     },
     hebrew: {
       "common.home": "דף הבית",
-      "common.createBook": "סטודיו יצירה", // Changed from "יצירת ספר חדש"
+      "common.createBook": "יצירת ספר",
       "common.myLibrary": "הספרייה שלי",
       "common.community": "קהילה",
-      // "common.storyIdeas": "רעיונות לסיפורים", // Removed
       "common.settings": "הגדרות",
       "common.logout": "התנתק",
       "common.darkMode": "מצב כהה",
       "common.lightMode": "מצב בהיר",
-      "common.documentation": "תיעוד",
       "common.main": "ראשי",
       "common.create": "יצירה",
-      "common.explore": "גלה עוד",
+      "common.mySpace": "המרחב שלי",
       "common.system": "מערכת",
       "common.myProfile": "הפרופיל שלי",
       "common.characters": "הדמויות שלי",
-      "common.games": "משחקים",
-      "common.bookWizard": "אשף יצירת ספר"
+      "common.quickCreate": "יצירה מהירה",
+      "common.leaderboard": "טבלת מובילים"
     }
   };
 
@@ -145,16 +140,15 @@ export default function Layout({ children, currentPageName }) {
       { href: "/", label: t("common.home"), icon: Home, pageName: "Home" },
       { href: "/Library", label: t("common.myLibrary"), icon: Library, pageName: "Library" },
       { href: "/Community", label: t("common.community"), icon: Users, pageName: "Community" },
-      { href: "/Profile", label: t("common.myProfile"), icon: UserIcon, pageName: "Profile" }
     ],
     create: [
       { href: "/CreativeStoryStudio", label: t("common.createBook"), icon: PlusCircle, pageName: "CreativeStoryStudio" },
-      { href: "/BookWizard", label: t("common.bookWizard"), icon: BookOpen, pageName: "BookWizard" },
+      { href: "/BookWizard", label: t("common.quickCreate"), icon: Sparkles, pageName: "BookWizard" },
       { href: "/Characters", label: t("common.characters"), icon: Users2, pageName: "Characters" },
     ],
-    explore: [
-      { href: "/Games", label: t("common.games"), icon: Gamepad2, pageName: "Games" },
-      { href: "/Documentation", label: t("common.documentation"), icon: FileText, pageName: "Documentation" },
+    mySpace: [
+      { href: "/Profile", label: t("common.myProfile"), icon: UserIcon, pageName: "Profile" },
+      { href: "/Leaderboard", label: t("common.leaderboard"), icon: Trophy, pageName: "Leaderboard" },
     ],
     system: [
       { href: "/Settings", label: t("common.settings"), icon: Settings, pageName: "Settings" }
@@ -214,19 +208,20 @@ export default function Layout({ children, currentPageName }) {
 
     const hebrewPageNames = {
       "Home": "דף הבית",
-      "CreativeStoryStudio": "סטודיו יצירה", // Updated from "CreateBook": "יצירת ספר"
-      // "StoryIdeas": "רעיונות סיפור", // Removed
+      "CreativeStoryStudio": "יצירת ספר",
       "Library": "ספרייה",
       "Community": "קהילה",
       "Settings": "הגדרות",
-      "BookCreation": "יצירת ספר", // Kept, assuming it's a separate internal route
+      "BookCreation": "יצירת ספר",
       "BookView": "צפייה בספר",
+      "BookWizard": "יצירה מהירה",
       "Feedback": "משוב",
-      "Collaborate": "שיתוף פעולה",
       "CommunityPost": "פרסום קהילה",
-      "Documentation": "תיעוד",
       "Characters": "דמויות",
-      "Profile": "פרופיל"
+      "CharacterEditor": "עריכת דמות",
+      "Profile": "פרופיל",
+      "Leaderboard": "טבלת מובילים",
+      "StoryIdeas": "רעיונות לסיפורים"
     };
 
     return hebrewPageNames[pageName] || pageName;
@@ -238,17 +233,16 @@ export default function Layout({ children, currentPageName }) {
 
     const pagePath = path.split("?")[0];
     const pageName = pagePath.replace(/^\/+/, "");
-    // Special handling for root paths or known pages
     switch (pageName.toLowerCase()) {
       case "library": return "Library";
       case "community": return "Community";
       case "profile": return "Profile";
-      case "creativestorystudio": return "CreativeStoryStudio"; // Updated from "createbook"
-      // case "storyideas": return "StoryIdeas"; // Removed
+      case "creativestorystudio": return "CreativeStoryStudio";
       case "characters": return "Characters";
-      case "documentation": return "Documentation";
+      case "leaderboard": return "Leaderboard";
+      case "bookwizard": return "BookWizard";
       case "settings": return "Settings";
-      default: return pageName.charAt(0).toUpperCase() + pageName.slice(1); // Capitalize first letter
+      default: return pageName.charAt(0).toUpperCase() + pageName.slice(1);
     }
   };
 
@@ -298,14 +292,13 @@ export default function Layout({ children, currentPageName }) {
 
             <div className="mb-6">
               <h2 className="px-4 text-xs font-semibold text-gray-400 dark:text-gray-300 uppercase tracking-wider mb-2">
-                {t("common.explore")}
+                {t("common.mySpace")}
               </h2>
               <div className="space-y-1">
-                {navItems.explore.map(item => <NavLink key={item.href} item={item} />)}
+                {navItems.mySpace.map(item => <NavLink key={item.href} item={item} />)}
               </div>
             </div>
 
-            {/* New System section */}
             <div className="mb-6">
               <h2 className="px-4 text-xs font-semibold text-gray-400 dark:text-gray-300 uppercase tracking-wider mb-2">
                 {t("common.system")}
@@ -314,7 +307,6 @@ export default function Layout({ children, currentPageName }) {
                 {navItems.system.map(item => <NavLink key={item.href} item={item} />)}
               </div>
             </div>
-            {/* End of New System section */}
           </nav>
 
           <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
@@ -381,14 +373,14 @@ export default function Layout({ children, currentPageName }) {
             >
               <Menu className="h-5 w-5 dark:text-gray-300" />
             </Button>
-            
+
             <Link to={createPageUrl("Home")} className="flex items-center gap-2">
               <div className="bg-gradient-to-br from-purple-600 to-indigo-600 p-1.5 rounded-lg">
                 <BookOpen className="h-5 w-5 text-white" />
               </div>
               <span className="font-bold text-base text-gray-900 dark:text-white">EY.AI Kids</span>
             </Link>
-            
+
             <Link to={createPageUrl("Profile")}>
               <Avatar className="h-8 w-8 border-2 border-white dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
                 {user?.avatar_url ? (
