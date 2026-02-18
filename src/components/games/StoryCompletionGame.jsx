@@ -16,7 +16,6 @@ import {
   calculateStars,
   calculateXP,
   shuffle,
-  pickRandom,
   GAME_PHASES,
   DIFFICULTY_LEVELS,
 } from "./gameUtils";
@@ -145,6 +144,7 @@ export default function StoryCompletionGame({ onBack }) {
   const [answers, setAnswers] = useState([]);
   const [feedback, setFeedback] = useState(null); // 'correct' | 'wrong' | null
   const [storyComplete, setStoryComplete] = useState(false);
+  const [shuffledOptions, setShuffledOptions] = useState([]);
 
   const startGame = useCallback((diff) => {
     const diffConfig = DIFFICULTY_LEVELS[diff];
@@ -171,6 +171,7 @@ export default function StoryCompletionGame({ onBack }) {
     setAnswers([]);
     setFeedback(null);
     setStoryComplete(false);
+    setShuffledOptions(shuffle(story.blanks[0].options));
   };
 
   const selectAnswer = (answer, blankIdx) => {
@@ -216,6 +217,7 @@ export default function StoryCompletionGame({ onBack }) {
         }, 2000);
       } else {
         setCurrentBlankIdx(nextBlank);
+        setShuffledOptions(shuffle(currentStory.blanks[nextBlank].options));
       }
     }, 1000);
   };
@@ -358,7 +360,7 @@ export default function StoryCompletionGame({ onBack }) {
               role="group"
               aria-label="אפשרויות תשובה"
             >
-              {shuffle(currentStory.blanks[currentBlankIdx].options).map((option) => (
+              {shuffledOptions.map((option) => (
                 <motion.div key={option} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                   <Button
                     onClick={() => selectAnswer(option, currentBlankIdx)}

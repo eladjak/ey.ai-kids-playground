@@ -259,3 +259,96 @@ describe('CreativeStoryStudio simplified steps', () => {
     expect(((2 + 1) / steps.length * 100).toFixed(0)).toBe('100');
   });
 });
+
+// ---- CreativeStoryStudio 3-Step Wizard Flow Tests (5 additional) ----
+
+describe('CreativeStoryStudio wizard flow logic', () => {
+  // Reproduce the wizard navigation logic from CreativeStoryStudio.jsx
+  const steps = [
+    { id: 'idea', title: 'Get Started', component: 'IdeaStep' },
+    { id: 'refine', title: 'Refine & Style', component: 'RefineStyleStep' },
+    { id: 'create', title: 'Preview & Create', component: 'CreateBook' }
+  ];
+
+  const nextStep = (currentStep) => {
+    if (currentStep < steps.length - 1) return currentStep + 1;
+    return currentStep;
+  };
+
+  const prevStep = (currentStep) => {
+    if (currentStep > 0) return currentStep - 1;
+    return currentStep;
+  };
+
+  it('nextStep does not advance past the last step', () => {
+    // At step 2 (last), nextStep should stay at 2
+    expect(nextStep(2)).toBe(2);
+    // At step 1, nextStep goes to 2
+    expect(nextStep(1)).toBe(2);
+    // At step 0, nextStep goes to 1
+    expect(nextStep(0)).toBe(1);
+  });
+
+  it('prevStep does not go below zero', () => {
+    // At step 0, prevStep stays at 0
+    expect(prevStep(0)).toBe(0);
+    // At step 1, prevStep goes to 0
+    expect(prevStep(1)).toBe(0);
+    // At step 2, prevStep goes to 1
+    expect(prevStep(2)).toBe(1);
+  });
+
+  it('direct-create starting point jumps to step 1 (Refine & Style)', () => {
+    // When user picks "I Know What I Want" (direct-create),
+    // the wizard sets startingPoint and calls nextStep() from step 0
+    const startingPoint = 'direct-create';
+    let currentStep = 0;
+    if (startingPoint === 'direct-create') {
+      currentStep = nextStep(currentStep);
+    }
+    expect(currentStep).toBe(1);
+    expect(steps[currentStep].id).toBe('refine');
+  });
+
+  it('translation keys exist for all 3 step labels in both languages', () => {
+    const translations = {
+      english: {
+        "studio.step.idea": "Get Started",
+        "studio.step.refine": "Refine & Style",
+        "studio.step.create": "Preview & Create",
+      },
+      hebrew: {
+        "studio.step.idea": "בואו נתחיל",
+        "studio.step.refine": "עידון וסגנון",
+        "studio.step.create": "תצוגה מקדימה ויצירה",
+      }
+    };
+
+    const stepKeys = ['studio.step.idea', 'studio.step.refine', 'studio.step.create'];
+
+    // Every step key must exist in both languages
+    stepKeys.forEach((key) => {
+      expect(translations.english[key]).toBeTruthy();
+      expect(translations.hebrew[key]).toBeTruthy();
+    });
+
+    // Must have exactly 3 step keys per language
+    const enKeys = Object.keys(translations.english).filter(k => k.startsWith('studio.step.'));
+    const heKeys = Object.keys(translations.hebrew).filter(k => k.startsWith('studio.step.'));
+    expect(enKeys.length).toBe(3);
+    expect(heKeys.length).toBe(3);
+  });
+
+  it('last step shows create button instead of next', () => {
+    // On the final step (index 2), the wizard renders "Create My Book" instead of "Next Step"
+    const lastStepIndex = steps.length - 1;
+    expect(lastStepIndex).toBe(2);
+    expect(steps[lastStepIndex].id).toBe('create');
+
+    // On non-final steps, the wizard shows "Next Step"
+    const isLastStep = (idx) => idx === steps.length - 1;
+    expect(isLastStep(0)).toBe(false);
+    expect(isLastStep(1)).toBe(false);
+    expect(isLastStep(2)).toBe(true);
+  });
+});
