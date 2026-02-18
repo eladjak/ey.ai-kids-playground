@@ -7,14 +7,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { 
-  Users2, 
-  Plus, 
-  Search, 
-  Filter, 
-  User, 
+import {
+  Users2,
+  Plus,
+  Search,
+  Filter,
+  User,
   Sparkles,
-  Loader2,
   Grid3x3,
   List
 } from 'lucide-react';
@@ -26,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Characters() {
   const [characters, setCharacters] = useState([]);
@@ -161,11 +161,42 @@ export default function Characters() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" dir={isRTL ? "rtl" : "ltr"}>
-        <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-purple-600" />
-          <p className="text-gray-600 dark:text-gray-300">Loading characters...</p>
+      <div className="max-w-6xl mx-auto p-4 md:p-6" dir={isRTL ? "rtl" : "ltr"} aria-busy="true" role="status">
+        {/* Header skeleton */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-4 w-72" />
+          </div>
+          <Skeleton className="h-10 w-40" />
         </div>
+
+        {/* Search bar skeleton */}
+        <div className="mb-6">
+          <Skeleton className="h-10 w-full max-w-sm" />
+        </div>
+
+        {/* Character card skeletons */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+          {Array(8).fill(0).map((_, index) => (
+            <Card key={index} className="overflow-hidden">
+              <div className="flex flex-col items-center p-4 pb-2">
+                <Skeleton className="h-20 w-20 rounded-full mb-3" />
+                <Skeleton className="h-5 w-28 mb-1" />
+                <Skeleton className="h-3 w-20 mb-2" />
+                <div className="flex gap-1 mb-2">
+                  <Skeleton className="h-5 w-14 rounded-full" />
+                  <Skeleton className="h-5 w-14 rounded-full" />
+                </div>
+              </div>
+              <CardContent className="pt-0 pb-4 px-4">
+                <Skeleton className="h-4 w-full mb-1" />
+                <Skeleton className="h-4 w-5/6" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <span className="sr-only">{isRTL ? "טוען דמויות..." : "Loading characters..."}</span>
       </div>
     );
   }

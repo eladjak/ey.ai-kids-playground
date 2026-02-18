@@ -36,6 +36,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Import the BadgeDisplay component
 import BadgeDisplay from "../components/gamification/BadgeDisplay";
@@ -547,7 +548,25 @@ export default function Home() {
           
           <TabsContent value="featured">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredBooks.map((book) => (
+              {isLoading ? (
+                Array(3).fill(0).map((_, index) => (
+                  <Card key={index} className="overflow-hidden" aria-hidden="true">
+                    <Skeleton className="aspect-square w-full" />
+                    <CardContent className="p-5 space-y-3">
+                      <Skeleton className="h-5 w-3/4" />
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-5/6" />
+                      <div className="flex justify-between items-center pt-1">
+                        <div className="flex gap-2">
+                          <Skeleton className="h-5 w-20 rounded-full" />
+                          <Skeleton className="h-5 w-14 rounded-full" />
+                        </div>
+                        <Skeleton className="h-8 w-24 rounded-md" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : featuredBooks.map((book) => (
                 <Card key={book.id} className="overflow-hidden hover:shadow-lg transition-all duration-300 h-full">
                   <div className="aspect-square bg-gray-100 dark:bg-gray-800">
                     {book.cover_image ? (

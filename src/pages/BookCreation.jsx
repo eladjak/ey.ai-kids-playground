@@ -10,6 +10,8 @@ import { Edit, Eye, Share2, RotateCw, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent } from "@/components/ui/card";
 import { Collaboration } from "@/entities/Collaboration";
 import { User } from "@/entities/User";
 
@@ -527,16 +529,61 @@ export default function BookCreation() {
 
   // --- Render States ---
 
-  // Loading
+  // Loading - skeleton layout matching the book editor structure
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[70vh]">
-        <div className="text-center">
-          <RotateCw className="h-10 w-10 animate-spin text-purple-600 mx-auto mb-4" />
-          <p className="text-lg text-gray-600 dark:text-gray-300">
-            {t("book.creatingMessage")}
-          </p>
+      <div className="max-w-5xl mx-auto py-6 px-4" aria-busy="true" role="status">
+        {/* Header skeleton */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-9 w-9 rounded-md" />
+            <div className="space-y-1">
+              <Skeleton className="h-6 w-48" />
+              <Skeleton className="h-4 w-32" />
+            </div>
+          </div>
+          <Skeleton className="h-5 w-24" />
         </div>
+
+        {/* Tabs skeleton */}
+        <div className="flex gap-2 mb-6">
+          <Skeleton className="h-9 w-24 rounded-md" />
+          <Skeleton className="h-9 w-24 rounded-md" />
+          <Skeleton className="h-9 w-32 rounded-md" />
+        </div>
+
+        {/* Main content skeleton: page nav + editor */}
+        <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-6">
+          {/* Page thumbnails column */}
+          <div className="flex md:flex-col gap-2 overflow-x-auto md:overflow-visible">
+            {Array(5).fill(0).map((_, i) => (
+              <Skeleton key={i} className="h-20 w-14 flex-shrink-0 rounded-md" />
+            ))}
+          </div>
+
+          {/* Editor area */}
+          <div className="space-y-4">
+            <Card>
+              <CardContent className="p-4">
+                <Skeleton className="aspect-[4/3] w-full rounded-md mb-4" />
+                <Skeleton className="h-4 w-full mb-2" />
+                <Skeleton className="h-4 w-5/6 mb-2" />
+                <Skeleton className="h-4 w-4/6" />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4 space-y-3">
+                <Skeleton className="h-5 w-32" />
+                <Skeleton className="h-24 w-full rounded-md" />
+                <div className="flex gap-2 justify-end">
+                  <Skeleton className="h-9 w-28 rounded-md" />
+                  <Skeleton className="h-9 w-28 rounded-md" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+        <span className="sr-only">{t("book.creatingMessage")}</span>
       </div>
     );
   }
