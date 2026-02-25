@@ -142,3 +142,22 @@ Before designing ANY UI component, page, or layout:
 - Framer Motion or CSS transforms only
 - Max 200ms for feedback animations
 - No width/height/top/left animations - use transform/opacity
+
+---
+
+## Agent Tools & MCP (חובה!)
+
+### לפני כתיבת קוד
+- **Context7 MCP**: `resolve-library-id` → `query-docs` - לבדוק API/syntax עדכני
+- **Octocode MCP**: `githubSearchCode` - לחפש implementations אמיתיים ב-GitHub
+- **DeepWiki MCP**: `ask_question` - לשאול על ריפו ספציפי
+
+### לעבודת UI (אם רלוונטי)
+- **Stitch MCP**: `build_site` / `get_screen_code` - לעיצוב לפני קוד
+- **ReactBits**: reactbits.dev - קומפוננטות אנימטיביות
+
+### בסיום כל איטרציה
+1. עדכן PROGRESS.md עם מה שנעשה בפועל
+2. הרץ בדיקות: `npx vitest run` (פרויקט JSX - אין tsc strict)
+3. ודא build עובד לפני commit: `npm run build`
+4. commit עם הודעה: `feat/fix/refactor: תיאור באנגלית`

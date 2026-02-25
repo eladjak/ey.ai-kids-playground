@@ -13,7 +13,7 @@ import { checkAgeAppropriateLanguage } from "@/utils/content-moderation";
 
 import WizardProgress from "@/components/wizard/WizardProgress";
 import TopicStep from "@/components/wizard/TopicStep";
-import CharacterStep from "@/components/wizard/CharacterStep";
+import CharacterPicker from "@/components/shared/CharacterPicker";
 import PreviewEditStep from "@/components/wizard/PreviewEditStep";
 import SaveStep from "@/components/wizard/SaveStep";
 import LoadingOverlay from "@/components/shared/LoadingOverlay";
@@ -36,7 +36,6 @@ export default function BookWizard() {
 
   // Step 2: Characters
   const [selectedCharacters, setSelectedCharacters] = useState([]);
-  const [customCharacterName, setCustomCharacterName] = useState("");
 
   // Step 3: Book data (preview/edit)
   const [bookData, setBookData] = useState({
@@ -200,9 +199,9 @@ The story should be age-appropriate for children ages 5-10, fun, engaging, and e
           childNames: selectedCharacters.map((c) => c.name),
           selectedCharacters: selectedCharacters.map((c) => ({
             name: c.name,
-            age: 5,
-            gender: "neutral",
-            primary_image_url: null
+            age: c.age || 5,
+            gender: c.gender || "neutral",
+            primary_image_url: c.avatar || null
           }))
         }));
       }
@@ -324,11 +323,9 @@ The story should be age-appropriate for children ages 5-10, fun, engaging, and e
         );
       case 1:
         return (
-          <CharacterStep
+          <CharacterPicker
             selectedCharacters={selectedCharacters}
             onCharactersChange={setSelectedCharacters}
-            customCharacterName={customCharacterName}
-            onCustomNameChange={setCustomCharacterName}
             isRTL={isRTL}
             language={currentLanguage}
           />

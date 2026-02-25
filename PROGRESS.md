@@ -994,10 +994,91 @@ Added 5 tests in `newGames.test.js` under `CreativeStoryStudio wizard flow logic
 
 ---
 
+## Completed Work (Session 12 - 2026-02-19)
+
+### Character Entity Integration (Priority #1)
+Integrated Character entities into the BookWizard via a new unified CharacterPicker component.
+
+#### Changes
+- [x] **CharacterPicker** (`src/components/shared/CharacterPicker.jsx`) - New unified component with 3 sources:
+  - "My Characters" - loaded from Character entities via `useCharacterSelector` hook (with avatars)
+  - "Quick Templates" - 10 emoji-based character templates (Hebrew + English)
+  - "Add Custom" - inline custom character name input
+- [x] **useCharacterSelector** (`src/hooks/useCharacterSelector.js`) - New hook:
+  - Loads Character entities via `Character.list()` (sorted by creation date, limit 50)
+  - `entityToSelection()` - converts entity to unified selection format with avatar, age, gender
+  - `templateToSelection()` - converts template to selection format
+- [x] **BookWizard** (`src/pages/BookWizard.jsx`):
+  - Replaced `CharacterStep` import with `CharacterPicker`
+  - Removed `customCharacterName` state (CharacterPicker manages it internally)
+  - Updated `generateOutline` to pass entity data (age, gender, avatar) to book creation
+- [x] **CharacterStep.jsx** - DELETED (orphaned, replaced by CharacterPicker)
+- [x] **BookWizard.test.jsx** - Updated:
+  - Added mock for `useCharacterSelector`
+  - Replaced CharacterStep rendering tests with CharacterPicker tests
+- [x] **CharacterPicker.test.jsx** - NEW (21 tests):
+  - entityToSelection: full entity, missing fields, id collision prevention
+  - CHARACTER_TEMPLATES: count, unique ids, bilingual names, emoji/traits
+  - Selection logic: add, remove, immutability, multiple, specific removal
+  - Custom character: creation shape, empty rejection, whitespace trimming
+  - Template conversion: Hebrew/English, id preservation
+  - BookWizard integration shape: template/entity/custom character formats
+
+#### Results
+- Tests: **191 passing** (8 test files) - +21 new tests
+- Build: passes (vite build exit code 0)
+- CharacterStep.jsx deleted (was 222 lines, now replaced by CharacterPicker 308 lines + useCharacterSelector 64 lines)
+
+### Files Created (1 file)
+| File | Purpose |
+|------|---------|
+| `src/components/shared/CharacterPicker.test.jsx` | 21 tests for CharacterPicker + useCharacterSelector |
+
+### Files Modified (2 files)
+| File | Change |
+|------|--------|
+| `src/pages/BookWizard.jsx` | CharacterStep -> CharacterPicker, removed customCharacterName state |
+| `src/components/wizard/BookWizard.test.jsx` | Updated to test CharacterPicker, added useCharacterSelector mock |
+
+### Files Deleted (1 file)
+| File | Reason |
+|------|--------|
+| `src/components/wizard/CharacterStep.jsx` | Orphaned - replaced by CharacterPicker |
+
+---
+
+## Completed Work (Session 13 - 2026-02-19)
+
+### 10 BookWizard Page Integration Tests
+Added 10 new tests for the BookWizard page component itself (integration-level, not just sub-components):
+
+1. **Renders wizard title after loading** - Verifies "Book Creation Wizard" appears after User.me() resolves
+2. **Renders all 4 step labels** - All progress indicator labels visible (Choose Topic, Characters, Preview & Edit, Create)
+3. **Next button disabled without topic** - Validates canGoNext logic on step 0
+4. **Back button disabled on first step** - Cannot go back from step 0
+5. **Shows TopicStep content with cards** - Topic cards (Animals, Space, Adventure) visible on first step
+6. **Next button enabled after topic selection** - Clicking a topic enables the Next button
+7. **Navigates to characters step** - After topic + Next click, CharacterPicker renders (Brave Hero, Smart Detective)
+8. **Next disabled on characters step without selection** - canGoNext requires at least 1 character
+9. **Renders with ltr direction for English** - dir="ltr" on wrapper div
+10. **Back button navigates from characters to topics** - Round-trip navigation works
+
+Also added Skeleton mock for LoadingOverlay compatibility.
+
+#### Results
+- Tests: **201 passing** (8 test files) - was 191, +10 new
+- Build: passes (vite build exit code 0)
+
+### Files Modified (1 file)
+| File | Change |
+|------|--------|
+| `src/components/wizard/BookWizard.test.jsx` | +10 integration tests for BookWizard page, +Skeleton mock |
+
+---
+
 ## Notes for Next Session
-- Session 10 (2026-02-18): Code review, bug fix, 5 new wizard tests
-- 204 tests passing (8 test files) - up from 199
-- StoryCompletionGame: answer options now stable during render (shuffled once per blank)
-- All 5 games working: Math, Letters, Colors, Word Scramble, Story Completion
-- 3-step CreativeStoryStudio wizard: idea -> refine & style -> preview & create
+- Session 13 (2026-02-19): 10 BookWizard integration tests added
+- 201 tests passing (8 test files)
+- CharacterPicker integrated into BookWizard with entity support
+- Next priorities: Cross-flow awareness, Home page overhaul, StoryIdeas merge
 - Build verified passing

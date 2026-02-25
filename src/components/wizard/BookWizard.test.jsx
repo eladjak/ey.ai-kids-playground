@@ -36,6 +36,31 @@ vi.mock("@/components/ui/use-toast", () => ({
   }),
 }));
 
+vi.mock("@/hooks/useCharacterSelector", () => ({
+  default: () => ({
+    savedCharacters: [],
+    isLoading: false,
+    reload: vi.fn(),
+    entityToSelection: (entity) => ({
+      id: `entity_${entity.id}`,
+      entityId: entity.id,
+      name: entity.name,
+      traits: entity.personality || "",
+      emoji: null,
+      avatar: entity.primary_image_url || null,
+      age: entity.age,
+      gender: entity.gender,
+      isTemplate: false,
+      isEntity: true,
+    }),
+    templateToSelection: vi.fn(),
+  }),
+}));
+
+vi.mock("@/components/ui/skeleton", () => ({
+  Skeleton: ({ className }) => <div className={className} data-testid="skeleton" />,
+}));
+
 vi.mock("framer-motion", () => ({
   motion: {
     div: React.forwardRef(({ children, initial, animate, exit, transition, whileHover, whileTap, ...props }, ref) => (
@@ -57,7 +82,7 @@ vi.mock("framer-motion", () => ({
 // Test imports for individual components
 import WizardProgress from "./WizardProgress";
 import TopicStep, { TOPIC_CARDS } from "./TopicStep";
-import CharacterStep from "./CharacterStep";
+import CharacterPicker from "@/components/shared/CharacterPicker";
 import PreviewEditStep from "./PreviewEditStep";
 import SaveStep from "./SaveStep";
 
@@ -70,6 +95,9 @@ import {
   moderateInput,
   checkContentSafety,
 } from "@/utils/content-moderation";
+
+// Import the BookWizard page for integration tests
+import BookWizardPage from "@/pages/BookWizard";
 
 // === WIZARD PROGRESS TESTS ===
 describe("WizardProgress", () => {
@@ -186,15 +214,13 @@ describe("TopicStep", () => {
   });
 });
 
-// === CHARACTER STEP TESTS ===
-describe("CharacterStep", () => {
+// === CHARACTER PICKER TESTS ===
+describe("CharacterPicker", () => {
   it("renders character templates", () => {
     render(
-      <CharacterStep
+      <CharacterPicker
         selectedCharacters={[]}
         onCharactersChange={vi.fn()}
-        customCharacterName=""
-        onCustomNameChange={vi.fn()}
         isRTL={false}
         language="english"
       />
@@ -207,11 +233,9 @@ describe("CharacterStep", () => {
   it("toggles character selection on click", () => {
     const onCharactersChange = vi.fn();
     render(
-      <CharacterStep
+      <CharacterPicker
         selectedCharacters={[]}
         onCharactersChange={onCharactersChange}
-        customCharacterName=""
-        onCustomNameChange={vi.fn()}
         isRTL={false}
         language="english"
       />
@@ -226,14 +250,12 @@ describe("CharacterStep", () => {
 
   it("shows selected characters count", () => {
     render(
-      <CharacterStep
+      <CharacterPicker
         selectedCharacters={[
-          { id: "brave_hero", name: "Brave Hero", traits: "brave", emoji: "🦸", isTemplate: true },
-          { id: "robot", name: "Robot Friend", traits: "smart", emoji: "🤖", isTemplate: true },
+          { id: "brave_hero", name: "Brave Hero", traits: "brave", emoji: "🦸", isTemplate: true, isEntity: false },
+          { id: "robot", name: "Robot Friend", traits: "smart", emoji: "🤖", isTemplate: true, isEntity: false },
         ]}
         onCharactersChange={vi.fn()}
-        customCharacterName=""
-        onCustomNameChange={vi.fn()}
         isRTL={false}
         language="english"
       />
@@ -243,11 +265,9 @@ describe("CharacterStep", () => {
 
   it("shows add custom character button", () => {
     render(
-      <CharacterStep
+      <CharacterPicker
         selectedCharacters={[]}
         onCharactersChange={vi.fn()}
-        customCharacterName=""
-        onCustomNameChange={vi.fn()}
         isRTL={false}
         language="english"
       />
@@ -503,5 +523,117 @@ describe("Content Filtering for Wizard", () => {
   it("allows normal Hebrew content", () => {
     const result = checkContentSafety("ילד חכם שאוהב חיות");
     expect(result.isClean).toBe(true);
+  });
+});
+
+// === BOOK WIZARD PAGE INTEGRATION TESTS (10 new tests) ===
+describe("BookWizard Page", () => {
+  it("renders wizard title after user loads", async () => {
+    render(<BookWizardPage />);
+    await waitFor(() => {
+      expect(screen.getByText("Book Creation Wizard")).toBeDefined();
+    });
+  });
+
+  it("renders all 4 step labels in progress indicator", async () => {
+    render(<BookWizardPage />);
+    await waitFor(() => {
+      expect(screen.getByText("Choose Topic")).toBeDefined();
+      expect(screen.getByText("Characters")).toBeDefined();
+      expect(screen.getByText("Preview & Edit")).toBeDefined();
+      expect(screen.getByText("Create")).toBeDefined();
+    });
+  });
+
+  it("Next button is disabled when no topic is selected", async () => {
+    render(<BookWizardPage />);
+    await waitFor(() => {
+      expect(screen.getByText("Book Creation Wizard")).toBeDefined();
+    });
+    const nextBtn = screen.getByLabelText("Next step");
+    expect(nextBtn.disabled).toBe(true);
+  });
+
+  it("Back button is disabled on first step", async () => {
+    render(<BookWizardPage />);
+    await waitFor(() => {
+      expect(screen.getByText("Book Creation Wizard")).toBeDefined();
+    });
+    const backBtn = screen.getByLabelText("Back");
+    expect(backBtn.disabled).toBe(true);
+  });
+
+  it("shows TopicStep content with topic cards on first step", async () => {
+    render(<BookWizardPage />);
+    await waitFor(() => {
+      expect(screen.getByText("Animals")).toBeDefined();
+      expect(screen.getByText("Space")).toBeDefined();
+      expect(screen.getByText("Adventure")).toBeDefined();
+    });
+  });
+
+  it("Next button becomes enabled after selecting a topic", async () => {
+    render(<BookWizardPage />);
+    await waitFor(() => {
+      expect(screen.getByText("Animals")).toBeDefined();
+    });
+    fireEvent.click(screen.getByText("Animals"));
+    const nextBtn = screen.getByLabelText("Next step");
+    expect(nextBtn.disabled).toBe(false);
+  });
+
+  it("navigates to characters step when Next is clicked after topic selection", async () => {
+    render(<BookWizardPage />);
+    await waitFor(() => {
+      expect(screen.getByText("Animals")).toBeDefined();
+    });
+    fireEvent.click(screen.getByText("Animals"));
+    fireEvent.click(screen.getByLabelText("Next step"));
+    await waitFor(() => {
+      expect(screen.getByText("Brave Hero")).toBeDefined();
+      expect(screen.getByText("Smart Detective")).toBeDefined();
+    });
+  });
+
+  it("Next button is disabled on characters step with no characters selected", async () => {
+    render(<BookWizardPage />);
+    await waitFor(() => {
+      expect(screen.getByText("Animals")).toBeDefined();
+    });
+    fireEvent.click(screen.getByText("Animals"));
+    fireEvent.click(screen.getByLabelText("Next step"));
+    await waitFor(() => {
+      expect(screen.getByText("Brave Hero")).toBeDefined();
+    });
+    const nextBtn = screen.getByLabelText("Next step");
+    expect(nextBtn.disabled).toBe(true);
+  });
+
+  it("renders with ltr direction for English", async () => {
+    const { container } = render(<BookWizardPage />);
+    await waitFor(() => {
+      expect(screen.getByText("Book Creation Wizard")).toBeDefined();
+    });
+    const wrapper = container.firstChild;
+    expect(wrapper.getAttribute("dir")).toBe("ltr");
+  });
+
+  it("Back button navigates back from characters to topic step", async () => {
+    render(<BookWizardPage />);
+    await waitFor(() => {
+      expect(screen.getByText("Animals")).toBeDefined();
+    });
+    // Go to step 2
+    fireEvent.click(screen.getByText("Animals"));
+    fireEvent.click(screen.getByLabelText("Next step"));
+    await waitFor(() => {
+      expect(screen.getByText("Brave Hero")).toBeDefined();
+    });
+    // Go back
+    fireEvent.click(screen.getByLabelText("Back"));
+    await waitFor(() => {
+      expect(screen.getByText("Animals")).toBeDefined();
+      expect(screen.getByText("Space")).toBeDefined();
+    });
   });
 });
