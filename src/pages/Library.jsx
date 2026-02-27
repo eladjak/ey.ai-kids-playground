@@ -3,10 +3,11 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Book } from "@/entities/Book";
-import { 
-  PlusCircle, 
-  Search, 
-  BookOpen, 
+import { User } from "@/entities/User";
+import {
+  PlusCircle,
+  Search,
+  BookOpen,
   Filter,
   X
 } from "lucide-react";
@@ -138,7 +139,8 @@ export default function Library() {
   const loadBooks = async () => {
     try {
       setIsLoading(true);
-      const loadedBooks = await Book.list();
+      const user = await User.me();
+      const loadedBooks = await Book.filter({ created_by: user.email });
       setBooks(loadedBooks);
     } catch (error) {
       // silently handled

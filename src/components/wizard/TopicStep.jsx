@@ -1,5 +1,5 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Cat,
   Rocket,
@@ -12,8 +12,13 @@ import {
   Heart,
   Music,
   Palette,
-  Globe
+  Globe,
+  PenLine,
+  Lightbulb
 } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { StoryIdea } from "@/entities/StoryIdea";
 
 /**
  * Topic cards data with icons, colors, and Hebrew/English labels.
@@ -140,10 +145,48 @@ const cardVariants = {
 
 /**
  * TopicStep - Step 1 of the wizard: Choose a story topic.
- * Displays visual topic cards in a grid that the user can select.
+ * Displays visual topic cards, "I have my own idea" text input,
+ * and "Use Saved Idea" toggle showing saved StoryIdea list.
  */
-export default function TopicStep({ selectedTopic, onSelectTopic, isRTL, language }) {
+export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, onCustomIdeaChange, isRTL, language }) {
   const isHebrew = language === "hebrew";
+  const [showCustomIdea, setShowCustomIdea] = useState(!!customIdea);
+  const [showSavedIdeas, setShowSavedIdeas] = useState(false);
+  const [savedIdeas, setSavedIdeas] = useState([]);
+  const [isLoadingIdeas, setIsLoadingIdeas] = useState(false);
+
+  useEffect(() => {
+    if (showSavedIdeas && savedIdeas.length === 0) {
+      loadSavedIdeas();
+    }
+  }, [showSavedIdeas]);
+
+  const loadSavedIdeas = async () => {
+    try {
+      setIsLoadingIdeas(true);
+      const ideas = await StoryIdea.list("-created_date", 10);
+      setSavedIdeas(ideas);
+    } catch {
+      // silently handled
+    } finally {
+      setIsLoadingIdeas(false);
+    }
+  };
+
+  const handleSelectCustomIdea = () => {
+    setShowCustomIdea(true);
+    setShowSavedIdeas(false);
+    onSelectTopic("custom");
+  };
+
+  const handleSelectSavedIdea = (idea) => {
+    if (onCustomIdeaChange) {
+      onCustomIdeaChange(idea.description || idea.title);
+    }
+    onSelectTopic("custom");
+    setShowSavedIdeas(false);
+    setShowCustomIdea(true);
+  };
 
   return (
     <div className="space-y-6" dir={isRTL ? "rtl" : "ltr"}>
@@ -174,7 +217,10 @@ export default function TopicStep({ selectedTopic, onSelectTopic, isRTL, languag
               animate="visible"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => onSelectTopic(topic.id)}
+              onClick={() => {
+                setShowCustomIdea(false);
+                onSelectTopic(topic.id);
+              }}
               role="radio"
               aria-checked={isSelected}
               aria-label={isHebrew ? topic.he : topic.en}
@@ -206,7 +252,137 @@ export default function TopicStep({ selectedTopic, onSelectTopic, isRTL, languag
             </motion.button>
           );
         })}
+
+        {/* "I have my own idea" card */}
+        <motion.button
+          custom={TOPIC_CARDS.length}
+          variants={cardVariants}
+          initial="hidden"
+          animate="visible"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleSelectCustomIdea}
+          role="radio"
+          aria-checked={selectedTopic === "custom"}
+          aria-label={isHebrew ? "יש לי רעיון משלי" : "I have my own idea"}
+          className={`
+            flex flex-col items-center justify-center p-4 md:p-6 rounded-2xl
+            transition-all duration-200 cursor-pointer min-h-[120px] md:min-h-[140px]
+            bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-800 dark:to-slate-800
+            ${selectedTopic === "custom"
+              ? "ring-3 ring-purple-500 shadow-lg"
+              : "hover:shadow-md border border-dashed border-gray-300 dark:border-gray-600 hover:border-purple-400"
+            }
+          `}
+        >
+          <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center mb-3">
+            <PenLine className="h-6 w-6 md:h-7 md:w-7 text-white" aria-hidden="true" />
+          </div>
+          <span className="text-sm md:text-base font-semibold text-gray-800 dark:text-gray-200">
+            {isHebrew ? "רעיון משלי" : "My Own Idea"}
+          </span>
+          {selectedTopic === "custom" && (
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="mt-1 w-2 h-2 rounded-full bg-purple-600"
+              aria-hidden="true"
+            />
+          )}
+        </motion.button>
       </div>
+
+      {/* Custom idea text input */}
+      <AnimatePresence>
+        {showCustomIdea && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="bg-purple-50 dark:bg-purple-950/30 rounded-xl p-4 space-y-3">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300 block">
+                {isHebrew ? "ספר לנו על הרעיון שלך:" : "Tell us about your idea:"}
+              </label>
+              <Textarea
+                value={customIdea || ""}
+                onChange={(e) => onCustomIdeaChange?.(e.target.value)}
+                placeholder={isHebrew
+                  ? "למשל: סיפור על דרקון ידידותי שלומד לבשל..."
+                  : "e.g., A story about a friendly dragon who learns to cook..."
+                }
+                dir={isRTL ? "rtl" : "ltr"}
+                rows={3}
+                maxLength={500}
+                className="resize-none bg-white dark:bg-gray-900"
+                aria-label={isHebrew ? "תיאור הרעיון שלך" : "Describe your idea"}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* "Use Saved Idea" toggle */}
+      <div className="flex justify-center">
+        <Button
+          variant="ghost"
+          onClick={() => setShowSavedIdeas(!showSavedIdeas)}
+          className="text-purple-600 dark:text-purple-400 hover:text-purple-700 gap-2"
+          aria-expanded={showSavedIdeas}
+        >
+          <Lightbulb className="h-4 w-4" aria-hidden="true" />
+          {isHebrew ? "השתמש ברעיון שמור" : "Use Saved Idea"}
+        </Button>
+      </div>
+
+      {/* Saved ideas list */}
+      <AnimatePresence>
+        {showSavedIdeas && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="bg-blue-50 dark:bg-blue-950/30 rounded-xl p-4 space-y-3">
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                {isHebrew ? "הרעיונות השמורים שלך:" : "Your saved ideas:"}
+              </h3>
+              {isLoadingIdeas ? (
+                <div className="flex justify-center py-4">
+                  <div className="w-6 h-6 border-2 border-purple-300 border-t-purple-600 rounded-full animate-spin" />
+                </div>
+              ) : savedIdeas.length === 0 ? (
+                <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-3">
+                  {isHebrew ? "אין רעיונות שמורים עדיין" : "No saved ideas yet"}
+                </p>
+              ) : (
+                <div className="space-y-2 max-h-60 overflow-y-auto">
+                  {savedIdeas.map((idea) => (
+                    <motion.button
+                      key={idea.id}
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.99 }}
+                      onClick={() => handleSelectSavedIdea(idea)}
+                      className="w-full text-left p-3 bg-white dark:bg-gray-800 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors border border-gray-200 dark:border-gray-700"
+                    >
+                      <p className="font-medium text-sm text-gray-900 dark:text-white truncate">
+                        {idea.title}
+                      </p>
+                      {idea.description && (
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
+                          {idea.description}
+                        </p>
+                      )}
+                    </motion.button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

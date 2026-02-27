@@ -1,7 +1,265 @@
 # EY.AI Kids Playground - Progress & Analysis Report
 
-## Status: Active - Master Refocus (Back to Core)
-## Last Updated: 2026-02-18
+## Status: Active - Master Plan Phase 5 Complete (ALL PHASES DONE)
+## Last Updated: 2026-02-27
+
+---
+
+## Session 18: Master Plan Phase 5 - Polish & Community (Feb 27, 2026)
+
+### What Was Done
+Executed Phase 5 of the Master Plan - "Make it shine."
+
+**5.1 First-Time Onboarding Wizard**
+- Created `src/components/onboarding/OnboardingWizard.jsx` — 4-step wizard (Welcome, Profile, Language, Topics)
+- 12 topic choices with Hebrew translations
+- Saves preferences to User entity + localStorage
+- Shown on Home page when `onboarding_complete` flag is not set
+- Framer Motion slide transitions, RTL-aware
+
+**5.2 Community Improvements**
+- Fixed N+1 query pattern in Community.jsx: replaced individual Book.get/User.get/Comment.filter per post with batched `batchEnhancePosts()` function (3 parallel batches instead of 3N calls)
+- Fixed like button visual in CommunityPost.jsx: Heart fill now checks `isLiked` prop (current user) instead of `post.likes > 0` (any user)
+- Added report button for non-owner posts (Flag icon in dropdown menu, saves to localStorage)
+- CommunityPost wrapped with React.memo for performance
+
+**5.3 Home Page Overhaul**
+- Removed expensive `GenerateImage` API call for hero image (was calling AI on every page load)
+- Replaced with static gradient hero (purple→indigo→violet) with decorative CSS elements
+- Added "Continue Where You Left Off" section showing draft/generating books with orange-themed cards
+- Wired OnboardingWizard overlay for first-time users
+
+**5.4 Performance**
+- Created `src/components/shared/LazyImage.jsx` — IntersectionObserver-based lazy loading with fade-in transition
+- React.memo on CommunityPost component
+
+### Verification
+- Build: Clean (exit code 0)
+- Tests: 201 passing (8 files)
+- No regressions
+
+### Files Created
+1. `src/components/onboarding/OnboardingWizard.jsx` (220 lines)
+2. `src/components/shared/LazyImage.jsx` (60 lines)
+
+### Files Modified
+3. `src/pages/Home.jsx` — removed AI hero, added drafts section + onboarding
+4. `src/pages/Community.jsx` — N+1 batch fix, pass isLiked/onReport
+5. `src/components/community/CommunityPost.jsx` — like visual fix, report, React.memo
+
+---
+
+## Session 17: Master Plan Phase 4 - Real Gamification (Feb 27, 2026)
+
+### What Was Done
+Executed Phase 4 of the Master Plan - "Make kids WANT to come back."
+
+**4.1 Gamification Engine (useGamification hook)**
+- Created `src/hooks/useGamification.js` — central XP/level/streak/badge manager
+- XP events: book_created (+100), page_edited (+10), character_created (+50), community_share (+30), streak_day (+20), book_completed (+50)
+- Level thresholds: [0, 200, 500, 1000, 2000, 5000, 10000, 20000, 40000, 75000, 150000]
+- 8 badge definitions: First Book, Storyteller, Prolific Author, Character Creator, Community Star, Streak Master, Genre Explorer, Multilingual
+- Streak tracking with localStorage last-active date
+- `awardXP()` returns celebration queue items (XP toast, level-up, new badges)
+- Real data from User + Book + UserBadge entities
+
+**4.2 Badge System (UserBadge entity)**
+- Each badge has conditions checked against real stats (books, characters, genres, languages, streaks, shares)
+- Progress tracking per badge with current/max values
+- Auto-award: when conditions met, creates UserBadge entity record + awards bonus XP
+- Updated BadgeDisplay.jsx with all 8 new badge IDs and Hebrew/English translations
+
+**4.3 Achievement Celebrations**
+- Created `CelebrationModal.jsx` — canvas-confetti animation + level-up modal + badge unlock display
+- Created `XPToast.jsx` — floating +XP animated notification with event labels
+- Created `GamificationOverlay.jsx` — queue manager that renders celebrations in order
+- Spring animations with Framer Motion for celebration modals
+- RTL-aware, Hebrew/English labels throughout
+
+**4.4 Real Leaderboard**
+- Rewrote `Leaderboard.jsx` — replaced ALL mock data (generateMockLeaderboardData) with real entity queries
+- Aggregates books from Book entity by `created_by` email
+- Computes XP, level, books, streaks per user from real data
+- Weekly/Monthly/All-time filtering by date threshold
+- Category sorting: Overall XP, Books Created, Longest Streak
+- Current user highlighted with real stats
+- Loading state added, empty state for no data
+- "Rising Stars" shows count of users active in current period
+
+**4.5 Wired Gamification Into Pages**
+- **Home.jsx**: Added `useGamification` hook, replaced hardcoded XP/badges with real data, added GamificationOverlay
+- **BookWizard.jsx**: Added `useGamification` hook, awards XP on book creation (`awardXP("book_created")`), added GamificationOverlay
+- **Profile.jsx**: Replaced mock `loadAchievementsData()` with real UserBadge entity queries + BADGE_DEFINITIONS, replaced mock `loadRecentActivityData()` with real book history
+
+### Files Created (4)
+1. `src/hooks/useGamification.js` — Central gamification engine (280 lines)
+2. `src/components/gamification/CelebrationModal.jsx` — Level-up/badge modal with confetti (165 lines)
+3. `src/components/gamification/XPToast.jsx` — Floating XP notification (85 lines)
+4. `src/components/gamification/GamificationOverlay.jsx` — Celebration queue manager (40 lines)
+
+### Files Modified (5)
+1. `src/components/gamification/BadgeDisplay.jsx` — Added 8 new badge IDs + translations
+2. `src/pages/Leaderboard.jsx` — Full rewrite with real data (573 → 420 lines)
+3. `src/pages/Profile.jsx` — Replaced mock achievements/activity with real data
+4. `src/pages/Home.jsx` — Wired useGamification, real XP/level/badges, overlay
+5. `src/pages/BookWizard.jsx` — XP award on creation, overlay
+
+### Build & Tests
+- Build: Clean (exit code 0)
+- Tests: 201 passing, 8 files
+- No new test failures
+
+---
+
+## Session 16: Master Plan Phase 3 - Magical Book Reader (Feb 27, 2026)
+
+### What Was Done
+Executed Phase 3 of the Master Plan - "The wow moment — your book comes alive."
+
+**3.1 Page Flip Animation**
+- Created `PageFlip.jsx` component with Framer Motion 3D flip effect
+- `rotateY` spring animation with configurable direction
+- RTL-aware direction flipping
+- `perspective: 1200px` for realistic 3D depth
+
+**3.2 Text-to-Speech Narration**
+- Created `useTTS` hook wrapping Web Speech API (`speechSynthesis`)
+- Language-aware voice selection (Hebrew/English/Yiddish with fallbacks)
+- Word-by-word highlighting synced with `onboundary` events
+- Created `TTSControls.jsx` with Play/Pause/Resume/Stop buttons
+- Speed control: Slow (0.5x) / Normal (1x) / Fast (2x) with +/- buttons
+- TTS auto-stops on page change
+
+**3.3 Enhanced Reader UX**
+- **Reading progress persistence** — `localStorage` saves `book_{id}_page`, restored on load
+- **Fullscreen mode** — Fullscreen API toggle with Escape to exit
+- **Night mode** — Dark amber-tinted reading mode (independent of system dark mode)
+- **Zoom** — 0.75x to 2x zoom with pinch-friendly buttons, click image to zoom in
+- **Reading progress bar** — Gradient bar at top showing position in book
+- **Keyboard navigation** — Left/Right arrows (RTL-aware), Escape exits fullscreen
+- **Swipe gestures** — Touch start/end detection with 50px threshold (RTL-aware)
+- **RTL-aware** — All navigation, layout, and button order respects RTL
+- **Hebrew labels** — All UI text bilingual (Hebrew/English)
+
+**3.4 PDF Export**
+- Created `pdfExporter.js` utility using jsPDF (already in deps)
+- Cover page with gradient background + cover image
+- Content pages with illustration + text layout
+- Cross-origin image loading with fallbacks
+- Progress callback for UI progress bar
+- A4/Letter format support
+- Filename generated from book title (Hebrew-safe)
+
+**Results:**
+- Tests: 201 passing (8 files, 0 failures)
+- Build: passes (vite build exit code 0)
+- Files created: 4 (useTTS.js, pdfExporter.js, PageFlip.jsx, TTSControls.jsx)
+- Files modified: 1 (BookView.jsx — full rewrite)
+
+### Next Steps (Phase 4: Real Gamification)
+1. Gamification engine (useGamification hook, XP/levels/streaks)
+2. Badge system (UserBadge entity integration)
+3. Achievement celebrations (confetti, modals, toasts)
+4. Real leaderboard (replace mock data)
+
+---
+
+## Session 15: Master Plan Phase 2 - Unified Creation Flow (Feb 27, 2026)
+
+### What Was Done
+Executed Phase 2 of the Master Plan - "One flow to rule them all."
+
+**2.1 Sidebar Rename & Reorder**
+- BookWizard promoted to primary "Create Book" / "יצירת ספר" position in sidebar
+- CreativeStoryStudio demoted to secondary "Story Studio" / "סטודיו סיפורים"
+- Characters stays as third item in Create section
+
+**2.2 Enhanced TopicStep (Progressive Disclosure)**
+- Added "I have my own idea" card with text input for custom story descriptions
+- Added "Use Saved Idea" toggle showing StoryIdea list from entity
+- Custom topic flows through to outline generation with `customIdea` content
+- Validation: custom topic requires text content before proceeding
+
+**2.3 Enhanced PreviewEditStep**
+- Added language selector (English/Hebrew/Yiddish) between description and art style
+- Added "Advanced Settings" toggle with collapsible section containing:
+  - Story tone selector (Exciting, Calm, Funny, Educational, Mysterious)
+  - Age range selector (3-5, 5-7, 7-10, 10-12)
+  - Detailed moral message textarea
+
+**2.4 SaveStep Cleanup**
+- Removed 3 disabled "coming soon" placeholder cards (Download, Share, Library)
+- Added real-time creation progress bar with step indicators
+- Progress shows: content check -> outline/cover -> writing story -> illustrations -> saving pages
+- Spinner icon on CTA button during creation
+
+**2.5 Parallel Page Generation**
+- Rewrote `createBook` in BookWizard to use batch parallel generation:
+  1. Story outline + cover image generated in parallel (Promise.all)
+  2. ALL page texts generated in parallel (N InvokeLLM calls)
+  3. ALL illustrations generated in parallel (N GenerateImage calls)
+  4. ALL pages saved in parallel (N Page.create calls)
+- Real-time progress updates at each stage
+- Book status flow: generating -> complete
+- Navigates to BookView (not BookCreation) after generation - full book ready to read
+
+**2.6 CreativeStoryStudio Deprecation Banner**
+- Added upgrade banner at top of CreativeStoryStudio linking to BookWizard
+- RTL-aware with Hebrew/English text
+- Subtle gradient design, non-intrusive
+
+**Results:**
+- Tests: 201 passing (8 files, 0 failures)
+- Build: passes (vite build exit code 0)
+- Files modified: 6 files (Layout.jsx, TopicStep.jsx, PreviewEditStep.jsx, SaveStep.jsx, BookWizard.jsx, CreativeStoryStudio.jsx)
+- No files created or deleted
+
+### Next Steps (Phase 3: Magical Book Reader)
+1. Page flip animation (CSS/Framer Motion 3D transform)
+2. Text-to-Speech narration (Web Speech API)
+3. Enhanced reader UX (progress persistence, fullscreen, zoom)
+4. PDF export (jsPDF + html2canvas)
+
+---
+
+## Session 14: Master Plan Phase 1 - Foundation (Feb 27, 2026)
+
+### What Was Done
+Executed Phase 1 of the Master Plan ("The Best Kids Book Creation App on the Market").
+
+**1.1 Critical Bug Fixes (4 fixes)**
+- **Library user filter** - `Library.jsx` now filters books by `created_by: user.email` (was loading ALL users' books - privacy bug)
+- **Character image bug** - `CharacterEditor.jsx` now safely extracts `.url` from GenerateImage response (was storing full API response object)
+- **Fake sound button removed** - Removed non-functional Volume toggle from `BookView.jsx` (will return in Phase 3 with real TTS)
+- **Like deduplication** - `Community.jsx` now toggles likes (localStorage tracking), prevents infinite likes on same post
+
+**1.2 Dead Code Cleanup (10 files deleted)**
+- Deleted 4 orphaned createBook step components: `ChildInfoStep.jsx`, `LanguageStep.jsx`, `StoryDetailsStep.jsx`, `StoryStyleStep.jsx`
+- Deleted 3 dead i18n files: `LanguageService.jsx`, `TranslationService.jsx`, `i18nContext.jsx` (kept i18nProvider.jsx)
+- Deleted 2 README pseudo-components: `README.jsx`, `README-Development.jsx`
+- Deleted unused hook: `use-mobile.jsx` (inlined into sidebar.jsx)
+
+**1.3 Wire Up Existing Infrastructure**
+- **i18n globally wired** - Added `I18nProvider` to `App.jsx` wrapping the entire app
+- **Code splitting** - All 16 pages now use `React.lazy()` + `Suspense` (Home stays eager-loaded)
+
+**1.4 Core Hooks Created**
+- `useAICall(aiFn, options)` - Loading/error/rate-limiting wrapper for InvokeLLM/GenerateImage
+- `useBook(bookId)` - Loads book + pages with parallel fetching
+- `useCurrentUser()` - Cached user data (replaces scattered `User.me()` calls)
+
+**Results:**
+- Tests: 201 passing (8 files, 0 failures)
+- Build: passes (vite build exit code 0)
+- Files modified: ~8 files
+- Files deleted: 10 files
+- Files created: 3 hooks
+
+### Next Steps (Phase 2: Unified Creation Flow)
+1. Rename BookWizard to "Create Book" in sidebar
+2. Enhanced wizard steps with progressive disclosure
+3. Parallel page generation (batch AI calls)
+4. Deprecate CreativeStoryStudio with redirect banner
 
 ---
 

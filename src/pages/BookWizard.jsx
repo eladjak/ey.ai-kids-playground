@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Book } from "@/entities/Book";
+import { Page } from "@/entities/Page";
 import { User } from "@/entities/User";
 import { createPageUrl } from "@/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,6 +11,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { InvokeLLM, GenerateImage } from "@/integrations/Core";
 import { moderateInput, buildSafetyPromptPrefix } from "@/utils/content-moderation";
 import { checkAgeAppropriateLanguage } from "@/utils/content-moderation";
+import useGamification from "@/hooks/useGamification";
+import GamificationOverlay from "@/components/gamification/GamificationOverlay";
 
 import WizardProgress from "@/components/wizard/WizardProgress";
 import TopicStep from "@/components/wizard/TopicStep";
@@ -22,6 +25,7 @@ import FriendlyError from "@/components/shared/FriendlyError";
 export default function BookWizard() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const gamification = useGamification();
 
   // Wizard state
   const [currentStep, setCurrentStep] = useState(0);
@@ -33,9 +37,13 @@ export default function BookWizard() {
 
   // Step 1: Topic
   const [selectedTopic, setSelectedTopic] = useState(null);
+  const [customIdea, setCustomIdea] = useState("");
 
   // Step 2: Characters
   const [selectedCharacters, setSelectedCharacters] = useState([]);
+
+  // Creation progress
+  const [creationProgress, setCreationProgress] = useState(null);
 
   // Step 3: Book data (preview/edit)
   const [bookData, setBookData] = useState({
@@ -90,7 +98,7 @@ export default function BookWizard() {
   // Navigation
   const canGoNext = () => {
     switch (currentStep) {
-      case 0: return !!selectedTopic;
+      case 0: return selectedTopic === "custom" ? !!customIdea?.trim() : !!selectedTopic;
       case 1: return selectedCharacters.length > 0;
       case 2: return !!bookData.title;
       case 3: return true;
@@ -147,12 +155,16 @@ export default function BookWizard() {
         }
       }
 
-      const safetyPrefix = buildSafetyPromptPrefix("5-10");
+      const safetyPrefix = buildSafetyPromptPrefix(bookData.age_range || "5-10");
       const langInstruction = isHebrew
         ? "יש ליצור את כל התוכן בעברית בלבד. "
         : "Create all content in English only. ";
 
-      const prompt = `${safetyPrefix}${langInstruction}Create a children's story idea about the topic "${selectedTopic}" with characters: ${characterNames}. ${characterTraits ? `Character traits: ${characterTraits}.` : ""} Please provide:
+      const topicDescription = selectedTopic === "custom" && customIdea
+        ? customIdea
+        : selectedTopic;
+
+      const prompt = `${safetyPrefix}${langInstruction}Create a children's story idea about the topic "${topicDescription}" with characters: ${characterNames}. ${characterTraits ? `Character traits: ${characterTraits}.` : ""} Please provide:
 1. A catchy title for the story
 2. A brief description (2-3 sentences)
 3. A moral lesson
@@ -218,11 +230,12 @@ The story should be age-appropriate for children ages 5-10, fun, engaging, and e
     }
   };
 
-  // Create the book
+  // Create the book with parallel page generation
   const createBook = async () => {
     try {
       setIsCreating(true);
       setError(null);
+      setCreationProgress({ label: isHebrew ? "בודק תוכן..." : "Checking content...", percent: 5, step: "" });
 
       // Moderate title and description
       const titleCheck = moderateInput(bookData.title, "title");
@@ -235,36 +248,182 @@ The story should be age-appropriate for children ages 5-10, fun, engaging, and e
           description: isHebrew ? "הכותרת או התיאור מכילים תוכן לא מתאים" : "The title or description contains inappropriate content"
         });
         setIsCreating(false);
+        setCreationProgress(null);
         return;
       }
 
-      // Generate cover image
-      let coverImage = "";
-      try {
-        const coverPrompt = `Children's book cover for "${bookData.title}", featuring characters ${selectedCharacters.map((c) => c.name).join(", ")} in a ${selectedTopic} setting. Illustrated in ${bookData.art_style} style. Bright, colorful, child-friendly.`;
-        const coverResult = await GenerateImage({ prompt: coverPrompt });
-        if (coverResult?.url) {
-          coverImage = coverResult.url;
-        }
-      } catch {
-        // Proceed without cover image
-      }
+      // Step 1: Generate story outline + cover image in parallel
+      setCreationProgress({
+        label: isHebrew ? "יוצר עלילה ועטיפה..." : "Creating story & cover...",
+        percent: 10,
+        step: isHebrew ? "שלב 1 מתוך 4" : "Step 1 of 4"
+      });
+
+      let pageCount = 10;
+      if (bookData.length === "short") pageCount = 6;
+      if (bookData.length === "long") pageCount = 15;
+
+      const characterNames = selectedCharacters.map((c) => c.name).join(", ");
+      const topicDescription = selectedTopic === "custom" && customIdea ? customIdea : selectedTopic;
+      const safetyPrefix = buildSafetyPromptPrefix(bookData.age_range || "5-10");
+      const langInstruction = bookData.language === "hebrew"
+        ? "יש ליצור את כל התוכן בעברית בלבד. "
+        : "Create all content in English only. ";
+
+      const outlinePrompt = `${safetyPrefix}${langInstruction}Create a detailed outline for a children's book:
+- Title: ${bookData.title}
+- Description: ${bookData.description}
+- Topic: ${topicDescription}
+- Characters: ${characterNames}
+- Art style: ${bookData.art_style}
+- Tone: ${bookData.tone || "exciting"}
+- Moral: ${bookData.moral || "positive message"}
+- Age range: ${bookData.age_range || "5-7"}
+
+Create exactly ${pageCount} pages (including a title page).
+For each page, provide a brief description of what happens.
+The story should have a clear beginning, middle, and end.`;
+
+      const coverPrompt = `Children's book cover for "${bookData.title}", featuring characters ${characterNames} in a ${topicDescription} setting. Illustrated in ${bookData.art_style} style. Bright, colorful, child-friendly.`;
+
+      const [outlineResult, coverResult] = await Promise.all([
+        InvokeLLM({
+          prompt: outlinePrompt,
+          response_json_schema: {
+            type: "object",
+            properties: {
+              title: { type: "string" },
+              outline: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    page_number: { type: "number" },
+                    description: { type: "string" }
+                  }
+                }
+              }
+            }
+          }
+        }),
+        GenerateImage({ prompt: coverPrompt }).catch(() => null)
+      ]);
+
+      const coverImage = coverResult?.url || "";
+
+      // Step 2: Create book entity
+      setCreationProgress({
+        label: isHebrew ? "שומר את הספר..." : "Saving book...",
+        percent: 25,
+        step: isHebrew ? "שלב 2 מתוך 4" : "Step 2 of 4"
+      });
 
       const finalBookData = {
         ...bookData,
+        title: outlineResult?.title || bookData.title,
         cover_image: coverImage,
-        status: "draft"
+        status: "generating"
       };
 
       const createdBook = await Book.create(finalBookData);
 
+      // Step 3: Generate ALL page texts in parallel
+      setCreationProgress({
+        label: isHebrew ? "כותב את הסיפור..." : "Writing the story...",
+        percent: 35,
+        step: isHebrew ? "שלב 3 מתוך 4" : "Step 3 of 4"
+      });
+
+      const pages = outlineResult?.outline || [];
+      const pageTextPromises = pages.map((pageOutline, i) => {
+        const prompt = `${safetyPrefix}${langInstruction}Write the text content for page ${i} of a children's story based on this description: "${pageOutline.description}"
+
+Story details:
+- Title: ${finalBookData.title}
+- Main characters: ${characterNames}
+- Art style: ${bookData.art_style}
+- Target age: ${bookData.age_range || "5-7"}
+${i === 0 ? "This is the title page/introduction. Keep it brief and engaging." : ""}
+
+Also create a detailed image generation prompt for this page.
+
+Return as JSON with:
+1. text_content: The page text
+2. image_prompt: Detailed image generation prompt`;
+
+        return InvokeLLM({
+          prompt,
+          response_json_schema: {
+            type: "object",
+            properties: {
+              text_content: { type: "string" },
+              image_prompt: { type: "string" }
+            }
+          }
+        });
+      });
+
+      const pageTexts = await Promise.all(pageTextPromises);
+
+      // Step 4: Generate ALL illustrations in parallel
+      setCreationProgress({
+        label: isHebrew ? "מצייר איורים..." : "Drawing illustrations...",
+        percent: 60,
+        step: isHebrew ? "שלב 4 מתוך 4" : "Step 4 of 4"
+      });
+
+      const imagePromises = pageTexts.map((pageText, i) => {
+        const imagePrompt = `${pageText.image_prompt}. Children's book illustration in ${bookData.art_style} style. Bright, colorful, age-appropriate for ${bookData.age_range || "5-7"} year olds.`;
+        return GenerateImage({ prompt: imagePrompt }).catch(() => null);
+      });
+
+      const imageResults = await Promise.all(imagePromises);
+
+      // Save all pages in parallel
+      setCreationProgress({
+        label: isHebrew ? "שומר עמודים..." : "Saving pages...",
+        percent: 85,
+        step: ""
+      });
+
+      const pageCreatePromises = pageTexts.map((pageText, i) => {
+        return Page.create({
+          book_id: createdBook.id,
+          page_number: i,
+          text_content: pageText.text_content,
+          image_url: imageResults[i]?.url || "",
+          image_prompt: pageText.image_prompt,
+          layout_type: i === 0 ? "cover" : "standard"
+        });
+      });
+
+      await Promise.all(pageCreatePromises);
+
+      // Mark book as complete
+      await Book.update(createdBook.id, { status: "complete" });
+
+      setCreationProgress({
+        label: isHebrew ? "הספר מוכן!" : "Book ready!",
+        percent: 100,
+        step: ""
+      });
+
+      // Award XP for book creation
+      try {
+        await gamification.awardXP("book_created");
+        await gamification.incrementStat("totalBooks");
+      } catch {
+        // gamification is non-critical
+      }
+
       toast({
         title: isHebrew ? "הספר נוצר!" : "Book created!",
-        description: isHebrew ? "הספר שלך נוצר בהצלחה" : "Your book was created successfully",
+        description: isHebrew ? "הספר שלך מוכן לקריאה!" : "Your book is ready to read!",
         className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100"
       });
 
-      navigate(`${createPageUrl("BookCreation")}?id=${createdBook.id}`);
+      // Navigate to BookView instead of BookCreation
+      navigate(`${createPageUrl("BookView")}?id=${createdBook.id}`);
     } catch {
       setError({
         title: isHebrew ? "אופס! לא הצלחנו ליצור את הספר" : "Oops! Couldn't create the book",
@@ -273,6 +432,7 @@ The story should be age-appropriate for children ages 5-10, fun, engaging, and e
       });
     } finally {
       setIsCreating(false);
+      setCreationProgress(null);
     }
   };
 
@@ -317,6 +477,8 @@ The story should be age-appropriate for children ages 5-10, fun, engaging, and e
           <TopicStep
             selectedTopic={selectedTopic}
             onSelectTopic={setSelectedTopic}
+            customIdea={customIdea}
+            onCustomIdeaChange={setCustomIdea}
             isRTL={isRTL}
             language={currentLanguage}
           />
@@ -350,6 +512,7 @@ The story should be age-appropriate for children ages 5-10, fun, engaging, and e
             selectedTopic={selectedTopic}
             isCreating={isCreating}
             onCreateBook={createBook}
+            creationProgress={creationProgress}
             isRTL={isRTL}
             language={currentLanguage}
           />
@@ -462,6 +625,14 @@ The story should be age-appropriate for children ages 5-10, fun, engaging, and e
           overlay
         />
       )}
+
+      {/* Gamification celebrations */}
+      <GamificationOverlay
+        pendingCelebrations={gamification.pendingCelebrations}
+        onDismiss={gamification.dismissCelebration}
+        isRTL={isRTL}
+        isHebrew={isHebrew}
+      />
     </motion.div>
   );
 }

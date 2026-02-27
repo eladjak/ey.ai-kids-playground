@@ -1,48 +1,98 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Book } from "@/entities/Book";
 import { Page } from "@/entities/Page";
+import { User } from "@/entities/User";
 import { createPageUrl } from "@/utils";
-import { 
-  ArrowLeft, 
-  ChevronLeft, 
-  ChevronRight, 
-  Bookmark, 
-  Download, 
-  Share2,
+import {
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
   Home,
-  Volume2,
-  VolumeX,
-  MessageSquare
+  Download,
+  Maximize,
+  Minimize,
+  Moon,
+  Sun,
+  ZoomIn,
+  ZoomOut,
+  Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import PageFlip from "@/components/bookReader/PageFlip";
+import TTSControls from "@/components/bookReader/TTSControls";
+import { useTTS } from "@/hooks/useTTS";
+import { exportBookToPDF } from "@/utils/pdfExporter";
 
 export default function BookView() {
   const [book, setBook] = useState(null);
   const [pages, setPages] = useState([]);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [soundEnabled, setSoundEnabled] = useState(false);
+  const [direction, setDirection] = useState(1);
+  const [currentLanguage, setCurrentLanguage] = useState("english");
+
+  // Enhanced reader state
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [nightMode, setNightMode] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [isExportingPDF, setIsExportingPDF] = useState(false);
+  const [pdfProgress, setPdfProgress] = useState(0);
+
   const { toast } = useToast();
-  
+  const containerRef = useRef(null);
+  const touchStartRef = useRef(null);
+
   // Get book ID from URL
   const urlParams = new URLSearchParams(window.location.search);
   const bookId = urlParams.get("id");
-  
+
+  const isRTL = currentLanguage === "hebrew" || currentLanguage === "yiddish";
+  const isHebrew = currentLanguage === "hebrew";
+
+  // TTS hook
+  const tts = useTTS({ language: currentLanguage });
+
+  // Load book, pages, and restore reading progress
   useEffect(() => {
     if (!bookId) return;
-    
+
     const loadBook = async () => {
       try {
         setLoading(true);
-        const bookData = await Book.get(bookId);
+
+        // Load user language
+        try {
+          const user = await User.me();
+          const lang = user.language || localStorage.getItem("appLanguage") || "english";
+          setCurrentLanguage(lang);
+        } catch {
+          // Use default
+        }
+
+        const [bookData, pagesData] = await Promise.all([
+          Book.get(bookId),
+          Page.filter({ book_id: bookId }, "page_number")
+        ]);
+
         setBook(bookData);
-        
-        // Load pages
-        const pagesData = await Page.filter({ book_id: bookId }, "page_number");
         setPages(pagesData);
-      } catch (error) {
+
+        // Restore reading progress
+        const savedPage = localStorage.getItem(`book_${bookId}_page`);
+        if (savedPage) {
+          const pageIdx = parseInt(savedPage, 10);
+          if (pageIdx >= 0 && pageIdx < pagesData.length) {
+            setCurrentPageIndex(pageIdx);
+          }
+        }
+
+        // Use book language if available
+        if (bookData.language) {
+          setCurrentLanguage(bookData.language);
+        }
+      } catch {
         toast({
           variant: "destructive",
           description: "Failed to load book. Please try again.",
@@ -51,164 +101,421 @@ export default function BookView() {
         setLoading(false);
       }
     };
-    
+
     loadBook();
   }, [bookId]);
-  
+
+  // Save reading progress
+  useEffect(() => {
+    if (bookId && pages.length > 0) {
+      localStorage.setItem(`book_${bookId}_page`, String(currentPageIndex));
+    }
+  }, [bookId, currentPageIndex, pages.length]);
+
+  // Stop TTS when changing pages
+  useEffect(() => {
+    tts.stop();
+  }, [currentPageIndex]);
+
   const currentPage = pages[currentPageIndex];
-  
-  const goToNextPage = () => {
+
+  // Navigation
+  const goToNextPage = useCallback(() => {
     if (currentPageIndex < pages.length - 1) {
-      setCurrentPageIndex(currentPageIndex + 1);
+      setDirection(1);
+      setCurrentPageIndex((prev) => prev + 1);
     }
-  };
-  
-  const goToPreviousPage = () => {
+  }, [currentPageIndex, pages.length]);
+
+  const goToPreviousPage = useCallback(() => {
     if (currentPageIndex > 0) {
-      setCurrentPageIndex(currentPageIndex - 1);
+      setDirection(-1);
+      setCurrentPageIndex((prev) => prev - 1);
+    }
+  }, [currentPageIndex]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+
+      switch (e.key) {
+        case "ArrowRight":
+          isRTL ? goToPreviousPage() : goToNextPage();
+          break;
+        case "ArrowLeft":
+          isRTL ? goToNextPage() : goToPreviousPage();
+          break;
+        case "Escape":
+          if (isFullscreen) toggleFullscreen();
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [goToNextPage, goToPreviousPage, isRTL, isFullscreen]);
+
+  // Swipe gesture support
+  const handleTouchStart = (e) => {
+    touchStartRef.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e) => {
+    if (touchStartRef.current === null) return;
+    const diff = touchStartRef.current - e.changedTouches[0].clientX;
+    const threshold = 50;
+
+    if (Math.abs(diff) > threshold) {
+      if (diff > 0) {
+        // Swipe left
+        isRTL ? goToPreviousPage() : goToNextPage();
+      } else {
+        // Swipe right
+        isRTL ? goToNextPage() : goToPreviousPage();
+      }
+    }
+    touchStartRef.current = null;
+  };
+
+  // Fullscreen
+  const toggleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      containerRef.current?.requestFullscreen?.();
+      setIsFullscreen(true);
+    } else {
+      document.exitFullscreen?.();
+      setIsFullscreen(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
+
+  // Zoom
+  const zoomIn = () => setZoomLevel((prev) => Math.min(prev + 0.25, 2));
+  const zoomOut = () => setZoomLevel((prev) => Math.max(prev - 0.25, 0.75));
+
+  // PDF export
+  const handleExportPDF = async () => {
+    if (!book || pages.length === 0) return;
+    try {
+      setIsExportingPDF(true);
+      setPdfProgress(0);
+      await exportBookToPDF(book, pages, {
+        format: "a4",
+        onProgress: (progress) => setPdfProgress(progress)
+      });
+      toast({
+        title: isHebrew ? "הורדה הושלמה!" : "Download complete!",
+        description: isHebrew ? "הספר הורד כ-PDF" : "The book was downloaded as PDF",
+        className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100"
+      });
+    } catch {
+      toast({
+        variant: "destructive",
+        description: isHebrew ? "שגיאה ביצוא PDF" : "Failed to export PDF"
+      });
+    } finally {
+      setIsExportingPDF(false);
+      setPdfProgress(0);
     }
   };
-  
-  const toggleSound = () => {
-    setSoundEnabled(!soundEnabled);
+
+  // TTS handlers
+  const handleTTSPlay = () => {
+    const text = currentPage?.text_content;
+    if (text) tts.speak(text);
   };
-  
+
+  // Page layout helper
   const getPageLayoutStyle = (layoutType) => {
     switch (layoutType) {
-      case "text_top":
-        return "flex-col";
-      case "text_bottom":
-        return "flex-col-reverse";
-      case "text_left":
-        return "flex-row";
-      case "text_right":
-        return "flex-row-reverse";
-      default:
-        return "flex-col";
+      case "text_top": return "flex-col";
+      case "text_bottom": return "flex-col-reverse";
+      case "text_left": return "flex-row";
+      case "text_right": return "flex-row-reverse";
+      default: return "flex-col";
     }
   };
-  
+
+  // Render text with word highlighting for TTS
+  const renderHighlightedText = (text) => {
+    if (!text) return null;
+
+    if (!tts.isSpeaking || tts.currentWordIndex < 0) {
+      return (
+        <p className="text-lg md:text-xl leading-relaxed">
+          {text}
+        </p>
+      );
+    }
+
+    const words = text.split(/(\s+)/);
+    let wordIdx = 0;
+
+    return (
+      <p className="text-lg md:text-xl leading-relaxed">
+        {words.map((segment, i) => {
+          if (/^\s+$/.test(segment)) return segment;
+
+          const isHighlighted = wordIdx === tts.currentWordIndex;
+          wordIdx++;
+
+          return (
+            <span
+              key={i}
+              className={isHighlighted
+                ? "bg-yellow-200 dark:bg-yellow-700 rounded px-0.5 transition-colors duration-100"
+                : "transition-colors duration-100"
+              }
+            >
+              {segment}
+            </span>
+          );
+        })}
+      </p>
+    );
+  };
+
+  // Night mode classes
+  const nightBg = nightMode ? "bg-gray-950" : "bg-gray-100 dark:bg-gray-900";
+  const nightCard = nightMode ? "bg-gray-900 text-amber-50" : "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200";
+  const nightHeader = nightMode ? "bg-gray-900 border-gray-800" : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700";
+  const nightNav = nightMode ? "bg-gray-900 border-gray-800" : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700";
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-700 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-300">Loading book...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-700 mx-auto" />
+          <p className="mt-4 text-gray-600 dark:text-gray-300">
+            {isHebrew ? "טוען את הספר..." : "Loading book..."}
+          </p>
         </div>
       </div>
     );
   }
-  
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div
+      ref={containerRef}
+      className={`min-h-screen flex flex-col ${nightBg} transition-colors duration-300`}
+      dir={isRTL ? "rtl" : "ltr"}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* Header */}
-      <header className="p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+      <header className={`p-3 border-b ${nightHeader} shadow-sm transition-colors duration-300`}>
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center">
+          <div className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
             <Link to={createPageUrl("Library")}>
-              <Button variant="ghost" size="icon" className="mr-2">
+              <Button variant="ghost" size="icon">
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-              {book?.title || "Book Viewer"}
+            <h1 className={`text-lg font-semibold truncate max-w-[200px] md:max-w-none ${nightMode ? "text-amber-50" : "text-gray-900 dark:text-white"}`}>
+              {book?.title || (isHebrew ? "צפייה בספר" : "Book Viewer")}
             </h1>
           </div>
-          
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" onClick={toggleSound}>
-              {soundEnabled ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}
+
+          <div className={`flex items-center gap-1 ${isRTL ? "flex-row-reverse" : ""}`}>
+            {/* TTS Controls */}
+            {currentPageIndex > 0 && currentPage?.text_content && (
+              <TTSControls
+                isSpeaking={tts.isSpeaking}
+                isPaused={tts.isPaused}
+                rate={tts.rate}
+                onPlay={handleTTSPlay}
+                onPause={tts.pause}
+                onResume={tts.resume}
+                onStop={tts.stop}
+                onRateChange={tts.setRate}
+                isRTL={isRTL}
+                isHebrew={isHebrew}
+              />
+            )}
+
+            {/* Zoom controls */}
+            <Button variant="ghost" size="icon" onClick={zoomOut} disabled={zoomLevel <= 0.75} aria-label="Zoom out">
+              <ZoomOut className="h-4 w-4" />
             </Button>
-            
-            <Link to={`${createPageUrl("Feedback")}?id=${bookId}`}>
-              <Button variant="ghost" size="icon">
-                <MessageSquare className="h-5 w-5" />
-              </Button>
-            </Link>
+            <Button variant="ghost" size="icon" onClick={zoomIn} disabled={zoomLevel >= 2} aria-label="Zoom in">
+              <ZoomIn className="h-4 w-4" />
+            </Button>
+
+            {/* Night mode */}
+            <Button variant="ghost" size="icon" onClick={() => setNightMode(!nightMode)} aria-label={isHebrew ? "מצב לילה" : "Night mode"}>
+              {nightMode ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4" />}
+            </Button>
+
+            {/* Fullscreen */}
+            <Button variant="ghost" size="icon" onClick={toggleFullscreen} aria-label={isHebrew ? "מסך מלא" : "Fullscreen"}>
+              {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
+            </Button>
+
+            {/* PDF Export */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleExportPDF}
+              disabled={isExportingPDF}
+              aria-label={isHebrew ? "הורד PDF" : "Download PDF"}
+            >
+              {isExportingPDF ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+            </Button>
           </div>
         </div>
+
+        {/* PDF progress bar */}
+        {isExportingPDF && (
+          <div className="mt-2 max-w-7xl mx-auto">
+            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+              <div
+                className="bg-purple-600 h-1.5 rounded-full transition-all duration-300"
+                style={{ width: `${pdfProgress}%` }}
+              />
+            </div>
+          </div>
+        )}
       </header>
-      
+
+      {/* Reading progress bar */}
+      <div className="h-1 bg-gray-200 dark:bg-gray-700">
+        <div
+          className="h-1 bg-gradient-to-r from-purple-500 to-indigo-500 transition-all duration-300"
+          style={{ width: pages.length > 1 ? `${(currentPageIndex / (pages.length - 1)) * 100}%` : "0%" }}
+        />
+      </div>
+
       {/* Book content */}
       <main className="flex-1 flex flex-col">
         {book && pages.length > 0 ? (
           <div className="flex-1 flex flex-col">
             {/* Book viewer */}
-            <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-8 bg-gray-100 dark:bg-gray-900">
-              <div className="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-                {currentPageIndex === 0 ? (
-                  // Cover page
-                  <div className="aspect-video md:aspect-[3/2] relative overflow-hidden">
-                    {book.cover_image ? (
-                      <img 
-                        src={book.cover_image} 
-                        alt={book.title}
-                        className="w-full h-full object-cover"
-                      />
+            <div className={`flex-1 flex flex-col items-center justify-center p-4 md:p-8 ${nightBg}`}>
+              <div
+                className="w-full max-w-4xl transition-transform duration-200"
+                style={{ transform: `scale(${zoomLevel})`, transformOrigin: "top center" }}
+              >
+                <PageFlip
+                  pageKey={currentPageIndex}
+                  direction={direction}
+                  isRTL={isRTL}
+                >
+                  <div className={`${nightCard} rounded-lg shadow-lg overflow-hidden transition-colors duration-300`}>
+                    {currentPageIndex === 0 ? (
+                      /* Cover page */
+                      <div className="aspect-video md:aspect-[3/2] relative overflow-hidden">
+                        {book.cover_image ? (
+                          <img
+                            src={book.cover_image}
+                            alt={book.title}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-r from-purple-400 to-blue-500 flex items-center justify-center">
+                            <div className="text-center p-8">
+                              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{book.title}</h2>
+                              {book.child_name && (
+                                <p className="text-xl text-white opacity-80">
+                                  {isHebrew ? `סיפור עבור ${book.child_name}` : `A story for ${book.child_name}`}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-r from-purple-400 to-blue-500 flex items-center justify-center">
-                        <div className="text-center p-8">
-                          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{book.title}</h2>
-                          <p className="text-xl text-white opacity-80">A story for {book.child_name}</p>
+                      /* Regular page */
+                      <div className={`min-h-[60vh] flex ${getPageLayoutStyle(currentPage?.layout_type)}`}>
+                        {/* Text content */}
+                        <div className="p-6 md:p-8 flex-1 flex items-center">
+                          <div>
+                            {renderHighlightedText(currentPage?.text_content)}
+                          </div>
+                        </div>
+
+                        {/* Image */}
+                        <div className={`flex-1 ${nightMode ? "bg-gray-800" : "bg-gray-50 dark:bg-gray-700"}`}>
+                          {currentPage?.image_url ? (
+                            <img
+                              src={currentPage.image_url}
+                              alt={isHebrew ? `עמוד ${currentPageIndex}` : `Page ${currentPageIndex}`}
+                              className="w-full h-full object-cover cursor-zoom-in"
+                              onClick={zoomIn}
+                            />
+                          ) : (
+                            <div className="w-full h-full min-h-[200px] flex items-center justify-center">
+                              <p className="text-gray-400">
+                                {isHebrew ? "אין איור" : "No illustration"}
+                              </p>
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
                   </div>
-                ) : (
-                  // Regular page
-                  <div className={`min-h-[60vh] flex ${getPageLayoutStyle(currentPage?.layout_type)}`}>
-                    {/* Text content */}
-                    <div className="p-6 md:p-8 flex-1 flex items-center">
-                      <div>
-                        <p className="text-lg md:text-xl text-gray-800 dark:text-gray-200 leading-relaxed">
-                          {currentPage?.text_content}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    {/* Image */}
-                    <div className="flex-1 bg-gray-50 dark:bg-gray-700">
-                      {currentPage?.image_url ? (
-                        <img 
-                          src={currentPage.image_url} 
-                          alt={`Page ${currentPageIndex}`}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <p className="text-gray-400">No illustration</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
+                </PageFlip>
               </div>
             </div>
-            
+
             {/* Navigation controls */}
-            <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-              <div className="max-w-4xl mx-auto flex justify-between items-center">
-                <Button 
-                  variant="outline" 
+            <div className={`p-4 border-t ${nightNav} transition-colors duration-300`}>
+              <div className={`max-w-4xl mx-auto flex justify-between items-center ${isRTL ? "flex-row-reverse" : ""}`}>
+                <Button
+                  variant="outline"
                   onClick={goToPreviousPage}
                   disabled={currentPageIndex === 0}
                   className="flex items-center gap-2"
+                  aria-label={isHebrew ? "הקודם" : "Previous"}
                 >
-                  <ChevronLeft className="h-4 w-4" />
-                  Previous
+                  {isRTL ? (
+                    <>
+                      {isHebrew ? "הקודם" : "Previous"}
+                      <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                    </>
+                  ) : (
+                    <>
+                      <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+                      Previous
+                    </>
+                  )}
                 </Button>
-                
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                  Page {currentPageIndex} of {pages.length - 1}
+
+                <div className={`text-sm ${nightMode ? "text-gray-400" : "text-gray-500 dark:text-gray-400"}`}>
+                  {isHebrew
+                    ? `עמוד ${currentPageIndex} מתוך ${pages.length - 1}`
+                    : `Page ${currentPageIndex} of ${pages.length - 1}`
+                  }
                 </div>
-                
-                <Button 
+
+                <Button
                   onClick={goToNextPage}
                   disabled={currentPageIndex === pages.length - 1}
                   className="bg-purple-600 hover:bg-purple-700 flex items-center gap-2"
+                  aria-label={isHebrew ? "הבא" : "Next"}
                 >
-                  Next
-                  <ChevronRight className="h-4 w-4" />
+                  {isRTL ? (
+                    <>
+                      <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+                      {isHebrew ? "הבא" : "Next"}
+                    </>
+                  ) : (
+                    <>
+                      Next
+                      <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
@@ -216,16 +523,19 @@ export default function BookView() {
         ) : (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center p-8">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                Book not found
+              <h2 className={`text-2xl font-bold mb-4 ${nightMode ? "text-amber-50" : "text-gray-900 dark:text-white"}`}>
+                {isHebrew ? "הספר לא נמצא" : "Book not found"}
               </h2>
-              <p className="text-gray-600 dark:text-gray-300 mb-6">
-                The book you're looking for might have been removed or doesn't exist.
+              <p className={`mb-6 ${nightMode ? "text-gray-400" : "text-gray-600 dark:text-gray-300"}`}>
+                {isHebrew
+                  ? "הספר שחיפשת לא נמצא או הוסר."
+                  : "The book you're looking for might have been removed or doesn't exist."
+                }
               </p>
               <Link to={createPageUrl("Library")}>
                 <Button className="bg-purple-600 hover:bg-purple-700">
-                  <Home className="mr-2 h-4 w-4" />
-                  Go to Library
+                  <Home className={`h-4 w-4 ${isRTL ? "ml-2" : "mr-2"}`} />
+                  {isHebrew ? "לספרייה" : "Go to Library"}
                 </Button>
               </Link>
             </div>

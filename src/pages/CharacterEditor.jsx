@@ -175,11 +175,12 @@ export default function CharacterEditor() {
         try {
             const safetyPrefix = buildSafetyPromptPrefix('5-10');
             const prompt = safetyPrefix + `A ${character.gender === 'boy' ? 'boy' : character.gender === 'girl' ? 'girl' : 'child'} character named ${character.name}, age ${character.age}, with ${character.appearance}. Style: ${character.art_style}. Child-friendly, wholesome illustration.`;
-            const imageUrl = await GenerateImage({
+            const response = await GenerateImage({
                 prompt: prompt,
                 quality: 'standard',
                 size: '1024x1024'
             });
+            const imageUrl = typeof response === 'string' ? response : response.url;
             setCharacter(prev => ({ ...prev, primary_image_url: imageUrl }));
             toast({
                 title: "Image generated successfully!",

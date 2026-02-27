@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Book } from "@/entities/Book";
 import { StoryIdea } from "@/entities/StoryIdea";
 import { User } from "@/entities/User";
@@ -12,7 +12,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Wand2,
-  Play
+  Play,
+  ArrowRight,
+  ArrowLeft
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -652,6 +654,32 @@ export default function CreativeStoryStudio() {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
     >
+      {/* Upgrade Banner */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-6"
+      >
+        <Link to={createPageUrl("BookWizard")}>
+          <div className={`bg-gradient-to-r from-purple-100 to-indigo-100 dark:from-purple-900/30 dark:to-indigo-900/30 border border-purple-200 dark:border-purple-800 rounded-xl p-4 flex items-center gap-3 hover:shadow-md transition-shadow cursor-pointer ${isRTL ? "flex-row-reverse" : ""}`}>
+            <Sparkles className="h-5 w-5 text-purple-600 dark:text-purple-400 flex-shrink-0" />
+            <div className="flex-1">
+              <p className="font-semibold text-purple-800 dark:text-purple-200 text-sm">
+                {isRTL ? "שדרגנו! נסה את יצירת הספר החדשה" : "We've upgraded! Try our new Create Book wizard"}
+              </p>
+              <p className="text-purple-600 dark:text-purple-400 text-xs mt-0.5">
+                {isRTL ? "חוויה פשוטה וחכמה יותר ב-4 שלבים" : "A simpler, smarter experience in 4 steps"}
+              </p>
+            </div>
+            {isRTL ? (
+              <ArrowLeft className="h-5 w-5 text-purple-600 dark:text-purple-400 flex-shrink-0" />
+            ) : (
+              <ArrowRight className="h-5 w-5 text-purple-600 dark:text-purple-400 flex-shrink-0" />
+            )}
+          </div>
+        </Link>
+      </motion.div>
+
       {/* Header */}
       <div className={`text-center mb-8 ${isRTL ? 'rtl' : ''}`}>
         <motion.h1

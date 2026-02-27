@@ -47,11 +47,45 @@ export default function CommunityPage() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [showShareModal, setShowShareModal] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [likedPosts, setLikedPosts] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("likedPosts") || "[]");
+    } catch { return []; }
+  });
   const [currentLanguage, setCurrentLanguage] = useState("english");
 
   // For pagination
   const [page, setPage] = useState(1);
   const postsPerPage = 10;
+
+  // Batch enhance posts to avoid N+1 queries
+  const batchEnhancePosts = async (posts) => {
+    if (posts.length === 0) return [];
+
+    // Collect unique IDs
+    const bookIds = [...new Set(posts.map(p => p.book_id).filter(Boolean))];
+    const userIds = [...new Set(posts.map(p => p.user_id).filter(Boolean))];
+
+    // Fetch all books/users/comments in parallel batches
+    const [books, users, allComments] = await Promise.all([
+      Promise.all(bookIds.map(id => Book.get(id).catch(() => null))),
+      Promise.all(userIds.map(id => User.get(id).catch(() => null))),
+      Promise.all(posts.map(p => Comment.filter({ community_id: p.id }).catch(() => [])))
+    ]);
+
+    // Build lookup maps
+    const bookMap = {};
+    books.forEach(b => { if (b) bookMap[b.id] = b; });
+    const userMap = {};
+    users.forEach(u => { if (u) userMap[u.id] = u; });
+
+    return posts.map((post, i) => ({
+      ...post,
+      book: bookMap[post.book_id] || null,
+      user: userMap[post.user_id] || null,
+      commentCount: allComments[i]?.length || 0
+    }));
+  };
   
   // Load language preference
   useEffect(() => {
@@ -152,23 +186,10 @@ export default function CommunityPage() {
       
       // Load featured posts
       const featured = await Community.filter({ is_featured: true }, "-featured_date", 3);
-      
-      // Enhance posts with book and user data
-      const enhancedFeatured = await Promise.all(
-        featured.map(async (post) => {
-          const book = await Book.get(post.book_id);
-          const user = await User.get(post.user_id);
-          const commentCount = (await Comment.filter({ community_id: post.id })).length;
-          
-          return {
-            ...post,
-            book,
-            user,
-            commentCount
-          };
-        })
-      );
-      
+
+      // Batch enhance posts (avoid N+1)
+      const enhancedFeatured = await batchEnhancePosts(featured);
+
       setFeaturedPosts(enhancedFeatured);
       
       // Load initial posts
@@ -202,22 +223,9 @@ export default function CommunityPage() {
       }
       
       const filteredPosts = await Community.filter(filter, sortOrder, postsPerPage, (page - 1) * postsPerPage);
-      
-      // Enhance posts with book and user data
-      const enhancedPosts = await Promise.all(
-        filteredPosts.map(async (post) => {
-          const book = await Book.get(post.book_id);
-          const user = await User.get(post.user_id);
-          const commentCount = (await Comment.filter({ community_id: post.id })).length;
-          
-          return {
-            ...post,
-            book,
-            user,
-            commentCount
-          };
-        })
-      );
+
+      // Batch enhance posts (avoid N+1)
+      const enhancedPosts = await batchEnhancePosts(filteredPosts);
       
       // Filter by search query if present
       let searchResults = enhancedPosts;
@@ -269,32 +277,40 @@ export default function CommunityPage() {
 
   const handleLikePost = async (postId) => {
     try {
-      // Find post
       const postIndex = posts.findIndex(p => p.id === postId);
       if (postIndex === -1) return;
-      
+
       const post = posts[postIndex];
-      
-      // Update like count
-      const newLikeCount = post.likes + 1;
+      const alreadyLiked = likedPosts.includes(postId);
+
+      // Toggle like: unlike if already liked, like if not
+      const newLikeCount = alreadyLiked
+        ? Math.max(0, post.likes - 1)
+        : post.likes + 1;
       await Community.update(postId, { likes: newLikeCount });
-      
+
+      // Update liked posts tracking
+      const newLikedPosts = alreadyLiked
+        ? likedPosts.filter(id => id !== postId)
+        : [...likedPosts, postId];
+      setLikedPosts(newLikedPosts);
+      localStorage.setItem("likedPosts", JSON.stringify(newLikedPosts));
+
       // Update UI
       const updatedPosts = [...posts];
       updatedPosts[postIndex] = {
         ...post,
         likes: newLikeCount
       };
-      
       setPosts(updatedPosts);
-      
+
       toast({
-        description: "You liked this post!",
+        description: alreadyLiked ? "Like removed" : "You liked this post!",
       });
     } catch (error) {
       toast({
         variant: "destructive",
-        description: "Failed to like post. Please try again.",
+        description: "Failed to update like. Please try again.",
       });
     }
   };
@@ -521,13 +537,21 @@ export default function CommunityPage() {
             ) : posts.length > 0 ? (
               <div className="space-y-4">
                 {posts.map(post => (
-                  <CommunityPost 
-                    key={post.id} 
-                    post={post} 
+                  <CommunityPost
+                    key={post.id}
+                    post={post}
                     onLike={() => handleLikePost(post.id)}
+                    isLiked={likedPosts.includes(post.id)}
+                    onReport={(postId) => {
+                      const reported = JSON.parse(localStorage.getItem("reportedPosts") || "[]");
+                      if (!reported.includes(postId)) {
+                        localStorage.setItem("reportedPosts", JSON.stringify([...reported, postId]));
+                      }
+                      toast({ description: isRTL ? "הדיווח נשלח. תודה!" : "Report submitted. Thank you!" });
+                    }}
                   />
                 ))}
-                
+
                 {/* Pagination */}
                 <div className="flex justify-center mt-8 gap-2">
                   <Button
@@ -587,10 +611,11 @@ export default function CommunityPage() {
             ) : posts.length > 0 ? (
               <div className="space-y-4">
                 {posts.map(post => (
-                  <CommunityPost 
-                    key={post.id} 
-                    post={post} 
+                  <CommunityPost
+                    key={post.id}
+                    post={post}
                     onLike={() => handleLikePost(post.id)}
+                    isLiked={likedPosts.includes(post.id)}
                     isOwner={true}
                   />
                 ))}

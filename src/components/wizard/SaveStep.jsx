@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Download, Share2, Sparkles, CheckCircle2 } from "lucide-react";
+import { BookOpen, Sparkles, CheckCircle2, Loader2 } from "lucide-react";
 
 /**
  * SaveStep - Step 4 of the wizard: Save, Download, Share.
@@ -14,6 +14,7 @@ export default function SaveStep({
   selectedTopic,
   isCreating,
   onCreateBook,
+  creationProgress,
   isRTL,
   language
 }) {
@@ -91,58 +92,62 @@ export default function SaveStep({
         </Card>
       </motion.div>
 
-      {/* Action Buttons */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {/* Create Book - Primary CTA */}
-        <motion.div
-          className="sm:col-span-3"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+      {/* Create Book CTA */}
+      <motion.div
+        whileHover={!isCreating ? { scale: 1.02 } : {}}
+        whileTap={!isCreating ? { scale: 0.98 } : {}}
+      >
+        <Button
+          onClick={onCreateBook}
+          disabled={isCreating}
+          className="w-full h-14 text-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 gap-3 shadow-lg"
+          aria-label={isHebrew ? "צור את הספר שלי" : "Create my book"}
         >
-          <Button
-            onClick={onCreateBook}
-            disabled={isCreating}
-            className="w-full h-14 text-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 gap-3 shadow-lg"
-            aria-label={isHebrew ? "צור את הספר שלי" : "Create my book"}
-          >
+          {isCreating ? (
+            <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
+          ) : (
             <Sparkles className="h-5 w-5" aria-hidden="true" />
-            {isCreating
-              ? (isHebrew ? "יוצר את הספר..." : "Creating your book...")
-              : (isHebrew ? "צור את הספר שלי!" : "Create My Book!")
-            }
-          </Button>
+          )}
+          {isCreating
+            ? (isHebrew ? "יוצר את הספר..." : "Creating your book...")
+            : (isHebrew ? "צור את הספר שלי!" : "Create My Book!")
+          }
+        </Button>
+      </motion.div>
+
+      {/* Generation Progress */}
+      {isCreating && creationProgress && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <Card className="border-purple-200 dark:border-purple-800">
+            <CardContent className="p-4 space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-600 dark:text-gray-400">
+                  {creationProgress.label}
+                </span>
+                <span className="font-medium text-purple-600 dark:text-purple-400">
+                  {creationProgress.percent}%
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <motion.div
+                  className="bg-gradient-to-r from-purple-500 to-indigo-500 h-2 rounded-full"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${creationProgress.percent}%` }}
+                  transition={{ duration: 0.3 }}
+                />
+              </div>
+              {creationProgress.step && (
+                <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                  {creationProgress.step}
+                </p>
+              )}
+            </CardContent>
+          </Card>
         </motion.div>
-
-        {/* Download (placeholder) */}
-        <Card className="border-dashed opacity-60 cursor-not-allowed">
-          <CardContent className="p-4 flex flex-col items-center gap-2">
-            <Download className="h-6 w-6 text-gray-400" aria-hidden="true" />
-            <span className="text-sm text-gray-500">
-              {isHebrew ? "הורדה (בקרוב)" : "Download (coming soon)"}
-            </span>
-          </CardContent>
-        </Card>
-
-        {/* Share (placeholder) */}
-        <Card className="border-dashed opacity-60 cursor-not-allowed">
-          <CardContent className="p-4 flex flex-col items-center gap-2">
-            <Share2 className="h-6 w-6 text-gray-400" aria-hidden="true" />
-            <span className="text-sm text-gray-500">
-              {isHebrew ? "שיתוף (בקרוב)" : "Share (coming soon)"}
-            </span>
-          </CardContent>
-        </Card>
-
-        {/* Library link (placeholder) */}
-        <Card className="border-dashed opacity-60 cursor-not-allowed">
-          <CardContent className="p-4 flex flex-col items-center gap-2">
-            <BookOpen className="h-6 w-6 text-gray-400" aria-hidden="true" />
-            <span className="text-sm text-gray-500">
-              {isHebrew ? "ספרייה (בקרוב)" : "Library (coming soon)"}
-            </span>
-          </CardContent>
-        </Card>
-      </div>
+      )}
     </div>
   );
 }

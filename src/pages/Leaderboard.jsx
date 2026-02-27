@@ -2,17 +2,18 @@
 import React, { useState, useEffect } from "react";
 import { User } from "@/entities/User";
 import { Book } from "@/entities/Book";
+import { Community } from "@/entities/Community";
 import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
-import { 
-  Trophy, 
-  Medal, 
-  Award, 
-  ArrowUp, 
-  ArrowDown, 
-  Minus, 
+import { getLevelFromXP } from "@/hooks/useGamification";
+import {
+  Trophy,
+  Medal,
+  Award,
+  ArrowUp,
+  ArrowDown,
+  Minus,
   Search,
-  Filter,
   ChevronLeft,
   ChevronRight,
   CalendarRange,
@@ -21,10 +22,11 @@ import {
   BookOpen,
   Users,
   Shield,
-  Calendar
+  Calendar,
+  Loader2
 } from "lucide-react";
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -44,103 +46,127 @@ export default function Leaderboard() {
   const [timePeriod, setTimePeriod] = useState("weekly");
   const [category, setCategory] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(5);
+  const [totalStoryTellers, setTotalStoryTellers] = useState(0);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setIsLoading(true);
-        
-        // Load user settings
-        const user = await User.me();
-        setCurrentUser(user);
-        
-        const storedLanguage = localStorage.getItem("appLanguage") || "english";
-        setCurrentLanguage(storedLanguage);
-        setIsRTL(storedLanguage === "hebrew" || storedLanguage === "yiddish");
-        
-        // Load mock leaderboard data
-        generateMockLeaderboardData();
-        
-      } catch (error) {
-        // silently handled
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
     loadData();
   }, []);
 
-  // Update leaderboard when filters change
+  // Reload when filters change
   useEffect(() => {
-    generateMockLeaderboardData();
+    if (currentUser) {
+      buildLeaderboard();
+    }
   }, [timePeriod, category]);
 
-  const generateMockLeaderboardData = () => {
-    // Generate different data based on selected period and category
-    const mockUsers = [
-      { id: 1, name: "Sophie K.", avatar: "https://i.pravatar.cc/150?img=29", level: 8, books: 24, xp: 1860, streak: 15, rank_change: 0 },
-      { id: 2, name: "Ethan M.", avatar: "https://i.pravatar.cc/150?img=12", level: 7, books: 19, xp: 1580, streak: 12, rank_change: 2 },
-      { id: 3, name: "Olivia J.", avatar: "https://i.pravatar.cc/150?img=23", level: 6, books: 15, xp: 1250, streak: 8, rank_change: -1 },
-      { id: 4, name: "Daniel S.", avatar: "https://i.pravatar.cc/150?img=52", level: 5, books: 12, xp: 980, streak: 5, rank_change: 1 },
-      { id: 5, name: "Current User", avatar: "", level: 4, books: 8, xp: 720, streak: 7, rank_change: 3, isCurrentUser: true },
-      { id: 6, name: "Maya L.", avatar: "https://i.pravatar.cc/150?img=32", level: 4, books: 7, xp: 650, streak: 4, rank_change: -2 },
-      { id: 7, name: "Noah B.", avatar: "https://i.pravatar.cc/150?img=53", level: 3, books: 6, xp: 540, streak: 3, rank_change: 0 },
-      { id: 8, name: "Emma R.", avatar: "https://i.pravatar.cc/150?img=44", level: 3, books: 5, xp: 480, streak: 6, rank_change: 5 },
-      { id: 9, name: "Liam P.", avatar: "https://i.pravatar.cc/150?img=55", level: 3, books: 5, xp: 450, streak: 2, rank_change: -3 },
-      { id: 10, name: "Ava T.", avatar: "https://i.pravatar.cc/150?img=47", level: 2, books: 4, xp: 390, streak: 1, rank_change: 1 }
-    ];
-    
-    // Create variations for different time periods and categories
-    let selectedData = [...mockUsers];
-    
-    if (timePeriod === "monthly") {
-      // Different order for monthly
-      selectedData = selectedData.map(user => ({
-        ...user,
-        xp: Math.round(user.xp * 3.2), // More XP for longer period
-        books: Math.round(user.books * 1.5),
-        rank_change: Math.floor(Math.random() * 7) - 3
-      }));
-      
-      // Shuffle the order a bit
-      selectedData.sort((a, b) => b.xp - a.xp);
-    } else if (timePeriod === "allTime") {
-      selectedData = selectedData.map(user => ({
-        ...user,
-        xp: Math.round(user.xp * 8.5), // Much more XP for all time
-        books: Math.round(user.books * 3.2),
-        rank_change: 0 // No rank change for all time
-      }));
-      
-      // Add more veteran users at the top for all time
-      selectedData.unshift(
-        { id: 100, name: "James W.", avatar: "https://i.pravatar.cc/150?img=59", level: 12, books: 42, xp: 8950, streak: 24, rank_change: 0 },
-        { id: 101, name: "Charlotte D.", avatar: "https://i.pravatar.cc/150?img=48", level: 11, books: 38, xp: 7600, streak: 18, rank_change: 0 }
-      );
-      
-      // Move current user down for all time
-      const currentUserIndex = selectedData.findIndex(u => u.isCurrentUser);
-      if (currentUserIndex !== -1) {
-        const currentUser = selectedData[currentUserIndex];
-        selectedData.splice(currentUserIndex, 1);
-        selectedData.splice(7, 0, { ...currentUser, xp: 2100, level: 6, books: 12 });
+  const loadData = async () => {
+    try {
+      setIsLoading(true);
+
+      const user = await User.me();
+      setCurrentUser(user);
+
+      const storedLanguage = localStorage.getItem("appLanguage") || "english";
+      setCurrentLanguage(storedLanguage);
+      setIsRTL(storedLanguage === "hebrew" || storedLanguage === "yiddish");
+
+      await buildLeaderboard(user);
+    } catch {
+      // silently handled
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const buildLeaderboard = async (userOverride) => {
+    try {
+      const user = userOverride || currentUser;
+      if (!user) return;
+
+      // Load all books to aggregate per-user stats
+      const allBooks = await Book.list("-created_date", 200);
+
+      // Build date filter based on time period
+      const now = new Date();
+      let dateThreshold = null;
+      if (timePeriod === "weekly") {
+        dateThreshold = new Date(now.getTime() - 7 * 86400000);
+      } else if (timePeriod === "monthly") {
+        dateThreshold = new Date(now.getTime() - 30 * 86400000);
       }
+      // allTime = no filter
+
+      // Filter books by date
+      const filteredBooks = dateThreshold
+        ? allBooks.filter(b => new Date(b.created_date) >= dateThreshold)
+        : allBooks;
+
+      // Aggregate by created_by (email)
+      const userMap = {};
+      for (const book of filteredBooks) {
+        const email = book.created_by;
+        if (!email) continue;
+
+        if (!userMap[email]) {
+          userMap[email] = {
+            email,
+            name: book.created_by_name || email.split("@")[0],
+            avatar: "",
+            books: 0,
+            xp: 0,
+            streak: 0,
+            level: 1,
+            isCurrentUser: email === user.email
+          };
+        }
+        userMap[email].books += 1;
+        userMap[email].xp += 100; // XP_EVENTS.book_created = 100
+      }
+
+      // Enrich current user with real data
+      if (userMap[user.email]) {
+        userMap[user.email].name = user.display_name || user.full_name || user.email.split("@")[0];
+        userMap[user.email].avatar = user.avatar_url || "";
+        userMap[user.email].xp = user.xp || userMap[user.email].xp;
+        userMap[user.email].level = user.level || getLevelFromXP(userMap[user.email].xp);
+        userMap[user.email].streak = user.streak_days || 0;
+      } else {
+        // Current user has no books in this period — still show them
+        userMap[user.email] = {
+          email: user.email,
+          name: user.display_name || user.full_name || user.email.split("@")[0],
+          avatar: user.avatar_url || "",
+          books: 0,
+          xp: user.xp || 0,
+          streak: user.streak_days || 0,
+          level: user.level || 1,
+          isCurrentUser: true
+        };
+      }
+
+      // Convert to array
+      let entries = Object.values(userMap);
+
+      // Compute levels for all entries
+      entries = entries.map(e => ({
+        ...e,
+        level: e.level || getLevelFromXP(e.xp)
+      }));
+
+      // Sort by selected category
+      if (category === "books") {
+        entries.sort((a, b) => b.books - a.books);
+      } else if (category === "streak") {
+        entries.sort((a, b) => b.streak - a.streak);
+      } else {
+        entries.sort((a, b) => b.xp - a.xp);
+      }
+
+      setLeaderboardData(entries);
+      setTotalStoryTellers(entries.length);
+    } catch {
+      // silently handled
     }
-    
-    // Filter by category
-    if (category === "books") {
-      selectedData.sort((a, b) => b.books - a.books);
-    } else if (category === "streak") {
-      selectedData.sort((a, b) => b.streak - a.streak);
-    } else {
-      // Default sort by XP
-      selectedData.sort((a, b) => b.xp - a.xp);
-    }
-    
-    setLeaderboardData(selectedData);
-    setTotalPages(Math.ceil(selectedData.length / 10));
   };
 
   const translations = {
@@ -162,12 +188,12 @@ export default function Leaderboard() {
       "leaderboard.streak": "Streak",
       "leaderboard.search": "Search storytellers...",
       "leaderboard.your.rank": "Your Rank",
-      "leaderboard.your.position": "Your position",
       "leaderboard.top.storytellers": "Top Storytellers",
-      "leaderboard.total.users": "Total Storytellers",
-      "leaderboard.rising.stars": "Rising Stars",
-      "leaderboard.most.improved": "Most Improved",
-      "leaderboard.view.profile": "View Profile"
+      "leaderboard.rising.stars": "Active This Week",
+      "leaderboard.view.profile": "View Profile",
+      "leaderboard.you": "You",
+      "leaderboard.empty": "No storytellers found for this period",
+      "leaderboard.loading": "Loading leaderboard..."
     },
     hebrew: {
       "leaderboard.title": "טבלת המובילים",
@@ -187,12 +213,12 @@ export default function Leaderboard() {
       "leaderboard.streak": "רצף",
       "leaderboard.search": "חפש מספרי סיפורים...",
       "leaderboard.your.rank": "הדירוג שלך",
-      "leaderboard.your.position": "המיקום שלך",
       "leaderboard.top.storytellers": "מספרי הסיפורים המובילים",
-      "leaderboard.total.users": "סה״כ מספרי סיפורים",
-      "leaderboard.rising.stars": "כוכבים עולים",
-      "leaderboard.most.improved": "השיפור הגדול ביותר",
-      "leaderboard.view.profile": "צפה בפרופיל"
+      "leaderboard.rising.stars": "פעילים השבוע",
+      "leaderboard.view.profile": "צפה בפרופיל",
+      "leaderboard.you": "את/ה",
+      "leaderboard.empty": "לא נמצאו מספרי סיפורים לתקופה זו",
+      "leaderboard.loading": "טוען טבלת מובילים..."
     }
   };
 
@@ -202,7 +228,6 @@ export default function Leaderboard() {
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
-    // In a real app, this would trigger a search API call or filter the data
   };
 
   const handleTabChange = (tab) => {
@@ -218,36 +243,13 @@ export default function Leaderboard() {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    // In a real app, this would load the relevant page of data
   };
 
-  // Rank trend indicator component
-  const RankTrend = ({ change }) => {
-    if (change > 0) {
-      return (
-        <div className="flex items-center text-green-500 text-xs">
-          <ArrowUp className="h-3 w-3 mr-1" />
-          <span>{change}</span>
-        </div>
-      );
-    } else if (change < 0) {
-      return (
-        <div className="flex items-center text-red-500 text-xs">
-          <ArrowDown className="h-3 w-3 mr-1" />
-          <span>{Math.abs(change)}</span>
-        </div>
-      );
-    } else {
-      return (
-        <div className="flex items-center text-gray-400 text-xs">
-          <Minus className="h-3 w-3 mr-1" />
-          <span>0</span>
-        </div>
-      );
-    }
+  const RankTrend = ({ rank }) => {
+    // For real data we show the rank number, no fake trends
+    return null;
   };
 
-  // Get rank decoration based on position
   const getRankDecoration = (rank) => {
     switch (rank) {
       case 1:
@@ -273,15 +275,26 @@ export default function Leaderboard() {
     }
   };
 
-  const filteredLeaderboard = leaderboardData.filter(user => 
+  const filteredLeaderboard = leaderboardData.filter(user =>
     user.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Get current user data
-  const currentUserEntry = leaderboardData.find(user => user.isCurrentUser);
+  const currentUserEntry = leaderboardData.find(u => u.isCurrentUser);
   const currentUserRank = currentUserEntry ? leaderboardData.indexOf(currentUserEntry) + 1 : null;
 
+  const totalPages = Math.max(1, Math.ceil(filteredLeaderboard.length / 10));
   const paginatedData = filteredLeaderboard.slice((currentPage - 1) * 10, currentPage * 10);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-[400px]">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-purple-600 mx-auto mb-4" />
+          <p className="text-gray-600 dark:text-gray-300">{t("leaderboard.loading")}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto pb-12" dir={isRTL ? "rtl" : "ltr"}>
@@ -331,13 +344,10 @@ export default function Leaderboard() {
                       </Badge>
                     </div>
                   </div>
-                  <div>
-                    <RankTrend change={currentUserEntry.rank_change} />
-                  </div>
                 </div>
               ) : (
                 <div className="text-center py-2">
-                  <p>Login to see your rank</p>
+                  <p>{currentLanguage === "hebrew" ? "התחבר כדי לראות את הדירוג שלך" : "Login to see your rank"}</p>
                 </div>
               )}
             </CardContent>
@@ -347,7 +357,7 @@ export default function Leaderboard() {
             <CardContent className="p-4 text-center">
               <Trophy className="h-8 w-8 text-amber-500 mx-auto mb-2" />
               <h3 className="font-semibold text-lg">{t("leaderboard.top.storytellers")}</h3>
-              <p className="text-2xl font-bold mt-1">{leaderboardData.length}</p>
+              <p className="text-2xl font-bold mt-1">{totalStoryTellers}</p>
             </CardContent>
           </Card>
 
@@ -355,7 +365,7 @@ export default function Leaderboard() {
             <CardContent className="p-4 text-center">
               <Users className="h-8 w-8 text-green-500 mx-auto mb-2" />
               <h3 className="font-semibold text-lg">{t("leaderboard.rising.stars")}</h3>
-              <p className="text-2xl font-bold mt-1">24</p>
+              <p className="text-2xl font-bold mt-1">{leaderboardData.filter(u => u.books > 0).length}</p>
             </CardContent>
           </Card>
         </div>
@@ -404,167 +414,169 @@ export default function Leaderboard() {
             </Tabs>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full table-auto">
-              <thead className="bg-gray-50 dark:bg-gray-800/50">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t("leaderboard.rank")}
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t("leaderboard.user")}
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t("leaderboard.level")}
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t("leaderboard.xp")}
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t("leaderboard.books")}
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t("leaderboard.streak")}
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                {paginatedData.map((user, index) => {
-                  const actualRank = (currentPage - 1) * 10 + index + 1;
-                  const rankDecoration = getRankDecoration(actualRank);
-                  
-                  return (
-                    <tr 
-                      key={user.id} 
-                      className={user.isCurrentUser ? 'bg-purple-50 dark:bg-purple-900/10' : 'hover:bg-gray-50 dark:hover:bg-gray-800/60'}
-                    >
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-2">
+          {paginatedData.length === 0 ? (
+            <div className="p-12 text-center">
+              <Trophy className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500">{t("leaderboard.empty")}</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full table-auto">
+                <thead className="bg-gray-50 dark:bg-gray-800/50">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {t("leaderboard.rank")}
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {t("leaderboard.user")}
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {t("leaderboard.level")}
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {t("leaderboard.xp")}
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {t("leaderboard.books")}
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {t("leaderboard.streak")}
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                  {paginatedData.map((entry, index) => {
+                    const actualRank = (currentPage - 1) * 10 + index + 1;
+                    const rankDecoration = getRankDecoration(actualRank);
+
+                    return (
+                      <tr
+                        key={entry.email}
+                        className={entry.isCurrentUser ? 'bg-purple-50 dark:bg-purple-900/10' : 'hover:bg-gray-50 dark:hover:bg-gray-800/60'}
+                      >
+                        <td className="px-4 py-4 whitespace-nowrap">
                           <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${rankDecoration.className}`}>
                             {rankDecoration.icon || actualRank}
                           </div>
-                          <RankTrend change={user.rank_change} />
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <Avatar className="h-8 w-8 mr-3">
-                            {user.avatar ? (
-                              <AvatarImage src={user.avatar} alt={user.name} />
-                            ) : (
-                              <AvatarFallback className="bg-gradient-to-br from-purple-500 to-indigo-500 text-white">
-                                {user.name.charAt(0)}
-                              </AvatarFallback>
-                            )}
-                          </Avatar>
-                          <div className="flex flex-col">
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <Avatar className="h-8 w-8 mr-3">
+                              {entry.avatar ? (
+                                <AvatarImage src={entry.avatar} alt={entry.name} />
+                              ) : (
+                                <AvatarFallback className="bg-gradient-to-br from-purple-500 to-indigo-500 text-white">
+                                  {entry.name.charAt(0).toUpperCase()}
+                                </AvatarFallback>
+                              )}
+                            </Avatar>
                             <div className="flex items-center">
-                              <span className="font-medium">{user.name}</span>
-                              {user.isCurrentUser && (
+                              <span className="font-medium">{entry.name}</span>
+                              {entry.isCurrentUser && (
                                 <Badge className="ml-2 text-xs bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
                                   {t("leaderboard.you")}
                                 </Badge>
                               )}
                             </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-1">
-                          <Shield className="h-4 w-4 text-purple-500" />
-                          <span className="font-medium">{user.level}</span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap font-medium">
-                        {user.xp.toLocaleString()} XP
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-1">
-                          <BookOpen className="h-4 w-4 text-blue-500" />
-                          <span>{user.books}</span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-1">
-                          <CalendarRange className="h-4 w-4 text-green-500" />
-                          <span>{user.streak} {timePeriod !== "allTime" ? (currentLanguage === "hebrew" ? "ימים" : "days") : ""}</span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 text-right whitespace-nowrap">
-                        <Link to={createPageUrl("Profile")}>
-                          <Button variant="ghost" size="sm" className="h-8 text-xs text-purple-600 dark:text-purple-400">
-                            {t("leaderboard.view.profile")}
-                          </Button>
-                        </Link>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          <div className="flex items-center gap-1">
+                            <Shield className="h-4 w-4 text-purple-500" />
+                            <span className="font-medium">{entry.level || 1}</span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap font-medium">
+                          {(entry.xp || 0).toLocaleString()} XP
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          <div className="flex items-center gap-1">
+                            <BookOpen className="h-4 w-4 text-blue-500" />
+                            <span>{entry.books}</span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          <div className="flex items-center gap-1">
+                            <CalendarRange className="h-4 w-4 text-green-500" />
+                            <span>{entry.streak} {timePeriod !== "allTime" ? (currentLanguage === "hebrew" ? "ימים" : "days") : ""}</span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 text-right whitespace-nowrap">
+                          <Link to={createPageUrl("Profile")}>
+                            <Button variant="ghost" size="sm" className="h-8 text-xs text-purple-600 dark:text-purple-400">
+                              {t("leaderboard.view.profile")}
+                            </Button>
+                          </Link>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
 
-          <div className="p-4 border-t border-gray-100 dark:border-gray-700">
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious 
-                    onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                    className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
-                  />
-                </PaginationItem>
-                
-                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                  let pageNumber;
-                  
-                  // Logic to show the right range of page numbers
-                  if (totalPages <= 5) {
-                    pageNumber = i + 1;
-                  } else if (currentPage <= 3) {
-                    pageNumber = i + 1;
-                  } else if (currentPage >= totalPages - 2) {
-                    pageNumber = totalPages - 4 + i;
-                  } else {
-                    pageNumber = currentPage - 2 + i;
-                  }
-                  
-                  return (
-                    <PaginationItem key={i}>
-                      <PaginationLink
-                        isActive={pageNumber === currentPage}
-                        onClick={() => handlePageChange(pageNumber)}
-                      >
-                        {pageNumber}
-                      </PaginationLink>
-                    </PaginationItem>
-                  );
-                })}
-                
-                {totalPages > 5 && currentPage < totalPages - 2 && (
-                  <>
-                    <PaginationItem>
-                      <PaginationEllipsis />
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink onClick={() => handlePageChange(totalPages)}>
-                        {totalPages}
-                      </PaginationLink>
-                    </PaginationItem>
-                  </>
-                )}
-                
-                <PaginationItem>
-                  <PaginationNext 
-                    onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
+          {totalPages > 1 && (
+            <div className="p-4 border-t border-gray-100 dark:border-gray-700">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                      className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                    />
+                  </PaginationItem>
+
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNumber;
+                    if (totalPages <= 5) {
+                      pageNumber = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNumber = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNumber = totalPages - 4 + i;
+                    } else {
+                      pageNumber = currentPage - 2 + i;
+                    }
+
+                    return (
+                      <PaginationItem key={i}>
+                        <PaginationLink
+                          isActive={pageNumber === currentPage}
+                          onClick={() => handlePageChange(pageNumber)}
+                        >
+                          {pageNumber}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  })}
+
+                  {totalPages > 5 && currentPage < totalPages - 2 && (
+                    <>
+                      <PaginationItem>
+                        <PaginationEllipsis />
+                      </PaginationItem>
+                      <PaginationItem>
+                        <PaginationLink onClick={() => handlePageChange(totalPages)}>
+                          {totalPages}
+                        </PaginationLink>
+                      </PaginationItem>
+                    </>
+                  )}
+
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
         </div>
       </div>
     </div>

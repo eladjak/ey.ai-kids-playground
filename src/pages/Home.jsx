@@ -4,8 +4,11 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { User } from "@/entities/User";
 import { Book } from "@/entities/Book";
-import { GenerateImage, InvokeLLM } from "@/integrations/Core";
+import { InvokeLLM } from "@/integrations/Core";
 import { buildSafetyPromptPrefix } from "@/utils/content-moderation";
+import useGamification from "@/hooks/useGamification";
+import GamificationOverlay from "@/components/gamification/GamificationOverlay";
+import OnboardingWizard from "@/components/onboarding/OnboardingWizard";
 import { 
   BookOpen, 
   Sparkles, 
@@ -42,30 +45,30 @@ import { Skeleton } from "@/components/ui/skeleton";
 import BadgeDisplay from "../components/gamification/BadgeDisplay";
 
 export default function Home() {
+  const gamification = useGamification();
+  const [showOnboarding, setShowOnboarding] = useState(
+    () => !localStorage.getItem("onboarding_complete")
+  );
   const [currentLanguage, setCurrentLanguage] = useState("english");
   const [isLoading, setIsLoading] = useState(true);
-  const [isHeroLoading, setIsHeroLoading] = useState(true);
-  const [heroImage, setHeroImage] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("featured");
   const [recentBooks, setRecentBooks] = useState([]);
   const [featuredBooks, setFeaturedBooks] = useState([]);
+  const [draftBooks, setDraftBooks] = useState([]);
   const [dailyPrompt, setDailyPrompt] = useState(null);
   const [isPromptLoading, setIsPromptLoading] = useState(false);
   const [userData, setUserData] = useState({
     full_name: "Guest",
     avatar_url: "",
     level: 1,
-    xp: 120,
+    xp: 0,
     nextLevelXp: 200,
     completedBooks: 0,
     streakDays: 0,
-    badges: [
-      { id: "first_book", name: "First Book", description: "Created your first book", icon: BookOpen },
-      { id: "storyteller", name: "Storyteller", description: "Created 3 different stories", icon: Sparkles },
-    ],
-    notifications: 2
+    badges: [],
+    notifications: 0
   });
   
   const searchInputRef = useRef(null);
@@ -87,56 +90,37 @@ export default function Home() {
     const loadUserData = async () => {
       try {
         const user = await User.me();
-        const userBooks = await Book.filter({ created_by: user.email }, "-created_date", 6);
-        
-        setUserData({
-          ...userData,
+        const userBooks = await Book.filter({ created_by: user.email }, "-created_date", 10);
+
+        // Separate drafts/generating from completed books
+        const drafts = userBooks.filter(b => b.status !== "complete");
+        const completedBooks = userBooks.filter(b => b.status === "complete");
+
+        setUserData(prev => ({
+          ...prev,
           ...user,
-          completedBooks: userBooks.length,
-          full_name: user.display_name || user.full_name
-        });
-        
-        setRecentBooks(userBooks);
-        
-        if (userBooks.length === 0) {
+          completedBooks: completedBooks.length,
+          full_name: user.display_name || user.full_name,
+          level: user.level || 1,
+          xp: user.xp || 0,
+          nextLevelXp: user.next_level_xp || 200,
+          streakDays: user.streak_days || 0,
+          badges: (gamification.badges || [])
+            .filter(b => b.earned)
+            .map(b => ({ id: b.id, name: b.nameEn }))
+        }));
+
+        setDraftBooks(drafts.slice(0, 3));
+        setRecentBooks(completedBooks.slice(0, 6));
+
+        if (completedBooks.length === 0) {
           createSampleFeaturedBooks();
         } else {
-          setFeaturedBooks(userBooks.slice(0, 3));
+          setFeaturedBooks(completedBooks.slice(0, 3));
         }
-        
+
       } catch (error) {
         createSampleFeaturedBooks();
-      }
-    };
-    
-    const generateHeroImage = async () => {
-      try {
-        setIsHeroLoading(true);
-        
-        const cachedImage = localStorage.getItem("homeHeroImage");
-        const cacheTimestamp = localStorage.getItem("homeHeroImageTimestamp");
-        const now = Date.now();
-        const oneDayMs = 24 * 60 * 60 * 1000;
-        
-        if (cachedImage && cacheTimestamp && (now - parseInt(cacheTimestamp)) < oneDayMs) {
-          setHeroImage(cachedImage);
-          setIsHeroLoading(false);
-          return;
-        }
-        
-        const result = await GenerateImage({
-          prompt: "A magical, colorful illustration of children reading a glowing storybook with fantasy characters emerging from its pages, digital art style, cheerful, inspiring, for children's book app, vibrant colors, soft lighting, high quality detailed illustration"
-        });
-        
-        if (result && result.url) {
-          setHeroImage(result.url);
-          localStorage.setItem("homeHeroImage", result.url);
-          localStorage.setItem("homeHeroImageTimestamp", now.toString());
-        }
-      } catch (error) {
-        setHeroImage("https://images.unsplash.com/photo-1511949860663-92c5c57d48a7?w=800&auto=format&fit=crop&q=80&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
-      } finally {
-        setIsHeroLoading(false);
       }
     };
     
@@ -198,7 +182,7 @@ export default function Home() {
     const initializeApp = async () => {
       setIsLoading(true);
       await loadUserData();
-      await Promise.all([generateHeroImage(), generateDailyPrompt()]);
+      await generateDailyPrompt();
       setIsLoading(false);
     };
     
@@ -303,7 +287,11 @@ export default function Home() {
       "home.dailyPrompt.use": "Use This Prompt",
       "home.dailyPrompt.loading": "Loading inspiration...",
       "home.dailyPrompt.explore": "Explore more ideas",
-      "home.promptSaved": "Prompt saved! Go to Story Ideas to use it."
+      "home.promptSaved": "Prompt saved! Go to Story Ideas to use it.",
+      "home.drafts.title": "Continue Where You Left Off",
+      "home.drafts.continue": "Continue",
+      "home.drafts.status.draft": "Draft",
+      "home.drafts.status.generating": "Generating..."
     },
     hebrew: {
       "home.welcome": "ברוך שובך,",
@@ -334,7 +322,11 @@ export default function Home() {
       "home.dailyPrompt.use": "השתמש ברעיון",
       "home.dailyPrompt.loading": "טוען רעיונות...",
       "home.dailyPrompt.explore": "גלה עוד רעיונות",
-      "home.promptSaved": "הרעיון נשמר! עבור לדף רעיונות לסיפורים כדי להשתמש בו."
+      "home.promptSaved": "הרעיון נשמר! עבור לדף רעיונות לסיפורים כדי להשתמש בו.",
+      "home.drafts.title": "המשך מהמקום שהפסקת",
+      "home.drafts.continue": "המשך",
+      "home.drafts.status.draft": "טיוטה",
+      "home.drafts.status.generating": "...בהפקה"
     }
   };
   
@@ -441,20 +433,18 @@ export default function Home() {
         </div>
 
         <Card className="mt-6 overflow-hidden">
-          <div className="relative min-h-[300px] sm:min-h-[400px] md:min-h-[450px] lg:min-h-[500px] bg-gradient-to-br from-purple-700 to-indigo-700">
-            {isHeroLoading ? (
-              <div className="absolute inset-0 flex items-center justify-center bg-purple-700/50">
-                <Sparkles className="h-10 w-10 text-white/50 animate-bounce" />
-              </div>
-            ) : (
-              <img 
-                src={heroImage} 
-                alt="Children's stories illustration" 
-                className="w-full h-full object-cover opacity-75"
-              />
-            )}
-            
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-900/70 to-transparent flex items-center">
+          <div className="relative min-h-[220px] sm:min-h-[280px] md:min-h-[320px] bg-gradient-to-br from-purple-700 via-indigo-600 to-violet-800">
+            {/* Decorative elements instead of AI-generated image */}
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute top-8 right-12 w-32 h-32 bg-white/5 rounded-full" />
+              <div className="absolute bottom-4 right-1/4 w-20 h-20 bg-white/5 rounded-full" />
+              <div className="absolute top-1/3 right-1/3 w-48 h-48 bg-purple-500/10 rounded-full blur-2xl" />
+              <Sparkles className="absolute top-6 right-8 h-6 w-6 text-white/20" />
+              <BookOpen className="absolute bottom-8 right-16 h-8 w-8 text-white/10" />
+              <Star className="absolute top-12 right-1/3 h-5 w-5 text-amber-300/20" />
+            </div>
+
+            <div className="relative flex items-center min-h-[220px] sm:min-h-[280px] md:min-h-[320px]">
               <div className="p-4 md:p-6 lg:p-8 max-w-xl">
                 <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-3 leading-tight">
                   {t("home.title")}
@@ -462,7 +452,7 @@ export default function Home() {
                 <p className="text-purple-100 text-sm md:text-base lg:text-lg mb-6 leading-relaxed">
                   {t("home.subtitle")}
                 </p>
-                
+
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Link to={createPageUrl("CreativeStoryStudio")} className="w-full sm:w-auto">
                     <Button className="w-full sm:w-auto bg-white text-purple-700 hover:bg-purple-50">
@@ -471,8 +461,8 @@ export default function Home() {
                     </Button>
                   </Link>
                   <Link to={createPageUrl("Library")} className="w-full sm:w-auto">
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       className="w-full sm:w-auto text-white border-white bg-purple-700/40 hover:bg-purple-600/50 backdrop-blur-sm border-opacity-70 shadow-sm"
                     >
                       <BookOpen className="h-4 w-4 mr-2" />
@@ -533,6 +523,45 @@ export default function Home() {
           </CardContent>
         </Card>
       </section>
+
+      {/* Continue where you left off */}
+      {draftBooks.length > 0 && (
+        <section className="px-4 md:px-6 lg:px-8 pb-2">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <Clock className="h-5 w-5 text-orange-500" />
+            {t("home.drafts.title")}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {draftBooks.map(book => (
+              <Card key={book.id} className="overflow-hidden border-orange-200 dark:border-orange-900/40 bg-orange-50/50 dark:bg-orange-950/10">
+                <CardContent className="p-4 flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center flex-shrink-0">
+                    {book.cover_image ? (
+                      <img src={book.cover_image} alt={book.title} className="w-full h-full object-cover rounded-lg" />
+                    ) : (
+                      <BookOpen className="h-6 w-6 text-orange-400" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium text-sm truncate">{book.title || "Untitled Book"}</h3>
+                    <Badge variant="outline" className="text-xs mt-1 bg-orange-100 text-orange-700 border-orange-200">
+                      {book.status === "generating"
+                        ? t("home.drafts.status.generating")
+                        : t("home.drafts.status.draft")}
+                    </Badge>
+                  </div>
+                  <Link to={`${createPageUrl("BookCreation")}?id=${book.id}`}>
+                    <Button size="sm" variant="outline" className="border-orange-300 text-orange-700 hover:bg-orange-100">
+                      <Play className="h-3 w-3 mr-1" />
+                      {t("home.drafts.continue")}
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="p-4 md:p-6 lg:p-8">
         <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
@@ -759,6 +788,22 @@ export default function Home() {
           </CardContent>
         </Card>
       </section>
+
+      {/* Gamification celebrations overlay */}
+      <GamificationOverlay
+        pendingCelebrations={gamification.pendingCelebrations}
+        onDismiss={gamification.dismissCelebration}
+        isRTL={isRTL}
+        isHebrew={currentLanguage === "hebrew"}
+      />
+
+      {/* First-time onboarding wizard */}
+      {showOnboarding && (
+        <OnboardingWizard
+          onComplete={() => setShowOnboarding(false)}
+          userName={userData.full_name !== "Guest" ? userData.full_name : ""}
+        />
+      )}
     </div>
   );
 }

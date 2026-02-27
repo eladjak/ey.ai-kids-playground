@@ -1,22 +1,24 @@
-import App from './pages/App';
-import BookCreation from './pages/BookCreation';
-import BookView from './pages/BookView';
-import BookWizard from './pages/BookWizard';
-import CharacterEditor from './pages/CharacterEditor';
-import Characters from './pages/Characters';
-import Community from './pages/Community';
-import CommunityPost from './pages/CommunityPost';
-import CreativeStoryStudio from './pages/CreativeStoryStudio';
-import Feedback from './pages/Feedback';
+import { lazy } from 'react';
 import Home from './pages/Home';
-import Leaderboard from './pages/Leaderboard';
-import Library from './pages/Library';
-import Profile from './pages/Profile';
-import Settings from './pages/Settings';
-import StoryIdeas from './pages/StoryIdeas';
-import index from './pages/index';
 import __Layout from './Layout.jsx';
 
+// Lazy-loaded pages for code splitting
+const App = lazy(() => import('./pages/App'));
+const BookCreation = lazy(() => import('./pages/BookCreation'));
+const BookView = lazy(() => import('./pages/BookView'));
+const BookWizard = lazy(() => import('./pages/BookWizard'));
+const CharacterEditor = lazy(() => import('./pages/CharacterEditor'));
+const Characters = lazy(() => import('./pages/Characters'));
+const Community = lazy(() => import('./pages/Community'));
+const CommunityPost = lazy(() => import('./pages/CommunityPost'));
+const CreativeStoryStudio = lazy(() => import('./pages/CreativeStoryStudio'));
+const Feedback = lazy(() => import('./pages/Feedback'));
+const Leaderboard = lazy(() => import('./pages/Leaderboard'));
+const Library = lazy(() => import('./pages/Library'));
+const Profile = lazy(() => import('./pages/Profile'));
+const Settings = lazy(() => import('./pages/Settings'));
+const StoryIdeas = lazy(() => import('./pages/StoryIdeas'));
+const index = lazy(() => import('./pages/index'));
 
 export const PAGES = {
     "App": App,

@@ -4,12 +4,14 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { User } from "@/entities/User";
 import { Book } from "@/entities/Book";
-import { 
-  User as UserIcon, 
-  Settings, 
-  Edit, 
-  Camera, 
-  Trophy, 
+import { UserBadge } from "@/entities/UserBadge";
+import useGamification, { BADGE_DEFINITIONS } from "@/hooks/useGamification";
+import {
+  User as UserIcon,
+  Settings,
+  Edit,
+  Camera,
+  Trophy,
   BookOpen,
   ChevronRight,
   Star,
@@ -230,8 +232,8 @@ export default function Profile() {
         setCurrentLanguage(interfaceLanguage);
         setIsRTL(interfaceLanguage === "hebrew" || interfaceLanguage === "yiddish");
         
-        loadAchievementsData();
-        loadRecentActivityData();
+        loadAchievementsData(user, allBooks);
+        loadRecentActivityData(allBooks);
         
       } catch (error) {
         showToast("Failed to load profile", "error");
@@ -243,152 +245,71 @@ export default function Profile() {
     loadUserData();
   }, []);
 
-  const loadAchievementsData = () => {
-    const sampleAchievements = [
-      {
-        id: "first_book",
-        title: "First Book Creator",
-        description: "Create your first book",
-        icon: BookOpen,
-        category: "books",
-        completed: true,
-        progress: 100,
-        max_progress: 1,
-        unlocked_date: "2023-12-15",
-        xp_reward: 50,
-        translations: {
-          en: {
-            title: "First Book Creator",
-            description: "Create your first book"
-          },
-          he: {
-            title: "יוצר הספר הראשון",
-            description: "צור את הספר הראשון שלך"
-          }
-        }
-      },
-      {
-        id: "storyteller",
-        title: "Storyteller",
-        description: "Create 5 different books",
-        icon: Sparkles,
-        category: "books",
-        completed: false,
-        progress: 3,
-        max_progress: 5,
-        xp_reward: 100,
-        translations: {
-          en: {
-            title: "Storyteller",
-            description: "Create 5 different books"
-          },
-          he: {
-            title: "מספר stories",
-            description: "צור 5 ספרים שונים"
-          }
-        }
-      },
-      {
-        id: "daily_streak",
-        title: "Consistent Creator",
-        description: "Access the app for 7 consecutive days",
-        icon: Calendar,
-        category: "activity",
-        completed: true,
-        progress: 7,
-        max_progress: 7,
-        unlocked_date: "2023-12-25",
-        xp_reward: 75,
-        translations: {
-          en: {
-            title: "Consistent Creator",
-            description: "Access the app for 7 consecutive days"
-          },
-          he: {
-            title: "יוצר עקבי",
-            description: "גש לאפליקציה 7 ימים ברציפות"
-          }
-        }
-      },
-      {
-        id: "genre_master",
-        title: "Genre Explorer",
-        description: "Create books in 3 different genres",
-        icon: BookOpen,
-        category: "creativity",
-        completed: false,
-        progress: 2,
-        max_progress: 3,
-        xp_reward: 80,
-        translations: {
-          en: {
-            title: "Genre Explorer",
-            description: "Create books in 3 different genres" 
-          },
-          he: {
-            title: "חוקר ז'אנרים",
-            description: "צור ספרים ב-3 ז'אנרים שונים"
-          }
-        }
-      },
-      {
-        id: "community_contributor",
-        title: "Community Star",
-        description: "Share 3 books with the community",
-        icon: Star,
-        category: "community",
-        completed: false,
-        progress: 1,
-        max_progress: 3,
-        xp_reward: 100,
-        translations: {
-          en: {
-            title: "Community Star",
-            description: "Share 3 books with the community"
-          },
-          he: {
-            title: "כוכב הקהילה",
-            description: "שתף 3 ספרים עם הקהילה"
-          }
-        }
+  const loadAchievementsData = async (user, books) => {
+    try {
+      // Load earned badges from UserBadge entity
+      let userBadges = [];
+      try {
+        userBadges = await UserBadge.filter({ user_id: user.id || user.email });
+      } catch {
+        // UserBadge may not have data yet
       }
-    ];
-    
-    setAchievements(sampleAchievements);
+
+      // Compute stats for badge progress
+      const genres = new Set(books.map(b => b.genre).filter(Boolean));
+      const languages = new Set(books.map(b => b.language).filter(Boolean));
+      const stats = {
+        totalBooks: books.length,
+        totalCharacters: user.total_characters || 0,
+        communityShares: user.community_shares || 0,
+        streakDays: user.streak_days || 0,
+        uniqueGenres: genres.size,
+        uniqueLanguages: languages.size
+      };
+
+      // Build achievements from BADGE_DEFINITIONS with real progress
+      const achievementData = Object.values(BADGE_DEFINITIONS).map(def => {
+        const earned = userBadges.find(b => b.badge_id === def.id);
+        const isCompleted = !!earned || def.check(stats);
+        const currentProgress = def.progress(stats);
+
+        return {
+          id: def.id,
+          title: def.nameEn,
+          description: def.descEn,
+          icon: BookOpen,
+          category: def.category,
+          completed: isCompleted,
+          progress: currentProgress,
+          max_progress: def.maxProgress,
+          unlocked_date: earned?.earned_date || null,
+          xp_reward: def.xpReward,
+          translations: {
+            en: { title: def.nameEn, description: def.descEn },
+            he: { title: def.nameHe, description: def.descHe }
+          }
+        };
+      });
+
+      setAchievements(achievementData);
+    } catch {
+      setAchievements([]);
+    }
   };
 
-  const loadRecentActivityData = () => {
-    const sampleActivity = [
-      {
-        id: "act1",
-        type: "book_created",
-        title: "Created a new book",
-        description: "The Adventures of Luna",
-        date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2),
-        icon: BookOpen,
-        iconColor: "text-blue-500"
-      },
-      {
-        id: "act2",
-        type: "achievement_unlocked",
-        title: "Unlocked achievement",
-        description: "Consistent Creator",
-        date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3),
-        icon: Award,
-        iconColor: "text-amber-500"
-      },
-      {
-        id: "act3",
-        type: "level_up",
-        title: "Leveled up to",
-        description: "Level 2 Storyteller",
-        date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5),
-        icon: Trophy,
-        iconColor: "text-purple-500"
-      }
-    ];
-    
-    setRecentActivity(sampleActivity);
+  const loadRecentActivityData = (books) => {
+    // Build activity from real book data
+    const activities = books.slice(0, 10).map((book, i) => ({
+      id: `book_${book.id}`,
+      type: "book_created",
+      title: currentLanguage === "hebrew" ? "נוצר ספר חדש" : "Created a new book",
+      description: book.title || (currentLanguage === "hebrew" ? "ספר ללא שם" : "Untitled Book"),
+      date: new Date(book.created_date || Date.now()),
+      icon: BookOpen,
+      iconColor: "text-blue-500"
+    }));
+
+    setRecentActivity(activities);
   };
 
   const formatDate = (dateString) => {

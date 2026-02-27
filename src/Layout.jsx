@@ -108,7 +108,7 @@ export default function Layout({ children, currentPageName }) {
       "common.system": "System",
       "common.myProfile": "My Profile",
       "common.characters": "My Characters",
-      "common.quickCreate": "Quick Create",
+      "common.storyStudio": "Story Studio",
       "common.leaderboard": "Leaderboard"
     },
     hebrew: {
@@ -126,7 +126,7 @@ export default function Layout({ children, currentPageName }) {
       "common.system": "מערכת",
       "common.myProfile": "הפרופיל שלי",
       "common.characters": "הדמויות שלי",
-      "common.quickCreate": "יצירה מהירה",
+      "common.storyStudio": "סטודיו סיפורים",
       "common.leaderboard": "טבלת מובילים"
     }
   };
@@ -142,8 +142,8 @@ export default function Layout({ children, currentPageName }) {
       { href: "/Community", label: t("common.community"), icon: Users, pageName: "Community" },
     ],
     create: [
-      { href: "/CreativeStoryStudio", label: t("common.createBook"), icon: PlusCircle, pageName: "CreativeStoryStudio" },
-      { href: "/BookWizard", label: t("common.quickCreate"), icon: Sparkles, pageName: "BookWizard" },
+      { href: "/BookWizard", label: t("common.createBook"), icon: Sparkles, pageName: "BookWizard" },
+      { href: "/CreativeStoryStudio", label: t("common.storyStudio"), icon: PlusCircle, pageName: "CreativeStoryStudio" },
       { href: "/Characters", label: t("common.characters"), icon: Users2, pageName: "Characters" },
     ],
     mySpace: [
@@ -214,7 +214,7 @@ export default function Layout({ children, currentPageName }) {
       "Settings": "הגדרות",
       "BookCreation": "יצירת ספר",
       "BookView": "צפייה בספר",
-      "BookWizard": "יצירה מהירה",
+      "BookWizard": "יצירת ספר",
       "Feedback": "משוב",
       "CommunityPost": "פרסום קהילה",
       "Characters": "דמויות",

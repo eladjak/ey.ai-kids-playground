@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from "@/utils";
 import { format } from 'date-fns';
@@ -6,13 +6,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { 
-  Heart, 
-  MessageSquare, 
-  BookOpen, 
+import {
+  Heart,
+  MessageSquare,
+  BookOpen,
   Tag,
   MoreHorizontal,
-  ExternalLink
+  ExternalLink,
+  Flag
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -21,7 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export default function CommunityPost({ post, onLike, isOwner = false }) {
+function CommunityPost({ post, onLike, isLiked = false, isOwner = false, onReport }) {
   if (!post || !post.book) return null;
   
   const truncate = (text, maxLength = 150) => {
@@ -69,23 +70,30 @@ export default function CommunityPost({ post, onLike, isOwner = false }) {
               </div>
               
               {/* Actions menu */}
-              {isOwner && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <MoreHorizontal className="h-5 w-5" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
-                      Edit Post
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <MoreHorizontal className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {isOwner && (
+                    <>
+                      <DropdownMenuItem>Edit Post</DropdownMenuItem>
+                      <DropdownMenuItem className="text-red-600">Delete Post</DropdownMenuItem>
+                    </>
+                  )}
+                  {!isOwner && onReport && (
+                    <DropdownMenuItem
+                      onClick={() => onReport(post.id)}
+                      className="text-orange-600"
+                    >
+                      <Flag className="h-4 w-4 mr-2" />
+                      Report
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="text-red-600">
-                      Delete Post
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             
             {/* Post title and content */}
@@ -132,7 +140,7 @@ export default function CommunityPost({ post, onLike, isOwner = false }) {
                 className="flex items-center gap-1 text-gray-600 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400"
                 onClick={() => onLike(post.id)}
               >
-                <Heart className={`h-4 w-4 ${post.likes > 0 ? 'fill-red-500 text-red-500' : ''}`} />
+                <Heart className={`h-4 w-4 ${isLiked ? 'fill-red-500 text-red-500' : ''}`} />
                 <span>{post.likes || 0}</span>
               </Button>
               
@@ -158,3 +166,5 @@ export default function CommunityPost({ post, onLike, isOwner = false }) {
     </Card>
   );
 }
+
+export default memo(CommunityPost);
