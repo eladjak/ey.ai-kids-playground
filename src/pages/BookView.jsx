@@ -4,6 +4,7 @@ import { Book } from "@/entities/Book";
 import { Page } from "@/entities/Page";
 import { User } from "@/entities/User";
 import { createPageUrl } from "@/utils";
+import { useI18n } from "@/components/i18n/i18nProvider";
 import {
   ArrowLeft,
   ChevronLeft,
@@ -26,12 +27,13 @@ import { useTTS } from "@/hooks/useTTS";
 import { exportBookToPDF } from "@/utils/pdfExporter";
 
 export default function BookView() {
+  const { language: i18nLanguage, isRTL: i18nIsRTL } = useI18n();
   const [book, setBook] = useState(null);
   const [pages, setPages] = useState([]);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [direction, setDirection] = useState(1);
-  const [currentLanguage, setCurrentLanguage] = useState("english");
+  const [currentLanguage, setCurrentLanguage] = useState(i18nLanguage);
 
   // Enhanced reader state
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -62,13 +64,14 @@ export default function BookView() {
       try {
         setLoading(true);
 
-        // Load user language
+        // Load user language (fall back to i18n context language)
         try {
           const user = await User.me();
-          const lang = user.language || localStorage.getItem("appLanguage") || "english";
+          const lang = user.language || i18nLanguage || "english";
           setCurrentLanguage(lang);
         } catch {
-          // Use default
+          // Use i18n context default
+          setCurrentLanguage(i18nLanguage || "english");
         }
 
         const [bookData, pagesData] = await Promise.all([

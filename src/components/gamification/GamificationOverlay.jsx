@@ -23,6 +23,7 @@ export default function GamificationOverlay({
         celebration={current}
         onDismiss={onDismiss}
         isHebrew={isHebrew}
+        isRTL={isRTL}
       />
     );
   }

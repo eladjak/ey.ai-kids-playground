@@ -28,7 +28,7 @@ export default class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       // Detect language from localStorage to determine direction
       const storedLanguage = typeof window !== 'undefined'
-        ? localStorage.getItem('appLanguage') || 'hebrew'
+        ? localStorage.getItem('language') || 'hebrew'
         : 'hebrew';
       const isRTL = storedLanguage === 'hebrew' || storedLanguage === 'yiddish';
       const isHebrew = storedLanguage === 'hebrew';

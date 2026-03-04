@@ -355,18 +355,19 @@ export function saveParentalControls(controls) {
 // --- PIN Code Protection ---
 
 /**
- * Hash a PIN code using a simple but effective approach.
- * Uses btoa encoding with a salt for basic protection.
- * (In production, use bcrypt/argon2 on the server side.)
+ * Hash a PIN code using Web Crypto API SHA-256.
+ * This is a one-way hash — cannot be reversed unlike btoa/base64.
  *
  * @param {string} pin - The 4-6 digit PIN code
- * @returns {string} Hashed PIN
+ * @returns {Promise<string>} Hex-encoded SHA-256 hash
  */
-export function hashPin(pin) {
+export async function hashPin(pin) {
   if (typeof pin !== 'string' || pin.length < 4) return '';
-  // Simple hash: reverse + salt + base64
-  const salted = `eyai_kids_${pin.split('').reverse().join('')}_${pin.length}`;
-  return btoa(salted);
+  const encoder = new TextEncoder();
+  const data = encoder.encode(pin + '_eyai_salt');
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 /**
@@ -380,35 +381,69 @@ export function isPinSet() {
 /**
  * Set or update the parental PIN code.
  * @param {string} pin - 4-6 digit PIN
- * @returns {boolean} Whether the PIN was set successfully
+ * @returns {Promise<boolean>} Whether the PIN was set successfully
  */
-export function setParentalPin(pin) {
+export async function setParentalPin(pin) {
   if (typeof pin !== 'string' || !/^\d{4,6}$/.test(pin)) {
     return false;
   }
-  localStorage.setItem('parentalPin', hashPin(pin));
+  const hashed = await hashPin(pin);
+  localStorage.setItem('parentalPin', hashed);
   return true;
 }
 
 /**
  * Verify a PIN against the stored hash.
  * @param {string} pin - PIN to verify
- * @returns {boolean} Whether the PIN matches
+ * @returns {Promise<boolean>} Whether the PIN matches
  */
-export function verifyParentalPin(pin) {
+export async function verifyParentalPin(pin) {
   if (typeof pin !== 'string') return false;
   const storedHash = localStorage.getItem('parentalPin');
   if (!storedHash) return true; // No PIN set = always pass
-  return hashPin(pin) === storedHash;
+  const inputHash = await hashPin(pin);
+  return inputHash === storedHash;
 }
 
 /**
  * Remove the parental PIN (requires correct PIN first).
  * @param {string} currentPin - Current PIN for verification
- * @returns {boolean} Whether the PIN was removed
+ * @returns {Promise<boolean>} Whether the PIN was removed
  */
-export function removeParentalPin(currentPin) {
-  if (!verifyParentalPin(currentPin)) return false;
+export async function removeParentalPin(currentPin) {
+  if (!(await verifyParentalPin(currentPin))) return false;
   localStorage.removeItem('parentalPin');
   return true;
+}
+
+/**
+ * Sanitize user-generated input before using it in the UI or sending to AI.
+ * Strips HTML tags, script injection patterns, and enforces a max length.
+ *
+ * @param {string} input - Raw user input
+ * @param {number} [maxLength=500] - Maximum allowed length after sanitization
+ * @returns {string} Sanitized and length-limited string
+ */
+export function sanitizeUserInput(input, maxLength = 500) {
+  if (typeof input !== 'string') return '';
+
+  // Trim leading/trailing whitespace
+  let sanitized = input.trim();
+
+  // Strip HTML tags
+  sanitized = sanitized.replace(/<[^>]*>/g, '');
+
+  // Remove javascript: URIs and inline event handlers
+  sanitized = sanitized.replace(/javascript:/gi, '');
+  sanitized = sanitized.replace(/on\w+\s*=/gi, '');
+
+  // Remove null bytes and other dangerous control characters
+  sanitized = sanitized.replace(/\0/g, '');
+  sanitized = sanitized.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+
+  // Collapse excessive whitespace (preserve single newlines)
+  sanitized = sanitized.replace(/[^\S\n]{2,}/g, ' ');
+
+  // Enforce maximum length
+  return sanitized.slice(0, maxLength);
 }

@@ -67,8 +67,8 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
     }, 300);
   };
 
-  const handlePinUnlock = () => {
-    if (verifyParentalPin(pinInput)) {
+  const handlePinUnlock = async () => {
+    if (await verifyParentalPin(pinInput)) {
       setIsUnlocked(true);
       setPinError(false);
       setPinInput("");
@@ -78,7 +78,7 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
     }
   };
 
-  const handleSetPin = () => {
+  const handleSetPin = async () => {
     setPinSetupError("");
     if (!/^\d{4,6}$/.test(newPin)) {
       setPinSetupError(t("קוד PIN חייב להיות 4-6 ספרות", "PIN must be 4-6 digits"));
@@ -88,7 +88,7 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
       setPinSetupError(t("קודי ה-PIN לא תואמים", "PIN codes do not match"));
       return;
     }
-    const success = setParentalPin(newPin);
+    const success = await setParentalPin(newPin);
     if (success) {
       setHasPinSet(true);
       setIsSettingPin(false);
@@ -102,8 +102,8 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
     }
   };
 
-  const handleRemovePin = () => {
-    const success = removeParentalPin(removeConfirmPin);
+  const handleRemovePin = async () => {
+    const success = await removeParentalPin(removeConfirmPin);
     if (success) {
       setHasPinSet(false);
       setIsRemovingPin(false);

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trophy, Award, Star, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,51 @@ export default function CelebrationModal({
   isHebrew = false
 }) {
   const hasFireRef = useRef(false);
+  const modalRef = useRef(null);
+
+  // Focus trap: keep focus inside modal while open
+  const handleKeyDown = useCallback((e) => {
+    if (!modalRef.current) return;
+
+    if (e.key === "Escape") {
+      onDismiss();
+      return;
+    }
+
+    if (e.key !== "Tab") return;
+
+    const focusable = modalRef.current.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const firstFocusable = focusable[0];
+    const lastFocusable = focusable[focusable.length - 1];
+
+    if (e.shiftKey) {
+      if (document.activeElement === firstFocusable) {
+        e.preventDefault();
+        lastFocusable?.focus();
+      }
+    } else {
+      if (document.activeElement === lastFocusable) {
+        e.preventDefault();
+        firstFocusable?.focus();
+      }
+    }
+  }, [onDismiss]);
+
+  useEffect(() => {
+    if (!celebration) return;
+    document.addEventListener("keydown", handleKeyDown);
+    // Move focus into modal
+    const timer = setTimeout(() => {
+      const firstBtn = modalRef.current?.querySelector("button");
+      firstBtn?.focus();
+    }, 100);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      clearTimeout(timer);
+    };
+  }, [celebration, handleKeyDown]);
 
   useEffect(() => {
     if (!celebration || hasFireRef.current) return;
@@ -66,6 +111,7 @@ export default function CelebrationModal({
         onClick={onDismiss}
       >
         <motion.div
+          ref={modalRef}
           className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 max-w-sm mx-4 text-center relative overflow-hidden"
           initial={{ scale: 0.5, opacity: 0, y: 50 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -73,14 +119,17 @@ export default function CelebrationModal({
           transition={{ type: "spring", stiffness: 300, damping: 25 }}
           onClick={(e) => e.stopPropagation()}
           dir={isRTL ? "rtl" : "ltr"}
+          role="dialog"
+          aria-modal="true"
+          aria-label={isHebrew ? "חגיגה" : "Celebration"}
         >
           {/* Decorative gradient top */}
           <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-500 via-amber-400 to-indigo-500" />
 
-          {/* Close button */}
+          {/* Close button — positioned based on direction */}
           <button
             onClick={onDismiss}
-            className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            className={`absolute top-3 ${isRTL ? "left-3" : "right-3"} text-gray-400 hover:text-gray-600 dark:hover:text-gray-300`}
             aria-label={isHebrew ? "סגור" : "Close"}
           >
             <X className="h-5 w-5" />

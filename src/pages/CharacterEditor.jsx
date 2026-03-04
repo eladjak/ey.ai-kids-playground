@@ -20,6 +20,17 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Loader2, Sparkles, Wand2, User, Save, ArrowLeft, Trash2, Camera, Eye } from 'lucide-react';
 
 export default function CharacterEditor() {
@@ -48,7 +59,7 @@ export default function CharacterEditor() {
         const id = urlParams.get('id');
         const name = urlParams.get('name');
         const data = urlParams.get('data');
-        const storedLanguage = localStorage.getItem('appLanguage') || 'english';
+        const storedLanguage = localStorage.getItem('language') || 'english';
         setCurrentLanguage(storedLanguage);
 
         const loadCharacter = async (characterId) => {
@@ -271,22 +282,20 @@ export default function CharacterEditor() {
     };
 
     const handleDelete = async () => {
-        if (window.confirm(t("characterEditor.deleteConfirm"))) {
-            setIsDeleting(true);
-            try {
-                await Character.delete(character.id);
-                toast({ 
-                    title: t("characterEditor.successDelete")
-                });
-                navigate(createPageUrl('Characters'));
-            } catch (error) {
-                toast({ 
-                    variant: "destructive", 
-                    title: t("characterEditor.errorDelete")
-                });
-            } finally {
-                setIsDeleting(false);
-            }
+        setIsDeleting(true);
+        try {
+            await Character.delete(character.id);
+            toast({
+                title: t("characterEditor.successDelete")
+            });
+            navigate(createPageUrl('Characters'));
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: t("characterEditor.errorDelete")
+            });
+        } finally {
+            setIsDeleting(false);
         }
     };
 
@@ -454,10 +463,31 @@ export default function CharacterEditor() {
                             {isNew ? t("characterEditor.createCharacter") : t("characterEditor.saveChanges")}
                         </Button>
                         {!isNew && (
-                            <Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
-                                {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                {t("characterEditor.deleteCharacter")}
-                            </Button>
+                            <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <Button variant="destructive" disabled={isDeleting}>
+                                        {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                        {t("characterEditor.deleteCharacter")}
+                                    </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>{t("characterEditor.deleteCharacter")}</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            {t("characterEditor.deleteConfirm")}
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction
+                                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                            onClick={handleDelete}
+                                        >
+                                            {t("characterEditor.deleteCharacter")}
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
                         )}
                     </div>
                 </div>

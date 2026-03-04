@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Book } from "@/entities/Book";
 import { User } from "@/entities/User";
+import { useI18n } from "@/components/i18n/i18nProvider";
 import {
   PlusCircle,
   Search,
@@ -34,6 +35,7 @@ import BookCard from "../components/library/BookCard";
 import EmptyState from "../components/library/EmptyState";
 
 export default function Library() {
+  const { language: currentLanguage, isRTL } = useI18n();
   const [books, setBooks] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -45,23 +47,6 @@ export default function Library() {
     language: "all"
   });
   const [showFilters, setShowFilters] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState("english");
-  
-  useEffect(() => {
-    const storedLanguage = localStorage.getItem("appLanguage");
-    if (storedLanguage) {
-      setCurrentLanguage(storedLanguage);
-    }
-    
-    const handleStorageChange = (e) => {
-      if (e.key === "appLanguage") {
-        setCurrentLanguage(e.newValue || "english");
-      }
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
 
   const translations = {
     english: {
@@ -125,8 +110,6 @@ export default function Library() {
   const t = (key) => {
     return translations[currentLanguage]?.[key] || translations.english[key] || key;
   };
-
-  const isRTL = currentLanguage === "hebrew" || currentLanguage === "yiddish";
 
   useEffect(() => {
     loadBooks();

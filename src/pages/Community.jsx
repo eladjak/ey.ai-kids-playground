@@ -47,11 +47,9 @@ export default function CommunityPage() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [showShareModal, setShowShareModal] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  const [likedPosts, setLikedPosts] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("likedPosts") || "[]");
-    } catch { return []; }
-  });
+  // Per-user liked-posts set; populated once the current user is loaded
+  const [likedPostsKey, setLikedPostsKey] = useState("likedPosts_anonymous");
+  const [likedPosts, setLikedPosts] = useState([]);
   const [currentLanguage, setCurrentLanguage] = useState("english");
 
   // For pagination
@@ -89,13 +87,13 @@ export default function CommunityPage() {
   
   // Load language preference
   useEffect(() => {
-    const storedLanguage = localStorage.getItem("appLanguage");
+    const storedLanguage = localStorage.getItem("language");
     if (storedLanguage) {
       setCurrentLanguage(storedLanguage);
     }
     
     const handleStorageChange = (e) => {
-      if (e.key === "appLanguage") {
+      if (e.key === "language") {
         setCurrentLanguage(e.newValue || "english");
       }
     };
@@ -176,10 +174,19 @@ export default function CommunityPage() {
     try {
       setIsLoading(true);
       
-      // Load current user
+      // Load current user and set up per-user like tracking
       try {
         const user = await User.me();
         setCurrentUser(user);
+        if (user?.email) {
+          const key = `liked_posts_${user.email}`;
+          setLikedPostsKey(key);
+          try {
+            setLikedPosts(JSON.parse(localStorage.getItem(key) || "[]"));
+          } catch {
+            setLikedPosts([]);
+          }
+        }
       } catch (error) {
         // silently handled
       }
@@ -289,12 +296,12 @@ export default function CommunityPage() {
         : post.likes + 1;
       await Community.update(postId, { likes: newLikeCount });
 
-      // Update liked posts tracking
+      // Update per-user liked posts tracking
       const newLikedPosts = alreadyLiked
         ? likedPosts.filter(id => id !== postId)
         : [...likedPosts, postId];
       setLikedPosts(newLikedPosts);
-      localStorage.setItem("likedPosts", JSON.stringify(newLikedPosts));
+      localStorage.setItem(likedPostsKey, JSON.stringify(newLikedPosts));
 
       // Update UI
       const updatedPosts = [...posts];
@@ -386,7 +393,7 @@ export default function CommunityPage() {
           onClick={() => setShowShareModal(true)}
           className="bg-purple-600 hover:bg-purple-700"
         >
-          <BookOpen className={isRTL ? "ml-2" : "mr-2" + " h-4 w-4"} />
+          <BookOpen className={`${isRTL ? "ml-2" : "mr-2"} h-4 w-4`} />
           {t("community.shareYourBook")}
         </Button>
       </div>

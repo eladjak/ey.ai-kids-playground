@@ -153,9 +153,9 @@ export default function Settings() {
   }, []);
 
   useEffect(() => {
-    const storedLanguage = localStorage.getItem("appLanguage") || "english";
+    const storedLanguage = localStorage.getItem("language") || "english";
     setCurrentLanguage(storedLanguage);
-    setIsRTL(storedLanguage === "hebrew");
+    setIsRTL(storedLanguage === "hebrew" || storedLanguage === "yiddish");
   }, [currentLanguage]); // Add currentLanguage to dependency array to re-evaluate isRTL if language changes
 
   const loadSettings = async () => {
@@ -194,7 +194,7 @@ export default function Settings() {
       
       // Update app language if changed
       if (tempSettings.language !== currentLanguage) {
-        localStorage.setItem("appLanguage", tempSettings.language);
+        localStorage.setItem("language", tempSettings.language);
         window.location.reload(); // Reload to apply language change
       }
       
@@ -459,8 +459,8 @@ export default function Settings() {
           <AIStudio
             currentModel={null}
             onModelChange={() => {}}
-            userTier="premium" // For developer, access to all models
-            credits={{ used: 25, total: 1000 }} // High credits for testing
+            userTier={user?.tier || user?.subscription_tier || "free"}
+            credits={{ used: user?.credits_used ?? 0, total: user?.credits_total ?? 100 }}
             currentLanguage={currentLanguage}
           />
         </TabsContent>

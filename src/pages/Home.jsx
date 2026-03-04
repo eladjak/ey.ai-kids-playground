@@ -9,6 +9,7 @@ import { buildSafetyPromptPrefix } from "@/utils/content-moderation";
 import useGamification from "@/hooks/useGamification";
 import GamificationOverlay from "@/components/gamification/GamificationOverlay";
 import OnboardingWizard from "@/components/onboarding/OnboardingWizard";
+import { useI18n } from "@/components/i18n/i18nProvider";
 import { 
   BookOpen, 
   Sparkles, 
@@ -46,10 +47,10 @@ import BadgeDisplay from "../components/gamification/BadgeDisplay";
 
 export default function Home() {
   const gamification = useGamification();
+  const { language: currentLanguage, isRTL: i18nIsRTL } = useI18n();
   const [showOnboarding, setShowOnboarding] = useState(
     () => !localStorage.getItem("onboarding_complete")
   );
-  const [currentLanguage, setCurrentLanguage] = useState("english");
   const [isLoading, setIsLoading] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -74,19 +75,6 @@ export default function Home() {
   const searchInputRef = useRef(null);
   
   useEffect(() => {
-    const storedLanguage = localStorage.getItem("appLanguage");
-    if (storedLanguage) {
-      setCurrentLanguage(storedLanguage);
-    }
-    
-    const handleStorageChange = (e) => {
-      if (e.key === "appLanguage") {
-        setCurrentLanguage(e.newValue || "english");
-      }
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    
     const loadUserData = async () => {
       try {
         const user = await User.me();
@@ -131,16 +119,14 @@ export default function Home() {
         const cachedPrompt = localStorage.getItem("dailyPrompt");
         const cacheDate = localStorage.getItem("dailyPromptDate");
         const today = new Date().toDateString();
-        const storedLanguage = localStorage.getItem("appLanguage") || "english";
-        
         if (cachedPrompt && cacheDate === today) {
           setDailyPrompt(JSON.parse(cachedPrompt));
           setIsPromptLoading(false);
           return;
         }
-        
+
         const safetyPrefix = buildSafetyPromptPrefix('5-10');
-        const languagePrompt = storedLanguage === "hebrew" ?
+        const languagePrompt = currentLanguage === "hebrew" ?
           "צור רעיון קצר לסיפור ילדים בעברית לגילאי 5-10. הרעיון צריך להיות מעורר דמיון ומהנה. כלול כותרת קצרה ותיאור קצר של הרעיון (1-2 משפטים). החזר כ-JSON עם השדות title ו-description. שמור על כותרת קצרה (3-6 מילים) והתיאור עד 20 מילים." :
           "Generate a creative, child-friendly, short story prompt for children aged 5-10. The prompt should be imaginative, fun, and spark creativity. Include a story title and a brief (1-2 sentence) description. Return as JSON with title and description fields. Keep the title short (3-6 words) and the description to max 20 words.";
 
@@ -161,9 +147,7 @@ export default function Home() {
           localStorage.setItem("dailyPromptDate", today);
         }
       } catch (error) {
-        const storedLanguage = localStorage.getItem("appLanguage") || "english";
-        
-        if (storedLanguage === "hebrew") {
+        if (currentLanguage === "hebrew") {
           setDailyPrompt({
             title: "היער הקסום",
             description: "ילד מגלה יער שבו החיות יכולים לדבר והעצים לוחשים סודות עתיקים."
@@ -187,8 +171,6 @@ export default function Home() {
     };
     
     initializeApp();
-    
-    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
   
   const createSampleFeaturedBooks = () => {
@@ -259,6 +241,8 @@ export default function Home() {
   
   const translations = {
     english: {
+      "home.noBooks.title": "No books yet",
+      "home.noBooks.subtitle": "Create your first personalized storybook to get started!",
       "home.welcome": "Welcome back,",
       "home.title": "Create Magical Personalized Children's Books",
       "home.subtitle": "Spark your child's imagination with custom stories featuring them as the main character",
@@ -294,6 +278,8 @@ export default function Home() {
       "home.drafts.status.generating": "Generating..."
     },
     hebrew: {
+      "home.noBooks.title": "עדיין אין ספרים",
+      "home.noBooks.subtitle": "צרו את ספר הסיפורים המותאם אישית הראשון שלכם כדי להתחיל!",
       "home.welcome": "ברוך שובך,",
       "home.title": "יצירת ספרי ילדים קסומים מותאמים אישית",
       "home.subtitle": "עוררו את הדמיון של ילדיכם עם סיפורים מותאמים אישית",
@@ -334,7 +320,7 @@ export default function Home() {
     return translations[currentLanguage]?.[key] || translations.english[key] || key;
   };
   
-  const isRTL = currentLanguage === "hebrew" || currentLanguage === "yiddish";
+  const isRTL = i18nIsRTL;
   
   const progressToNextLevel = (userData.xp / userData.nextLevelXp) * 100;
 

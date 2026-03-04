@@ -9,7 +9,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { InvokeLLM, GenerateImage } from "@/integrations/Core";
-import { moderateInput, buildSafetyPromptPrefix } from "@/utils/content-moderation";
+import { moderateInput, buildSafetyPromptPrefix, sanitizeAIOutput } from "@/utils/content-moderation";
 import { checkAgeAppropriateLanguage } from "@/utils/content-moderation";
 import useGamification from "@/hooks/useGamification";
 import GamificationOverlay from "@/components/gamification/GamificationOverlay";
@@ -44,6 +44,8 @@ export default function BookWizard() {
 
   // Creation progress
   const [creationProgress, setCreationProgress] = useState(null);
+  // Track image generation failures for retry
+  const [imageFailures, setImageFailures] = useState([]);
 
   // Step 3: Book data (preview/edit)
   const [bookData, setBookData] = useState({
@@ -83,7 +85,7 @@ export default function BookWizard() {
     const loadUser = async () => {
       try {
         const user = await User.me();
-        const lang = user.language || localStorage.getItem("appLanguage") || "english";
+        const lang = user.language || localStorage.getItem("language") || "english";
         setCurrentLanguage(lang);
         setBookData((prev) => ({ ...prev, language: lang }));
       } catch {
@@ -155,7 +157,9 @@ export default function BookWizard() {
         }
       }
 
-      const safetyPrefix = buildSafetyPromptPrefix(bookData.age_range || "5-10");
+      // Use bookData.age_range, fallback to preferredAgeRange from onboarding, then default
+      const ageRange = bookData.age_range || localStorage.getItem("preferredAgeRange") || "5-10";
+      const safetyPrefix = buildSafetyPromptPrefix(ageRange);
       const langInstruction = isHebrew
         ? "יש ליצור את כל התוכן בעברית בלבד. "
         : "Create all content in English only. ";
@@ -169,7 +173,7 @@ export default function BookWizard() {
 2. A brief description (2-3 sentences)
 3. A moral lesson
 
-The story should be age-appropriate for children ages 5-10, fun, engaging, and educational.`;
+The story should be age-appropriate for children ages ${ageRange}, fun, engaging, and educational.`;
 
       const result = await InvokeLLM({
         prompt,
@@ -185,8 +189,13 @@ The story should be age-appropriate for children ages 5-10, fun, engaging, and e
       });
 
       if (result) {
+        // Sanitize AI output before using it
+        const sanitizedTitle = sanitizeAIOutput(result.title || "");
+        const sanitizedDescription = sanitizeAIOutput(result.description || "");
+        const sanitizedMoral = sanitizeAIOutput(result.moral_lesson || "");
+
         // Run age-appropriate language check on generated content
-        const ageCheck = checkAgeAppropriateLanguage(result.description, "5-10");
+        const ageCheck = checkAgeAppropriateLanguage(sanitizedDescription, ageRange);
         if (!ageCheck.isAppropriate) {
           // AI should not generate inappropriate content due to safety prefix,
           // but double-check just in case
@@ -199,12 +208,13 @@ The story should be age-appropriate for children ages 5-10, fun, engaging, and e
           return;
         }
 
-        setGeneratedOutline(result);
+        const sanitizedResult = { ...result, title: sanitizedTitle, description: sanitizedDescription, moral_lesson: sanitizedMoral };
+        setGeneratedOutline(sanitizedResult);
         setBookData((prev) => ({
           ...prev,
-          title: result.title || prev.title,
-          description: result.description || prev.description,
-          moral: result.moral_lesson || prev.moral,
+          title: sanitizedTitle || prev.title,
+          description: sanitizedDescription || prev.description,
+          moral: sanitizedMoral || prev.moral,
           genre: selectedTopic || prev.genre,
           child_name: selectedCharacters[0]?.name || prev.child_name,
           interests: selectedTopic,
@@ -230,11 +240,58 @@ The story should be age-appropriate for children ages 5-10, fun, engaging, and e
     }
   };
 
+  // Retry failed images for an already-created book
+  const retryFailedImages = async (bookId, failures) => {
+    if (!failures || failures.length === 0) return;
+
+    toast({
+      title: isHebrew ? "מנסה שוב איורים שנכשלו..." : "Retrying failed illustrations...",
+      description: isHebrew
+        ? `מנסה ליצור ${failures.length} איורים מחדש`
+        : `Attempting to regenerate ${failures.length} illustrations`
+    });
+
+    const retryResults = await Promise.allSettled(
+      failures.map(({ pageId, imagePrompt }) =>
+        GenerateImage({ prompt: imagePrompt })
+          .then((result) => ({ pageId, url: result?.url || "" }))
+          .catch(() => ({ pageId, url: "" }))
+      )
+    );
+
+    const stillFailed = [];
+    await Promise.allSettled(
+      retryResults.map(async (outcome, idx) => {
+        if (outcome.status === "fulfilled" && outcome.value.url) {
+          await Page.update(outcome.value.pageId, { image_url: outcome.value.url });
+        } else {
+          stillFailed.push(failures[idx]);
+        }
+      })
+    );
+
+    setImageFailures(stillFailed);
+
+    if (stillFailed.length === 0) {
+      toast({
+        title: isHebrew ? "כל האיורים נוצרו!" : "All illustrations generated!",
+        className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100"
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        title: isHebrew ? `${stillFailed.length} איורים עדיין נכשלו` : `${stillFailed.length} illustrations still failed`,
+        description: isHebrew ? "ניתן לנסות שוב מאוחר יותר" : "You can retry again later"
+      });
+    }
+  };
+
   // Create the book with parallel page generation
   const createBook = async () => {
     try {
       setIsCreating(true);
       setError(null);
+      setImageFailures([]);
       setCreationProgress({ label: isHebrew ? "בודק תוכן..." : "Checking content...", percent: 5, step: "" });
 
       // Moderate title and description
@@ -264,8 +321,21 @@ The story should be age-appropriate for children ages 5-10, fun, engaging, and e
       if (bookData.length === "long") pageCount = 15;
 
       const characterNames = selectedCharacters.map((c) => c.name).join(", ");
+      // Build character appearance descriptions for visual consistency across illustrations
+      const characterAppearances = selectedCharacters
+        .map((c) => {
+          const parts = [c.name];
+          if (c.appearance) parts.push(c.appearance);
+          else if (c.description) parts.push(c.description);
+          else if (c.traits) parts.push(c.traits);
+          return parts.join(": ");
+        })
+        .join(". ");
+
       const topicDescription = selectedTopic === "custom" && customIdea ? customIdea : selectedTopic;
-      const safetyPrefix = buildSafetyPromptPrefix(bookData.age_range || "5-10");
+      // Use bookData.age_range, fallback to preferredAgeRange from onboarding, then default
+      const ageRange = bookData.age_range || localStorage.getItem("preferredAgeRange") || "5-10";
+      const safetyPrefix = buildSafetyPromptPrefix(ageRange);
       const langInstruction = bookData.language === "hebrew"
         ? "יש ליצור את כל התוכן בעברית בלבד. "
         : "Create all content in English only. ";
@@ -278,13 +348,13 @@ The story should be age-appropriate for children ages 5-10, fun, engaging, and e
 - Art style: ${bookData.art_style}
 - Tone: ${bookData.tone || "exciting"}
 - Moral: ${bookData.moral || "positive message"}
-- Age range: ${bookData.age_range || "5-7"}
+- Age range: ${ageRange}
 
 Create exactly ${pageCount} pages (including a title page).
 For each page, provide a brief description of what happens.
 The story should have a clear beginning, middle, and end.`;
 
-      const coverPrompt = `Children's book cover for "${bookData.title}", featuring characters ${characterNames} in a ${topicDescription} setting. Illustrated in ${bookData.art_style} style. Bright, colorful, child-friendly.`;
+      const coverPrompt = `Children's book cover for "${bookData.title}", featuring characters ${characterNames} in a ${topicDescription} setting. ${characterAppearances ? `Character appearances: ${characterAppearances}.` : ""} Illustrated in ${bookData.art_style} style. Bright, colorful, child-friendly.`;
 
       const [outlineResult, coverResult] = await Promise.all([
         InvokeLLM({
@@ -318,9 +388,12 @@ The story should have a clear beginning, middle, and end.`;
         step: isHebrew ? "שלב 2 מתוך 4" : "Step 2 of 4"
       });
 
+      // Sanitize AI-generated title before saving
+      const sanitizedTitle = sanitizeAIOutput(outlineResult?.title || bookData.title);
+
       const finalBookData = {
         ...bookData,
-        title: outlineResult?.title || bookData.title,
+        title: sanitizedTitle,
         cover_image: coverImage,
         status: "generating"
       };
@@ -334,15 +407,15 @@ The story should have a clear beginning, middle, and end.`;
         step: isHebrew ? "שלב 3 מתוך 4" : "Step 3 of 4"
       });
 
-      const pages = outlineResult?.outline || [];
-      const pageTextPromises = pages.map((pageOutline, i) => {
+      const outlinePages = outlineResult?.outline || [];
+      const pageTextPromises = outlinePages.map((pageOutline, i) => {
         const prompt = `${safetyPrefix}${langInstruction}Write the text content for page ${i} of a children's story based on this description: "${pageOutline.description}"
 
 Story details:
 - Title: ${finalBookData.title}
 - Main characters: ${characterNames}
 - Art style: ${bookData.art_style}
-- Target age: ${bookData.age_range || "5-7"}
+- Target age: ${ageRange}
 ${i === 0 ? "This is the title page/introduction. Keep it brief and engaging." : ""}
 
 Also create a detailed image generation prompt for this page.
@@ -365,19 +438,60 @@ Return as JSON with:
 
       const pageTexts = await Promise.all(pageTextPromises);
 
+      // Sanitize all AI-generated text content
+      const sanitizedPageTexts = pageTexts.map((pt) => ({
+        ...pt,
+        text_content: sanitizeAIOutput(pt?.text_content || ""),
+        image_prompt: pt?.image_prompt || ""
+      }));
+
       // Step 4: Generate ALL illustrations in parallel
+      // Use Promise.allSettled so one failure doesn't cancel the rest
       setCreationProgress({
         label: isHebrew ? "מצייר איורים..." : "Drawing illustrations...",
         percent: 60,
         step: isHebrew ? "שלב 4 מתוך 4" : "Step 4 of 4"
       });
 
-      const imagePromises = pageTexts.map((pageText, i) => {
-        const imagePrompt = `${pageText.image_prompt}. Children's book illustration in ${bookData.art_style} style. Bright, colorful, age-appropriate for ${bookData.age_range || "5-7"} year olds.`;
-        return GenerateImage({ prompt: imagePrompt }).catch(() => null);
+      const imagePromises = sanitizedPageTexts.map((pageText) => {
+        // Prepend character appearance descriptions to every image prompt for visual consistency
+        const characterContext = characterAppearances
+          ? `Characters: ${characterAppearances}. `
+          : "";
+        const imagePrompt = `${characterContext}Scene: ${pageText.image_prompt}. Children's book illustration in ${bookData.art_style} style. Bright, colorful, age-appropriate for ${ageRange} year olds.`;
+        return GenerateImage({ prompt: imagePrompt })
+          .then((result) => ({ url: result?.url || "", prompt: imagePrompt }))
+          .catch((err) => {
+            console.error("[BookWizard] Image generation failed:", err?.message || err);
+            return { url: "", prompt: imagePrompt, failed: true };
+          });
       });
 
-      const imageResults = await Promise.all(imagePromises);
+      const imageSettled = await Promise.allSettled(imagePromises);
+
+      // Collect results, tracking failures with progress updates
+      const imageResults = [];
+      let successCount = 0;
+      const pendingFailures = [];
+
+      imageSettled.forEach((outcome, i) => {
+        if (outcome.status === "fulfilled") {
+          imageResults.push(outcome.value);
+          if (!outcome.value.failed && outcome.value.url) {
+            successCount++;
+          } else {
+            pendingFailures.push({ index: i, prompt: outcome.value.prompt });
+          }
+        } else {
+          console.error("[BookWizard] Image promise rejected for page", i, outcome.reason);
+          imageResults.push({ url: "", prompt: sanitizedPageTexts[i]?.image_prompt || "", failed: true });
+          pendingFailures.push({ index: i, prompt: sanitizedPageTexts[i]?.image_prompt || "" });
+        }
+        // Update progress as images complete
+        const doneCount = i + 1;
+        const imgPercent = 60 + Math.floor((doneCount / imageSettled.length) * 25);
+        setCreationProgress((prev) => prev ? { ...prev, percent: imgPercent } : prev);
+      });
 
       // Save all pages in parallel
       setCreationProgress({
@@ -386,18 +500,30 @@ Return as JSON with:
         step: ""
       });
 
-      const pageCreatePromises = pageTexts.map((pageText, i) => {
+      const pageCreatePromises = sanitizedPageTexts.map((pageText, i) => {
+        const imageUrl = imageResults[i]?.url || "";
+        // If image failed, set a placeholder message on the page record
+        const imagePromptFinal = imageResults[i]?.failed
+          ? `[Image generation failed] ${pageText.image_prompt}`
+          : pageText.image_prompt;
+
         return Page.create({
           book_id: createdBook.id,
           page_number: i,
           text_content: pageText.text_content,
-          image_url: imageResults[i]?.url || "",
-          image_prompt: pageText.image_prompt,
+          image_url: imageUrl,
+          image_prompt: imagePromptFinal,
           layout_type: i === 0 ? "cover" : "standard"
         });
       });
 
-      await Promise.all(pageCreatePromises);
+      const savedPages = await Promise.all(pageCreatePromises);
+
+      // Map failures to page IDs for retry
+      const failuresWithPageIds = pendingFailures.map(({ index, prompt }) => ({
+        pageId: savedPages[index]?.id,
+        imagePrompt: prompt
+      })).filter((f) => f.pageId);
 
       // Mark book as complete
       await Book.update(createdBook.id, { status: "complete" });
@@ -416,14 +542,33 @@ Return as JSON with:
         // gamification is non-critical
       }
 
-      toast({
-        title: isHebrew ? "הספר נוצר!" : "Book created!",
-        description: isHebrew ? "הספר שלך מוכן לקריאה!" : "Your book is ready to read!",
-        className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100"
-      });
+      // Show summary: how many images succeeded, and offer retry if any failed
+      if (failuresWithPageIds.length > 0) {
+        setImageFailures(failuresWithPageIds);
+        toast({
+          variant: "destructive",
+          title: isHebrew ? "הספר נוצר עם בעיות" : "Book created with issues",
+          description: isHebrew
+            ? `${successCount} מתוך ${sanitizedPageTexts.length} איורים נוצרו בהצלחה. האחרים נכשלו.`
+            : `${successCount} of ${sanitizedPageTexts.length} illustrations generated successfully. ${failuresWithPageIds.length} failed.`
+        });
+      } else {
+        toast({
+          title: isHebrew ? "הספר נוצר!" : "Book created!",
+          description: isHebrew ? "הספר שלך מוכן לקריאה!" : "Your book is ready to read!",
+          className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100"
+        });
+      }
 
-      // Navigate to BookView instead of BookCreation
+      // Navigate to BookView
       navigate(`${createPageUrl("BookView")}?id=${createdBook.id}`);
+
+      // If there were failures, offer retry after navigation (non-blocking)
+      if (failuresWithPageIds.length > 0) {
+        setTimeout(() => {
+          retryFailedImages(createdBook.id, failuresWithPageIds);
+        }, 2000);
+      }
     } catch {
       setError({
         title: isHebrew ? "אופס! לא הצלחנו ליצור את הספר" : "Oops! Couldn't create the book",

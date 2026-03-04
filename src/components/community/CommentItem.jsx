@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { MessageSquare, Send } from 'lucide-react';
 
-export default function CommentItem({ comment, currentUser, onSubmitReply, level = 0 }) {
+function CommentItem({ comment, currentUser, onSubmitReply, level = 0 }) {
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyText, setReplyText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -105,3 +105,5 @@ export default function CommentItem({ comment, currentUser, onSubmitReply, level
     </div>
   );
 }
+
+export default React.memo(CommentItem);

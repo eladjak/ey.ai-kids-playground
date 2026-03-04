@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import LazyImage from "@/components/shared/LazyImage";
 import {
   Card,
   CardContent,
@@ -22,19 +23,19 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 
-export default function BookCard({ book, viewType = "grid" }) {
+function BookCard({ book, viewType = "grid" }) {
   const [currentLanguage, setCurrentLanguage] = useState("english");
   const [isHovered, setIsHovered] = useState(false);
   
   // Load language preference
   useEffect(() => {
-    const storedLanguage = localStorage.getItem("appLanguage");
+    const storedLanguage = localStorage.getItem("language");
     if (storedLanguage) {
       setCurrentLanguage(storedLanguage);
     }
     
     const handleStorageChange = (e) => {
-      if (e.key === "appLanguage") {
+      if (e.key === "language") {
         setCurrentLanguage(e.newValue || "english");
       }
     };
@@ -127,10 +128,10 @@ export default function BookCard({ book, viewType = "grid" }) {
           <Link to={`${createPageUrl("BookView")}?id=${book.id}`}>
             <div className="aspect-[3/4] relative overflow-hidden bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-950 dark:to-gray-900">
               {book.cover_image ? (
-                <img
+                <LazyImage
                   src={book.cover_image}
                   alt={book.title}
-                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                  className="w-full h-full transition-transform duration-500 hover:scale-110"
                 />
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center">
@@ -225,10 +226,10 @@ export default function BookCard({ book, viewType = "grid" }) {
         <div className="flex flex-col sm:flex-row">
           <div className="sm:w-36 md:w-48 aspect-[4/3] overflow-hidden bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-950 dark:to-gray-900">
             {book.cover_image ? (
-              <img
+              <LazyImage
                 src={book.cover_image}
                 alt={book.title}
-                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                className="w-full h-full transition-transform duration-300 hover:scale-105"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
@@ -323,3 +324,5 @@ export default function BookCard({ book, viewType = "grid" }) {
     </motion.div>
   );
 }
+
+export default React.memo(BookCard);

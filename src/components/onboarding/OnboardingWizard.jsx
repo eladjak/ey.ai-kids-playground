@@ -117,7 +117,7 @@ export default function OnboardingWizard({ onComplete, userName }) {
         favorite_topics: selectedTopics
       });
 
-      localStorage.setItem("appLanguage", language);
+      localStorage.setItem("language", language);
       localStorage.setItem("onboarding_complete", "true");
       localStorage.setItem("preferredAgeRange", ageRange);
       localStorage.setItem("favoriteTopics", JSON.stringify(selectedTopics));
@@ -125,7 +125,7 @@ export default function OnboardingWizard({ onComplete, userName }) {
       onComplete?.();
     } catch {
       // Still mark complete even if profile update fails (Base44 may not support all fields)
-      localStorage.setItem("appLanguage", language);
+      localStorage.setItem("language", language);
       localStorage.setItem("onboarding_complete", "true");
       localStorage.setItem("preferredAgeRange", ageRange);
       localStorage.setItem("favoriteTopics", JSON.stringify(selectedTopics));

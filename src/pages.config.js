@@ -11,7 +11,6 @@ const CharacterEditor = lazy(() => import('./pages/CharacterEditor'));
 const Characters = lazy(() => import('./pages/Characters'));
 const Community = lazy(() => import('./pages/Community'));
 const CommunityPost = lazy(() => import('./pages/CommunityPost'));
-const CreativeStoryStudio = lazy(() => import('./pages/CreativeStoryStudio'));
 const Feedback = lazy(() => import('./pages/Feedback'));
 const Leaderboard = lazy(() => import('./pages/Leaderboard'));
 const Library = lazy(() => import('./pages/Library'));
@@ -29,7 +28,6 @@ export const PAGES = {
     "Characters": Characters,
     "Community": Community,
     "CommunityPost": CommunityPost,
-    "CreativeStoryStudio": CreativeStoryStudio,
     "Feedback": Feedback,
     "Home": Home,
     "Leaderboard": Leaderboard,

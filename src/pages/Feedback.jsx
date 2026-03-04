@@ -6,13 +6,14 @@ import { Page } from "@/entities/Page";
 import { User } from "@/entities/User";
 import { Feedback } from "@/entities/Feedback";
 import { Collaboration } from "@/entities/Collaboration";
-import { 
-  ArrowLeft, 
-  Star, 
-  StarHalf, 
-  MessageSquare, 
-  BookOpen, 
-  ChevronRight, 
+import {
+  ArrowLeft,
+  ArrowRight,
+  Star,
+  StarHalf,
+  MessageSquare,
+  BookOpen,
+  ChevronRight,
   ChevronLeft,
   ThumbsUp,
   LightbulbOff,
@@ -50,6 +51,10 @@ export default function FeedbackPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
+  const [currentLanguage, setCurrentLanguage] = useState(
+    () => localStorage.getItem("language") || "english"
+  );
+  const isRTL = currentLanguage === "hebrew" || currentLanguage === "yiddish";
   const [book, setBook] = useState(null);
   const [pages, setPages] = useState([]);
   const [currentPage, setCurrentPage] = useState(null);
@@ -297,7 +302,7 @@ export default function FeedbackPage() {
   }
   
   return (
-    <div className="max-w-6xl mx-auto py-4">
+    <div className="max-w-6xl mx-auto py-4" dir={isRTL ? "rtl" : "ltr"}>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
           <Button
@@ -305,7 +310,11 @@ export default function FeedbackPage() {
             size="icon"
             onClick={() => navigate(createPageUrl("Library"))}
           >
-            <ArrowLeft className="h-5 w-5" />
+            {isRTL ? (
+              <ArrowRight className="h-5 w-5" />
+            ) : (
+              <ArrowLeft className="h-5 w-5" />
+            )}
           </Button>
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">

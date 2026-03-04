@@ -10,7 +10,6 @@ import {
   Home,
   Menu,
   X,
-  PlusCircle,
   Library,
   LogOut,
   Moon,
@@ -40,13 +39,13 @@ export default function Layout({ children, currentPageName }) {
         setUser(userData);
 
         const userLanguage = userData.language;
-        const storedLanguage = localStorage.getItem("appLanguage");
+        const storedLanguage = localStorage.getItem("language");
         const defaultLanguage = "english";
 
         const selectedLanguage = userLanguage || storedLanguage || defaultLanguage;
 
         setCurrentLanguage(selectedLanguage);
-        localStorage.setItem("appLanguage", selectedLanguage);
+        localStorage.setItem("language", selectedLanguage);
 
         const isRTL = selectedLanguage === "hebrew" || selectedLanguage === "yiddish";
         setIsRTL(isRTL);
@@ -75,7 +74,7 @@ export default function Layout({ children, currentPageName }) {
         }
 
       } catch (error) {
-        const storedLanguage = localStorage.getItem("appLanguage");
+        const storedLanguage = localStorage.getItem("language");
         if (storedLanguage) {
           setCurrentLanguage(storedLanguage);
           setIsRTL(storedLanguage === "hebrew" || storedLanguage === "yiddish");
@@ -105,10 +104,10 @@ export default function Layout({ children, currentPageName }) {
       "common.main": "Main",
       "common.create": "Create",
       "common.mySpace": "My Space",
+      "common.communitySection": "Community",
       "common.system": "System",
       "common.myProfile": "My Profile",
       "common.characters": "My Characters",
-      "common.storyStudio": "Story Studio",
       "common.leaderboard": "Leaderboard"
     },
     hebrew: {
@@ -123,10 +122,10 @@ export default function Layout({ children, currentPageName }) {
       "common.main": "ראשי",
       "common.create": "יצירה",
       "common.mySpace": "המרחב שלי",
+      "common.communitySection": "קהילה",
       "common.system": "מערכת",
       "common.myProfile": "הפרופיל שלי",
       "common.characters": "הדמויות שלי",
-      "common.storyStudio": "סטודיו סיפורים",
       "common.leaderboard": "טבלת מובילים"
     }
   };
@@ -138,16 +137,17 @@ export default function Layout({ children, currentPageName }) {
   const navItems = {
     main: [
       { href: "/", label: t("common.home"), icon: Home, pageName: "Home" },
-      { href: "/Library", label: t("common.myLibrary"), icon: Library, pageName: "Library" },
-      { href: "/Community", label: t("common.community"), icon: Users, pageName: "Community" },
     ],
     create: [
       { href: "/BookWizard", label: t("common.createBook"), icon: Sparkles, pageName: "BookWizard" },
-      { href: "/CreativeStoryStudio", label: t("common.storyStudio"), icon: PlusCircle, pageName: "CreativeStoryStudio" },
       { href: "/Characters", label: t("common.characters"), icon: Users2, pageName: "Characters" },
     ],
     mySpace: [
+      { href: "/Library", label: t("common.myLibrary"), icon: Library, pageName: "Library" },
       { href: "/Profile", label: t("common.myProfile"), icon: UserIcon, pageName: "Profile" },
+    ],
+    community: [
+      { href: "/Community", label: t("common.community"), icon: Users, pageName: "Community" },
       { href: "/Leaderboard", label: t("common.leaderboard"), icon: Trophy, pageName: "Leaderboard" },
     ],
     system: [
@@ -208,7 +208,6 @@ export default function Layout({ children, currentPageName }) {
 
     const hebrewPageNames = {
       "Home": "דף הבית",
-      "CreativeStoryStudio": "יצירת ספר",
       "Library": "ספרייה",
       "Community": "קהילה",
       "Settings": "הגדרות",
@@ -237,7 +236,6 @@ export default function Layout({ children, currentPageName }) {
       case "library": return "Library";
       case "community": return "Community";
       case "profile": return "Profile";
-      case "creativestorystudio": return "CreativeStoryStudio";
       case "characters": return "Characters";
       case "leaderboard": return "Leaderboard";
       case "bookwizard": return "BookWizard";
@@ -250,7 +248,7 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <div className="min-h-screen w-full bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-sans transition-colors duration-300">
-      <div className={`${isRTL ? 'pr-64' : 'pl-64'} max-lg:${isRTL ? 'pr-0' : 'pl-0'}`}>
+      <div className={isRTL ? 'pr-64 max-lg:pr-0' : 'pl-64 max-lg:pl-0'}>
         <aside className={`fixed top-0 ${isRTL ? 'right-0 border-l' : 'left-0 border-r'} h-full w-64 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 flex flex-col transition-transform duration-300 z-50 ${sidebarOpen ? 'translate-x-0' : (isRTL ? 'translate-x-full' : '-translate-x-full')} lg:translate-x-0`}>
           <div className="p-6 flex items-center justify-between border-b border-gray-100 dark:border-gray-700">
             <Link to={createPageUrl("Home")} className="flex items-center gap-3">
@@ -296,6 +294,15 @@ export default function Layout({ children, currentPageName }) {
               </h2>
               <div className="space-y-1">
                 {navItems.mySpace.map(item => <NavLink key={item.href} item={item} />)}
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <h2 className="px-4 text-xs font-semibold text-gray-400 dark:text-gray-300 uppercase tracking-wider mb-2">
+                {t("common.communitySection")}
+              </h2>
+              <div className="space-y-1">
+                {navItems.community.map(item => <NavLink key={item.href} item={item} />)}
               </div>
             </div>
 

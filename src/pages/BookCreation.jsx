@@ -244,13 +244,17 @@ export default function BookCreation() {
       });
 
       if (outlineResult.title && (!book.title || book.title === "")) {
-        await Book.update(bookId, { title: outlineResult.title });
-        setBook((prev) => ({ ...prev, title: outlineResult.title }));
+        const sanitizedOutlineTitle = sanitizeAIOutput(outlineResult.title);
+        await Book.update(bookId, { title: sanitizedOutlineTitle });
+        setBook((prev) => ({ ...prev, title: sanitizedOutlineTitle }));
       }
 
       setGeneratingStep(3);
 
       const newPages = [];
+      let imageSuccessCount = 0;
+      const imageFailureInfo = [];
+
       for (let i = 0; i < outlineResult.outline.length; i++) {
         const pageOutline = outlineResult.outline[i];
 
@@ -266,20 +270,43 @@ export default function BookCreation() {
           }
         });
 
+        // Sanitize AI text output before saving
+        const sanitizedTextContent = sanitizeAIOutput(pageTextResult.text_content || "");
+
         const imagePrompt = getEnhancedImagePrompt(pageTextResult.image_prompt, i);
-        const imageResult = await GenerateImage({ prompt: imagePrompt });
+        let imageUrl = "";
+        let imageFailed = false;
+
+        try {
+          const imageResult = await GenerateImage({ prompt: imagePrompt });
+          imageUrl = imageResult?.url || "";
+          if (imageUrl) {
+            imageSuccessCount++;
+          } else {
+            imageFailed = true;
+            console.error("[BookCreation] GenerateImage returned no URL for page", i);
+          }
+        } catch (imgErr) {
+          imageFailed = true;
+          console.error("[BookCreation] Image generation failed for page", i, imgErr?.message || imgErr);
+        }
 
         const pageData = {
           book_id: bookId,
           page_number: i,
-          text_content: pageTextResult.text_content,
-          image_url: imageResult.url,
-          image_prompt: imagePrompt,
+          text_content: sanitizedTextContent,
+          image_url: imageUrl,
+          // If image failed, mark it in the prompt so it can be retried
+          image_prompt: imageFailed ? `[Image generation failed] ${imagePrompt}` : imagePrompt,
           layout_type: getLayoutForPageNumber(i)
         };
 
         const createdPage = await Page.create(pageData);
         newPages.push(createdPage);
+
+        if (imageFailed) {
+          imageFailureInfo.push({ pageId: createdPage.id, imagePrompt });
+        }
 
         setGeneratingStep(3 + Math.floor(((i + 1) * 7) / outlineResult.outline.length));
       }
@@ -290,10 +317,19 @@ export default function BookCreation() {
       setPages(newPages);
       setBook((prev) => ({ ...prev, status: "complete" }));
 
-      toast({
-        description: t("book.bookGenerated"),
-        className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100"
-      });
+      if (imageFailureInfo.length > 0) {
+        toast({
+          variant: "destructive",
+          description: isRTL
+            ? `${imageSuccessCount} מתוך ${newPages.length} איורים נוצרו. ${imageFailureInfo.length} נכשלו — ניתן לנסות שוב בעורך.`
+            : `${imageSuccessCount} of ${newPages.length} images generated. ${imageFailureInfo.length} failed — you can retry in the editor.`
+        });
+      } else {
+        toast({
+          description: t("book.bookGenerated"),
+          className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100"
+        });
+      }
     } catch (error) {
       toast({
         variant: "destructive",
@@ -311,13 +347,15 @@ export default function BookCreation() {
     if (length === "short") pageCount = 6;
     if (length === "long") pageCount = 15;
 
-    const safetyPrefix = buildSafetyPromptPrefix(age_range || "5-10");
+    // Use stored age range from onboarding if book doesn't have one
+    const resolvedAgeRange = age_range || localStorage.getItem("preferredAgeRange") || "5-10";
+    const safetyPrefix = buildSafetyPromptPrefix(resolvedAgeRange);
 
     return `${safetyPrefix}Create a detailed outline for a personalized children's book with the following details:
       - Title: ${title || "Generate a catchy title"}
       - Main character: ${child_name}, age ${child_age}
       - Genre: ${genre}
-      - Target age range: ${age_range}
+      - Target age range: ${resolvedAgeRange}
       - Tone: ${tone}
       - Moral or lesson: ${moral || "Should include a positive message appropriate for children"}
       - Child's interests: ${interests || "general children's interests"}
@@ -337,14 +375,16 @@ export default function BookCreation() {
 
   const getPageTextPrompt = (pageDescription, pageNumber) => {
     const { child_name, child_age, genre, age_range, art_style } = book;
-    const safetyPrefix = buildSafetyPromptPrefix(age_range || "5-10");
+    // Use stored age range from onboarding if book doesn't have one
+    const resolvedAgeRange = age_range || localStorage.getItem("preferredAgeRange") || "5-10";
+    const safetyPrefix = buildSafetyPromptPrefix(resolvedAgeRange);
 
     return `${safetyPrefix}Write the text content for page ${pageNumber} of a children's story based on this description: "${pageDescription}"
 
     Story details:
     - Main character: ${child_name}, age ${child_age}
     - Genre: ${genre}
-    - Target age range: ${age_range}
+    - Target age range: ${resolvedAgeRange}
     - Art style: ${art_style}
     ${useRhyming ? `- The text should be written in rhyming format with pattern: ${rhymeSettings.pattern}, meter: ${rhymeSettings.meter}, complexity: ${rhymeSettings.complexity}` : ""}
 
@@ -484,7 +524,7 @@ export default function BookCreation() {
       });
 
       if (result.text_with_nikud) {
-        setCurrentPageText(result.text_with_nikud);
+        setCurrentPageText(sanitizeAIOutput(result.text_with_nikud));
         toast({
           description: t("book.nikudAdded"),
           className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100"
@@ -514,7 +554,7 @@ export default function BookCreation() {
       });
 
       if (result.rhyming_text) {
-        setCurrentPageText(result.rhyming_text);
+        setCurrentPageText(sanitizeAIOutput(result.rhyming_text));
         toast({
           description: t("book.rhymeSuccess"),
           className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100"

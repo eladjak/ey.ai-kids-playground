@@ -32,7 +32,8 @@ const EVENT_LABELS = {
 export default function XPToast({
   celebration,
   onDismiss,
-  isHebrew = false
+  isHebrew = false,
+  isRTL = false
 }) {
   if (!celebration || celebration.type !== "xp") return null;
 
@@ -40,10 +41,13 @@ export default function XPToast({
     ? EVENT_LABELS.hebrew[celebration.eventType] || ""
     : EVENT_LABELS.english[celebration.eventType] || "";
 
+  // In RTL layouts, toast appears on the left side
+  const positionClass = isRTL ? "fixed top-20 left-4 z-40 pointer-events-none" : "fixed top-20 right-4 z-40 pointer-events-none";
+
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed top-20 right-4 z-40 pointer-events-none"
+        className={positionClass}
         initial={{ opacity: 0, y: 40, scale: 0.8 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: -30 }}

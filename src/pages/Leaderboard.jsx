@@ -66,7 +66,7 @@ export default function Leaderboard() {
       const user = await User.me();
       setCurrentUser(user);
 
-      const storedLanguage = localStorage.getItem("appLanguage") || "english";
+      const storedLanguage = localStorage.getItem("language") || "english";
       setCurrentLanguage(storedLanguage);
       setIsRTL(storedLanguage === "hebrew" || storedLanguage === "yiddish");
 

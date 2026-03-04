@@ -6,6 +6,7 @@ import { User } from "@/entities/User";
 import { Book } from "@/entities/Book";
 import { UserBadge } from "@/entities/UserBadge";
 import useGamification, { BADGE_DEFINITIONS } from "@/hooks/useGamification";
+import { useI18n } from "@/components/i18n/i18nProvider";
 import {
   User as UserIcon,
   Settings,
@@ -58,13 +59,16 @@ import RecentActivity from "../components/profile/RecentActivity";
 import MyBooksSection from "../components/profile/MyBooksSection";
 
 export default function Profile() {
+  const { language: i18nLanguage, isRTL: i18nIsRTL } = useI18n();
+
   const showToast = (message, type = "info") => {
     const toastClass = type === "error" ? "bg-red-100 border-red-200 text-red-800" : 
                       type === "success" ? "bg-green-100 border-green-200 text-green-800" : 
                       "bg-blue-100 border-blue-200 text-blue-800";
 
     const toastElement = document.createElement("div");
-    toastElement.className = `fixed bottom-4 right-4 p-4 rounded-md border ${toastClass} shadow-md transition-all duration-500 z-50`;
+    const toastSide = i18nIsRTL ? "left-4" : "right-4";
+    toastElement.className = `fixed bottom-4 ${toastSide} p-4 rounded-md border ${toastClass} shadow-md transition-all duration-500 z-50`;
     toastElement.textContent = message;
     document.body.appendChild(toastElement);
     
@@ -78,8 +82,8 @@ export default function Profile() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState("english");
-  const [isRTL, setIsRTL] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState(i18nLanguage);
+  const isRTL = i18nIsRTL;
   const [activeTab, setActiveTab] = useState("overview");
   const [editMode, setEditMode] = useState(false);
   const [avatarEditorOpen, setAvatarEditorOpen] = useState(false);
@@ -226,11 +230,8 @@ export default function Profile() {
         setRecentBooks(recentBooksData);
         setUserBooks(allBooks);
         
-        const interfaceLanguage = user.language || 
-                                localStorage.getItem("appLanguage") || 
-                                "english";
+        const interfaceLanguage = user.language || i18nLanguage || "english";
         setCurrentLanguage(interfaceLanguage);
-        setIsRTL(interfaceLanguage === "hebrew" || interfaceLanguage === "yiddish");
         
         loadAchievementsData(user, allBooks);
         loadRecentActivityData(allBooks);

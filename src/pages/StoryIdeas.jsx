@@ -50,7 +50,7 @@ export default function StoryIdeas() {
     const loadUserSettings = async () => {
       try {
         const user = await User.me();
-        const storedLanguage = user.language || localStorage.getItem("appLanguage") || "english";
+        const storedLanguage = user.language || localStorage.getItem("language") || "english";
         setCurrentLanguage(storedLanguage);
         
         // Load saved ideas

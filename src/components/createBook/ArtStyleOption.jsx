@@ -7,13 +7,13 @@ export default function ArtStyleOption({ id, name, image, description, isSelecte
   
   // Load language preference
   useEffect(() => {
-    const storedLanguage = localStorage.getItem("appLanguage");
+    const storedLanguage = localStorage.getItem("language");
     if (storedLanguage) {
       setCurrentLanguage(storedLanguage);
     }
     
     const handleStorageChange = (e) => {
-      if (e.key === "appLanguage") {
+      if (e.key === "language") {
         setCurrentLanguage(e.newValue || "english");
       }
     };

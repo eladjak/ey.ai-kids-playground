@@ -40,7 +40,7 @@ export default function Characters() {
   const [currentLanguage, setCurrentLanguage] = useState("english");
 
   useEffect(() => {
-    const storedLanguage = localStorage.getItem("appLanguage") || "english";
+    const storedLanguage = localStorage.getItem("language") || "english";
     setCurrentLanguage(storedLanguage);
     loadCharacters();
   }, []);
