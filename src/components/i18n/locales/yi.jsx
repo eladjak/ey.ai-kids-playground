@@ -342,7 +342,11 @@ export default {
       tryFilters: "פּרובירט צו פּאַסן דײַן זוכן אָדער פֿילטערס",
       createFirstLong: "שאַפֿן דײַן ערשטן פּערזענלעכן מעשׂה-בוך",
       button: "שאַפֿן אַ בוך"
-    }
+    },
+    copy: "קאָפּיע",
+    duplicated: "בוך דופּליקירט!",
+    duplicatedDesc: "\"{title}\" איז צוגעגעבן צו דײַן ביבליאָטעק",
+    duplicateError: "פֿעלער בײַם דופּליקירן דעם בוך"
   },
   collaborate: {
     title: "קאָלאַבאָראַטיוו עדיטאָר",
@@ -806,6 +810,15 @@ export default {
       title: "דײַן ביכל איז גרייט!",
       readButton: "לייענען מײַן ביכל",
       autoNavigate: "עפֿענען אויטאָמאַטיש אין אַ רגע..."
+    },
+    draft: {
+      found: "אַנטוואָרף געפֿונען",
+      foundDesc: "פֿאָרזעצן אַרבעטן אויף \"{title}\"?",
+      restore: "צוריקשטעלן",
+      restored: "אַנטוואָרף צוריקגעשטעלט!",
+      cleared: "אַנטוואָרף אויסגעמעקט",
+      clear: "אויסמעקן אַנטוואָרף",
+      untitled: "אַנטוואָרף אָן נאָמען"
     }
   },
   characters: {
@@ -1193,7 +1206,26 @@ export default {
     missingInfo: "פֿעלנדיקע אינפֿאָרמאַציע",
     missingFields: "ביטע פֿילן אין נאָמען, פּערזענלעכקייט, און אויסזען.",
     saving: "אָפּהיטן...",
-    deleting: "מעקן..."
+    deleting: "מעקן...",
+    generateDetails: "שאַפֿן פּרטים",
+    generateImage: "שאַפֿן בילד",
+    viewImage: "קוק",
+    imageUrlPlaceholder: "בילד URL (אָפּציאָנעל)",
+    imageGenerated: "בילד מיט דערפֿאָלג געשאַפֿן!",
+    imageGeneratedDesc: "דעם כאַראַקטער'ס בילד איז דערנייערט געוואָרן.",
+    imageGenerateFailed: "בילד שאַפֿן פֿאַרפֿעלט",
+    detailsGenerated: "פּרטים מיט דערפֿאָלג געשאַפֿן!",
+    detailsGeneratedDesc: "דעם כאַראַקטער'ס פּרטים זענען דערנייערט געוואָרן.",
+    detailsGenerateFailed: "פּרטים שאַפֿן פֿאַרפֿעלט",
+    tryAgain: "ביטע פּרוּוו נאָכאַמאָל.",
+    cancelBtn: "אָפּזאָגן",
+    styleCartoon: "קאַרטון",
+    styleDisney: "דיסני",
+    stylePixar: "פּיקסאַר",
+    styleWatercolor: "וואַסערפֿאַרב",
+    styleSketch: "סקיצע",
+    styleRealistic: "רעאַליסטיש",
+    styleAnime: "אַנימע"
   },
   ideaGenerator: {
     title: "געשיכטע אידעע שאַפֿער",
@@ -1358,7 +1390,8 @@ export default {
     view: "קוקן",
     edit: "רעדאַקטירן",
     feedback: "פֿידבעק",
-    share: "טיילן"
+    share: "טיילן",
+    duplicate: "דופּליקאַט"
   },
   myBooks: {
     title: "מײַנע ביכער",
@@ -1501,6 +1534,14 @@ export default {
     activity: {
       bookCreated: "אַ נײַ בוך נשאַפֿן",
       untitled: "בוך אָן נאָמען"
+    },
+    readingStats: {
+      title: "ליין-סטאַטיסטיקן",
+      booksCreated: "ביכער נשאַפֿן",
+      totalPages: "אַלע בלעטער",
+      favoriteGenre: "באַליבטער זשאַנער",
+      memberSince: "מיטגליד זינט",
+      noGenre: "נאָך קיינס"
     }
   }
 };

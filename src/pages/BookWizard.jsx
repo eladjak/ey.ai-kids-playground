@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Book } from "@/entities/Book";
 import { Page } from "@/entities/Page";
@@ -7,7 +7,7 @@ import { Notification } from "@/entities/Notification";
 import { createPageUrl } from "@/utils";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, BookOpen, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, BookOpen, Sparkles, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { InvokeLLM, GenerateImage } from "@/integrations/Core";
@@ -26,6 +26,63 @@ import PreviewEditStep from "@/components/wizard/PreviewEditStep";
 import SaveStep from "@/components/wizard/SaveStep";
 import LoadingOverlay from "@/components/shared/LoadingOverlay";
 import FriendlyError from "@/components/shared/FriendlyError";
+
+// --- Draft auto-save helpers ---
+const DRAFT_PREFIX = "sipurai_draft_";
+const MAX_DRAFTS = 3;
+
+function getDraftKeys() {
+  const keys = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith(DRAFT_PREFIX)) {
+      keys.push(key);
+    }
+  }
+  // Sort by saved timestamp (newest first)
+  keys.sort((a, b) => {
+    try {
+      const aData = JSON.parse(localStorage.getItem(a) || "{}");
+      const bData = JSON.parse(localStorage.getItem(b) || "{}");
+      return (bData._savedAt || 0) - (aData._savedAt || 0);
+    } catch {
+      return 0;
+    }
+  });
+  return keys;
+}
+
+function getLatestDraft() {
+  const keys = getDraftKeys();
+  if (keys.length === 0) return null;
+  try {
+    const data = JSON.parse(localStorage.getItem(keys[0]) || "null");
+    if (data) data._draftKey = keys[0];
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+function pruneOldDrafts() {
+  const keys = getDraftKeys();
+  // Remove drafts beyond the MAX_DRAFTS limit (oldest first)
+  while (keys.length > MAX_DRAFTS) {
+    const oldest = keys.pop();
+    localStorage.removeItem(oldest);
+  }
+}
+
+function clearDraft(key) {
+  if (key) {
+    localStorage.removeItem(key);
+  }
+}
+
+function clearAllDrafts() {
+  const keys = getDraftKeys();
+  keys.forEach((k) => localStorage.removeItem(k));
+}
 
 export default function BookWizard() {
   const navigate = useNavigate();
@@ -82,6 +139,112 @@ export default function BookWizard() {
   });
 
   const [generatedOutline, setGeneratedOutline] = useState(null);
+
+  // Draft auto-save
+  const [activeDraftKey, setActiveDraftKey] = useState(null);
+  const draftTimerRef = useRef(null);
+
+  // Save draft to localStorage (debounced)
+  const saveDraft = useCallback(() => {
+    // Don't save while creating or if book is already being generated
+    if (isCreating) return;
+
+    const draftData = {
+      currentStep,
+      selectedTopic,
+      customIdea,
+      selectedCharacters,
+      bookData,
+      generatedOutline,
+      _savedAt: Date.now(),
+    };
+
+    const key = activeDraftKey || `${DRAFT_PREFIX}${Date.now()}`;
+    try {
+      localStorage.setItem(key, JSON.stringify(draftData));
+      if (!activeDraftKey) {
+        setActiveDraftKey(key);
+      }
+      pruneOldDrafts();
+    } catch {
+      // localStorage may be full — silently skip
+    }
+  }, [currentStep, selectedTopic, customIdea, selectedCharacters, bookData, generatedOutline, isCreating, activeDraftKey]);
+
+  // Debounced auto-save on state changes (2 second delay)
+  useEffect(() => {
+    // Don't auto-save on initial load or while loading
+    if (isLoading || isCreating) return;
+    // Only save if user has made meaningful progress (selected a topic at minimum)
+    if (!selectedTopic && !customIdea && !bookData.title) return;
+
+    if (draftTimerRef.current) {
+      clearTimeout(draftTimerRef.current);
+    }
+    draftTimerRef.current = setTimeout(() => {
+      saveDraft();
+    }, 2000);
+
+    return () => {
+      if (draftTimerRef.current) {
+        clearTimeout(draftTimerRef.current);
+      }
+    };
+  }, [currentStep, selectedTopic, customIdea, selectedCharacters, bookData, generatedOutline, saveDraft, isLoading, isCreating]);
+
+  // Restore draft on mount
+  useEffect(() => {
+    const draft = getLatestDraft();
+    if (draft && draft._savedAt) {
+      // Only offer restore if draft is less than 7 days old
+      const ageMs = Date.now() - draft._savedAt;
+      const sevenDays = 7 * 24 * 60 * 60 * 1000;
+      if (ageMs < sevenDays) {
+        const draftTitle = draft.bookData?.title || draft.selectedTopic || t("wizard.draft.untitled");
+        toast({
+          title: t("wizard.draft.found"),
+          description: t("wizard.draft.foundDesc").replace("{title}", draftTitle),
+          duration: 8000,
+          action: (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                // Restore draft state
+                if (draft.currentStep != null) setCurrentStep(draft.currentStep);
+                if (draft.selectedTopic) setSelectedTopic(draft.selectedTopic);
+                if (draft.customIdea) setCustomIdea(draft.customIdea);
+                if (draft.selectedCharacters) setSelectedCharacters(draft.selectedCharacters);
+                if (draft.bookData) setBookData((prev) => ({ ...prev, ...draft.bookData }));
+                if (draft.generatedOutline) setGeneratedOutline(draft.generatedOutline);
+                setActiveDraftKey(draft._draftKey);
+                toast({
+                  title: t("wizard.draft.restored"),
+                  className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100",
+                });
+              }}
+            >
+              {t("wizard.draft.restore")}
+            </Button>
+          ),
+        });
+      }
+    }
+    // Only run on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleClearDraft = () => {
+    if (activeDraftKey) {
+      clearDraft(activeDraftKey);
+      setActiveDraftKey(null);
+    } else {
+      clearAllDrafts();
+    }
+    toast({
+      title: t("wizard.draft.cleared"),
+    });
+  };
 
   // Step definitions using i18n
   const steps = [
@@ -537,6 +700,12 @@ Return as JSON with:
         step: ""
       });
 
+      // Clear draft after successful creation
+      if (activeDraftKey) {
+        clearDraft(activeDraftKey);
+        setActiveDraftKey(null);
+      }
+
       // Track book creation event
       trackEvent('book_created', { book_id: createdBook.id });
 
@@ -907,25 +1076,39 @@ Return as JSON with:
 
       {/* Navigation Buttons */}
       <div className={`flex ${isRTL ? "flex-row-reverse" : "flex-row"} justify-between items-center mt-8 pt-4 border-t border-gray-200 dark:border-gray-700`}>
-        <Button
-          variant="outline"
-          onClick={prevStep}
-          disabled={currentStep === 0}
-          className="flex items-center gap-2"
-          aria-label={t("wizard.nav.back")}
-        >
-          {isRTL ? (
-            <>
-              {t("wizard.nav.back")}
-              <ChevronRight className="h-4 w-4" aria-hidden="true" />
-            </>
-          ) : (
-            <>
-              <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-              {t("wizard.nav.back")}
-            </>
+        <div className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
+          <Button
+            variant="outline"
+            onClick={prevStep}
+            disabled={currentStep === 0}
+            className="flex items-center gap-2"
+            aria-label={t("wizard.nav.back")}
+          >
+            {isRTL ? (
+              <>
+                {t("wizard.nav.back")}
+                <ChevronRight className="h-4 w-4" aria-hidden="true" />
+              </>
+            ) : (
+              <>
+                <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+                {t("wizard.nav.back")}
+              </>
+            )}
+          </Button>
+
+          {activeDraftKey && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleClearDraft}
+              className="text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400"
+              aria-label={t("wizard.draft.clear")}
+            >
+              <Trash2 className="h-4 w-4" aria-hidden="true" />
+            </Button>
           )}
-        </Button>
+        </div>
 
         {currentStep < steps.length - 1 && (
           <Button

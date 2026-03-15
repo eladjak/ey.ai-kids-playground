@@ -30,14 +30,14 @@
       "name": "Create Book",
       "short_name": "Create",
       "description": "Start creating a new book",
-      "url": "/book-wizard",
+      "url": "/BookWizard",
       "icons": [{ "src": "/icons/icon-192x192.jpg", "sizes": "192x192" }]
     },
     {
       "name": "My Library",
       "short_name": "Library",
       "description": "View your book library",
-      "url": "/library",
+      "url": "/Library",
       "icons": [{ "src": "/icons/icon-192x192.jpg", "sizes": "192x192" }]
     }
   ]

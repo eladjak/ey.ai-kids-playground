@@ -37,6 +37,48 @@
 
     <!-- Umami Analytics (cookieless, COPPA-safe) -->
     <script defer src="https://analytics.sipurai.ai/script.js" data-website-id="3540b3be-4b55-4372-828e-8666009a1ac8"></script>
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "name": "Sipurai",
+          "url": "https://sipurai.ai",
+          "logo": "https://sipurai.ai/icons/icon-512x512.jpg",
+          "description": "AI-powered children's book creation platform",
+          "sameAs": []
+        },
+        {
+          "@type": "WebApplication",
+          "name": "Sipurai",
+          "url": "https://sipurai.ai",
+          "applicationCategory": "EducationalApplication",
+          "operatingSystem": "Any",
+          "browserRequirements": "Requires JavaScript",
+          "description": "Create personalized AI-powered children's books in Hebrew, English, and Yiddish. Kids choose characters, style, and language — AI creates a complete illustrated story.",
+          "inLanguage": ["he", "en", "yi"],
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "audience": {
+            "@type": "EducationalAudience",
+            "educationalRole": "student",
+            "suggestedMinAge": 4,
+            "suggestedMaxAge": 12
+          },
+          "creator": {
+            "@type": "Organization",
+            "name": "Sipurai"
+          }
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

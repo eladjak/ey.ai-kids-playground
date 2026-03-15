@@ -1,5 +1,7 @@
+import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act, waitFor } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Mock secureEntity to pass through in tests
 vi.mock("@/lib/secureEntity", () => ({
@@ -25,6 +27,12 @@ import { useBook } from "./useBook";
 import { Book } from "@/entities/Book";
 import { Page } from "@/entities/Page";
 
+// Fresh QueryClient per test to avoid cache leaking between tests
+function createWrapper() {
+  const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return ({ children }) => React.createElement(QueryClientProvider, { client: qc }, children);
+}
+
 describe("useBook hook", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -36,7 +44,7 @@ describe("useBook hook", () => {
   });
 
   it("returns initial loading state when bookId is provided", () => {
-    const { result } = renderHook(() => useBook("book-1"));
+    const { result } = renderHook(() => useBook("book-1"), { wrapper: createWrapper() });
     expect(result.current.isLoading).toBe(true);
     expect(result.current.book).toBeNull();
     expect(result.current.pages).toHaveLength(0);
@@ -44,7 +52,7 @@ describe("useBook hook", () => {
   });
 
   it("returns book and pages after successful load", async () => {
-    const { result } = renderHook(() => useBook("book-1"));
+    const { result } = renderHook(() => useBook("book-1"), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     expect(result.current.book).toBeTruthy();
@@ -57,7 +65,7 @@ describe("useBook hook", () => {
   it("handles error when book load fails", async () => {
     vi.mocked(Book.get).mockRejectedValueOnce(new Error("Network error"));
 
-    const { result } = renderHook(() => useBook("book-1"));
+    const { result } = renderHook(() => useBook("book-1"), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     expect(result.current.error).toBe("Network error");
@@ -65,7 +73,7 @@ describe("useBook hook", () => {
   });
 
   it("returns empty state when no bookId is provided", () => {
-    const { result } = renderHook(() => useBook(null));
+    const { result } = renderHook(() => useBook(null), { wrapper: createWrapper() });
     expect(result.current.isLoading).toBe(false);
     expect(result.current.book).toBeNull();
     expect(result.current.pages).toHaveLength(0);
@@ -73,7 +81,7 @@ describe("useBook hook", () => {
   });
 
   it("pages are loaded with correct book_id filter", async () => {
-    const { result } = renderHook(() => useBook("book-42"));
+    const { result } = renderHook(() => useBook("book-42"), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     expect(Page.filter).toHaveBeenCalledWith({ book_id: "book-42" }, "page_number");
@@ -82,7 +90,7 @@ describe("useBook hook", () => {
   it("loading state is false after error", async () => {
     vi.mocked(Book.get).mockRejectedValueOnce(new Error("Server error"));
 
-    const { result } = renderHook(() => useBook("book-1"));
+    const { result } = renderHook(() => useBook("book-1"), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     expect(result.current.isLoading).toBe(false);
@@ -90,7 +98,7 @@ describe("useBook hook", () => {
   });
 
   it("refresh function triggers reload", async () => {
-    const { result } = renderHook(() => useBook("book-1"));
+    const { result } = renderHook(() => useBook("book-1"), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     const callCountBefore = vi.mocked(Book.get).mock.calls.length;

@@ -45,19 +45,3 @@ export async function UploadFile({ file }) {
   return uploadFileToSupabase(file, 'uploads');
 }
 
-// ─── Legacy exports (no-ops, kept for import compatibility) ─────────────────
-
-export async function SendEmail() {
-  console.warn('SendEmail: not implemented (Base44 removed)');
-  return {};
-}
-
-export async function SendSMS() {
-  console.warn('SendSMS: not implemented (Base44 removed)');
-  return {};
-}
-
-export async function ExtractDataFromUploadedFile() {
-  console.warn('ExtractDataFromUploadedFile: not implemented (Base44 removed)');
-  return {};
-}

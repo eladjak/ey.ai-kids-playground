@@ -318,6 +318,18 @@ vi.mock("@/utils/content-moderation", () => ({
   DEFAULT_PARENTAL_CONTROLS: {},
 }));
 
+// Mock error tracking and analytics
+vi.mock("@/lib/errorTracking", () => ({
+  captureError: vi.fn(),
+  initErrorTracking: vi.fn(),
+}));
+
+vi.mock("@/lib/analytics", () => ({
+  trackEvent: vi.fn(),
+  identifyUser: vi.fn(),
+  initAnalytics: vi.fn(),
+}));
+
 // Mock utils
 vi.mock("@/utils", () => ({
   createPageUrl: (pageName) => "/" + pageName.toLowerCase().replace(/ /g, "-"),

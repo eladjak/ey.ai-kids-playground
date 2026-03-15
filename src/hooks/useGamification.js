@@ -3,6 +3,7 @@ import { User } from "@/entities/User";
 import { Book } from "@/entities/Book";
 import { UserBadge } from "@/entities/UserBadge";
 import { trackEvent } from "@/lib/analytics";
+import { captureError } from "@/lib/errorTracking";
 
 // XP rewards for different actions
 const XP_EVENTS = {
@@ -224,8 +225,8 @@ export default function useGamification() {
       });
       setBadges(badgeStates);
 
-    } catch {
-      // Fallback to defaults
+    } catch (err) {
+      captureError(err, { context: 'useGamification.loadGamificationData' });
     } finally {
       setIsLoading(false);
     }
@@ -313,8 +314,8 @@ export default function useGamification() {
         level: newLevel || 1,
         next_level_xp: getNextLevelXP(newLevel)
       });
-    } catch {
-      // silently handled
+    } catch (err) {
+      captureError(err, { context: 'useGamification.awardXP.persistXP' });
     }
 
     // Check for newly earned badges
@@ -371,12 +372,12 @@ export default function useGamification() {
             setXP(updatedXP);
             try {
               await User.updateMyUserData({ xp: updatedXP });
-            } catch {
-              // silently handled
+            } catch (err) {
+              captureError(err, { context: 'useGamification.checkNewBadges.persistBadgeXP', badge_id: def.id });
             }
           }
-        } catch {
-          // Badge creation failed, will retry next time
+        } catch (err) {
+          captureError(err, { context: 'useGamification.checkNewBadges.createBadge', badge_id: def.id });
         }
       }
     }

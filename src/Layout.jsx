@@ -9,6 +9,7 @@ import useGamification from "@/hooks/useGamification";
 import GamificationOverlay from "@/components/gamification/GamificationOverlay";
 import NotificationBell from "@/components/social/NotificationBell";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import InstallPrompt from "@/components/shared/InstallPrompt";
 
 import {
   BookOpen,
@@ -222,6 +223,12 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <div className="min-h-screen w-full bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-sans transition-colors duration-300">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-purple-600 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg"
+      >
+        Skip to main content
+      </a>
       <div className={isRTL ? 'pr-64 max-lg:pr-0' : 'pl-64 max-lg:pl-0'}>
         <aside className={`fixed top-0 ${isRTL ? 'right-0 border-l' : 'left-0 border-r'} h-full w-64 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 flex flex-col transition-transform duration-300 z-50 ${sidebarOpen ? 'translate-x-0' : (isRTL ? 'translate-x-full' : '-translate-x-full')} lg:translate-x-0`}>
           <div className="p-6 flex items-center justify-between border-b border-gray-100 dark:border-gray-700">
@@ -234,8 +241,9 @@ export default function Layout({ children, currentPageName }) {
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
+              className="lg:hidden h-11 w-11 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
               onClick={() => setSidebarOpen(false)}
+              aria-label="Close sidebar"
             >
               <X className="h-5 w-5 dark:text-gray-300" />
             </Button>
@@ -347,8 +355,9 @@ export default function Layout({ children, currentPageName }) {
             <Button
               variant="ghost"
               size="icon"
-              className="hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
+              className="h-11 w-11 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
               onClick={() => setSidebarOpen(true)}
+              aria-label="Open menu"
             >
               <Menu className="h-5 w-5 dark:text-gray-300" />
             </Button>
@@ -360,8 +369,8 @@ export default function Layout({ children, currentPageName }) {
 
             <div className="flex items-center gap-2">
               <NotificationBell />
-              <Link to={createPageUrl("Profile")}>
-                <Avatar className="h-8 w-8 border-2 border-white dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
+              <Link to={createPageUrl("Profile")} aria-label="View profile">
+                <Avatar className="h-11 w-11 border-2 border-white dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
                   {user?.avatar_url ? (
                     <AvatarImage src={user.avatar_url} alt={user.full_name} />
                   ) : (
@@ -376,7 +385,7 @@ export default function Layout({ children, currentPageName }) {
         </div>
 
         <div className={`min-h-screen pt-16 lg:pt-0`}>
-          <main className="p-4">
+          <main id="main-content" className="p-4">
             <ErrorBoundary>
               {children}
             </ErrorBoundary>
@@ -388,6 +397,8 @@ export default function Layout({ children, currentPageName }) {
         <div
           className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
           onClick={() => setSidebarOpen(false)}
+          role="presentation"
+          aria-hidden="true"
         />
       )}
 
@@ -399,6 +410,8 @@ export default function Layout({ children, currentPageName }) {
         isHebrew={currentLanguage === "hebrew"}
         isYiddish={currentLanguage === "yiddish"}
       />
+
+      <InstallPrompt />
     </div>
   );
 }

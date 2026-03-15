@@ -18,7 +18,7 @@
  * }}
  */
 import { useRef, useCallback } from 'react';
-import { useQuery, useMutation, QueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, QueryClient } from '@tanstack/react-query';
 import { Notification } from '@/entities/Notification';
 import { User } from '@/entities/User';
 
@@ -26,13 +26,17 @@ const QUERY_KEY = ['notifications'];
 const POLL_INTERVAL = 30 * 1000; // 30 seconds
 
 export default function useNotifications() {
-  // Each hook instance owns a stable QueryClient so it works both inside a
-  // QueryClientProvider (production) and in isolation (tests).
-  const clientRef = useRef(null);
-  if (!clientRef.current) {
-    clientRef.current = new QueryClient({
-      defaultOptions: { queries: { retry: false } },
-    });
+  // Use the global QueryClient from the provider when available;
+  // fall back to a per-instance client for test environments.
+  const fallbackRef = useRef(null);
+  let queryClient;
+  try {
+    queryClient = useQueryClient();
+  } catch {
+    if (!fallbackRef.current) {
+      fallbackRef.current = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    }
+    queryClient = fallbackRef.current;
   }
 
   const { data: notifications = [], isPending, refetch } = useQuery(
@@ -54,7 +58,7 @@ export default function useNotifications() {
       refetchInterval: POLL_INTERVAL,
       retry: false,
     },
-    clientRef.current
+    queryClient
   );
 
   const { mutateAsync: doMarkAsRead } = useMutation(
@@ -63,11 +67,11 @@ export default function useNotifications() {
         await Notification.update(id, { read: true });
       },
       onSuccess: () => {
-        clientRef.current.invalidateQueries({ queryKey: QUERY_KEY });
+        queryClient.invalidateQueries({ queryKey: QUERY_KEY });
         refetch();
       },
     },
-    clientRef.current
+    queryClient
   );
 
   const { mutateAsync: doMarkAllAsRead } = useMutation(
@@ -79,11 +83,11 @@ export default function useNotifications() {
         );
       },
       onSuccess: () => {
-        clientRef.current.invalidateQueries({ queryKey: QUERY_KEY });
+        queryClient.invalidateQueries({ queryKey: QUERY_KEY });
         refetch();
       },
     },
-    clientRef.current
+    queryClient
   );
 
   const markAsRead = useCallback(async (id) => {

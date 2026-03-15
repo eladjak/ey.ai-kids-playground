@@ -8,6 +8,7 @@ import { User } from "@/entities/User";
 import { Comment } from "@/entities/Comment";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import useGamification from "@/hooks/useGamification";
+import { captureError } from "@/lib/errorTracking";
 import { verifyParentalPin, isPinSet } from "@/utils/content-moderation";
 import {
   Search,
@@ -146,6 +147,7 @@ export default function CommunityPage() {
       // Load initial posts
       await loadFilteredPosts();
     } catch (error) {
+      captureError(error, { context: 'Community.loadInitialData' });
       toast({
         variant: "destructive",
         description: t("community.toast.loadError"),
@@ -199,6 +201,7 @@ export default function CommunityPage() {
       
       setPosts(searchResults);
     } catch (error) {
+      captureError(error, { context: 'Community.loadFilteredPosts' });
       toast({
         variant: "destructive",
         description: t("community.toast.postsError"),
@@ -262,6 +265,7 @@ export default function CommunityPage() {
         description: alreadyLiked ? t("community.toast.likeRemoved") : t("community.toast.likeAdded"),
       });
     } catch (error) {
+      captureError(error, { context: 'Community.handleLikePost', postId });
       toast({
         variant: "destructive",
         description: t("community.toast.likeError"),
@@ -297,6 +301,7 @@ export default function CommunityPage() {
         description: t("community.toast.shareSuccess"),
       });
     } catch (error) {
+      captureError(error, { context: 'Community.doShareBook' });
       toast({
         variant: "destructive",
         description: t("community.toast.shareError"),

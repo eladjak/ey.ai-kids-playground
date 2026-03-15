@@ -1,14 +1,11 @@
 /**
- * AI Provider — Direct API integration for text and image generation.
+ * AI Provider — Text and image generation via Gemini.
  *
- * Replaces Base44's InvokeLLM and GenerateImage with direct API calls.
- * Currently supports Gemini (client-side). Claude and OpenAI can be added
- * via a backend proxy (Supabase Edge Functions) in the future.
+ * Production: Calls /api/ai/generate serverless proxy (API key stays server-side).
+ * Development: If VITE_GEMINI_API_KEY is set, uses direct Gemini API calls
+ *              for convenience. Otherwise falls back to the proxy.
  *
- * Architecture:
- *   aiProvider.js  → direct Gemini API calls
- *   Core.js        → thin adapter (converts image base64 → URL via upload)
- *   Pages/hooks    → import from Core.js (unchanged)
+ * External interface (invokeLLM, generateImage, base64ToFile) is unchanged.
  */
 
 // ─── Configuration ──────────────────────────────────────────────────────────
@@ -17,20 +14,26 @@ const GEMINI_TEXT_MODEL = 'gemini-2.5-flash';
 const GEMINI_IMAGE_MODEL = 'gemini-2.0-flash-preview-image-generation';
 const GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 
+/**
+ * Whether to use direct Gemini API calls (dev with local key)
+ * or the serverless proxy (production / dev without key).
+ */
+function useDirectApi() {
+  return import.meta.env.DEV && !!import.meta.env.VITE_GEMINI_API_KEY;
+}
+
 function getApiKey() {
   const key = import.meta.env.VITE_GEMINI_API_KEY;
   if (!key) {
     throw new Error(
       'VITE_GEMINI_API_KEY is not configured. ' +
-      'Add it to your .env file to use AI features.'
+      'Add it to your .env file to use AI features in development.'
     );
   }
   return key;
 }
 
-// ─── Schema Conversion ─────────────────────────────────────────────────────
-// Base44 uses lowercase JSON Schema types ("string", "object", "array").
-// Gemini API requires uppercase enum values ("STRING", "OBJECT", "ARRAY").
+// ─── Schema Conversion (for direct mode) ────────────────────────────────────
 
 const TYPE_MAP = {
   string: 'STRING',
@@ -41,9 +44,6 @@ const TYPE_MAP = {
   object: 'OBJECT',
 };
 
-/**
- * Recursively convert a JSON Schema (Base44 style) to Gemini responseSchema format.
- */
 function convertSchemaToGemini(schema) {
   if (!schema || typeof schema !== 'object') return schema;
 
@@ -64,10 +64,26 @@ function convertSchemaToGemini(schema) {
     } else if (key === 'description' && typeof value === 'string') {
       converted.description = value;
     }
-    // Skip unknown keys (Gemini doesn't support all JSON Schema features)
   }
 
   return converted;
+}
+
+// ─── Proxy Calls ────────────────────────────────────────────────────────────
+
+async function proxyCall(type, prompt, options = {}) {
+  const response = await fetch('/api/ai/generate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt, type, options }),
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data.error || `AI request failed (${response.status})`);
+  }
+
+  return response.json();
 }
 
 // ─── Text Generation (LLM) ─────────────────────────────────────────────────
@@ -90,6 +106,18 @@ export async function invokeLLM({
   temperature,
   max_tokens,
 }) {
+  // ── Proxy mode (production) ──
+  if (!useDirectApi()) {
+    const data = await proxyCall('text', prompt, {
+      response_json_schema,
+      response_format,
+      temperature,
+      max_tokens,
+    });
+    return data.result;
+  }
+
+  // ── Direct mode (dev with local key) ──
   const apiKey = getApiKey();
   const wantsJson = !!(response_json_schema || response_format?.type === 'json_object');
 
@@ -133,7 +161,6 @@ export async function invokeLLM({
 
   const data = await response.json();
 
-  // Handle safety blocks
   if (data.candidates?.[0]?.finishReason === 'SAFETY') {
     throw new Error('Content was blocked by safety filters. Please try a different prompt.');
   }
@@ -143,9 +170,12 @@ export async function invokeLLM({
     throw new Error('No text generated. The model returned an empty response.');
   }
 
-  // Always return parsed JSON when JSON output was requested
   if (wantsJson) {
-    return JSON.parse(text);
+    try {
+      return JSON.parse(text);
+    } catch {
+      throw new Error('AI returned invalid JSON. Please try again.');
+    }
   }
 
   return text;
@@ -165,9 +195,14 @@ export async function invokeLLM({
  * @returns {{ base64: string, mimeType: string }}
  */
 export async function generateImage({ prompt, aspectRatio = '1:1' }) {
+  // ── Proxy mode (production) ──
+  if (!useDirectApi()) {
+    return proxyCall('image', prompt, { aspectRatio });
+  }
+
+  // ── Direct mode (dev with local key) ──
   const apiKey = getApiKey();
 
-  // Append child-safety instruction to all image prompts
   const safePrompt = `${prompt}\n\nIMPORTANT: This image is for a children's book. It must be completely child-friendly, wholesome, and appropriate for young readers.`;
 
   const response = await fetch(
@@ -182,9 +217,7 @@ export async function generateImage({ prompt, aspectRatio = '1:1' }) {
         contents: [{ parts: [{ text: safePrompt }] }],
         generationConfig: {
           responseModalities: ['TEXT', 'IMAGE'],
-          imageConfig: {
-            aspectRatio,
-          },
+          imageConfig: { aspectRatio },
         },
       }),
     }
@@ -197,7 +230,6 @@ export async function generateImage({ prompt, aspectRatio = '1:1' }) {
 
   const data = await response.json();
 
-  // Handle safety blocks
   if (data.candidates?.[0]?.finishReason === 'SAFETY') {
     throw new Error('Image was blocked by safety filters. Please try a different prompt.');
   }

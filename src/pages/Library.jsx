@@ -3,8 +3,10 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Book } from "@/entities/Book";
+import { Page } from "@/entities/Page";
 import { useI18n } from "@/components/i18n/i18nProvider";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useToast } from "@/components/ui/use-toast";
 import {
   PlusCircle,
   Search,
@@ -36,6 +38,7 @@ import EmptyState from "../components/library/EmptyState";
 
 export default function Library() {
   const { t, isRTL } = useI18n();
+  const { toast } = useToast();
   const { user: hookUser } = useCurrentUser();
   const [books, setBooks] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
@@ -119,6 +122,50 @@ export default function Library() {
     setSearchQuery("");
   };
 
+  const duplicateBook = async (book) => {
+    try {
+      // Copy book data, excluding id/created_date/created_by (secureEntity adds created_by)
+      const { id, created_date, created_by, ...bookFields } = book;
+      const newBook = await Book.create({
+        ...bookFields,
+        title: `${book.title} (${t("library.copy")})`,
+        status: "complete",
+      });
+
+      // Also duplicate all pages belonging to this book
+      try {
+        const pages = await Page.filter({ book_id: book.id });
+        if (pages.length > 0) {
+          await Promise.all(
+            pages.map((page) => {
+              const { id: pageId, created_date: pageCreated, created_by: pageOwner, ...pageFields } = page;
+              return Page.create({
+                ...pageFields,
+                book_id: newBook.id,
+              });
+            })
+          );
+        }
+      } catch {
+        // Page duplication is best-effort
+      }
+
+      toast({
+        title: t("library.duplicated"),
+        description: t("library.duplicatedDesc").replace("{title}", newBook.title),
+        className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100",
+      });
+
+      // Refresh the book list
+      await loadBooks();
+    } catch {
+      toast({
+        variant: "destructive",
+        title: t("library.duplicateError"),
+      });
+    }
+  };
+
   const genreOptions = [
     { value: "all", label: t("library.allGenres") },
     { value: "adventure", label: t("library.genreOptions.adventure") },
@@ -179,6 +226,7 @@ export default function Library() {
                 size="icon"
                 className={`absolute ${isRTL ? 'left-1' : 'right-1'} top-1/2 -translate-y-1/2 h-7 w-7 dark:text-gray-400 dark:hover:text-white`}
                 onClick={() => setSearchQuery("")}
+                aria-label="Clear search"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -331,7 +379,7 @@ export default function Library() {
           ) : filteredBooks.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {filteredBooks.map((book) => (
-                <BookCard key={book.id} book={book} viewType="grid" />
+                <BookCard key={book.id} book={book} viewType="grid" onDuplicate={duplicateBook} />
               ))}
             </div>
           ) : (
@@ -368,7 +416,7 @@ export default function Library() {
           ) : filteredBooks.length > 0 ? (
             <div className="space-y-4">
               {filteredBooks.map((book) => (
-                <BookCard key={book.id} book={book} viewType="list" />
+                <BookCard key={book.id} book={book} viewType="list" onDuplicate={duplicateBook} />
               ))}
             </div>
           ) : (

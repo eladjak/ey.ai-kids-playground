@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
-import { useQuery, QueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient, QueryClient } from '@tanstack/react-query';
 import { Book } from '@/entities/Book';
 import { Page } from '@/entities/Page';
 
@@ -11,13 +11,17 @@ import { Page } from '@/entities/Page';
  * @returns {{ book: Object|null, pages: Array, isLoading: boolean, error: string|null, refresh: Function }}
  */
 export function useBook(bookId) {
-  // Each hook instance owns a stable QueryClient so this hook works both
-  // inside a QueryClientProvider (production) and in isolation (tests).
-  const clientRef = useRef(null);
-  if (!clientRef.current) {
-    clientRef.current = new QueryClient({
-      defaultOptions: { queries: { retry: false } },
-    });
+  // Use the global QueryClient from the provider when available;
+  // fall back to a per-instance client for test environments.
+  const fallbackRef = useRef(null);
+  let queryClient;
+  try {
+    queryClient = useQueryClient();
+  } catch {
+    if (!fallbackRef.current) {
+      fallbackRef.current = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    }
+    queryClient = fallbackRef.current;
   }
 
   const { data, isPending, error: rqError, refetch } = useQuery(
@@ -34,7 +38,7 @@ export function useBook(bookId) {
       staleTime: 2 * 60 * 1000, // 2 minutes
       retry: false,
     },
-    clientRef.current
+    queryClient
   );
 
   // Local error string, kept in sync with React Query's error via useEffect

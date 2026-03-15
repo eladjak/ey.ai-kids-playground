@@ -18,22 +18,23 @@ export default function SavedIdeas({
 
   if (ideas.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 px-4 text-center" dir={isRTL ? "rtl" : "ltr"}>
-        <div className="rounded-full bg-amber-100 dark:bg-amber-900/30 p-5 mb-5">
-          <Lightbulb className="h-10 w-10 text-amber-500" />
+      <div className="flex flex-col items-center justify-center py-16 px-4 text-center bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-gray-800/50 dark:to-gray-800/30 rounded-xl border border-dashed border-amber-200 dark:border-gray-700" dir={isRTL ? "rtl" : "ltr"}>
+        <div className="rounded-full bg-amber-100 dark:bg-amber-900/30 p-6 mb-6">
+          <Lightbulb className="h-12 w-12 text-amber-500" />
         </div>
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
           {t("savedIdeas.emptyTitle")}
         </h3>
-        <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-sm">
+        <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-md text-base leading-relaxed">
           {t("savedIdeas.emptyDesc")}
         </p>
         {onGenerateNew && (
           <Button
+            size="lg"
             onClick={onGenerateNew}
-            className="bg-purple-600 hover:bg-purple-700 gap-2"
+            className="bg-purple-600 hover:bg-purple-700 gap-2 text-base px-8 py-3 h-auto"
           >
-            <Lightbulb className="h-4 w-4" />
+            <Lightbulb className="h-5 w-5" />
             {isRTL ? "צור רעיון חדש" : "Generate new idea"}
           </Button>
         )}

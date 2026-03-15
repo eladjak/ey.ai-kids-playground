@@ -1,14 +1,13 @@
 import { User } from "@/entities/User";
 
 /**
- * Creates a secure wrapper around a Base44 entity that adds
+ * Creates a secure wrapper around a Supabase entity that adds
  * authentication and ownership validation.
  *
- * Base44 has no server-side RLS, so all auth/ownership checks must
- * happen client-side. This wrapper enforces those checks for write
- * operations (create, update, delete) while passing reads through.
+ * This wrapper enforces auth/ownership checks for write operations
+ * (create, update, delete) while passing reads through.
  *
- * @param {object} entity  - A Base44 entity object (e.g. base44.entities.Book)
+ * @param {object} entity  - An entity object (e.g. entities.Book)
  * @param {object} options
  * @param {string} [options.ownerField='created_by'] - Field used to store the owner identifier
  * @returns {object} Secure entity wrapper

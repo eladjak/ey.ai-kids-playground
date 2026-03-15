@@ -33,7 +33,9 @@ import {
   Heart,
   Zap,
   MessageCircle,
-  Plus
+  Plus,
+  FileText,
+  BarChart3
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -109,6 +111,12 @@ export default function Profile() {
   const [recentActivity, setRecentActivity] = useState([]);
   const [achievements, setAchievements] = useState([]);
   const [recentBooks, setRecentBooks] = useState([]);
+  const [readingStats, setReadingStats] = useState({
+    totalBooks: 0,
+    totalPages: 0,
+    favoriteGenre: null,
+    memberSince: null,
+  });
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -147,7 +155,23 @@ export default function Profile() {
         });
         setRecentBooks(recentBooksData);
         setUserBooks(allBooks);
-        
+
+        // Compute reading stats
+        const totalPages = allBooks.reduce((sum, b) => sum + (b.total_pages || 0), 0);
+        const genreCounts = {};
+        allBooks.forEach((b) => {
+          if (b.genre) {
+            genreCounts[b.genre] = (genreCounts[b.genre] || 0) + 1;
+          }
+        });
+        const favoriteGenre = Object.entries(genreCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || null;
+        setReadingStats({
+          totalBooks: allBooks.length,
+          totalPages,
+          favoriteGenre,
+          memberSince: user.created_date || null,
+        });
+
         const interfaceLanguage = user.language || i18nLanguage || "english";
         setCurrentLanguage(interfaceLanguage);
         
@@ -463,6 +487,46 @@ export default function Profile() {
                     {t("profile.viewAll")}
                     <ChevronRight className="h-4 w-4 ml-1" />
                   </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Reading Stats Card */}
+            <Card className="md:col-span-2">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                  {t("profile.readingStats.title")}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4 text-center">
+                    <BookOpen className="h-8 w-8 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{readingStats.totalBooks}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t("profile.readingStats.booksCreated")}</p>
+                  </div>
+                  <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 text-center">
+                    <FileText className="h-8 w-8 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{readingStats.totalPages}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t("profile.readingStats.totalPages")}</p>
+                  </div>
+                  <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4 text-center">
+                    <Star className="h-8 w-8 text-amber-600 dark:text-amber-400 mx-auto mb-2" />
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white capitalize">
+                      {readingStats.favoriteGenre
+                        ? readingStats.favoriteGenre.replace(/_/g, " ")
+                        : t("profile.readingStats.noGenre")}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t("profile.readingStats.favoriteGenre")}</p>
+                  </div>
+                  <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-4 text-center">
+                    <Calendar className="h-8 w-8 text-green-600 dark:text-green-400 mx-auto mb-2" />
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                      {readingStats.memberSince ? formatDate(readingStats.memberSince) : "-"}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t("profile.readingStats.memberSince")}</p>
+                  </div>
                 </div>
               </CardContent>
             </Card>

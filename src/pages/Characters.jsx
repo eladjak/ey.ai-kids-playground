@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useI18n } from '@/components/i18n/i18nProvider';
 import { Character } from '@/entities/Character';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -30,6 +31,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Characters() {
   const { t, isRTL } = useI18n();
+  const { user } = useCurrentUser();
   const [characters, setCharacters] = useState([]);
   const [filteredCharacters, setFilteredCharacters] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -52,7 +54,11 @@ export default function Characters() {
     try {
       setIsLoading(true);
       const data = await Character.list("-created_date");
-      setCharacters(data);
+      // Filter to only show current user's characters (privacy)
+      const userChars = user?.email
+        ? data.filter(c => c.created_by === user.email)
+        : [];
+      setCharacters(userChars);
     } catch (error) {
       // silently handled
     } finally {
@@ -213,6 +219,7 @@ export default function Characters() {
               size="sm"
               onClick={() => setViewMode("grid")}
               className="h-8 w-8 p-0"
+              aria-label="Grid view"
             >
               <Grid3x3 className="h-4 w-4" />
             </Button>
@@ -221,6 +228,7 @@ export default function Characters() {
               size="sm"
               onClick={() => setViewMode("list")}
               className="h-8 w-8 p-0"
+              aria-label="List view"
             >
               <List className="h-4 w-4" />
             </Button>
@@ -230,16 +238,20 @@ export default function Characters() {
 
       {/* Characters Display */}
       {filteredCharacters.length === 0 ? (
-        <Card className="border-dashed">
-          <CardContent className="p-12 text-center">
-            <Users2 className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-medium mb-2">{t("characters.noCharacters")}</h3>
-            <p className="text-gray-500 mb-6 max-w-md mx-auto">
+        <Card className="border-dashed border-purple-200 dark:border-gray-700 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-gray-800/50 dark:to-gray-800/30">
+          <CardContent className="p-10 md:p-16 text-center flex flex-col items-center">
+            <div className="rounded-full bg-purple-100 dark:bg-purple-900/30 p-5 mb-6">
+              <Users2 className="h-12 w-12 text-purple-400" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+              {characters.length === 0 ? t("characters.noCharacters") : t("characters.noResults")}
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-md mx-auto text-base leading-relaxed">
               {characters.length === 0 ? t("characters.createFirst") : t("characters.adjustFilters")}
             </p>
             <Link to={createPageUrl("CharacterEditor")}>
-              <Button className="bg-purple-600 hover:bg-purple-700">
-                <Plus className="mr-2 h-4 w-4" />
+              <Button size="lg" className="bg-purple-600 hover:bg-purple-700 text-base px-8 py-3 h-auto">
+                <Sparkles className="mr-2 h-5 w-5" />
                 {t("characters.createNew")}
               </Button>
             </Link>

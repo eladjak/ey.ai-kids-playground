@@ -1,6 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useI18n } from '@/components/i18n/i18nProvider';
+import { useToast } from '@/components/ui/use-toast';
 import { User } from '@/entities/User';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -50,8 +52,10 @@ import { Check, Crown } from 'lucide-react';
 
 export default function Settings() {
   const { t, language, isRTL } = useI18n();
+  const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const { user: hookUser } = useCurrentUser();
-  const { plan: currentPlan } = useSubscription();
+  const { plan: currentPlan, refetch: refetchSubscription } = useSubscription();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [user, setUser] = useState(null);
@@ -66,6 +70,25 @@ export default function Settings() {
     default_story_language: "english"
   });
   const [tempSettings, setTempSettings] = useState({});
+
+  // Handle checkout success redirect from Polar
+  useEffect(() => {
+    const checkoutStatus = searchParams.get('checkout');
+    const upgradedPlan = searchParams.get('plan');
+
+    if (checkoutStatus === 'success') {
+      toast({
+        title: isRTL ? 'שדרוג הצליח!' : 'Upgrade Successful!',
+        description: isRTL
+          ? `ברכות! שודרגת לתוכנית ${upgradedPlan || 'פרימיום'}`
+          : `Congratulations! You've been upgraded to the ${upgradedPlan || 'premium'} plan.`,
+      });
+      refetchSubscription();
+
+      // Remove query params from URL without reload
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, [searchParams, refetchSubscription, toast, isRTL]);
 
   useEffect(() => {
     loadSettings();
@@ -474,37 +497,36 @@ export default function Settings() {
             </Card>
 
             <div className="grid md:grid-cols-3 gap-6">
-              {Object.values(PLANS).map((plan) => {
-                const currentPlan = currentPlan;
-                const isCurrent = currentPlan === plan.id;
+              {Object.values(PLANS).map((planDef) => {
+                const isCurrent = currentPlan === planDef.id;
                 const lang = isRTL ? 'he' : 'en';
 
                 return (
                   <Card
-                    key={plan.id}
+                    key={planDef.id}
                     className={`relative overflow-hidden transition-shadow ${
-                      plan.popular
+                      planDef.popular
                         ? 'border-2 border-purple-500 shadow-lg shadow-purple-100 dark:shadow-purple-900/20'
                         : ''
                     } ${isCurrent ? 'ring-2 ring-green-500' : ''}`}
                   >
-                    {plan.popular && (
+                    {planDef.popular && (
                       <div className="absolute top-0 left-0 right-0 bg-purple-600 text-white text-center text-xs py-1 font-medium">
                         {isRTL ? 'הכי פופולרי' : 'Most Popular'}
                       </div>
                     )}
-                    <CardHeader className={plan.popular ? 'pt-8' : ''}>
+                    <CardHeader className={planDef.popular ? 'pt-8' : ''}>
                       <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'flex-row text-left'}`}>
-                        {plan.id !== 'free' && <Crown className="h-5 w-5 text-purple-500" />}
-                        {plan.name[lang]}
+                        {planDef.id !== 'free' && <Crown className="h-5 w-5 text-purple-500" />}
+                        {planDef.name[lang]}
                       </CardTitle>
                       <div className={`text-2xl font-bold text-purple-700 dark:text-purple-300 ${isRTL ? 'text-right' : 'text-left'}`}>
-                        {plan.price[lang]}
+                        {planDef.price[lang]}
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <ul className="space-y-2">
-                        {plan.features[lang].map((feature, i) => (
+                        {planDef.features[lang].map((feature, i) => (
                           <li
                             key={i}
                             className={`flex items-center gap-2 text-sm ${isRTL ? 'flex-row-reverse text-right' : 'flex-row text-left'}`}
@@ -520,14 +542,14 @@ export default function Settings() {
                           <Check className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                           {isRTL ? 'המנוי הנוכחי' : 'Current Plan'}
                         </Button>
-                      ) : plan.id === 'free' ? (
+                      ) : planDef.id === 'free' ? (
                         <Button variant="outline" className="w-full" disabled>
                           {isRTL ? 'חינמי' : 'Free'}
                         </Button>
                       ) : (
                         <Button
-                          className={`w-full ${plan.popular ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
-                          onClick={() => openCheckout(plan.id, user?.email)}
+                          className={`w-full ${planDef.popular ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
+                          onClick={() => openCheckout(planDef.id, user?.email)}
                         >
                           <Crown className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                           {isRTL ? 'שדרג עכשיו' : 'Upgrade Now'}

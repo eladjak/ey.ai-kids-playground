@@ -69,8 +69,7 @@ export default function CharacterEditor() {
                 setCharacter(fetchedCharacter);
             } catch (error) {
                 toast({
-                    title: "Error",
-                    description: "Failed to load character.",
+                    title: t("characterEditor.errorLoad"),
                     variant: "destructive",
                 });
             } finally {
@@ -114,14 +113,14 @@ export default function CharacterEditor() {
             const imageUrl = typeof response === 'string' ? response : response.url;
             setCharacter(prev => ({ ...prev, primary_image_url: imageUrl }));
             toast({
-                title: "Image generated successfully!",
-                description: "The character's image has been updated.",
+                title: t("characterEditor.imageGenerated"),
+                description: t("characterEditor.imageGeneratedDesc"),
             });
         } catch (error) {
             toast({
                 variant: "destructive",
-                title: "Failed to generate image",
-                description: "Please try again.",
+                title: t("characterEditor.imageGenerateFailed"),
+                description: t("characterEditor.tryAgain"),
             });
         } finally {
             setIsGeneratingImage(false);
@@ -149,14 +148,14 @@ export default function CharacterEditor() {
                 appearance: parsedDetails.appearance || prev.appearance,
             }));
             toast({
-                title: "Details generated successfully!",
-                description: "The character's details have been updated.",
+                title: t("characterEditor.detailsGenerated"),
+                description: t("characterEditor.detailsGeneratedDesc"),
             });
         } catch (error) {
             toast({
                 variant: "destructive",
-                title: "Failed to generate details",
-                description: "Please try again.",
+                title: t("characterEditor.detailsGenerateFailed"),
+                description: t("characterEditor.tryAgain"),
             });
         } finally {
             setIsGeneratingDetails(false);
@@ -316,7 +315,7 @@ export default function CharacterEditor() {
                                 >
                                     {isGeneratingDetails && <Loader2 className="h-4 w-4 animate-spin" />}
                                     {!isGeneratingDetails && <Sparkles className="h-4 w-4" />}
-                                    Generate Details
+                                    {t("characterEditor.generateDetails")}
                                 </Button>
                             </div>
                         </CardContent>
@@ -334,13 +333,13 @@ export default function CharacterEditor() {
                                 <Select value={character.art_style} onValueChange={(val) => handleInputChange('art_style', val)}>
                                     <SelectTrigger><SelectValue /></SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="cartoon">Cartoon</SelectItem>
-                                        <SelectItem value="disney">Disney</SelectItem>
-                                        <SelectItem value="pixar">Pixar</SelectItem>
-                                        <SelectItem value="watercolor">Watercolor</SelectItem>
-                                        <SelectItem value="sketch">Sketch</SelectItem>
-                                        <SelectItem value="realistic">Realistic</SelectItem>
-                                        <SelectItem value="anime">Anime</SelectItem>
+                                        <SelectItem value="cartoon">{t("characterEditor.styleCartoon")}</SelectItem>
+                                        <SelectItem value="disney">{t("characterEditor.styleDisney")}</SelectItem>
+                                        <SelectItem value="pixar">{t("characterEditor.stylePixar")}</SelectItem>
+                                        <SelectItem value="watercolor">{t("characterEditor.styleWatercolor")}</SelectItem>
+                                        <SelectItem value="sketch">{t("characterEditor.styleSketch")}</SelectItem>
+                                        <SelectItem value="realistic">{t("characterEditor.styleRealistic")}</SelectItem>
+                                        <SelectItem value="anime">{t("characterEditor.styleAnime")}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -352,7 +351,7 @@ export default function CharacterEditor() {
                                     </AvatarFallback>
                                 </Avatar>
                                 <Input
-                                    placeholder="Image URL (optional)"
+                                    placeholder={t("characterEditor.imageUrlPlaceholder")}
                                     value={character.primary_image_url}
                                     onChange={(e) => handleInputChange('primary_image_url', e.target.value)}
                                 />
@@ -363,7 +362,7 @@ export default function CharacterEditor() {
                                         className="flex-1"
                                     >
                                         {isGeneratingImage && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                        <Wand2 className="mr-2 h-4 w-4" /> Generate Image
+                                        <Wand2 className="mr-2 h-4 w-4" /> {t("characterEditor.generateImage")}
                                     </Button>
                                     <Button 
                                         variant="outline" 
@@ -371,7 +370,7 @@ export default function CharacterEditor() {
                                         onClick={() => window.open(character.primary_image_url, '_blank', 'noopener,noreferrer')}
                                         disabled={!character.primary_image_url}
                                     >
-                                        <Eye className="mr-2 h-4 w-4" /> View
+                                        <Eye className="mr-2 h-4 w-4" /> {t("characterEditor.viewImage")}
                                     </Button>
                                 </div>
                             </div>
@@ -399,7 +398,7 @@ export default function CharacterEditor() {
                                         </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogCancel>{t("characterEditor.cancelBtn")}</AlertDialogCancel>
                                         <AlertDialogAction
                                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                             onClick={handleDelete}

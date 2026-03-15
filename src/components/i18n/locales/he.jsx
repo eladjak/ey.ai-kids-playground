@@ -342,7 +342,11 @@ export default {
       tryFilters: "נסו לשנות את הסינונים או מונחי החיפוש",
       createFirstLong: "צרו את ספר הסיפורים המותאם האישי הראשון שלכם",
       button: "צור ספר"
-    }
+    },
+    copy: "עותק",
+    duplicated: "הספר שוכפל!",
+    duplicatedDesc: "\"{title}\" נוסף לספרייה שלך",
+    duplicateError: "שגיאה בשכפול הספר"
   },
   collaborate: {
     title: "עורך שיתופי",
@@ -806,6 +810,15 @@ export default {
       title: "הספר שלך מוכן!",
       readButton: "קרא את הספר שלי",
       autoNavigate: "מעביר אוטומטית תוך שניות..."
+    },
+    draft: {
+      found: "נמצאה טיוטה",
+      foundDesc: "להמשיך לעבוד על \"{title}\"?",
+      restore: "שחזר",
+      restored: "הטיוטה שוחזרה!",
+      cleared: "הטיוטה נמחקה",
+      clear: "מחק טיוטה",
+      untitled: "טיוטה ללא שם"
     }
   },
   characters: {
@@ -1190,7 +1203,8 @@ export default {
     view: "צפייה",
     edit: "עריכה",
     feedback: "משוב",
-    share: "שיתוף"
+    share: "שיתוף",
+    duplicate: "שכפול"
   },
   myBooks: {
     title: "הספרים שלי",
@@ -1421,7 +1435,26 @@ export default {
     missingInfo: "מידע חסר",
     missingFields: "אנא מלא את השם, האישיות והמראה.",
     saving: "שומר...",
-    deleting: "מוחק..."
+    deleting: "מוחק...",
+    generateDetails: "ייצר פרטים",
+    generateImage: "ייצר תמונה",
+    viewImage: "צפה",
+    imageUrlPlaceholder: "כתובת תמונה (אופציונלי)",
+    imageGenerated: "התמונה נוצרה בהצלחה!",
+    imageGeneratedDesc: "תמונת הדמות עודכנה.",
+    imageGenerateFailed: "יצירת התמונה נכשלה",
+    detailsGenerated: "הפרטים נוצרו בהצלחה!",
+    detailsGeneratedDesc: "פרטי הדמות עודכנו.",
+    detailsGenerateFailed: "יצירת הפרטים נכשלה",
+    tryAgain: "אנא נסה שוב.",
+    cancelBtn: "ביטול",
+    styleCartoon: "קריקטורה",
+    styleDisney: "דיסני",
+    stylePixar: "פיקסאר",
+    styleWatercolor: "צבעי מים",
+    styleSketch: "סקיצה",
+    styleRealistic: "ריאליסטי",
+    styleAnime: "אנימה"
   },
   blog: {
     title: "הבלוג שלנו",
@@ -1501,6 +1534,14 @@ export default {
     activity: {
       bookCreated: "נוצר ספר חדש",
       untitled: "ספר ללא שם"
+    },
+    readingStats: {
+      title: "סטטיסטיקות",
+      booksCreated: "ספרים שנוצרו",
+      totalPages: "סה\"כ עמודים",
+      favoriteGenre: "ז'אנר מועדף",
+      memberSince: "חבר מאז",
+      noGenre: "אין עדיין"
     }
   }
 };

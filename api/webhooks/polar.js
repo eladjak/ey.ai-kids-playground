@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 
 const supabase = createClient(
-  process.env.VITE_SUPABASE_URL,
+  process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
@@ -102,8 +102,8 @@ export default async function handler(req, res) {
 }
 
 function getPlanFromProductId(productId) {
-  const premiumId = process.env.VITE_POLAR_PRODUCT_PREMIUM;
-  const familyId = process.env.VITE_POLAR_PRODUCT_FAMILY;
+  const premiumId = process.env.POLAR_PRODUCT_PREMIUM || process.env.VITE_POLAR_PRODUCT_PREMIUM;
+  const familyId = process.env.POLAR_PRODUCT_FAMILY || process.env.VITE_POLAR_PRODUCT_FAMILY;
 
   if (productId === premiumId) return 'premium';
   if (productId === familyId) return 'family';

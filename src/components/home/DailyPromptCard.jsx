@@ -28,8 +28,8 @@ const DailyPromptCard = React.memo(function DailyPromptCard({ dailyPrompt, isPro
       <Card className="bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/10">
         <CardContent className="p-4 md:p-6">
           {isPromptLoading ? (
-            <div className="flex flex-col items-center justify-center h-32">
-              <Sparkles className="h-10 w-10 text-amber-300 animate-pulse" />
+            <div className="flex flex-col items-center justify-center h-32" role="status" aria-busy="true">
+              <Sparkles className="h-10 w-10 text-amber-300 animate-pulse" aria-hidden="true" />
               <p className="text-amber-700 mt-4">{t("home.dailyPrompt.loading")}</p>
             </div>
           ) : (

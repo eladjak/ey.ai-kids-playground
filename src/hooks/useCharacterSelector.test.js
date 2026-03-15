@@ -1,5 +1,7 @@
+import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act, waitFor } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Mock secureEntity to pass through in tests
 vi.mock("@/lib/secureEntity", () => ({
@@ -18,6 +20,12 @@ vi.mock("@/entities/Character", () => ({
 import useCharacterSelector from "./useCharacterSelector";
 import { Character } from "@/entities/Character";
 
+// Fresh QueryClient per test to avoid cache leaking between tests
+function createWrapper() {
+  const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return ({ children }) => React.createElement(QueryClientProvider, { client: qc }, children);
+}
+
 describe("useCharacterSelector hook", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -28,12 +36,12 @@ describe("useCharacterSelector hook", () => {
   });
 
   it("returns initial loading state", () => {
-    const { result } = renderHook(() => useCharacterSelector());
+    const { result } = renderHook(() => useCharacterSelector(), { wrapper: createWrapper() });
     expect(result.current.isLoading).toBe(true);
   });
 
   it("loads characters from entity", async () => {
-    const { result } = renderHook(() => useCharacterSelector());
+    const { result } = renderHook(() => useCharacterSelector(), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     expect(result.current.savedCharacters).toHaveLength(2);
@@ -44,7 +52,7 @@ describe("useCharacterSelector hook", () => {
   it("returns empty array when no characters exist", async () => {
     vi.mocked(Character.list).mockResolvedValueOnce([]);
 
-    const { result } = renderHook(() => useCharacterSelector());
+    const { result } = renderHook(() => useCharacterSelector(), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     expect(result.current.savedCharacters).toHaveLength(0);
@@ -53,7 +61,7 @@ describe("useCharacterSelector hook", () => {
   it("handles error gracefully without crashing", async () => {
     vi.mocked(Character.list).mockRejectedValueOnce(new Error("Failed to load"));
 
-    const { result } = renderHook(() => useCharacterSelector());
+    const { result } = renderHook(() => useCharacterSelector(), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     // Should not crash — silently handled
@@ -62,7 +70,7 @@ describe("useCharacterSelector hook", () => {
   });
 
   it("entityToSelection converts entity correctly", async () => {
-    const { result } = renderHook(() => useCharacterSelector());
+    const { result } = renderHook(() => useCharacterSelector(), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     const entity = { id: "char-1", name: "Hero", personality: "brave", primary_image_url: "http://img.com/hero.png", age: 10, gender: "boy" };
@@ -77,7 +85,7 @@ describe("useCharacterSelector hook", () => {
   });
 
   it("entityToSelection sets isEntity=true and isTemplate=false", async () => {
-    const { result } = renderHook(() => useCharacterSelector());
+    const { result } = renderHook(() => useCharacterSelector(), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     const entity = { id: "char-1", name: "Hero", personality: "brave", primary_image_url: null, age: 10, gender: "boy" };
@@ -88,7 +96,7 @@ describe("useCharacterSelector hook", () => {
   });
 
   it("entityToSelection uses primary_image_url as avatar", async () => {
-    const { result } = renderHook(() => useCharacterSelector());
+    const { result } = renderHook(() => useCharacterSelector(), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     const entityWithImage = { id: "c1", name: "A", personality: "", primary_image_url: "http://img.com/hero.png", age: 5, gender: "boy" };
@@ -99,7 +107,7 @@ describe("useCharacterSelector hook", () => {
   });
 
   it("templateToSelection converts template correctly", async () => {
-    const { result } = renderHook(() => useCharacterSelector());
+    const { result } = renderHook(() => useCharacterSelector(), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     const template = { id: "tmpl-1", en: "Brave Hero", he: "גיבור אמיץ", traits: "brave, strong", emoji: "🦸" };
@@ -113,7 +121,7 @@ describe("useCharacterSelector hook", () => {
   });
 
   it("templateToSelection sets isTemplate=true and isEntity=false", async () => {
-    const { result } = renderHook(() => useCharacterSelector());
+    const { result } = renderHook(() => useCharacterSelector(), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     const template = { id: "tmpl-1", en: "Brave Hero", he: "גיבור אמיץ", traits: "brave", emoji: "🦸" };
@@ -124,7 +132,7 @@ describe("useCharacterSelector hook", () => {
   });
 
   it("templateToSelection uses Hebrew name when isHebrew is true", async () => {
-    const { result } = renderHook(() => useCharacterSelector());
+    const { result } = renderHook(() => useCharacterSelector(), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     const template = { id: "tmpl-1", en: "Brave Hero", he: "גיבור אמיץ", traits: "brave", emoji: "🦸" };
@@ -136,7 +144,7 @@ describe("useCharacterSelector hook", () => {
   });
 
   it("reload function triggers character reload", async () => {
-    const { result } = renderHook(() => useCharacterSelector());
+    const { result } = renderHook(() => useCharacterSelector(), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     const callCountBefore = vi.mocked(Character.list).mock.calls.length;

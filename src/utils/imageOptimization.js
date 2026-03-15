@@ -15,7 +15,7 @@ const DEFAULT_SIZES = [320, 480, 640, 768, 1024, 1280];
  * Supported:
  *   - Cloudinary  (?w=&q=)
  *   - Imgix       (?w=&q=)
- *   - Base44 CDN  (?width=&quality=)  — assumed convention
+ *   - Supabase    (via storage transforms)
  *   - Unsplash    (?w=&q=)
  */
 function detectCdnType(url) {
@@ -23,7 +23,6 @@ function detectCdnType(url) {
   if (url.includes("cloudinary.com")) return "cloudinary";
   if (url.includes(".imgix.net")) return "imgix";
   if (url.includes("supabase.co")) return "supabase";
-  if (url.includes("base44.com") || url.includes("base44.app")) return "base44";
   if (url.includes("unsplash.com")) return "unsplash";
   return null;
 }
@@ -38,8 +37,6 @@ function buildCdnParams(cdnType, width, quality) {
     case "imgix":
     case "unsplash":
       return `w=${width}&q=${q}&auto=format`;
-    case "base44":
-      return `width=${width}&quality=${q}`;
     default:
       return null;
   }
@@ -66,18 +63,10 @@ export function getOptimizedImageUrl(url, { width, quality } = {}) {
     const parsed = new URL(url);
     // Set individual params to avoid clobbering unrelated query keys
     if (width) {
-      if (cdnType === "base44") {
-        parsed.searchParams.set("width", String(width));
-      } else {
-        parsed.searchParams.set("w", String(width));
-      }
+      parsed.searchParams.set("w", String(width));
     }
     if (quality != null) {
-      if (cdnType === "base44") {
-        parsed.searchParams.set("quality", String(quality));
-      } else {
-        parsed.searchParams.set("q", String(quality));
-      }
+      parsed.searchParams.set("q", String(quality));
       // Cloudinary / imgix benefit from automatic format selection
       if (cdnType === "cloudinary" || cdnType === "imgix") {
         parsed.searchParams.set("auto", "format");

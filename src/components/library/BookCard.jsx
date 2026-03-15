@@ -19,14 +19,29 @@ import {
   Edit,
   MessageSquare,
   Star,
-  Share2
+  Share2,
+  Copy,
+  Loader2
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useI18n } from "@/components/i18n/i18nProvider";
 
-function BookCard({ book, viewType = "grid" }) {
+function BookCard({ book, viewType = "grid", onDuplicate }) {
   const { t, isRTL } = useI18n();
   const [isHovered, setIsHovered] = useState(false);
+  const [isDuplicating, setIsDuplicating] = useState(false);
+
+  const handleDuplicate = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!onDuplicate || isDuplicating) return;
+    setIsDuplicating(true);
+    try {
+      await onDuplicate(book);
+    } finally {
+      setIsDuplicating(false);
+    }
+  };
   
   const statusIcons = {
     draft: <Clock className="h-4 w-4 text-yellow-500" />,
@@ -125,8 +140,8 @@ function BookCard({ book, viewType = "grid" }) {
             
             <div className="flex flex-wrap gap-2 w-full">
               <Link to={`${createPageUrl("BookView")}?id=${book.id}`} className="flex-1">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="sm"
                   className="w-full gap-1 hover:bg-purple-50 dark:hover:bg-purple-900/30 border-purple-200 dark:border-purple-900 hover:text-purple-700 dark:hover:text-purple-300"
                 >
@@ -134,11 +149,11 @@ function BookCard({ book, viewType = "grid" }) {
                   <span>{t("bookCard.view")}</span>
                 </Button>
               </Link>
-              
+
               {book.status !== "generating" && (
                 <Link to={`${createPageUrl("BookCreation")}?id=${book.id}`} className="flex-1">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="sm"
                     className="w-full gap-1 hover:bg-blue-50 dark:hover:bg-blue-900/30 border-blue-200 dark:border-blue-900 hover:text-blue-700 dark:hover:text-blue-300"
                   >
@@ -146,6 +161,23 @@ function BookCard({ book, viewType = "grid" }) {
                     <span>{t("bookCard.edit")}</span>
                   </Button>
                 </Link>
+              )}
+
+              {onDuplicate && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDuplicate}
+                  disabled={isDuplicating}
+                  className="gap-1 hover:bg-amber-50 dark:hover:bg-amber-900/30 border-amber-200 dark:border-amber-900 hover:text-amber-700 dark:hover:text-amber-300"
+                  aria-label={t("bookCard.duplicate")}
+                >
+                  {isDuplicating ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Copy className="h-3.5 w-3.5" />
+                  )}
+                </Button>
               )}
             </div>
           </CardFooter>
@@ -249,13 +281,31 @@ function BookCard({ book, viewType = "grid" }) {
               </Link>
               
               {book.status === "complete" && (
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="sm"
                   className="gap-1 border-green-200 dark:border-green-900 hover:bg-green-50 dark:hover:bg-green-900/30"
                 >
                   <Share2 className="h-3.5 w-3.5" />
                   <span>{t("bookCard.share")}</span>
+                </Button>
+              )}
+
+              {onDuplicate && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDuplicate}
+                  disabled={isDuplicating}
+                  className="gap-1 border-amber-200 dark:border-amber-900 hover:bg-amber-50 dark:hover:bg-amber-900/30"
+                  aria-label={t("bookCard.duplicate")}
+                >
+                  {isDuplicating ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Copy className="h-3.5 w-3.5" />
+                  )}
+                  <span>{t("bookCard.duplicate")}</span>
                 </Button>
               )}
             </div>

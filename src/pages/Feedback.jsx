@@ -6,6 +6,7 @@ import { Book } from "@/entities/Book";
 import { Page } from "@/entities/Page";
 import { Feedback } from "@/entities/Feedback";
 import { Collaboration } from "@/entities/Collaboration";
+import { User } from "@/entities/User";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import {
   ArrowLeft,

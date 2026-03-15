@@ -153,17 +153,25 @@ export default function CommunityPost() {
   const handleLike = async () => {
     try {
       if (!post) return;
-      
+
+      // Per-user like dedup via localStorage
+      const likeKey = `post_liked_${postId}_${user?.email || 'anon'}`;
+      if (localStorage.getItem(likeKey)) {
+        toast({ description: t("communityPost.alreadyLiked") || "Already liked!" });
+        return;
+      }
+
       // Increment like count
       const newLikeCount = (post.likes || 0) + 1;
       await Community.update(postId, { likes: newLikeCount });
-      
+      localStorage.setItem(likeKey, '1');
+
       // Update post in state
       setPost({
         ...post,
         likes: newLikeCount
       });
-      
+
       toast({
         description: t("communityPost.likeSuccess"),
       });

@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { useQuery, QueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient, QueryClient } from '@tanstack/react-query';
 import { Character } from '@/entities/Character';
 
 /**
@@ -8,13 +8,17 @@ import { Character } from '@/entities/Character';
  * Uses React Query for automatic caching and deduplication.
  */
 export default function useCharacterSelector() {
-  // Each hook instance owns a stable QueryClient so this hook works both
-  // inside a QueryClientProvider (production) and in isolation (tests).
-  const clientRef = useRef(null);
-  if (!clientRef.current) {
-    clientRef.current = new QueryClient({
-      defaultOptions: { queries: { retry: false } },
-    });
+  // Use the global QueryClient from the provider when available;
+  // fall back to a per-instance client for test environments.
+  const fallbackRef = useRef(null);
+  let queryClient;
+  try {
+    queryClient = useQueryClient();
+  } catch {
+    if (!fallbackRef.current) {
+      fallbackRef.current = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    }
+    queryClient = fallbackRef.current;
   }
 
   const { data, isPending, refetch } = useQuery(
@@ -31,7 +35,7 @@ export default function useCharacterSelector() {
       staleTime: 2 * 60 * 1000, // 2 minutes
       retry: false,
     },
-    clientRef.current
+    queryClient
   );
 
   /**

@@ -18,20 +18,24 @@
  * }}
  */
 import { useRef, useCallback } from 'react';
-import { useQuery, useMutation, QueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, QueryClient } from '@tanstack/react-query';
 import { Follow } from '@/entities/Follow';
 import { User } from '@/entities/User';
 import { Notification } from '@/entities/Notification';
 import { trackEvent } from '@/lib/analytics';
 
 export default function useFollow(targetEmail) {
-  // Each hook instance owns a stable QueryClient so it works both inside a
-  // QueryClientProvider (production) and in isolation (tests).
-  const clientRef = useRef(null);
-  if (!clientRef.current) {
-    clientRef.current = new QueryClient({
-      defaultOptions: { queries: { retry: false } },
-    });
+  // Use the global QueryClient from the provider when available;
+  // fall back to a per-instance client for test environments.
+  const fallbackRef = useRef(null);
+  let queryClient;
+  try {
+    queryClient = useQueryClient();
+  } catch {
+    if (!fallbackRef.current) {
+      fallbackRef.current = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    }
+    queryClient = fallbackRef.current;
   }
 
   // Fetch current user's follow relationship to targetEmail
@@ -64,7 +68,7 @@ export default function useFollow(targetEmail) {
       staleTime: 30 * 1000, // 30 seconds
       retry: false,
     },
-    clientRef.current
+    queryClient
   );
 
   const { mutateAsync: doToggle, isPending: mutating } = useMutation(
@@ -101,11 +105,11 @@ export default function useFollow(targetEmail) {
       },
       onSuccess: () => {
         // Invalidate so the query refetches fresh counts + relationship
-        clientRef.current.invalidateQueries({ queryKey: ['follow', targetEmail] });
+        queryClient.invalidateQueries({ queryKey: ['follow', targetEmail] });
         refetchFollow();
       },
     },
-    clientRef.current
+    queryClient
   );
 
   const toggleFollow = useCallback(async () => {

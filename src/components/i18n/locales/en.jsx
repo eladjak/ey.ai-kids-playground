@@ -354,7 +354,11 @@ export default {
       tryFilters: "Try adjusting your search or filters",
       createFirstLong: "Create your first personalized storybook",
       button: "Create a Book"
-    }
+    },
+    copy: "Copy",
+    duplicated: "Book duplicated!",
+    duplicatedDesc: "\"{title}\" has been added to your library",
+    duplicateError: "Failed to duplicate book"
   },
   collaborate: {
     title: "Collaborative Editor",
@@ -818,6 +822,15 @@ export default {
       title: "Your book is ready!",
       readButton: "Read My Book",
       autoNavigate: "Opening automatically in a moment..."
+    },
+    draft: {
+      found: "Draft found",
+      foundDesc: "Continue working on \"{title}\"?",
+      restore: "Restore",
+      restored: "Draft restored!",
+      cleared: "Draft cleared",
+      clear: "Clear draft",
+      untitled: "Untitled draft"
     }
   },
   characters: {
@@ -1202,7 +1215,8 @@ export default {
     view: "View",
     edit: "Edit",
     feedback: "Feedback",
-    share: "Share"
+    share: "Share",
+    duplicate: "Duplicate"
   },
   myBooks: {
     title: "My Books",
@@ -1433,7 +1447,26 @@ export default {
     missingInfo: "Missing Information",
     missingFields: "Please fill in Name, Personality, and Appearance.",
     saving: "Saving...",
-    deleting: "Deleting..."
+    deleting: "Deleting...",
+    generateDetails: "Generate Details",
+    generateImage: "Generate Image",
+    viewImage: "View",
+    imageUrlPlaceholder: "Image URL (optional)",
+    imageGenerated: "Image generated successfully!",
+    imageGeneratedDesc: "The character's image has been updated.",
+    imageGenerateFailed: "Failed to generate image",
+    detailsGenerated: "Details generated successfully!",
+    detailsGeneratedDesc: "The character's details have been updated.",
+    detailsGenerateFailed: "Failed to generate details",
+    tryAgain: "Please try again.",
+    cancelBtn: "Cancel",
+    styleCartoon: "Cartoon",
+    styleDisney: "Disney",
+    stylePixar: "Pixar",
+    styleWatercolor: "Watercolor",
+    styleSketch: "Sketch",
+    styleRealistic: "Realistic",
+    styleAnime: "Anime"
   },
   blog: {
     title: "Our Blog",
@@ -1513,6 +1546,14 @@ export default {
     activity: {
       bookCreated: "Created a new book",
       untitled: "Untitled Book"
+    },
+    readingStats: {
+      title: "Reading Stats",
+      booksCreated: "Books Created",
+      totalPages: "Total Pages",
+      favoriteGenre: "Favorite Genre",
+      memberSince: "Member Since",
+      noGenre: "None yet"
     }
   }
 };

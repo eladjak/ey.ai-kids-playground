@@ -6,6 +6,7 @@ import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { InvokeLLM } from "@/integrations/Core";
 import { buildSafetyPromptPrefix } from "@/utils/content-moderation";
 import useGamification from "@/hooks/useGamification";
+import { captureError } from "@/lib/errorTracking";
 import OnboardingWizard from "@/components/onboarding/OnboardingWizard";
 import { useI18n } from "@/components/i18n/i18nProvider";
 import UserWelcomeCard from "@/components/home/UserWelcomeCard";
@@ -23,6 +24,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Home() {
   const gamification = useGamification();
@@ -122,7 +124,8 @@ export default function Home() {
           localStorage.setItem("dailyPrompt", JSON.stringify(result));
           localStorage.setItem("dailyPromptDate", today);
         }
-      } catch {
+      } catch (err) {
+        captureError(err, { context: 'Home.generateDailyPrompt' });
         setDailyPrompt(
           lang === "hebrew"
             ? { title: "היער הקסום", description: "ילד מגלה יער שבו החיות יכולים לדבר והעצים לוחשים סודות עתיקים." }
@@ -178,7 +181,8 @@ export default function Home() {
         // Generate daily prompt after we know the user's language
         const userLang = user?.language || currentLanguage;
         generateDailyPrompt(userLang);
-      } catch {
+      } catch (err) {
+        captureError(err, { context: 'Home.initializeApp' });
         setFeaturedBooks(createSampleFeaturedBooks());
         generateDailyPrompt(currentLanguage);
       } finally {
@@ -189,6 +193,92 @@ export default function Home() {
     initializeApp();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUserHook]);
+
+  if (isLoading) {
+    return (
+      <div className="max-w-6xl mx-auto pb-12" dir={isRTL ? "rtl" : "ltr"} aria-busy="true" role="status">
+        <section className="p-4 md:p-6 lg:p-8">
+          {/* Welcome card skeleton */}
+          <div className="flex flex-col md:flex-row gap-4 md:gap-6 mb-6">
+            <Card className="w-full md:w-auto flex-grow-0 flex-shrink-0">
+              <div className="p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <Skeleton className="h-12 w-12 rounded-full" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-5 w-32" />
+                  </div>
+                </div>
+                <div className="flex gap-2 justify-center mb-3">
+                  <Skeleton className="h-6 w-20 rounded-full" />
+                  <Skeleton className="h-6 w-20 rounded-full" />
+                </div>
+                <Skeleton className="h-1.5 w-full rounded" />
+              </div>
+            </Card>
+          </div>
+
+          {/* Action bar skeleton */}
+          <div className="flex items-center gap-2 mb-6">
+            <Skeleton className="h-10 w-40" />
+            <Skeleton className="h-10 w-36" />
+          </div>
+
+          {/* Hero banner skeleton */}
+          <Card className="overflow-hidden">
+            <Skeleton className="h-[280px] md:h-[320px] w-full" />
+          </Card>
+        </section>
+
+        {/* Featured books skeleton */}
+        <section className="p-4 md:p-6 lg:p-8">
+          <div className="flex justify-between items-center mb-6">
+            <Skeleton className="h-7 w-48" />
+            <Skeleton className="h-9 w-40 rounded-md" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array(3).fill(0).map((_, index) => (
+              <Card key={index} className="overflow-hidden" aria-hidden="true">
+                <Skeleton className="aspect-square w-full" />
+                <div className="p-5 space-y-3">
+                  <Skeleton className="h-5 w-3/4" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-5/6" />
+                  <div className="flex justify-between pt-1">
+                    <Skeleton className="h-5 w-20 rounded-full" />
+                    <Skeleton className="h-8 w-24 rounded-md" />
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        {/* Daily prompt skeleton */}
+        <section className="p-4 md:p-6 lg:p-8">
+          <Skeleton className="h-7 w-48 mb-6" />
+          <Card>
+            <div className="p-6">
+              <div className="flex flex-col md:flex-row gap-6 items-center">
+                <div className="flex-1 space-y-3">
+                  <Skeleton className="h-6 w-2/3" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-4/5" />
+                  <div className="flex gap-3 pt-2">
+                    <Skeleton className="h-10 w-32" />
+                    <Skeleton className="h-10 w-36" />
+                  </div>
+                </div>
+                <Skeleton className="w-full md:w-1/3 h-32 md:h-40 rounded-lg" />
+              </div>
+            </div>
+          </Card>
+        </section>
+
+        <span className="sr-only">Loading homepage content...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto pb-12" dir={isRTL ? "rtl" : "ltr"}>
