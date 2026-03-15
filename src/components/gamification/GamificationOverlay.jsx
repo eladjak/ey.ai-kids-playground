@@ -10,7 +10,8 @@ export default function GamificationOverlay({
   pendingCelebrations = [],
   onDismiss,
   isRTL = false,
-  isHebrew = false
+  isHebrew = false,
+  isYiddish = false
 }) {
   if (pendingCelebrations.length === 0) return null;
 
@@ -23,6 +24,7 @@ export default function GamificationOverlay({
         celebration={current}
         onDismiss={onDismiss}
         isHebrew={isHebrew}
+        isYiddish={isYiddish}
         isRTL={isRTL}
       />
     );
@@ -36,6 +38,7 @@ export default function GamificationOverlay({
         onDismiss={onDismiss}
         isRTL={isRTL}
         isHebrew={isHebrew}
+        isYiddish={isYiddish}
       />
     );
   }

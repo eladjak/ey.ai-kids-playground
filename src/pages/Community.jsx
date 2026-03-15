@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { useI18n } from "@/components/i18n/i18nProvider";
 import { Community } from "@/entities/Community";
 import { Book } from "@/entities/Book";
 import { User } from "@/entities/User";
 import { Comment } from "@/entities/Comment";
-import { 
-  Search, 
-  Filter, 
-  Award, 
-  Heart, 
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import useGamification from "@/hooks/useGamification";
+import { verifyParentalPin, isPinSet } from "@/utils/content-moderation";
+import {
+  Search,
+  Filter,
+  Award,
+  Heart,
   MessageSquare,
   Users,
   Tag,
@@ -17,10 +21,19 @@ import {
   Star,
   ChevronDown,
   X,
-  Sparkles
+  Sparkles,
+  Lock
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   DropdownMenu,
@@ -38,6 +51,8 @@ import ShareBookModal from "../components/community/ShareBookModal";
 export default function CommunityPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const gamification = useGamification();
+  const { user: hookUser } = useCurrentUser();
   const [posts, setPosts] = useState([]);
   const [featuredPosts, setFeaturedPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -50,11 +65,17 @@ export default function CommunityPage() {
   // Per-user liked-posts set; populated once the current user is loaded
   const [likedPostsKey, setLikedPostsKey] = useState("likedPosts_anonymous");
   const [likedPosts, setLikedPosts] = useState([]);
-  const [currentLanguage, setCurrentLanguage] = useState("english");
+  const { t, isRTL } = useI18n();
 
   // For pagination
   const [page, setPage] = useState(1);
   const postsPerPage = 10;
+
+  // Parental PIN approval state
+  const [showPinDialog, setShowPinDialog] = useState(false);
+  const [pinInput, setPinInput] = useState("");
+  const [pinError, setPinError] = useState("");
+  const [pendingShareData, setPendingShareData] = useState(null);
 
   // Batch enhance posts to avoid N+1 queries
   const batchEnhancePosts = async (posts) => {
@@ -85,83 +106,6 @@ export default function CommunityPage() {
     }));
   };
   
-  // Load language preference
-  useEffect(() => {
-    const storedLanguage = localStorage.getItem("language");
-    if (storedLanguage) {
-      setCurrentLanguage(storedLanguage);
-    }
-    
-    const handleStorageChange = (e) => {
-      if (e.key === "language") {
-        setCurrentLanguage(e.newValue || "english");
-      }
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
-
-  // Translations
-  const translations = {
-    english: {
-      "community.title": "Community",
-      "community.subtitle": "Discover and share stories created by our community",
-      "community.shareYourBook": "Share Your Book",
-      "community.featuredStories": "Featured Stories",
-      "community.search": "Search stories, authors or topics...",
-      "community.mostRecent": "Most Recent",
-      "community.mostPopular": "Most Popular",
-      "community.allStories": "All Stories",
-      "community.mySharedStories": "My Shared Stories",
-      "community.clearFilters": "Clear filters",
-      "community.noStories": "No stories found",
-      "community.adjustFilters": "Try adjusting your search or filters",
-      "community.beFirst": "Be the first to share a story with the community",
-      "community.shareYourStory": "Share Your Story",
-      "community.previous": "Previous",
-      "community.next": "Next",
-      "community.noSharedYet": "No shared stories yet",
-      "community.notSharedYet": "You haven't shared any books with the community yet",
-      "community.shareFirstStory": "Share Your First Story"
-    },
-    hebrew: {
-      "community.title": "קהילה",
-      "community.subtitle": "גלה ושתף סיפורים שנוצרו על ידי הקהילה שלנו",
-      "community.shareYourBook": "שתף את הספר שלך",
-      "community.featuredStories": "סיפורים מובחרים",
-      "community.search": "חפש סיפורים, יוצרים או נושאים...",
-      "community.mostRecent": "הכי חדשים",
-      "community.mostPopular": "הכי פופולריים",
-      "community.allStories": "כל הסיפורים",
-      "community.mySharedStories": "הסיפורים ששיתפתי",
-      "community.clearFilters": "נקה מסננים",
-      "community.noStories": "לא נמצאו סיפורים",
-      "community.adjustFilters": "נסה להתאים את החיפוש או המסננים שלך",
-      "community.beFirst": "היה הראשון לשתף סיפור עם הקהילה",
-      "community.shareYourStory": "שתף את הסיפור שלך",
-      "community.previous": "הקודם",
-      "community.next": "הבא",
-      "community.noSharedYet": "אין עדיין סיפורים משותפים",
-      "community.notSharedYet": "עדיין לא שיתפת ספרים עם הקהילה",
-      "community.shareFirstStory": "שתף את הסיפור הראשון שלך"
-    },
-    yiddish: {
-      "community.title": "קהילה",
-      "community.shareYourBook": "טיילן דיין בוך",
-      "community.allStories": "אַלע געשיכטעס",
-      "community.mySharedStories": "מיינע געטיילטע געשיכטעס"
-    }
-  };
-  
-  // Translation function
-  const t = (key) => {
-    return translations[currentLanguage]?.[key] || translations.english[key] || key;
-  };
-  
-  // Determine text direction
-  const isRTL = currentLanguage === "hebrew" || currentLanguage === "yiddish";
-
   useEffect(() => {
     loadInitialData();
   }, []);
@@ -173,13 +117,15 @@ export default function CommunityPage() {
   const loadInitialData = async () => {
     try {
       setIsLoading(true);
-      
-      // Load current user and set up per-user like tracking
-      try {
-        const user = await User.me();
-        setCurrentUser(user);
-        if (user?.email) {
-          const key = `liked_posts_${user.email}`;
+
+      // Set up current user and per-user like tracking from hook.
+      // Key by user ID (stable) rather than email to avoid collisions on
+      // email changes and to work even when email is not set.
+      if (hookUser) {
+        setCurrentUser(hookUser);
+        const userId = hookUser?.id || hookUser?.email;
+        if (userId) {
+          const key = `liked_posts_${userId}`;
           setLikedPostsKey(key);
           try {
             setLikedPosts(JSON.parse(localStorage.getItem(key) || "[]"));
@@ -187,8 +133,6 @@ export default function CommunityPage() {
             setLikedPosts([]);
           }
         }
-      } catch (error) {
-        // silently handled
       }
       
       // Load featured posts
@@ -204,7 +148,7 @@ export default function CommunityPage() {
     } catch (error) {
       toast({
         variant: "destructive",
-        description: "Failed to load community data. Please try again.",
+        description: t("community.toast.loadError"),
       });
     } finally {
       setIsLoading(false);
@@ -257,7 +201,7 @@ export default function CommunityPage() {
     } catch (error) {
       toast({
         variant: "destructive",
-        description: "Failed to load posts. Please try again.",
+        description: t("community.toast.postsError"),
       });
     } finally {
       setIsLoading(false);
@@ -287,42 +231,45 @@ export default function CommunityPage() {
       const postIndex = posts.findIndex(p => p.id === postId);
       if (postIndex === -1) return;
 
-      const post = posts[postIndex];
       const alreadyLiked = likedPosts.includes(postId);
 
-      // Toggle like: unlike if already liked, like if not
+      // Re-fetch the current like count from the server before writing to
+      // avoid stale-state manipulation (e.g. a user opening two tabs and
+      // clicking like in both).  We only ever add or subtract exactly 1.
+      const freshPost = await Community.get(postId);
+      const currentLikes = (freshPost?.likes ?? posts[postIndex].likes) || 0;
+
       const newLikeCount = alreadyLiked
-        ? Math.max(0, post.likes - 1)
-        : post.likes + 1;
+        ? Math.max(0, currentLikes - 1)
+        : currentLikes + 1;
+
       await Community.update(postId, { likes: newLikeCount });
 
-      // Update per-user liked posts tracking
+      // Update per-user liked posts tracking (keyed by userId)
       const newLikedPosts = alreadyLiked
         ? likedPosts.filter(id => id !== postId)
         : [...likedPosts, postId];
       setLikedPosts(newLikedPosts);
       localStorage.setItem(likedPostsKey, JSON.stringify(newLikedPosts));
 
-      // Update UI
-      const updatedPosts = [...posts];
-      updatedPosts[postIndex] = {
-        ...post,
-        likes: newLikeCount
-      };
-      setPosts(updatedPosts);
+      // Update both posts list and featured posts list in local state
+      const applyUpdate = (list) =>
+        list.map(p => p.id === postId ? { ...p, likes: newLikeCount } : p);
+      setPosts(applyUpdate);
+      setFeaturedPosts(applyUpdate);
 
       toast({
-        description: alreadyLiked ? "Like removed" : "You liked this post!",
+        description: alreadyLiked ? t("community.toast.likeRemoved") : t("community.toast.likeAdded"),
       });
     } catch (error) {
       toast({
         variant: "destructive",
-        description: "Failed to update like. Please try again.",
+        description: t("community.toast.likeError"),
       });
     }
   };
 
-  const handleShareBook = async (bookData) => {
+  const doShareBook = async (bookData) => {
     try {
       // Create community post
       const postData = {
@@ -332,24 +279,64 @@ export default function CommunityPage() {
         description: bookData.description,
         tags: bookData.tags,
         visibility: "public",
-        likes: 0
+        likes: 0,
       };
-      
+
       await Community.create(postData);
-      
+
+      // Award XP for community share
+      gamification.awardXP("community_share");
+      gamification.incrementStat("totalShares");
+
       // Refresh posts
       await loadFilteredPosts();
-      
+
       setShowShareModal(false);
-      
+
       toast({
-        description: "Your book has been shared with the community!",
+        description: t("community.toast.shareSuccess"),
       });
     } catch (error) {
       toast({
         variant: "destructive",
-        description: "Failed to share book. Please try again.",
+        description: t("community.toast.shareError"),
       });
+    }
+  };
+
+  const handleShareBook = async (bookData) => {
+    // Check if parental approval is required before publishing
+    let controls = {};
+    try {
+      controls = JSON.parse(localStorage.getItem("parentalControls") || "{}");
+    } catch {
+      controls = {};
+    }
+
+    const requireApproval = controls.requireApprovalBeforePublish ?? true;
+
+    if (requireApproval && isPinSet()) {
+      // Store the share data and show PIN dialog
+      setPendingShareData(bookData);
+      setPinInput("");
+      setPinError("");
+      setShowPinDialog(true);
+    } else {
+      await doShareBook(bookData);
+    }
+  };
+
+  const handlePinSubmit = async () => {
+    const ok = await verifyParentalPin(pinInput);
+    if (ok) {
+      setShowPinDialog(false);
+      setPinError("");
+      if (pendingShareData) {
+        await doShareBook(pendingShareData);
+        setPendingShareData(null);
+      }
+    } else {
+      setPinError(isRTL ? "PIN שגוי. נסה שוב." : "Incorrect PIN. Please try again.");
     }
   };
 
@@ -374,7 +361,7 @@ export default function CommunityPage() {
   
   // Function to get tag display based on language
   const getTagDisplay = (tag) => {
-    if (currentLanguage === "hebrew" && hebrewTags[tag]) {
+    if (isRTL && hebrewTags[tag]) {
       return hebrewTags[tag];
     }
     return tag;
@@ -419,10 +406,11 @@ export default function CommunityPage() {
               ))
             ) : (
               featuredPosts.map(post => (
-                <FeaturedStory 
-                  key={post.id} 
-                  post={post} 
+                <FeaturedStory
+                  key={post.id}
+                  post={post}
                   onLike={() => handleLikePost(post.id)}
+                  isLiked={likedPosts.includes(post.id)}
                 />
               ))
             )}
@@ -652,6 +640,64 @@ export default function CommunityPage() {
         onClose={() => setShowShareModal(false)}
         onShare={handleShareBook}
       />
+
+      {/* Parental PIN Approval Dialog */}
+      <Dialog open={showPinDialog} onOpenChange={(open) => {
+        if (!open) {
+          setShowPinDialog(false);
+          setPendingShareData(null);
+          setPinInput("");
+          setPinError("");
+        }
+      }}>
+        <DialogContent dir={isRTL ? "rtl" : "ltr"} className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Lock className="h-5 w-5 text-purple-600" />
+              {isRTL ? "אישור הורה נדרש" : "Parental Approval Required"}
+            </DialogTitle>
+            <DialogDescription>
+              {isRTL
+                ? "כדי לפרסם ספר בקהילה, יש להזין את קוד ה-PIN של ההורה."
+                : "To publish a book to the community, please enter the parental PIN."}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-3 py-2">
+            <Input
+              type="password"
+              inputMode="numeric"
+              maxLength={6}
+              placeholder={isRTL ? "הזן PIN (4-6 ספרות)" : "Enter PIN (4-6 digits)"}
+              value={pinInput}
+              onChange={(e) => {
+                setPinInput(e.target.value);
+                setPinError("");
+              }}
+              onKeyDown={(e) => { if (e.key === "Enter") handlePinSubmit(); }}
+              autoFocus
+              className={isRTL ? "text-right" : "text-left"}
+            />
+            {pinError && (
+              <p className="text-sm text-red-500">{pinError}</p>
+            )}
+          </div>
+
+          <DialogFooter className={isRTL ? "flex-row-reverse" : ""}>
+            <Button variant="outline" onClick={() => {
+              setShowPinDialog(false);
+              setPendingShareData(null);
+              setPinInput("");
+              setPinError("");
+            }}>
+              {isRTL ? "ביטול" : "Cancel"}
+            </Button>
+            <Button onClick={handlePinSubmit} className="bg-purple-600 hover:bg-purple-700">
+              {isRTL ? "אשר" : "Confirm"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

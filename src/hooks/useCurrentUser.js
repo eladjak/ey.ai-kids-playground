@@ -1,35 +1,20 @@
-import { useState, useEffect, useCallback } from 'react';
-import { User } from '@/entities/User';
+import { useAuth } from '@/lib/AuthContext';
 
 /**
  * Hook to get the current authenticated user data.
- * Caches user data in state and provides a refresh function.
- * Replaces scattered User.me() calls throughout the app.
+ * Wraps useAuth() to provide a consistent API for components.
  *
  * @returns {{ user: Object|null, isLoading: boolean, error: string|null, refresh: Function }}
  */
 export function useCurrentUser() {
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { user, isLoadingAuth } = useAuth();
 
-  const loadUser = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const userData = await User.me();
-      setUser(userData);
-    } catch (err) {
-      setError(err?.message || 'Failed to load user');
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadUser();
-  }, [loadUser]);
-
-  return { user, isLoading, error, refresh: loadUser };
+  return {
+    user: user ?? null,
+    isLoading: isLoadingAuth,
+    error: null,
+    refresh: () => Promise.resolve(),
+  };
 }
+
+export default useCurrentUser;

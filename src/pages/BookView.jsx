@@ -2,11 +2,12 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Book } from "@/entities/Book";
 import { Page } from "@/entities/Page";
-import { User } from "@/entities/User";
 import { createPageUrl } from "@/utils";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useI18n } from "@/components/i18n/i18nProvider";
 import {
   ArrowLeft,
+  ArrowRight,
   ChevronLeft,
   ChevronRight,
   Home,
@@ -17,7 +18,12 @@ import {
   Sun,
   ZoomIn,
   ZoomOut,
-  Loader2
+  Loader2,
+  PenTool,
+  BookOpen,
+  Share2,
+  Plus,
+  LogIn
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -25,9 +31,15 @@ import PageFlip from "@/components/bookReader/PageFlip";
 import TTSControls from "@/components/bookReader/TTSControls";
 import { useTTS } from "@/hooks/useTTS";
 import { exportBookToPDF } from "@/utils/pdfExporter";
+import useGamification from "@/hooks/useGamification";
+import confetti from "canvas-confetti";
+import { updateMeta, resetMeta } from "@/lib/seo";
+import { useAuth } from "@/lib/AuthContext";
 
 export default function BookView() {
   const { language: i18nLanguage, isRTL: i18nIsRTL } = useI18n();
+  const { user } = useCurrentUser();
+  const { navigateToLogin } = useAuth();
   const [book, setBook] = useState(null);
   const [pages, setPages] = useState([]);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
@@ -45,6 +57,10 @@ export default function BookView() {
   const { toast } = useToast();
   const containerRef = useRef(null);
   const touchStartRef = useRef(null);
+  const bookReadAwardedRef = useRef(false); // Tracks whether book_read XP was awarded this session
+
+  // Gamification — only meaningful when logged in, but hook is always called
+  const gamification = useGamification();
 
   // Get book ID from URL
   const urlParams = new URLSearchParams(window.location.search);
@@ -53,8 +69,18 @@ export default function BookView() {
   const isRTL = currentLanguage === "hebrew" || currentLanguage === "yiddish";
   const isHebrew = currentLanguage === "hebrew";
 
+  // Whether the viewer is a guest (not logged in)
+  const isGuest = !user;
+
   // TTS hook
   const tts = useTTS({ language: currentLanguage });
+
+  // If there is no bookId at all, stop loading immediately
+  useEffect(() => {
+    if (!bookId) {
+      setLoading(false);
+    }
+  }, [bookId]);
 
   // Load book, pages, and restore reading progress
   useEffect(() => {
@@ -65,14 +91,9 @@ export default function BookView() {
         setLoading(true);
 
         // Load user language (fall back to i18n context language)
-        try {
-          const user = await User.me();
-          const lang = user.language || i18nLanguage || "english";
-          setCurrentLanguage(lang);
-        } catch {
-          // Use i18n context default
-          setCurrentLanguage(i18nLanguage || "english");
-        }
+        // user comes from useCurrentUser hook (null when not logged in)
+        const lang = user?.language || i18nLanguage || "english";
+        setCurrentLanguage(lang);
 
         const [bookData, pagesData] = await Promise.all([
           Book.get(bookId),
@@ -95,6 +116,14 @@ export default function BookView() {
         if (bookData.language) {
           setCurrentLanguage(bookData.language);
         }
+
+        // SEO meta tags
+        updateMeta({
+          title: bookData.title,
+          description: bookData.description || 'ספר ילדים מאת Sipurai',
+          image: bookData.cover_image,
+          type: 'article',
+        });
       } catch {
         toast({
           variant: "destructive",
@@ -108,6 +137,11 @@ export default function BookView() {
     loadBook();
   }, [bookId]);
 
+  // Reset SEO meta on unmount
+  useEffect(() => {
+    return () => resetMeta();
+  }, []);
+
   // Save reading progress
   useEffect(() => {
     if (bookId && pages.length > 0) {
@@ -119,6 +153,44 @@ export default function BookView() {
   useEffect(() => {
     tts.stop();
   }, [currentPageIndex]);
+
+  // Award book_read XP and fire confetti when reaching the last page (once per session)
+  // Only award XP to logged-in users
+  useEffect(() => {
+    if (
+      !isGuest &&
+      pages.length > 1 &&
+      currentPageIndex === pages.length - 1 &&
+      !bookReadAwardedRef.current
+    ) {
+      bookReadAwardedRef.current = true;
+      gamification.awardXP("book_read");
+
+      // Confetti celebration
+      const duration = 2500;
+      const end = Date.now() + duration;
+      const celebrate = () => {
+        confetti({
+          particleCount: 4,
+          angle: 60,
+          spread: 60,
+          origin: { x: 0, y: 0.7 },
+          colors: ["#9333ea", "#f59e0b", "#10b981", "#6366f1"]
+        });
+        confetti({
+          particleCount: 4,
+          angle: 120,
+          spread: 60,
+          origin: { x: 1, y: 0.7 },
+          colors: ["#9333ea", "#f59e0b", "#10b981", "#6366f1"]
+        });
+        if (Date.now() < end) {
+          requestAnimationFrame(celebrate);
+        }
+      };
+      celebrate();
+    }
+  }, [currentPageIndex, pages.length, isGuest]);
 
   const currentPage = pages[currentPageIndex];
 
@@ -204,7 +276,7 @@ export default function BookView() {
   const zoomIn = () => setZoomLevel((prev) => Math.min(prev + 0.25, 2));
   const zoomOut = () => setZoomLevel((prev) => Math.max(prev - 0.25, 0.75));
 
-  // PDF export
+  // PDF export — available to all (guests included)
   const handleExportPDF = async () => {
     if (!book || pages.length === 0) return;
     try {
@@ -313,13 +385,31 @@ export default function BookView() {
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
+      {/* Guest sign-in banner — shown at top for unauthenticated visitors */}
+      {isGuest && book && (
+        <div className="bg-purple-600 text-white px-4 py-2 flex items-center justify-between gap-3 text-sm">
+          <span className={isRTL ? "text-right" : ""}>
+            {isHebrew
+              ? "קורא כאורח — התחבר כדי ליצור ספרים, לשמור קריאה ולקבל XP"
+              : "Reading as guest — sign in to create books, save progress, and earn XP"}
+          </span>
+          <button
+            onClick={() => navigateToLogin()}
+            className="shrink-0 flex items-center gap-1.5 bg-white text-purple-700 hover:bg-purple-50 transition-colors px-3 py-1 rounded-full font-medium"
+          >
+            <LogIn className="h-3.5 w-3.5" aria-hidden="true" />
+            {isHebrew ? "התחברות" : "Sign in"}
+          </button>
+        </div>
+      )}
+
       {/* Header */}
       <header className={`p-3 border-b ${nightHeader} shadow-sm transition-colors duration-300`}>
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
             <Link to={createPageUrl("Library")}>
-              <Button variant="ghost" size="icon">
-                <ArrowLeft className="h-5 w-5" />
+              <Button variant="ghost" size="icon" aria-label={isHebrew ? "חזרה לספרייה" : "Back to Library"}>
+                {isRTL ? <ArrowRight className="h-5 w-5" /> : <ArrowLeft className="h-5 w-5" />}
               </Button>
             </Link>
             <h1 className={`text-lg font-semibold truncate max-w-[200px] md:max-w-none ${nightMode ? "text-amber-50" : "text-gray-900 dark:text-white"}`}>
@@ -362,7 +452,7 @@ export default function BookView() {
               {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
             </Button>
 
-            {/* PDF Export */}
+            {/* PDF Export — available to all */}
             <Button
               variant="ghost"
               size="icon"
@@ -376,6 +466,16 @@ export default function BookView() {
                 <Download className="h-4 w-4" />
               )}
             </Button>
+
+            {/* Edit in Advanced Editor — owner only, requires login */}
+            {book && !isGuest && book.created_by === user?.email && (
+              <Link to={`${createPageUrl("BookCreation")}?id=${book.id}`}>
+                <Button variant="outline" size="sm" className="flex items-center gap-2">
+                  <PenTool className="h-4 w-4" />
+                  {isHebrew ? "ערוך בעורך מתקדם" : "Edit in Advanced Editor"}
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
 
@@ -472,6 +572,82 @@ export default function BookView() {
               </div>
             </div>
 
+            {/* "The End" celebration section — shown when on the last page */}
+            {currentPageIndex === pages.length - 1 && pages.length > 1 && (
+              <div className={`px-4 pt-6 pb-2 text-center ${nightBg} transition-colors duration-300`}>
+                <div className={`max-w-2xl mx-auto rounded-2xl p-6 shadow-inner ${nightMode ? "bg-gray-900" : "bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20"}`}>
+                  <div className="text-4xl mb-2">🎉</div>
+                  <h3 className={`text-2xl font-bold mb-1 ${nightMode ? "text-amber-100" : "text-purple-700 dark:text-purple-300"}`}>
+                    {currentLanguage === "hebrew" || currentLanguage === "yiddish"
+                      ? "סיימת את הספר!"
+                      : "You finished the book!"}
+                  </h3>
+                  <p className={`text-sm mb-5 ${nightMode ? "text-gray-400" : "text-gray-500 dark:text-gray-400"}`}>
+                    {isGuest
+                      ? (currentLanguage === "hebrew" || currentLanguage === "yiddish"
+                        ? "התחבר כדי לצבור XP ולשמור את ההתקדמות שלך"
+                        : "Sign in to earn XP and save your progress")
+                      : (currentLanguage === "hebrew" || currentLanguage === "yiddish"
+                        ? "כל הכבוד! קיבלת +25 XP על הקריאה"
+                        : "Great job! You earned +25 XP for reading")
+                    }
+                  </p>
+                  <div className={`flex flex-wrap justify-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}>
+                    {/* Read Again */}
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        bookReadAwardedRef.current = false;
+                        setCurrentPageIndex(0);
+                        setDirection(-1);
+                      }}
+                      className="flex items-center gap-2"
+                    >
+                      <BookOpen className="h-4 w-4" />
+                      {currentLanguage === "hebrew" || currentLanguage === "yiddish"
+                        ? "קרא שוב"
+                        : "Read Again"}
+                    </Button>
+
+                    {/* Sign In prompt for guests, Share for logged-in */}
+                    {isGuest ? (
+                      <Button
+                        onClick={() => navigateToLogin()}
+                        className="bg-purple-600 hover:bg-purple-700 flex items-center gap-2"
+                      >
+                        <LogIn className="h-4 w-4" />
+                        {currentLanguage === "hebrew" || currentLanguage === "yiddish"
+                          ? "התחבר כדי ליצור ספרים"
+                          : "Sign in to create books"}
+                      </Button>
+                    ) : (
+                      <>
+                        {/* Share */}
+                        <Link to={createPageUrl("Community")}>
+                          <Button variant="outline" className="flex items-center gap-2">
+                            <Share2 className="h-4 w-4" />
+                            {currentLanguage === "hebrew" || currentLanguage === "yiddish"
+                              ? "שתף"
+                              : "Share"}
+                          </Button>
+                        </Link>
+
+                        {/* Create New Book */}
+                        <Link to={createPageUrl("BookWizard")}>
+                          <Button className="bg-purple-600 hover:bg-purple-700 flex items-center gap-2">
+                            <Plus className="h-4 w-4" />
+                            {currentLanguage === "hebrew" || currentLanguage === "yiddish"
+                              ? "צור ספר חדש"
+                              : "Create New Book"}
+                          </Button>
+                        </Link>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Navigation controls */}
             <div className={`p-4 border-t ${nightNav} transition-colors duration-300`}>
               <div className={`max-w-4xl mx-auto flex justify-between items-center ${isRTL ? "flex-row-reverse" : ""}`}>
@@ -545,6 +721,7 @@ export default function BookView() {
           </div>
         )}
       </main>
+
     </div>
   );
 }

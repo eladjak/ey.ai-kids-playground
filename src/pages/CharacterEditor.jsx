@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { useI18n } from '@/components/i18n/i18nProvider';
 import { Character } from '@/entities/Character';
+import useGamification from '@/hooks/useGamification';
 import { GenerateImage, InvokeLLM } from '@/integrations/Core';
 import { buildSafetyPromptPrefix, moderateInput } from '@/utils/content-moderation';
 
@@ -36,7 +38,9 @@ import { Loader2, Sparkles, Wand2, User, Save, ArrowLeft, Trash2, Camera, Eye } 
 export default function CharacterEditor() {
     const navigate = useNavigate();
     const { toast } = useToast();
-    
+    const { t, isRTL } = useI18n();
+    const gamification = useGamification();
+
     const [character, setCharacter] = useState({
         id: null, // New: character ID, null for new characters
         name: '',
@@ -52,15 +56,12 @@ export default function CharacterEditor() {
     const [isDeleting, setIsDeleting] = useState(false);
     const [isGeneratingImage, setIsGeneratingImage] = useState(false); // New: state for image generation
     const [isGeneratingDetails, setIsGeneratingDetails] = useState(false); // New: state for details generation
-    const [currentLanguage, setCurrentLanguage] = useState("english");
 
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
         const name = urlParams.get('name');
         const data = urlParams.get('data');
-        const storedLanguage = localStorage.getItem('language') || 'english';
-        setCurrentLanguage(storedLanguage);
 
         const loadCharacter = async (characterId) => {
             try {
@@ -95,87 +96,6 @@ export default function CharacterEditor() {
             setIsLoading(false);
         }
     }, []);
-
-    const translations = {
-        english: {
-            "characterEditor.title": "Character Editor",
-            "characterEditor.createNew": "Create New Character",
-            "characterEditor.editCharacter": "Edit Character",
-            "characterEditor.back": "Back to Characters",
-            "characterEditor.basicInfo": "Basic Information",
-            "characterEditor.name": "Name",
-            "characterEditor.age": "Age",
-            "characterEditor.gender": "Gender",
-            "characterEditor.boy": "Boy",
-            "characterEditor.girl": "Girl",
-            "characterEditor.neutral": "Neutral",
-            "characterEditor.personalityAppearance": "Personality & Appearance",
-            "characterEditor.personalityDesc": "These details will help the AI create consistent stories and images.",
-            "characterEditor.personality": "Personality",
-            "characterEditor.personalityPlaceholder": "e.g., Brave, curious, loves animals, a bit shy...",
-            "characterEditor.appearance": "Appearance",
-            "characterEditor.appearancePlaceholder": "e.g., Red curly hair, green eyes, wears glasses, has freckles...",
-            "characterEditor.visuals": "Visuals",
-            "characterEditor.artStyle": "Preferred Art Style",
-            "characterEditor.createCharacter": "Create Character",
-            "characterEditor.saveChanges": "Save Changes",
-            "characterEditor.deleteCharacter": "Delete Character",
-            "characterEditor.deleteConfirm": "Are you sure you want to delete this character?",
-            "characterEditor.successCreate": "Character created successfully.",
-            "characterEditor.successUpdate": "Character updated successfully.",
-            "characterEditor.successDelete": "Character deleted.",
-            "characterEditor.errorCreate": "Failed to create character.",
-            "characterEditor.errorUpdate": "Failed to update character.",
-            "characterEditor.errorDelete": "Failed to delete character.",
-            "characterEditor.errorLoad": "Failed to load character.",
-            "characterEditor.missingInfo": "Missing Information",
-            "characterEditor.missingFields": "Please fill in Name, Personality, and Appearance.",
-            "characterEditor.saving": "Saving...",
-            "characterEditor.deleting": "Deleting..."
-        },
-        hebrew: {
-            "characterEditor.title": "עורך דמויות",
-            "characterEditor.createNew": "צור דמות חדשה",
-            "characterEditor.editCharacter": "ערוך דמות",
-            "characterEditor.back": "חזור לדמויות",
-            "characterEditor.basicInfo": "מידע בסיסי",
-            "characterEditor.name": "שם",
-            "characterEditor.age": "גיל",
-            "characterEditor.gender": "מין",
-            "characterEditor.boy": "בן",
-            "characterEditor.girl": "בת",
-            "characterEditor.neutral": "ניטרלי",
-            "characterEditor.personalityAppearance": "אישיות ומראה",
-            "characterEditor.personalityDesc": "פרטים אלו יעזרו לבינה המלאכותית ליצור סיפורים ותמונות עקביים.",
-            "characterEditor.personality": "אישיות",
-            "characterEditor.personalityPlaceholder": "למשל: אמיץ, סקרן, אוהב חיות, קצת ביישן...",
-            "characterEditor.appearance": "מראה",
-            "characterEditor.appearancePlaceholder": "למשל: שיער מתולתל אדום, עיניים ירוקות, משקפיים, נמשים...",
-            "characterEditor.visuals": "חזותיות",
-            "characterEditor.artStyle": "סגנון איור מועדף",
-            "characterEditor.createCharacter": "צור דמות",
-            "characterEditor.saveChanges": "שמור שינויים",
-            "characterEditor.deleteCharacter": "מחק דמות",
-            "characterEditor.deleteConfirm": "האם אתה בטוח שברצונך למחוק את הדמות הזאת?",
-            "characterEditor.successCreate": "הדמות נוצרה בהצלחה.",
-            "characterEditor.successUpdate": "הדמות עודכנה בהצלחה.",
-            "characterEditor.successDelete": "הדמות נמחקה.",
-            "characterEditor.errorCreate": "יצירת הדמות נכשלה.",
-            "characterEditor.errorUpdate": "עדכון הדמות נכשל.",
-            "characterEditor.errorDelete": "מחיקת הדמות נכשלה.",
-            "characterEditor.errorLoad": "טעינת הדמות נכשלה.",
-            "characterEditor.missingInfo": "מידע חסר",
-            "characterEditor.missingFields": "אנא מלא את השם, האישיות והמראה.",
-            "characterEditor.saving": "שומר...",
-            "characterEditor.deleting": "מוחק..."
-        }
-    };
-
-    const t = (key) => {
-        return translations[currentLanguage]?.[key] || translations.english[key] || key;
-    };
-
-    const isRTL = currentLanguage === "hebrew";
 
     const handleInputChange = (field, value) => {
         setCharacter(prev => ({ ...prev, [field]: value }));
@@ -214,14 +134,12 @@ export default function CharacterEditor() {
             const safetyPrefix = buildSafetyPromptPrefix('5-10');
             const prompt = safetyPrefix + `Generate a name, age (a number between 4 and 10), gender (boy/girl/neutral), personality, and appearance for a fictional child character. Focus on positive, child-friendly traits. Provide the output as a JSON object with keys: "name", "age", "gender", "personality", "appearance". Example: {"name": "Lily", "age": 7, "gender": "girl", "personality": "Brave and adventurous, loves to explore.", "appearance": "Long brown hair, big blue eyes, wears a red dress."}`;
             
-            const generatedJson = await InvokeLLM({
+            const parsedDetails = await InvokeLLM({
                 prompt: prompt,
                 temperature: 0.7,
                 max_tokens: 500,
                 response_format: { type: "json_object" }
             });
-
-            const parsedDetails = JSON.parse(generatedJson);
             setCharacter(prev => ({
                 ...prev,
                 name: parsedDetails.name || prev.name,
@@ -260,9 +178,12 @@ export default function CharacterEditor() {
             const isNewCharacter = character.id === null;
             if (isNewCharacter) {
                 const newCharacter = await Character.create(character);
-                toast({ 
+                toast({
                     title: t("characterEditor.successCreate")
                 });
+                // Award XP for creating a new character
+                gamification.awardXP("character_created");
+                gamification.incrementStat("totalCharacters");
                 setCharacter(prev => ({ ...prev, id: newCharacter.id })); // Update character with new ID
                 navigate(`${createPageUrl('CharacterEditor')}?id=${newCharacter.id}`);
             } else {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import LazyImage from "@/components/shared/LazyImage";
@@ -9,83 +9,24 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  BookOpen, 
-  Eye, 
-  Clock, 
-  CheckCircle, 
-  RotateCw, 
-  Users, 
+import {
+  BookOpen,
+  Eye,
+  Clock,
+  CheckCircle,
+  RotateCw,
+  Users,
   Edit,
   MessageSquare,
   Star,
   Share2
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useI18n } from "@/components/i18n/i18nProvider";
 
 function BookCard({ book, viewType = "grid" }) {
-  const [currentLanguage, setCurrentLanguage] = useState("english");
+  const { t, isRTL } = useI18n();
   const [isHovered, setIsHovered] = useState(false);
-  
-  // Load language preference
-  useEffect(() => {
-    const storedLanguage = localStorage.getItem("language");
-    if (storedLanguage) {
-      setCurrentLanguage(storedLanguage);
-    }
-    
-    const handleStorageChange = (e) => {
-      if (e.key === "language") {
-        setCurrentLanguage(e.newValue || "english");
-      }
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
-  
-  // Translations dictionary
-  const translations = {
-    english: {
-      "bookCard.draft": "Draft",
-      "bookCard.generating": "Generating",
-      "bookCard.complete": "Complete",
-      "bookCard.for": "For",
-      "bookCard.years": "years",
-      "bookCard.view": "View",
-      "bookCard.edit": "Edit",
-      "bookCard.feedback": "Feedback",
-      "bookCard.share": "Share"
-    },
-    hebrew: {
-      "bookCard.draft": "טיוטה",
-      "bookCard.generating": "בתהליך יצירה",
-      "bookCard.complete": "הושלם",
-      "bookCard.for": "עבור",
-      "bookCard.years": "שנים",
-      "bookCard.view": "צפייה",
-      "bookCard.edit": "עריכה",
-      "bookCard.feedback": "משוב",
-      "bookCard.share": "שיתוף"
-    },
-    yiddish: {
-      "bookCard.draft": "אנטווורף",
-      "bookCard.complete": "פארטיק",
-      "bookCard.for": "פאר",
-      "bookCard.years": "יאר",
-      "bookCard.view": "קוקן",
-      "bookCard.edit": "רעדאקטירן",
-      "bookCard.share": "טיילן"
-    }
-  };
-  
-  // Translation function
-  const t = (key) => {
-    return translations[currentLanguage]?.[key] || translations.english[key] || key;
-  };
-  
-  // Determine text direction
-  const isRTL = currentLanguage === "hebrew" || currentLanguage === "yiddish";
   
   const statusIcons = {
     draft: <Clock className="h-4 w-4 text-yellow-500" />,

@@ -12,13 +12,153 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { Sparkles, RefreshCw, Edit3, BookOpen, Globe, ChevronDown, Settings2 } from "lucide-react";
+import { Sparkles, RefreshCw, Edit3, BookOpen, Globe, ChevronDown, Settings2, Check } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ART_STYLE_OPTIONS, translateGenre, translateArtStyle } from "@/utils/book-translations";
+
+/**
+ * Visual art style definitions with emoji, color, and trilingual descriptions.
+ * Used in PreviewEditStep to show child-friendly style previews.
+ */
+const ART_STYLE_VISUAL = [
+  {
+    value: "disney",
+    emoji: "🏰",
+    color: "#4f46e5",
+    bg: "bg-indigo-50 dark:bg-indigo-950/30",
+    border: "border-indigo-200 dark:border-indigo-700",
+    en: "Disney Animation",
+    he: "אנימציית דיסני",
+    yi: "דיסני אַנימאַציע",
+    desc: { en: "Colorful & magical", he: "צבעוני וקסום", yi: "פֿאַרביק און כּישופֿדיק" }
+  },
+  {
+    value: "watercolor",
+    emoji: "🎨",
+    color: "#06b6d4",
+    bg: "bg-cyan-50 dark:bg-cyan-950/30",
+    border: "border-cyan-200 dark:border-cyan-700",
+    en: "Watercolor",
+    he: "צבעי מים",
+    yi: "וואַסערפֿאַרבן",
+    desc: { en: "Soft & dreamy", he: "עדין וחלומי", yi: "ווייך און חלומדיק" }
+  },
+  {
+    value: "cartoon",
+    emoji: "😄",
+    color: "#f59e0b",
+    bg: "bg-amber-50 dark:bg-amber-950/30",
+    border: "border-amber-200 dark:border-amber-700",
+    en: "Bright Cartoon",
+    he: "קומיקס צבעוני",
+    yi: "קאַריקאַטור",
+    desc: { en: "Fun & playful", he: "כיפי ושובבי", yi: "שפּאַסיק" }
+  },
+  {
+    value: "realistic",
+    emoji: "📷",
+    color: "#64748b",
+    bg: "bg-slate-50 dark:bg-slate-950/30",
+    border: "border-slate-200 dark:border-slate-700",
+    en: "Semi-Realistic",
+    he: "מציאותי למחצה",
+    yi: "האַלב-רעאַליסטיש",
+    desc: { en: "Photo-like detail", he: "פרטים כמו צילום", yi: "פֿאָטאָ-ווי" }
+  },
+  {
+    value: "comic",
+    emoji: "💥",
+    color: "#ef4444",
+    bg: "bg-red-50 dark:bg-red-950/30",
+    border: "border-red-200 dark:border-red-700",
+    en: "Comic Book",
+    he: "ספר קומיקס",
+    yi: "קאָמיקס",
+    desc: { en: "Bold & dynamic", he: "נועז ודינמי", yi: "שטאַרק" }
+  },
+  {
+    value: "storybook",
+    emoji: "📖",
+    color: "#8b5cf6",
+    bg: "bg-violet-50 dark:bg-violet-950/30",
+    border: "border-violet-200 dark:border-violet-700",
+    en: "Storybook",
+    he: "ספר ילדים קלאסי",
+    yi: "מעשׂה-ביכל",
+    desc: { en: "Classic & warm", he: "קלאסי וחמים", yi: "קלאַסיש" }
+  },
+  {
+    value: "anime",
+    emoji: "⭐",
+    color: "#ec4899",
+    bg: "bg-pink-50 dark:bg-pink-950/30",
+    border: "border-pink-200 dark:border-pink-700",
+    en: "Anime/Manga",
+    he: "אנימה/מנגה",
+    yi: "אַנימע",
+    desc: { en: "Japanese style", he: "סגנון יפני", yi: "יאַפּאַנישער סטיל" }
+  },
+  {
+    value: "impressionist",
+    emoji: "🌻",
+    color: "#84cc16",
+    bg: "bg-lime-50 dark:bg-lime-950/30",
+    border: "border-lime-200 dark:border-lime-700",
+    en: "Impressionist",
+    he: "אימפרסיוניסטי",
+    yi: "אימפּרעסיאָניסטיש",
+    desc: { en: "Artistic & textured", he: "אמנותי ומרקמי", yi: "קינסטלעריש" }
+  },
+  {
+    value: "pixar",
+    emoji: "🎬",
+    color: "#0ea5e9",
+    bg: "bg-sky-50 dark:bg-sky-950/30",
+    border: "border-sky-200 dark:border-sky-700",
+    en: "Pixar 3D",
+    he: "תלת מימד פיקסאר",
+    yi: "פּיקסאַר 3D",
+    desc: { en: "3D & expressive", he: "תלת-מימדי ומרגש", yi: "3D" }
+  },
+  {
+    value: "minimalist",
+    emoji: "⬜",
+    color: "#94a3b8",
+    bg: "bg-gray-50 dark:bg-gray-950/30",
+    border: "border-gray-200 dark:border-gray-700",
+    en: "Minimalist",
+    he: "מינימליסטי",
+    yi: "מינימאַליסטיש",
+    desc: { en: "Clean & simple", he: "נקי ופשוט", yi: "פּשוט" }
+  },
+  {
+    value: "vintage",
+    emoji: "🕰️",
+    color: "#92400e",
+    bg: "bg-orange-50 dark:bg-orange-950/30",
+    border: "border-orange-200 dark:border-orange-700",
+    en: "Vintage",
+    he: "וינטג'",
+    yi: "וינטאַזש",
+    desc: { en: "Nostalgic charm", he: "קסם נוסטלגי", yi: "נאָסטאַלגיש" }
+  }
+];
+
+function getStyleLabel(style, language) {
+  if (language === "hebrew") return style.he;
+  if (language === "yiddish") return style.yi || style.en;
+  return style.en;
+}
+
+function getStyleDesc(style, language) {
+  if (language === "hebrew") return style.desc.he;
+  if (language === "yiddish") return style.desc.yi || style.desc.en;
+  return style.desc.en;
+}
 
 /**
  * PreviewEditStep - Step 3 of the wizard: Preview and edit the story outline.
  * Shows generated story details with edit capability.
+ * Art style selection uses visual preview cards instead of plain text buttons.
  */
 export default function PreviewEditStep({
   bookData,
@@ -30,6 +170,7 @@ export default function PreviewEditStep({
   language
 }) {
   const isHebrew = language === "hebrew";
+  const isYiddish = language === "yiddish";
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   // Loading skeleton
@@ -38,7 +179,7 @@ export default function PreviewEditStep({
       <div className="space-y-6" dir={isRTL ? "rtl" : "ltr"}>
         <div className="text-center mb-6">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            {isHebrew ? "מכינים את הסיפור שלך..." : "Preparing your story..."}
+            {isHebrew ? "מכינים את הסיפור שלך..." : isYiddish ? "מיר גרייטן דײַן מעשׂה..." : "Preparing your story..."}
           </h2>
           <p className="text-gray-500 dark:text-gray-400 text-lg">
             {isHebrew ? "ה-AI עובד על רעיון מדהים בשבילך" : "The AI is crafting an amazing story for you"}
@@ -74,7 +215,7 @@ export default function PreviewEditStep({
     <div className="space-y-6" dir={isRTL ? "rtl" : "ltr"}>
       <div className="text-center mb-6">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          {isHebrew ? "בדוק ועדכן את הסיפור" : "Review & edit your story"}
+          {isHebrew ? "בדוק ועדכן את הסיפור" : isYiddish ? "קוק איבער דײַן מעשׂה" : "Review & edit your story"}
         </h2>
         <p className="text-gray-500 dark:text-gray-400 text-lg">
           {isHebrew ? "אפשר לערוך לפני שממשיכים" : "You can make changes before continuing"}
@@ -164,36 +305,63 @@ export default function PreviewEditStep({
         </CardContent>
       </Card>
 
-      {/* Art Style Selection */}
+      {/* Art Style Selection — Visual Preview Cards */}
       <Card>
         <CardHeader>
           <CardTitle className={`flex items-center gap-2 text-lg ${isRTL ? "flex-row-reverse" : ""}`}>
             <Sparkles className="h-5 w-5 text-amber-500" aria-hidden="true" />
-            {isHebrew ? "סגנון אמנותי" : "Art Style"}
+            {isHebrew ? "סגנון אמנותי" : isYiddish ? "קונסט-סטיל" : "Art Style"}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {ART_STYLE_OPTIONS.map((style) => {
+          <div
+            className="grid grid-cols-2 sm:grid-cols-3 gap-3"
+            role="radiogroup"
+            aria-label={isHebrew ? "בחר סגנון אמנותי" : "Choose art style"}
+          >
+            {ART_STYLE_VISUAL.map((style) => {
               const isSelected = bookData.art_style === style.value;
               return (
-                <motion.button
+                <button
                   key={style.value}
                   onClick={() => onBookDataChange("art_style", style.value)}
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  aria-pressed={isSelected}
-                  aria-label={isHebrew ? style.he : style.en}
+                  role="radio"
+                  aria-checked={isSelected}
+                  aria-label={getStyleLabel(style, language)}
                   className={`
-                    p-3 rounded-xl text-sm font-medium text-center transition-all duration-200
+                    relative p-3 rounded-xl text-left border-2 cursor-pointer
+                    transition-colors duration-150
                     ${isSelected
-                      ? "bg-purple-100 dark:bg-purple-900/40 ring-2 ring-purple-500 text-purple-800 dark:text-purple-200"
-                      : "bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700"
+                      ? "border-purple-500 bg-purple-50 dark:bg-purple-900/30 shadow-md"
+                      : `${style.border} ${style.bg} hover:border-purple-300 dark:hover:border-purple-600`
                     }
                   `}
                 >
-                  {isHebrew ? style.he : style.en}
-                </motion.button>
+                  {/* Selected checkmark — no enter/exit animation to prevent flicker */}
+                  <div
+                    className={`absolute top-2 right-2 w-5 h-5 bg-purple-600 rounded-full flex items-center justify-center transition-opacity duration-150 ${isSelected ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+                    aria-hidden="true"
+                  >
+                    <Check className="h-3 w-3 text-white" />
+                  </div>
+
+                  <div className="flex flex-col items-start gap-1">
+                    {/* Emoji */}
+                    <span className="text-2xl leading-none mb-1" aria-hidden="true">
+                      {style.emoji}
+                    </span>
+
+                    {/* Style name */}
+                    <span className={`text-sm font-semibold leading-tight ${isSelected ? "text-purple-800 dark:text-purple-200" : "text-gray-800 dark:text-gray-200"}`}>
+                      {getStyleLabel(style, language)}
+                    </span>
+
+                    {/* Short description */}
+                    <span className={`text-xs leading-tight ${isSelected ? "text-purple-600 dark:text-purple-300" : "text-gray-500 dark:text-gray-400"}`}>
+                      {getStyleDesc(style, language)}
+                    </span>
+                  </div>
+                </button>
               );
             })}
           </div>

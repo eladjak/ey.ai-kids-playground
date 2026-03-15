@@ -1,3 +1,4 @@
-import { base44 } from '../api/base44Client';
+import { createSupabaseEntity } from '../lib/supabaseEntity';
+import { createSecureEntity } from '../lib/secureEntity';
 
-export const StoryIdea = base44.entities.StoryIdea;
+export const StoryIdea = createSecureEntity(createSupabaseEntity('story_ideas'));

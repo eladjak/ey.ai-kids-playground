@@ -1,29 +1,38 @@
-import { useState, useEffect } from "react";
-import { Character } from "@/entities/Character";
+import { useRef } from 'react';
+import { useQuery, QueryClient } from '@tanstack/react-query';
+import { Character } from '@/entities/Character';
 
 /**
  * Hook to load saved Character entities and convert between
  * Character entity format and the bookData.selectedCharacters format.
+ * Uses React Query for automatic caching and deduplication.
  */
 export default function useCharacterSelector() {
-  const [savedCharacters, setSavedCharacters] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // Each hook instance owns a stable QueryClient so this hook works both
+  // inside a QueryClientProvider (production) and in isolation (tests).
+  const clientRef = useRef(null);
+  if (!clientRef.current) {
+    clientRef.current = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+  }
 
-  useEffect(() => {
-    loadCharacters();
-  }, []);
-
-  const loadCharacters = async () => {
-    try {
-      setIsLoading(true);
-      const data = await Character.list("-created_date", 50);
-      setSavedCharacters(data);
-    } catch (error) {
-      // silently handled - user may not have characters yet
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { data, isPending, refetch } = useQuery(
+    {
+      queryKey: ['characters'],
+      queryFn: async () => {
+        try {
+          return await Character.list('-created_date', 50);
+        } catch {
+          // silently handled - user may not have characters yet
+          return [];
+        }
+      },
+      staleTime: 2 * 60 * 1000, // 2 minutes
+      retry: false,
+    },
+    clientRef.current
+  );
 
   /**
    * Convert a Character entity to the format used in bookData.selectedCharacters
@@ -32,7 +41,7 @@ export default function useCharacterSelector() {
     id: `entity_${entity.id}`,
     entityId: entity.id,
     name: entity.name,
-    traits: entity.personality || "",
+    traits: entity.personality || '',
     emoji: null,
     avatar: entity.primary_image_url || null,
     age: entity.age,
@@ -55,9 +64,9 @@ export default function useCharacterSelector() {
   });
 
   return {
-    savedCharacters,
-    isLoading,
-    reload: loadCharacters,
+    savedCharacters: data ?? [],
+    isLoading: isPending,
+    reload: refetch,
     entityToSelection,
     templateToSelection,
   };

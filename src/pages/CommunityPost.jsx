@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { useI18n } from "@/components/i18n/i18nProvider";
 import { Community } from "@/entities/Community";
 import { Comment } from "@/entities/Comment";
 import { User } from "@/entities/User";
 import { Book } from "@/entities/Book";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import FollowButton from "@/components/social/FollowButton";
+import { moderateInput } from "@/utils/content-moderation";
 import { 
   ArrowLeft, 
   Heart, 
@@ -37,6 +41,8 @@ import CommentItem from "../components/community/CommentItem";
 export default function CommunityPost() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t, isRTL } = useI18n();
+  const { user: hookUser } = useCurrentUser();
   const [post, setPost] = useState(null);
   const [book, setBook] = useState(null);
   const [author, setAuthor] = useState(null);
@@ -62,15 +68,12 @@ export default function CommunityPost() {
   const loadData = async () => {
     try {
       setIsLoading(true);
-      
-      // Load current user
-      try {
-        const user = await User.me();
-        setCurrentUser(user);
-      } catch (error) {
-        // silently handled
+
+      // Set current user from hook
+      if (hookUser) {
+        setCurrentUser(hookUser);
       }
-      
+
       // Load post data
       const postData = await Community.get(postId);
       setPost(postData);
@@ -93,7 +96,7 @@ export default function CommunityPost() {
     } catch (error) {
       toast({
         variant: "destructive",
-        description: "Failed to load post data. Please try again.",
+        description: t("communityPost.loadError"),
       });
       navigate(createPageUrl("Community"));
     } finally {
@@ -121,7 +124,7 @@ export default function CommunityPost() {
           } catch (error) {
             return {
               ...comment,
-              user: { full_name: "Unknown User" }
+              user: { full_name: t("common.unknownUser") }
             };
           }
         })
@@ -142,7 +145,7 @@ export default function CommunityPost() {
     } catch (error) {
       toast({
         variant: "destructive",
-        description: "Failed to load comments. Please try again.",
+        description: t("communityPost.loadCommentsError"),
       });
     }
   };
@@ -162,12 +165,12 @@ export default function CommunityPost() {
       });
       
       toast({
-        description: "Thanks for liking this post!",
+        description: t("communityPost.likeSuccess"),
       });
     } catch (error) {
       toast({
         variant: "destructive",
-        description: "Failed to like post. Please try again.",
+        description: t("communityPost.likeError"),
       });
     }
   };
@@ -175,17 +178,28 @@ export default function CommunityPost() {
   const handleSubmitComment = async () => {
     try {
       if (!commentText.trim() || !currentUser) return;
-      
+
+      // Moderate the comment before submitting
+      const modResult = moderateInput(commentText, 'comment');
+      if (modResult.blocked) {
+        toast({
+          variant: "destructive",
+          title: t("communityPost.inappropriateTitle"),
+          description: t("communityPost.inappropriateDesc")
+        });
+        return;
+      }
+
       setIsSubmitting(true);
-      
+
       // Create comment
       const commentData = {
         community_id: postId,
         user_id: currentUser.id,
-        content: commentText,
+        content: modResult.sanitized,
         parent_id: null // Root comment
       };
-      
+
       await Comment.create(commentData);
       
       // Refresh comments
@@ -195,12 +209,12 @@ export default function CommunityPost() {
       setCommentText('');
       
       toast({
-        description: "Comment added successfully!",
+        description: t("communityPost.commentSuccess"),
       });
     } catch (error) {
       toast({
         variant: "destructive",
-        description: "Failed to add comment. Please try again.",
+        description: t("communityPost.commentError"),
       });
     } finally {
       setIsSubmitting(false);
@@ -210,29 +224,40 @@ export default function CommunityPost() {
   const handleSubmitReply = async (parentId, content) => {
     try {
       if (!content.trim() || !currentUser) return;
-      
+
+      // Moderate the reply before submitting
+      const modResult = moderateInput(content, 'comment');
+      if (modResult.blocked) {
+        toast({
+          variant: "destructive",
+          title: t("communityPost.inappropriateTitle"),
+          description: t("communityPost.inappropriateDesc")
+        });
+        return false;
+      }
+
       // Create reply
       const replyData = {
         community_id: postId,
         user_id: currentUser.id,
-        content: content,
+        content: modResult.sanitized,
         parent_id: parentId
       };
-      
+
       await Comment.create(replyData);
       
       // Refresh comments
       await loadComments();
       
       toast({
-        description: "Reply added successfully!",
+        description: t("communityPost.replySuccess"),
       });
       
       return true;
     } catch (error) {
       toast({
         variant: "destructive",
-        description: "Failed to add reply. Please try again.",
+        description: t("communityPost.replyError"),
       });
       return false;
     }
@@ -264,17 +289,17 @@ export default function CommunityPost() {
   if (!post) {
     return (
       <div className="max-w-4xl mx-auto py-8 text-center">
-        <h2 className="text-2xl font-bold mb-4">Post not found</h2>
-        <p className="text-gray-600 dark:text-gray-300 mb-6">This post may have been removed or doesn't exist</p>
+        <h2 className="text-2xl font-bold mb-4">{t("communityPost.notFound")}</h2>
+        <p className="text-gray-600 dark:text-gray-300 mb-6">{t("communityPost.notFoundDesc")}</p>
         <Button onClick={() => navigate(createPageUrl("Community"))}>
-          Return to Community
+          {t("communityPost.returnToCommunity")}
         </Button>
       </div>
     );
   }
   
   return (
-    <div className="max-w-4xl mx-auto py-4">
+    <div className="max-w-4xl mx-auto py-4" dir={isRTL ? "rtl" : "ltr"}>
       <div className="mb-6">
         <Button
           variant="ghost"
@@ -283,22 +308,29 @@ export default function CommunityPost() {
           className="mb-4"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Community
+          {t("communityPost.backToCommunity")}
         </Button>
         
         <Card>
           <CardHeader>
             <div className="flex items-center gap-4 mb-3">
               <Avatar>
-                <AvatarImage src={`https://ui-avatars.com/api/?name=${author?.full_name || 'User'}&background=random`} />
-                <AvatarFallback>{author?.full_name?.[0] || 'U'}</AvatarFallback>
+                {author?.avatar_url ? (
+                  <AvatarImage src={author.avatar_url} alt={author.full_name} />
+                ) : null}
+                <AvatarFallback className="bg-gradient-to-br from-purple-500 to-indigo-500 text-white">
+                  {author?.full_name?.charAt(0) || 'U'}
+                </AvatarFallback>
               </Avatar>
               <div>
-                <p className="font-medium">{author?.full_name || 'Unknown User'}</p>
+                <p className="font-medium">{author?.full_name || t("common.unknownUser")}</p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   {post.created_date && format(new Date(post.created_date), 'MMM d, yyyy')}
                 </p>
               </div>
+              {author?.email && hookUser?.email && author.email !== hookUser.email && (
+                <FollowButton targetEmail={author.email} size="sm" />
+              )}
             </div>
             
             <CardTitle className="text-2xl">{post.title}</CardTitle>
@@ -338,11 +370,11 @@ export default function CommunityPost() {
                   <div className="p-6 md:w-2/3">
                     <h3 className="text-xl font-bold mb-2">{book.title}</h3>
                     <p className="text-gray-600 dark:text-gray-400 mb-4">
-                      A personalized story for {book.child_name}
+                      {t("communityPost.personalizedStoryFor")} {book.child_name}
                     </p>
                     <div className="flex flex-wrap gap-2">
                       <Badge>{book.genre?.replace(/_/g, ' ')}</Badge>
-                      <Badge variant="outline">{book.age_range} years</Badge>
+                      <Badge variant="outline">{book.age_range} {t("communityPost.years")}</Badge>
                       <Badge variant="outline" className="capitalize">{book.language}</Badge>
                     </div>
                   </div>
@@ -364,9 +396,30 @@ export default function CommunityPost() {
             </div>
             
             <div>
-              <Button variant="ghost" className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                className="flex items-center gap-2"
+                onClick={async () => {
+                  const shareUrl = `${window.location.origin}${createPageUrl("CommunityPost")}?id=${postId}`;
+                  if (navigator.share) {
+                    try {
+                      await navigator.share({
+                        title: post?.title,
+                        text: post?.description,
+                        url: shareUrl,
+                      });
+                    } catch {
+                      // User cancelled share dialog — no action needed
+                    }
+                  } else {
+                    navigator.clipboard.writeText(shareUrl).then(() => {
+                      toast({ description: t("communityPost.linkCopied") });
+                    });
+                  }
+                }}
+              >
                 <Share2 className="h-5 w-5" />
-                Share
+                {t("communityPost.share")}
               </Button>
             </div>
           </CardFooter>
@@ -377,13 +430,13 @@ export default function CommunityPost() {
       <div className="mt-8">
         <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
           <MessageSquare className="h-5 w-5" />
-          Comments ({comments.length})
+          {t("communityPost.comments")} ({comments.length})
         </h3>
         
         {/* Comment form */}
         <div className="mb-8">
           <Textarea
-            placeholder="Add a comment..."
+            placeholder={t("communityPost.addComment")}
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
             className="min-h-[100px] mb-2"
@@ -394,7 +447,7 @@ export default function CommunityPost() {
               disabled={!commentText.trim() || isSubmitting}
               className="bg-purple-600 hover:bg-purple-700"
             >
-              {isSubmitting ? 'Posting...' : 'Post Comment'}
+              {isSubmitting ? t("communityPost.posting") : t("communityPost.postComment")}
               <Send className="ml-2 h-4 w-4" />
             </Button>
           </div>
@@ -414,8 +467,8 @@ export default function CommunityPost() {
           ) : (
             <div className="text-center py-10 border border-dashed border-gray-200 dark:border-gray-700 rounded-lg">
               <MessageSquare className="h-10 w-10 mx-auto text-gray-400" />
-              <p className="mt-4 text-gray-600 dark:text-gray-400">No comments yet</p>
-              <p className="text-gray-500 dark:text-gray-500">Be the first to share your thoughts!</p>
+              <p className="mt-4 text-gray-600 dark:text-gray-400">{t("communityPost.noComments")}</p>
+              <p className="text-gray-500 dark:text-gray-500">{t("communityPost.beFirstComment")}</p>
             </div>
           )}
         </div>

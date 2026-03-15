@@ -1,10 +1,13 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { useI18n } from "@/components/i18n/i18nProvider";
+import useGamification from "@/hooks/useGamification";
 import { Book } from "@/entities/Book";
 import { Page } from "@/entities/Page";
 import { GenerateImage, InvokeLLM } from "@/integrations/Core";
 import { buildSafetyPromptPrefix, sanitizeAIOutput } from "@/utils/content-moderation";
+import { canCreateBook, recordBookCreation } from "@/utils/bookRateLimit";
 import { createPageUrl } from "@/utils";
 import { Edit, Eye, Share2, RotateCw, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,6 +17,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { Collaboration } from "@/entities/Collaboration";
 import { User } from "@/entities/User";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { captureError } from "@/lib/errorTracking";
 
 // Extracted components
 import GenerationSteps from "../components/bookCreation/GenerationSteps";
@@ -32,6 +37,9 @@ import { getBookTranslation } from "@/utils/book-translations";
 export default function BookCreation() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { isRTL: uiIsRTL } = useI18n();
+  const gamification = useGamification();
+  const { user: hookUser } = useCurrentUser();
 
   // Core state
   const [isLoading, setIsLoading] = useState(true);
@@ -84,8 +92,10 @@ export default function BookCreation() {
   const bookId = urlParams.get("id");
 
   // Language / RTL
+  // currentLanguage is the BOOK CONTENT language (for AI-generated content translations)
   const currentLanguage = book?.language === "hebrew" || book?.language === "yiddish" ? "hebrew" : "english";
-  const isRTL = currentLanguage === "hebrew";
+  // isRTL for layout direction uses the UI language (from useI18n), not book content language
+  const isRTL = uiIsRTL;
   const t = getBookTranslation(currentLanguage);
 
   // Auto-save: track editable state
@@ -142,8 +152,9 @@ export default function BookCreation() {
       const bookData = await Book.get(bookId);
       setBook(bookData);
 
-      const currentUser = await User.me();
-      setIsOwner(bookData.created_by === currentUser.email);
+      // Use hook user for ownership check (no extra network request needed)
+      const currentUser = hookUser;
+      setIsOwner(currentUser ? bookData.created_by === currentUser.email : false);
 
       const pagesData = await Page.filter({ book_id: bookId }, "page_number");
       setPages(pagesData);
@@ -213,6 +224,23 @@ export default function BookCreation() {
 
   const generateBook = async () => {
     if (isGenerating) return;
+
+    // --- Rate limit check ---
+    try {
+      const currentUser = await User.me();
+      const rateCheck = canCreateBook(currentUser.email);
+      if (!rateCheck.allowed) {
+        toast({
+          variant: "destructive",
+          description: isRTL
+            ? `הגעת למגבלה היומית של ${rateCheck.limit} ספרים. נסה שוב מחר!`
+            : `You've reached today's limit of ${rateCheck.limit} books. Try again tomorrow!`,
+        });
+        return;
+      }
+    } catch {
+      // If we can't determine the user, allow creation to proceed
+    }
 
     try {
       setIsGenerating(true);
@@ -284,11 +312,11 @@ export default function BookCreation() {
             imageSuccessCount++;
           } else {
             imageFailed = true;
-            console.error("[BookCreation] GenerateImage returned no URL for page", i);
+            captureError(new Error(`[BookCreation] GenerateImage returned no URL for page ${i}`));
           }
         } catch (imgErr) {
           imageFailed = true;
-          console.error("[BookCreation] Image generation failed for page", i, imgErr?.message || imgErr);
+          captureError(imgErr instanceof Error ? imgErr : new Error(String(imgErr?.message || imgErr)), { page: i, context: "BookCreation image generation" });
         }
 
         const pageData = {
@@ -316,6 +344,14 @@ export default function BookCreation() {
 
       setPages(newPages);
       setBook((prev) => ({ ...prev, status: "complete" }));
+
+      // Record successful book creation for rate limiting
+      try {
+        const currentUser = await User.me();
+        recordBookCreation(currentUser.email);
+      } catch {
+        // Non-critical — ignore if user fetch fails
+      }
 
       if (imageFailureInfo.length > 0) {
         toast({
@@ -441,6 +477,9 @@ export default function BookCreation() {
       };
       setPages(updatedPages);
 
+      // Award XP for explicitly saving a page edit
+      gamification.awardXP("page_edited");
+
       toast({
         description: t("book.textUpdated"),
         className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100"
@@ -448,7 +487,7 @@ export default function BookCreation() {
     } catch (error) {
       toast({ variant: "destructive", description: t("book.textUpdateError") });
     }
-  }, [currentPageIndex, currentPageText, pages, t, toast]);
+  }, [currentPageIndex, currentPageText, pages, t, toast, gamification]);
 
   const updatePageImage = useCallback(async () => {
     if (currentPageIndex < 0 || currentPageIndex >= pages.length || !currentPageImagePrompt) return;

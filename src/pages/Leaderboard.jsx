@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from "react";
-import { User } from "@/entities/User";
+import { useI18n } from "@/components/i18n/i18nProvider";
 import { Book } from "@/entities/Book";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { Community } from "@/entities/Community";
 import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
@@ -31,14 +32,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 
 export default function Leaderboard() {
+  const { t, language, isRTL } = useI18n();
+  const { user: hookUser } = useCurrentUser();
   const [isLoading, setIsLoading] = useState(true);
-  const [currentLanguage, setCurrentLanguage] = useState("english");
-  const [isRTL, setIsRTL] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -63,14 +65,11 @@ export default function Leaderboard() {
     try {
       setIsLoading(true);
 
-      const user = await User.me();
-      setCurrentUser(user);
+      if (hookUser) {
+        setCurrentUser(hookUser);
+      }
 
-      const storedLanguage = localStorage.getItem("language") || "english";
-      setCurrentLanguage(storedLanguage);
-      setIsRTL(storedLanguage === "hebrew" || storedLanguage === "yiddish");
-
-      await buildLeaderboard(user);
+      await buildLeaderboard(hookUser);
     } catch {
       // silently handled
     } finally {
@@ -169,63 +168,6 @@ export default function Leaderboard() {
     }
   };
 
-  const translations = {
-    english: {
-      "leaderboard.title": "Storytellers Leaderboard",
-      "leaderboard.subtitle": "See who's creating the most magical stories",
-      "leaderboard.tabs.weekly": "This Week",
-      "leaderboard.tabs.monthly": "This Month",
-      "leaderboard.tabs.allTime": "All Time",
-      "leaderboard.filter.title": "Filter by",
-      "leaderboard.filter.all": "Overall XP",
-      "leaderboard.filter.books": "Books Created",
-      "leaderboard.filter.streak": "Longest Streak",
-      "leaderboard.rank": "Rank",
-      "leaderboard.user": "Storyteller",
-      "leaderboard.level": "Level",
-      "leaderboard.xp": "XP Points",
-      "leaderboard.books": "Books",
-      "leaderboard.streak": "Streak",
-      "leaderboard.search": "Search storytellers...",
-      "leaderboard.your.rank": "Your Rank",
-      "leaderboard.top.storytellers": "Top Storytellers",
-      "leaderboard.rising.stars": "Active This Week",
-      "leaderboard.view.profile": "View Profile",
-      "leaderboard.you": "You",
-      "leaderboard.empty": "No storytellers found for this period",
-      "leaderboard.loading": "Loading leaderboard..."
-    },
-    hebrew: {
-      "leaderboard.title": "טבלת המובילים",
-      "leaderboard.subtitle": "ראה מי יוצר את הסיפורים הקסומים ביותר",
-      "leaderboard.tabs.weekly": "השבוע",
-      "leaderboard.tabs.monthly": "החודש",
-      "leaderboard.tabs.allTime": "כל הזמנים",
-      "leaderboard.filter.title": "סנן לפי",
-      "leaderboard.filter.all": "ניקוד כולל",
-      "leaderboard.filter.books": "ספרים שנוצרו",
-      "leaderboard.filter.streak": "רצף הארוך ביותר",
-      "leaderboard.rank": "דירוג",
-      "leaderboard.user": "מספר סיפורים",
-      "leaderboard.level": "רמה",
-      "leaderboard.xp": "נקודות ניסיון",
-      "leaderboard.books": "ספרים",
-      "leaderboard.streak": "רצף",
-      "leaderboard.search": "חפש מספרי סיפורים...",
-      "leaderboard.your.rank": "הדירוג שלך",
-      "leaderboard.top.storytellers": "מספרי הסיפורים המובילים",
-      "leaderboard.rising.stars": "פעילים השבוע",
-      "leaderboard.view.profile": "צפה בפרופיל",
-      "leaderboard.you": "את/ה",
-      "leaderboard.empty": "לא נמצאו מספרי סיפורים לתקופה זו",
-      "leaderboard.loading": "טוען טבלת מובילים..."
-    }
-  };
-
-  const t = (key) => {
-    return translations[currentLanguage]?.[key] || translations.english[key] || key;
-  };
-
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
@@ -287,10 +229,58 @@ export default function Leaderboard() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-purple-600 mx-auto mb-4" />
-          <p className="text-gray-600 dark:text-gray-300">{t("leaderboard.loading")}</p>
+      <div className="max-w-6xl mx-auto pb-12 p-4 md:p-6">
+        {/* Header skeleton */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-4 w-64" />
+          </div>
+          <Skeleton className="h-10 w-64" />
+        </div>
+
+        {/* Stats cards skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <Skeleton className="md:col-span-2 h-24 rounded-lg" />
+          <Skeleton className="h-24 rounded-lg" />
+          <Skeleton className="h-24 rounded-lg" />
+        </div>
+
+        {/* Table skeleton */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+          {/* Tabs skeleton */}
+          <div className="p-4 border-b border-gray-100 dark:border-gray-700">
+            <div className="flex gap-2">
+              <Skeleton className="h-9 w-28 rounded-md" />
+              <Skeleton className="h-9 w-28 rounded-md" />
+              <Skeleton className="h-9 w-28 rounded-md" />
+            </div>
+          </div>
+
+          {/* Row skeletons — match actual leaderboard row layout */}
+          <div className="divide-y divide-gray-200 dark:divide-gray-700">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-4 px-4 py-4 animate-pulse">
+                {/* Rank */}
+                <Skeleton className="h-8 w-8 rounded-full flex-shrink-0" />
+                {/* Avatar + name */}
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <Skeleton className="h-8 w-8 rounded-full flex-shrink-0" />
+                  <Skeleton className="h-4 w-32" />
+                </div>
+                {/* Level */}
+                <Skeleton className="h-4 w-12 hidden sm:block" />
+                {/* XP */}
+                <Skeleton className="h-4 w-16 hidden sm:block" />
+                {/* Books */}
+                <Skeleton className="h-4 w-10 hidden md:block" />
+                {/* Streak */}
+                <Skeleton className="h-4 w-14 hidden md:block" />
+                {/* Button */}
+                <Skeleton className="h-8 w-20 rounded-md flex-shrink-0" />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -347,7 +337,7 @@ export default function Leaderboard() {
                 </div>
               ) : (
                 <div className="text-center py-2">
-                  <p>{currentLanguage === "hebrew" ? "התחבר כדי לראות את הדירוג שלך" : "Login to see your rank"}</p>
+                  <p>{language === "hebrew" ? "התחבר כדי לראות את הדירוג שלך" : "Login to see your rank"}</p>
                 </div>
               )}
             </CardContent>
@@ -424,25 +414,25 @@ export default function Leaderboard() {
               <table className="w-full table-auto">
                 <thead className="bg-gray-50 dark:bg-gray-800/50">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {t("leaderboard.rank")}
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {t("leaderboard.user")}
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {t("leaderboard.level")}
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {t("leaderboard.xp")}
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {t("leaderboard.books")}
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {t("leaderboard.streak")}
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
 
                     </th>
                   </tr>
@@ -458,13 +448,14 @@ export default function Leaderboard() {
                         className={entry.isCurrentUser ? 'bg-purple-50 dark:bg-purple-900/10' : 'hover:bg-gray-50 dark:hover:bg-gray-800/60'}
                       >
                         <td className="px-4 py-4 whitespace-nowrap">
-                          <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${rankDecoration.className}`}>
+                          <div className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${rankDecoration.className}`}
+                            style={{ float: isRTL ? 'right' : 'left' }}>
                             {rankDecoration.icon || actualRank}
                           </div>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <Avatar className="h-8 w-8 mr-3">
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-8 w-8 shrink-0">
                               {entry.avatar ? (
                                 <AvatarImage src={entry.avatar} alt={entry.name} />
                               ) : (
@@ -473,10 +464,10 @@ export default function Leaderboard() {
                                 </AvatarFallback>
                               )}
                             </Avatar>
-                            <div className="flex items-center">
+                            <div className="flex items-center gap-2">
                               <span className="font-medium">{entry.name}</span>
                               {entry.isCurrentUser && (
-                                <Badge className="ml-2 text-xs bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
+                                <Badge className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
                                   {t("leaderboard.you")}
                                 </Badge>
                               )}
@@ -501,10 +492,10 @@ export default function Leaderboard() {
                         <td className="px-4 py-4 whitespace-nowrap">
                           <div className="flex items-center gap-1">
                             <CalendarRange className="h-4 w-4 text-green-500" />
-                            <span>{entry.streak} {timePeriod !== "allTime" ? (currentLanguage === "hebrew" ? "ימים" : "days") : ""}</span>
+                            <span>{entry.streak} {timePeriod !== "allTime" ? (language === "hebrew" ? "ימים" : "days") : ""}</span>
                           </div>
                         </td>
-                        <td className="px-4 py-4 text-right whitespace-nowrap">
+                        <td className="px-4 py-4 text-end whitespace-nowrap">
                           <Link to={createPageUrl("Profile")}>
                             <Button variant="ghost" size="sm" className="h-8 text-xs text-purple-600 dark:text-purple-400">
                               {t("leaderboard.view.profile")}

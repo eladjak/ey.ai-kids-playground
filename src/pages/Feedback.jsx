@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { useI18n } from "@/components/i18n/i18nProvider";
 import { Book } from "@/entities/Book";
 import { Page } from "@/entities/Page";
-import { User } from "@/entities/User";
 import { Feedback } from "@/entities/Feedback";
 import { Collaboration } from "@/entities/Collaboration";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import {
   ArrowLeft,
   ArrowRight,
@@ -50,11 +51,9 @@ import FeedbackContext from "../components/feedback/FeedbackContext";
 export default function FeedbackPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { isRTL } = useI18n();
+  const { user: hookUser } = useCurrentUser();
   const [isLoading, setIsLoading] = useState(true);
-  const [currentLanguage, setCurrentLanguage] = useState(
-    () => localStorage.getItem("language") || "english"
-  );
-  const isRTL = currentLanguage === "hebrew" || currentLanguage === "yiddish";
   const [book, setBook] = useState(null);
   const [pages, setPages] = useState([]);
   const [currentPage, setCurrentPage] = useState(null);
@@ -91,24 +90,28 @@ export default function FeedbackPage() {
   const loadBookData = async () => {
     try {
       setIsLoading(true);
-      
-      // Load current user
-      const user = await User.me();
-      setCurrentUser(user);
-      
+
+      // Use current user from hook
+      const user = hookUser;
+      if (user) {
+        setCurrentUser(user);
+      }
+
       // Load book data
       const bookData = await Book.get(bookId);
       setBook(bookData);
-      
+
       // Check if user is owner
-      setIsOwner(bookData.created_by === user.email);
-      
+      if (user) {
+        setIsOwner(bookData.created_by === user.email);
+      }
+
       // Check if user is collaborator
-      const collaborations = await Collaboration.filter({
+      const collaborations = user ? await Collaboration.filter({
         book_id: bookId,
         collaborator_email: user.email,
         status: "accepted"
-      });
+      }) : [];
       
       setIsCollaborator(collaborations.length > 0);
       

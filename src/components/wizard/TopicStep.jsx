@@ -14,7 +14,8 @@ import {
   Palette,
   Globe,
   PenLine,
-  Lightbulb
+  Lightbulb,
+  Shuffle
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -31,7 +32,8 @@ const TOPIC_CARDS = [
     bg: "bg-amber-50 dark:bg-amber-950/30",
     ring: "ring-amber-400",
     en: "Animals",
-    he: "חיות"
+    he: "חיות",
+    yi: "חיות"
   },
   {
     id: "space",
@@ -40,7 +42,8 @@ const TOPIC_CARDS = [
     bg: "bg-indigo-50 dark:bg-indigo-950/30",
     ring: "ring-indigo-400",
     en: "Space",
-    he: "חלל"
+    he: "חלל",
+    yi: "חלל"
   },
   {
     id: "family",
@@ -49,7 +52,8 @@ const TOPIC_CARDS = [
     bg: "bg-pink-50 dark:bg-pink-950/30",
     ring: "ring-pink-400",
     en: "Family",
-    he: "משפחה"
+    he: "משפחה",
+    yi: "משפּחה"
   },
   {
     id: "fairy_tale",
@@ -58,7 +62,8 @@ const TOPIC_CARDS = [
     bg: "bg-yellow-50 dark:bg-yellow-950/30",
     ring: "ring-yellow-400",
     en: "Fairy Tales",
-    he: "אגדות"
+    he: "אגדות",
+    yi: "מעשׂיות"
   },
   {
     id: "adventure",
@@ -67,7 +72,8 @@ const TOPIC_CARDS = [
     bg: "bg-emerald-50 dark:bg-emerald-950/30",
     ring: "ring-emerald-400",
     en: "Adventure",
-    he: "הרפתקאות"
+    he: "הרפתקאות",
+    yi: "אַוואַנטורעס"
   },
   {
     id: "nature",
@@ -76,7 +82,8 @@ const TOPIC_CARDS = [
     bg: "bg-green-50 dark:bg-green-950/30",
     ring: "ring-green-400",
     en: "Nature",
-    he: "טבע"
+    he: "טבע",
+    yi: "נאַטור"
   },
   {
     id: "science",
@@ -85,7 +92,8 @@ const TOPIC_CARDS = [
     bg: "bg-cyan-50 dark:bg-cyan-950/30",
     ring: "ring-cyan-400",
     en: "Science",
-    he: "מדע"
+    he: "מדע",
+    yi: "וויסנשאַפֿט"
   },
   {
     id: "magic",
@@ -94,7 +102,8 @@ const TOPIC_CARDS = [
     bg: "bg-violet-50 dark:bg-violet-950/30",
     ring: "ring-violet-400",
     en: "Magic",
-    he: "קסמים"
+    he: "קסמים",
+    yi: "כּישוף"
   },
   {
     id: "friendship",
@@ -103,7 +112,8 @@ const TOPIC_CARDS = [
     bg: "bg-rose-50 dark:bg-rose-950/30",
     ring: "ring-rose-400",
     en: "Friendship",
-    he: "חברות"
+    he: "חברות",
+    yi: "פֿרײַנדשאַפֿט"
   },
   {
     id: "music",
@@ -112,7 +122,8 @@ const TOPIC_CARDS = [
     bg: "bg-fuchsia-50 dark:bg-fuchsia-950/30",
     ring: "ring-fuchsia-400",
     en: "Music",
-    he: "מוזיקה"
+    he: "מוזיקה",
+    yi: "מוזיק"
   },
   {
     id: "art",
@@ -121,7 +132,8 @@ const TOPIC_CARDS = [
     bg: "bg-orange-50 dark:bg-orange-950/30",
     ring: "ring-orange-400",
     en: "Art",
-    he: "אמנות"
+    he: "אמנות",
+    yi: "קונסט"
   },
   {
     id: "travel",
@@ -130,9 +142,47 @@ const TOPIC_CARDS = [
     bg: "bg-sky-50 dark:bg-sky-950/30",
     ring: "ring-sky-400",
     en: "Travel",
-    he: "טיולים"
+    he: "טיולים",
+    yi: "רײַזן"
   }
 ];
+
+/**
+ * Fun "Surprise Me!" twist phrases per topic.
+ * Combined with the topic name to create a creative custom idea.
+ */
+const SURPRISE_TWISTS = {
+  en: [
+    "who discovers they can talk to clouds",
+    "on a mission to find the world's tastiest cookie",
+    "who accidentally shrinks to the size of an ant",
+    "that can travel through rainbows",
+    "who builds a rocket out of cardboard boxes",
+    "that befriends a tiny invisible dragon",
+    "who discovers a secret library under the sea",
+    "on a quest to collect every color of the sunset"
+  ],
+  he: [
+    "שמגלה שהוא יכול לדבר עם העננים",
+    "במשימה למצוא את העוגייה הטעימה בעולם",
+    "שמתכווץ בטעות לגודל של נמלה",
+    "שיכול לנסוע דרך קשתות",
+    "שבונה רקטה מקרטון",
+    "שמתיידד עם דרקון קטנטן בלתי נראה",
+    "שמגלה ספרייה סודית מתחת לים",
+    "במסע לאסוף כל צבעי השקיעה"
+  ],
+  yi: [
+    "וואָס ענטדעקט אַז ער קען רעדן מיט וואָלקנס",
+    "אויף אַ מיסיע צו געפֿינען דעם טעמסטן קיכל אין דער וועלט",
+    "וואָס שרומפּט אַראָפּ צו דער גרייס פֿון אַן אַמייז",
+    "וואָס קען רײַזן דורך רעגנבויגנס",
+    "וואָס בויט אַ ראַקעטע פֿון קאַרטאָן",
+    "וואָס ווערט אַ פֿרײַנד מיט אַ קליין אומזעיִקן דראַקאָן",
+    "וואָס ענטדעקט אַ סודותדיקע ביבליאָטעק אונטער ים",
+    "אויף אַ קוועסט צו זאַמלען אַלע פֿאַרבן פֿון שקיעה"
+  ]
+};
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -143,17 +193,42 @@ const cardVariants = {
   })
 };
 
+const surpriseRevealVariants = {
+  initial: { scale: 0.5, rotate: -15, opacity: 0 },
+  animate: {
+    scale: 1,
+    rotate: 0,
+    opacity: 1,
+    transition: { type: "spring", stiffness: 400, damping: 15 }
+  },
+  exit: { scale: 0.5, rotate: 15, opacity: 0, transition: { duration: 0.15 } }
+};
+
+function getTopicLabel(topic, language) {
+  if (language === "hebrew") return topic.he;
+  if (language === "yiddish") return topic.yi || topic.en;
+  return topic.en;
+}
+
+function getSurpriseButtonLabel(language) {
+  if (language === "hebrew") return "הפתע אותי!";
+  if (language === "yiddish") return "אַ השתּאות!";
+  return "Surprise Me!";
+}
+
 /**
  * TopicStep - Step 1 of the wizard: Choose a story topic.
  * Displays visual topic cards, "I have my own idea" text input,
- * and "Use Saved Idea" toggle showing saved StoryIdea list.
+ * "Use Saved Idea" toggle, and a "Surprise Me!" button.
  */
 export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, onCustomIdeaChange, isRTL, language }) {
   const isHebrew = language === "hebrew";
+  const isYiddish = language === "yiddish";
   const [showCustomIdea, setShowCustomIdea] = useState(!!customIdea);
   const [showSavedIdeas, setShowSavedIdeas] = useState(false);
   const [savedIdeas, setSavedIdeas] = useState([]);
   const [isLoadingIdeas, setIsLoadingIdeas] = useState(false);
+  const [surprisedTopicId, setSurprisedTopicId] = useState(null);
 
   useEffect(() => {
     if (showSavedIdeas && savedIdeas.length === 0) {
@@ -188,15 +263,68 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
     setShowCustomIdea(true);
   };
 
+  const handleSurpriseMe = () => {
+    // Pick a random topic from TOPIC_CARDS
+    const randomTopic = TOPIC_CARDS[Math.floor(Math.random() * TOPIC_CARDS.length)];
+    // Pick a random twist
+    const twistList = isYiddish
+      ? SURPRISE_TWISTS.yi
+      : isHebrew
+      ? SURPRISE_TWISTS.he
+      : SURPRISE_TWISTS.en;
+    const randomTwist = twistList[Math.floor(Math.random() * twistList.length)];
+    const topicLabel = getTopicLabel(randomTopic, language);
+
+    // Build the creative idea text
+    let ideaText;
+    if (isHebrew) {
+      ideaText = `סיפור על ${topicLabel} ${randomTwist}`;
+    } else if (isYiddish) {
+      ideaText = `אַ מעשׂה וועגן ${topicLabel} ${randomTwist}`;
+    } else {
+      ideaText = `A story about ${topicLabel.toLowerCase()} ${randomTwist}`;
+    }
+
+    // Animate: briefly mark the surprised topic
+    setSurprisedTopicId(randomTopic.id);
+    setTimeout(() => setSurprisedTopicId(null), 800);
+
+    // Auto-fill topic + custom idea
+    onSelectTopic("custom");
+    if (onCustomIdeaChange) onCustomIdeaChange(ideaText);
+    setShowCustomIdea(true);
+    setShowSavedIdeas(false);
+  };
+
   return (
     <div className="space-y-6" dir={isRTL ? "rtl" : "ltr"}>
-      <div className="text-center mb-6">
+      <div className="text-center mb-4">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          {isHebrew ? "על מה יהיה הסיפור?" : "What's the story about?"}
+          {isHebrew ? "על מה יהיה הסיפור?" : isYiddish ? "וועגן וואָס וועט די מעשׂה זײַן?" : "What's the story about?"}
         </h2>
         <p className="text-gray-500 dark:text-gray-400 text-lg">
-          {isHebrew ? "בחר נושא שמעניין אותך" : "Pick a topic you love"}
+          {isHebrew ? "בחר נושא שמעניין אותך" : isYiddish ? "קלײַב אַ טעמע וואָס אינטערעסירט דיך" : "Pick a topic you love"}
         </p>
+      </div>
+
+      {/* Surprise Me! Button — prominent, placed before the grid */}
+      <div className="flex justify-center">
+        <motion.button
+          onClick={handleSurpriseMe}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          aria-label={getSurpriseButtonLabel(language)}
+          className="
+            flex items-center gap-3 px-6 py-3 rounded-2xl font-bold text-base
+            bg-gradient-to-r from-fuchsia-500 via-purple-500 to-indigo-500
+            text-white shadow-lg hover:shadow-xl
+            transition-all duration-200
+          "
+        >
+          <Shuffle className="h-5 w-5" aria-hidden="true" />
+          {getSurpriseButtonLabel(language)}
+          <Sparkles className="h-5 w-5" aria-hidden="true" />
+        </motion.button>
       </div>
 
       <div
@@ -206,7 +334,8 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
       >
         {TOPIC_CARDS.map((topic, index) => {
           const Icon = topic.icon;
-          const isSelected = selectedTopic === topic.id;
+          const isSelected = selectedTopic === topic.id || (selectedTopic === "custom" && surprisedTopicId === topic.id);
+          const isSurprised = surprisedTopicId === topic.id;
 
           return (
             <motion.button
@@ -219,29 +348,48 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
               whileTap={{ scale: 0.95 }}
               onClick={() => {
                 setShowCustomIdea(false);
+                setSurprisedTopicId(null);
                 onSelectTopic(topic.id);
               }}
               role="radio"
-              aria-checked={isSelected}
-              aria-label={isHebrew ? topic.he : topic.en}
+              aria-checked={selectedTopic === topic.id}
+              aria-label={getTopicLabel(topic, language)}
               className={`
                 flex flex-col items-center justify-center p-4 md:p-6 rounded-2xl
                 transition-all duration-200 cursor-pointer min-h-[120px] md:min-h-[140px]
                 ${topic.bg}
                 ${isSelected
-                  ? `ring-3 ${topic.ring} shadow-lg`
+                  ? `ring-2 ${topic.ring} shadow-lg`
                   : "hover:shadow-md border border-transparent hover:border-gray-200 dark:hover:border-gray-600"
                 }
               `}
             >
-              <div className={`w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br ${topic.gradient} flex items-center justify-center mb-3`}>
-                <Icon className="h-6 w-6 md:h-7 md:w-7 text-white" aria-hidden="true" />
-              </div>
+              <AnimatePresence mode="wait">
+                {isSurprised ? (
+                  <motion.div
+                    key="surprised"
+                    variants={surpriseRevealVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    className={`w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br ${topic.gradient} flex items-center justify-center mb-3`}
+                  >
+                    <Icon className="h-6 w-6 md:h-7 md:w-7 text-white" aria-hidden="true" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="normal"
+                    className={`w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br ${topic.gradient} flex items-center justify-center mb-3`}
+                  >
+                    <Icon className="h-6 w-6 md:h-7 md:w-7 text-white" aria-hidden="true" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
               <span className="text-sm md:text-base font-semibold text-gray-800 dark:text-gray-200">
-                {isHebrew ? topic.he : topic.en}
+                {getTopicLabel(topic, language)}
               </span>
 
-              {isSelected && (
+              {selectedTopic === topic.id && !surprisedTopicId && (
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
@@ -264,13 +412,13 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
           onClick={handleSelectCustomIdea}
           role="radio"
           aria-checked={selectedTopic === "custom"}
-          aria-label={isHebrew ? "יש לי רעיון משלי" : "I have my own idea"}
+          aria-label={isHebrew ? "יש לי רעיון משלי" : isYiddish ? "איך האָב מײַן אייגענעם רעיון" : "I have my own idea"}
           className={`
             flex flex-col items-center justify-center p-4 md:p-6 rounded-2xl
             transition-all duration-200 cursor-pointer min-h-[120px] md:min-h-[140px]
             bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-800 dark:to-slate-800
             ${selectedTopic === "custom"
-              ? "ring-3 ring-purple-500 shadow-lg"
+              ? "ring-2 ring-purple-500 shadow-lg"
               : "hover:shadow-md border border-dashed border-gray-300 dark:border-gray-600 hover:border-purple-400"
             }
           `}
@@ -279,9 +427,9 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
             <PenLine className="h-6 w-6 md:h-7 md:w-7 text-white" aria-hidden="true" />
           </div>
           <span className="text-sm md:text-base font-semibold text-gray-800 dark:text-gray-200">
-            {isHebrew ? "רעיון משלי" : "My Own Idea"}
+            {isHebrew ? "רעיון משלי" : isYiddish ? "מײַן רעיון" : "My Own Idea"}
           </span>
-          {selectedTopic === "custom" && (
+          {selectedTopic === "custom" && !surprisedTopicId && (
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -303,13 +451,15 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
           >
             <div className="bg-purple-50 dark:bg-purple-950/30 rounded-xl p-4 space-y-3">
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300 block">
-                {isHebrew ? "ספר לנו על הרעיון שלך:" : "Tell us about your idea:"}
+                {isHebrew ? "ספר לנו על הרעיון שלך:" : isYiddish ? "דערציי אונדז וועגן דײַן רעיון:" : "Tell us about your idea:"}
               </label>
               <Textarea
                 value={customIdea || ""}
                 onChange={(e) => onCustomIdeaChange?.(e.target.value)}
                 placeholder={isHebrew
                   ? "למשל: סיפור על דרקון ידידותי שלומד לבשל..."
+                  : isYiddish
+                  ? "פֿאַרביישפּיל: אַ מעשׂה וועגן אַ פֿרײַנדלעכן דראַקאָן..."
                   : "e.g., A story about a friendly dragon who learns to cook..."
                 }
                 dir={isRTL ? "rtl" : "ltr"}
@@ -332,7 +482,7 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
           aria-expanded={showSavedIdeas}
         >
           <Lightbulb className="h-4 w-4" aria-hidden="true" />
-          {isHebrew ? "השתמש ברעיון שמור" : "Use Saved Idea"}
+          {isHebrew ? "השתמש ברעיון שמור" : isYiddish ? "נוץ אַ געשפּאָרטן רעיון" : "Use Saved Idea"}
         </Button>
       </div>
 

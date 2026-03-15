@@ -1,19 +1,32 @@
 
 import React, { useState, useEffect } from 'react';
+import { useI18n } from '@/components/i18n/i18nProvider';
 import { User } from '@/entities/User';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from '@/components/ui/select';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import {
   Settings as SettingsIcon,
   User as UserIcon,
@@ -30,12 +43,17 @@ import {
 import AIStudio from '../components/ai/AIStudio';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import ParentalControls from '../components/settings/ParentalControls';
+import { PLANS, openCheckout } from '@/lib/polar';
+import useSubscription from '@/hooks/useSubscription';
+import { Badge } from '@/components/ui/badge';
+import { Check, Crown } from 'lucide-react';
 
 export default function Settings() {
+  const { t, language, isRTL } = useI18n();
+  const { user: hookUser } = useCurrentUser();
+  const { plan: currentPlan } = useSubscription();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState("english");
-  const [isRTL, setIsRTL] = useState(false);
   const [user, setUser] = useState(null);
   const [userData, setUserData] = useState({
     language: "english",
@@ -49,121 +67,21 @@ export default function Settings() {
   });
   const [tempSettings, setTempSettings] = useState({});
 
-  const translations = {
-    english: {
-      "settings.title": "Settings",
-      "settings.subtitle": "Manage your preferences and account settings",
-      "settings.tabs.general": "General",
-      "settings.tabs.appearance": "Appearance",
-      "settings.tabs.ai": "AI Studio",
-      "settings.tabs.account": "Account",
-      "settings.tabs.billing": "Billing",
-      "settings.language": "Interface Language",
-      "settings.defaultStoryLanguage": "Default Story Language",
-      "settings.notifications": "Notifications",
-      "settings.audio": "Audio Settings",
-      "settings.audioEnabled": "Enable Audio Narration",
-      "settings.audioSpeed": "Narration Speed",
-      "settings.appearance.title": "Appearance",
-      "settings.appearance.desc": "Customize how the app looks and feels.",
-      "settings.darkMode": "Dark Mode",
-      "settings.textDensity": "Text Density",
-      "settings.fontSize": "Font Size",
-      "settings.appearance.density.low": "Low",
-      "settings.appearance.density.medium": "Medium",
-      "settings.appearance.density.high": "High",
-      "settings.appearance.fontSize.small": "Small",
-      "settings.appearance.fontSize.medium": "Medium",
-      "settings.appearance.fontSize.large": "Large",
-      "settings.appearance.fontSize.xLarge": "Extra Large",
-      "settings.ai.title": "AI Preferences",
-      "settings.ai.description": "Configure your AI models and generation preferences",
-      "settings.save": "Save Changes",
-      "settings.saving": "Saving...",
-      "settings.saved": "Settings saved successfully",
-      "settings.account.title": "Account Information",
-      "settings.account.desc": "View and manage your account details.",
-      "settings.account.name": "Full Name",
-      "settings.account.email": "Email Address",
-      "settings.account.manageSub": "Manage Subscription",
-      "settings.account.logout": "Logout",
-      "settings.billing.title": "Billing & Subscription",
-      "settings.billing.desc": "View your current plan, usage, and billing history.",
-      "settings.billing.comingSoon": "Billing management is coming soon.",
-      "settings.billing.upgradePlan": "Upgrade Plan",
-      "settings.general.languageSettings": "Language Settings",
-      "settings.notification.enable": "Enable notifications for new features and updates",
-      "settings.loading": "Loading settings...",
-      "settings.tabs.parental": "Parental Controls"
-    },
-    hebrew: {
-      "settings.title": "הגדרות",
-      "settings.subtitle": "נהל את ההעדפות והגדרות החשבון שלך",
-      "settings.tabs.general": "כללי",
-      "settings.tabs.appearance": "מראה",
-      "settings.tabs.ai": "סטודיו AI",
-      "settings.tabs.account": "חשבון",
-      "settings.tabs.billing": "חיוב",
-      "settings.language": "שפת הממשק",
-      "settings.defaultStoryLanguage": "שפת ברירת מחדל לסיפורים",
-      "settings.notifications": "התראות",
-      "settings.audio": "הגדרות אודיו",
-      "settings.audioEnabled": "הפעל קריינות אודיו",
-      "settings.audioSpeed": "מהירות קריינות",
-      "settings.appearance.title": "מראה",
-      "settings.appearance.desc": "התאם את מראה האפליקציה לפי הטעם שלך.",
-      "settings.darkMode": "מצב כהה",
-      "settings.textDensity": "צפיפות טקסט",
-      "settings.fontSize": "גודל גופן",
-      "settings.appearance.density.low": "נמוכה",
-      "settings.appearance.density.medium": "בינונית",
-      "settings.appearance.density.high": "גבוהה",
-      "settings.appearance.fontSize.small": "קטן",
-      "settings.appearance.fontSize.medium": "בינוני",
-      "settings.appearance.fontSize.large": "גדול",
-      "settings.appearance.fontSize.xLarge": "גדול מאוד",
-      "settings.ai.title": "העדפות AI",
-      "settings.ai.description": "הגדר את מודלי ה-AI והעדפות היצירה שלך",
-      "settings.save": "שמור שינויים",
-      "settings.saving": "שומר...",
-      "settings.saved": "ההגדרות נשמרו בהצלחה",
-      "settings.account.title": "פרטי חשבון",
-      "settings.account.desc": "צפה ונהל את פרטי החשבון שלך.",
-      "settings.account.name": "שם מלא",
-      "settings.account.email": "כתובת אימייל",
-      "settings.account.manageSub": "נהל מנוי",
-      "settings.account.logout": "התנתק",
-      "settings.billing.title": "חיובים ומנוי",
-      "settings.billing.desc": "צפה בחבילה הנוכחית, שימוש, והיסטוריית חיובים.",
-      "settings.billing.comingSoon": "ניהול חיובים יתווסף בקרוב.",
-      "settings.billing.upgradePlan": "שדרג חבילה",
-      "settings.general.languageSettings": "הגדרות שפה",
-      "settings.notification.enable": "אפשר התראות על פיצ'רים חדשים ועדכונים",
-      "settings.loading": "טוען הגדרות...",
-      "settings.tabs.parental": "בקרת הורים"
-    }
-  };
-
-  const t = (key) => {
-    return translations[currentLanguage]?.[key] || translations.english[key] || key;
-  };
-
   useEffect(() => {
     loadSettings();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hookUser]);
 
-  useEffect(() => {
-    const storedLanguage = localStorage.getItem("language") || "english";
-    setCurrentLanguage(storedLanguage);
-    setIsRTL(storedLanguage === "hebrew" || storedLanguage === "yiddish");
-  }, [currentLanguage]); // Add currentLanguage to dependency array to re-evaluate isRTL if language changes
-
-  const loadSettings = async () => {
+  const loadSettings = () => {
     try {
       setIsLoading(true);
-      const currentUser = await User.me();
+      const currentUser = hookUser;
+      if (!currentUser) {
+        setIsLoading(false);
+        return;
+      }
       setUser(currentUser);
-      
+
       const settings = {
         language: currentUser.language || "english",
         dark_mode: currentUser.dark_mode || false,
@@ -174,7 +92,7 @@ export default function Settings() {
         audio_speed: currentUser.audio_speed || "1",
         default_story_language: currentUser.default_story_language || "english"
       };
-      
+
       setUserData(settings);
       setTempSettings(settings);
     } catch (error) {
@@ -193,7 +111,7 @@ export default function Settings() {
       setUserData(tempSettings);
       
       // Update app language if changed
-      if (tempSettings.language !== currentLanguage) {
+      if (tempSettings.language !== language) {
         localStorage.setItem("language", tempSettings.language);
         window.location.reload(); // Reload to apply language change
       }
@@ -226,6 +144,14 @@ export default function Settings() {
     await User.logout();
     window.location.href = "/";
   };
+
+  const logoutLabel = isRTL ? "יציאה מהחשבון" : "Log out";
+  const logoutConfirmTitle = isRTL ? "האם אתה בטוח?" : "Are you sure you want to log out?";
+  const logoutConfirmDesc = isRTL
+    ? "תצא מהחשבון שלך. תוכל להתחבר מחדש בכל עת."
+    : "You will be signed out of your account. You can sign back in at any time.";
+  const cancelLabel = isRTL ? "ביטול" : "Cancel";
+  const confirmLabel = isRTL ? "יציאה" : "Log out";
 
   if (isLoading) {
     return (
@@ -461,7 +387,7 @@ export default function Settings() {
             onModelChange={() => {}}
             userTier={user?.tier || user?.subscription_tier || "free"}
             credits={{ used: user?.credits_used ?? 0, total: user?.credits_total ?? 100 }}
-            currentLanguage={currentLanguage}
+            currentLanguage={language}
           />
         </TabsContent>
 
@@ -496,39 +422,128 @@ export default function Settings() {
                     <CreditCard className={`${isRTL ? 'ml-2' : 'mr-2'} h-4 w-4`} />
                     {t("settings.account.manageSub")}
                   </Button>
-                  <Button variant="destructive" onClick={handleLogout}>
-                     <LogOut className={`${isRTL ? 'ml-2' : 'mr-2'} h-4 w-4`} />
-                    {t("settings.account.logout")}
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive">
+                        <LogOut className={`${isRTL ? 'ml-2' : 'mr-2'} h-4 w-4`} />
+                        {t("settings.account.logout")}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent dir={isRTL ? "rtl" : "ltr"}>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>{logoutConfirmTitle}</AlertDialogTitle>
+                        <AlertDialogDescription>{logoutConfirmDesc}</AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter className={isRTL ? "flex-row-reverse" : ""}>
+                        <AlertDialogCancel>{cancelLabel}</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={handleLogout}
+                          className="bg-red-600 hover:bg-red-700 text-white"
+                        >
+                          {confirmLabel}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                </div>
             </CardContent>
           </Card>
         </TabsContent>
         
         <TabsContent value="billing">
-           <Card>
-            <CardHeader>
-              <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'flex-row text-left'}`}>
-                <CreditCard className="h-5 w-5 text-gray-500" />
-                 {t("settings.billing.title")}
-              </CardTitle>
-              <CardDescription className={isRTL ? "text-right" : "text-left"}>{t("settings.billing.desc")}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-12">
-                <CreditCard className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">{t("settings.billing.comingSoon")}</p>
-                 <Button variant="default" className="mt-4" disabled>
-                   {t("settings.billing.upgradePlan")}
-                 </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'flex-row text-left'}`}>
+                  <CreditCard className="h-5 w-5 text-purple-500" />
+                  {isRTL ? 'מנוי נוכחי' : 'Current Plan'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
+                  <Badge variant="secondary" className="text-sm px-3 py-1 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
+                    {PLANS[currentPlan]?.name[isRTL ? 'he' : 'en'] || 'Free'}
+                  </Badge>
+                  {currentPlan !== 'free' && (
+                    <span className="text-sm text-gray-500">
+                      {PLANS[currentPlan]?.price[isRTL ? 'he' : 'en']}
+                    </span>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              {Object.values(PLANS).map((plan) => {
+                const currentPlan = currentPlan;
+                const isCurrent = currentPlan === plan.id;
+                const lang = isRTL ? 'he' : 'en';
+
+                return (
+                  <Card
+                    key={plan.id}
+                    className={`relative overflow-hidden transition-shadow ${
+                      plan.popular
+                        ? 'border-2 border-purple-500 shadow-lg shadow-purple-100 dark:shadow-purple-900/20'
+                        : ''
+                    } ${isCurrent ? 'ring-2 ring-green-500' : ''}`}
+                  >
+                    {plan.popular && (
+                      <div className="absolute top-0 left-0 right-0 bg-purple-600 text-white text-center text-xs py-1 font-medium">
+                        {isRTL ? 'הכי פופולרי' : 'Most Popular'}
+                      </div>
+                    )}
+                    <CardHeader className={plan.popular ? 'pt-8' : ''}>
+                      <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'flex-row text-left'}`}>
+                        {plan.id !== 'free' && <Crown className="h-5 w-5 text-purple-500" />}
+                        {plan.name[lang]}
+                      </CardTitle>
+                      <div className={`text-2xl font-bold text-purple-700 dark:text-purple-300 ${isRTL ? 'text-right' : 'text-left'}`}>
+                        {plan.price[lang]}
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <ul className="space-y-2">
+                        {plan.features[lang].map((feature, i) => (
+                          <li
+                            key={i}
+                            className={`flex items-center gap-2 text-sm ${isRTL ? 'flex-row-reverse text-right' : 'flex-row text-left'}`}
+                          >
+                            <Check className="h-4 w-4 text-green-500 shrink-0" />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+
+                      {isCurrent ? (
+                        <Button variant="outline" className="w-full" disabled>
+                          <Check className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                          {isRTL ? 'המנוי הנוכחי' : 'Current Plan'}
+                        </Button>
+                      ) : plan.id === 'free' ? (
+                        <Button variant="outline" className="w-full" disabled>
+                          {isRTL ? 'חינמי' : 'Free'}
+                        </Button>
+                      ) : (
+                        <Button
+                          className={`w-full ${plan.popular ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
+                          onClick={() => openCheckout(plan.id, user?.email)}
+                        >
+                          <Crown className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                          {isRTL ? 'שדרג עכשיו' : 'Upgrade Now'}
+                        </Button>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
         </TabsContent>
 
         <TabsContent value="parental">
           <ParentalControls
-            currentLanguage={currentLanguage}
+            currentLanguage={language}
             isRTL={isRTL}
           />
         </TabsContent>

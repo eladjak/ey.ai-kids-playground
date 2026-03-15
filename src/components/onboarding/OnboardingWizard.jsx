@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { User } from "@/entities/User";
+import { useI18n } from "@/components/i18n/i18nProvider";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles,
@@ -8,7 +9,8 @@ import {
   Heart,
   ArrowRight,
   ArrowLeft,
-  Check
+  Check,
+  Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,7 +49,7 @@ const AGE_RANGES = ["2-4", "5-7", "8-10", "11-13"];
 
 const translations = {
   english: {
-    "welcome.title": "Welcome to EY.AI!",
+    "welcome.title": "Welcome to Sipurai!",
     "welcome.subtitle": "Let's set up your magical book studio",
     "welcome.start": "Let's Go!",
     "profile.title": "Tell Us About You",
@@ -64,7 +66,7 @@ const translations = {
     "skip": "Skip for now"
   },
   hebrew: {
-    "welcome.title": "!EY.AI-ברוכים הבאים ל",
+    "welcome.title": "!Sipurai-ברוכים הבאים ל",
     "welcome.subtitle": "בואו נקים את סטודיו הספרים הקסום שלכם",
     "welcome.start": "!יאללה",
     "profile.title": "ספרו לנו על עצמכם",
@@ -82,7 +84,11 @@ const translations = {
   }
 };
 
-export default function OnboardingWizard({ onComplete, userName }) {
+const OnboardingWizard = React.memo(function OnboardingWizard({ onComplete, userName }) {
+  // NOTE: OnboardingWizard manages its own language state because it IS the
+  // language selection UI. The user picks their language in step 2, and the
+  // wizard previews translations in real-time before saving to the i18n provider.
+  const { isRTL: uiIsRTL } = useI18n();
   const [step, setStep] = useState(0);
   const [name, setName] = useState(userName || "");
   const [ageRange, setAgeRange] = useState("");
@@ -90,7 +96,10 @@ export default function OnboardingWizard({ onComplete, userName }) {
   const [selectedTopics, setSelectedTopics] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
 
-  const isRTL = language === "hebrew" || language === "yiddish";
+  // Use the wizard's selected language for in-wizard RTL (so the user sees
+  // immediate feedback when they pick Hebrew/Yiddish in step 2).
+  // Before step 2, fall back to the global UI direction.
+  const isRTL = step >= 2 ? (language === "hebrew" || language === "yiddish") : uiIsRTL;
   const t = (key) => translations[language]?.[key] || translations.english[key] || key;
 
   const toggleTopic = (topicId) => {
@@ -324,7 +333,7 @@ export default function OnboardingWizard({ onComplete, userName }) {
                   {step === STEPS.length - 1 ? (
                     <>
                       {isSaving ? (
-                        <span className="animate-spin mr-2">...</span>
+                        <Loader2 className={`h-4 w-4 animate-spin ${isRTL ? "ml-1" : "mr-1"}`} />
                       ) : (
                         <Check className={`h-4 w-4 ${isRTL ? "ml-1" : "mr-1"}`} />
                       )}
@@ -344,4 +353,6 @@ export default function OnboardingWizard({ onComplete, userName }) {
       </Card>
     </div>
   );
-}
+});
+
+export default OnboardingWizard;

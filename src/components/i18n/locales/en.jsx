@@ -5,7 +5,8 @@ export default {
     library: "My Library",
     community: "Community",
     settings: "Settings",
-    createBook: "Create New Book",
+    createBook: "Create Book",
+    advancedEditor: "Advanced Editor",
     collaborate: "Collaborate",
     feedback: "Feedback",
     save: "Save",
@@ -27,6 +28,15 @@ export default {
     page: "Page",
     of: "of",
     for: "for",
+    main: "Main",
+    create: "Create",
+    mySpace: "My Space",
+    communitySection: "Community",
+    system: "System",
+    myProfile: "My Profile",
+    characters: "My Characters",
+    leaderboard: "Leaderboard",
+    unknownUser: "Unknown User",
     status: {
       draft: "Draft",
       generating: "Generating",
@@ -52,6 +62,61 @@ export default {
     subtitle: "Spark your child's imagination with custom stories featuring them as the main character",
     createBookBtn: "Create a Book",
     viewLibraryBtn: "View Library",
+    noBooks: {
+      title: "No books yet",
+      subtitle: "Create your first personalized storybook to get started!"
+    },
+    welcome: "Welcome back,",
+    level: "Level",
+    xp: "XP",
+    books: "Books",
+    streak: "Day Streak",
+    progress: {
+      title: "Your Progress",
+      toNext: "to next level"
+    },
+    badges: {
+      recent: "Recent Badges"
+    },
+    create: {
+      button: "Create Book",
+      new: "Create New Book"
+    },
+    library: {
+      button: "View Library"
+    },
+    search: {
+      placeholder: "Search books, ideas or themes..."
+    },
+    tabs: {
+      featured: "Featured Books",
+      recent: "Recent Books",
+      all: "All Books"
+    },
+    book: {
+      read: "Read Book",
+      continue: "Continue Reading",
+      edit: "Edit Book",
+      age: "Age Range",
+      genre: "Genre",
+      lastEdit: "Last edited"
+    },
+    dailyPrompt: {
+      title: "Daily Story Prompt",
+      try: "Try this prompt",
+      use: "Use This Prompt",
+      loading: "Loading inspiration...",
+      explore: "Explore more ideas"
+    },
+    promptSaved: "Prompt saved! Go to Story Ideas to use it.",
+    drafts: {
+      title: "Continue Where You Left Off",
+      continue: "Continue",
+      status: {
+        draft: "Draft",
+        generating: "Generating..."
+      }
+    },
     features: {
       title: "Features",
       subtitle: "Everything you need to create unique stories",
@@ -237,16 +302,57 @@ export default {
     subtitle: "View and manage your personalized storybooks",
     createNewBook: "Create New Book",
     searchPlaceholder: "Search by title or child's name...",
+    search: "Search by title or child's name...",
     filters: "Filters",
     resetFilters: "Reset filters",
+    active: "Active",
+    reset: "Reset",
+    status: "Status",
+    allStatus: "All Status",
+    draft: "Draft",
+    generating: "Generating",
+    complete: "Complete",
+    genre: "Genre",
+    allGenres: "All Genres",
+    ageRange: "Age Range",
+    allAges: "All Ages",
+    language: "Language",
+    allLanguages: "All Languages",
+    booksFound: "books found",
+    bookFound: "book found",
+    noBooks: "No books found",
+    adjustFilters: "Try adjusting your filters or search terms",
+    createFirst: "Create your first personalized storybook",
+    createBook: "Create a Book",
+    genreOptions: {
+      adventure: "Adventure",
+      fairy_tale: "Fairy Tale",
+      educational: "Educational",
+      bedtime: "Bedtime",
+      fantasy: "Fantasy",
+      science: "Science",
+      animals: "Animals",
+      sports: "Sports"
+    },
+    ageRangeOptions: {
+      years_2_4: "2-4 years",
+      years_5_7: "5-7 years",
+      years_8_10: "8-10 years",
+      years_11plus: "11+ years"
+    },
+    languageOptions: {
+      english: "English",
+      hebrew: "Hebrew",
+      yiddish: "Yiddish"
+    },
     tabs: {
       all: "All Stories",
       myPosts: "My Shared Stories"
     },
-    noBooks: {
+    noBookData: {
       title: "No books found",
       tryFilters: "Try adjusting your search or filters",
-      createFirst: "Create your first personalized storybook",
+      createFirstLong: "Create your first personalized storybook",
       button: "Create a Book"
     }
   },
@@ -257,7 +363,6 @@ export default {
     statusLabels: {
       pageOf: "Page {{current}} of {{total}}"
     },
-    invite: "Invite",
     saving: "Saving...",
     tabs: {
       editor: "Editor",
@@ -334,10 +439,6 @@ export default {
   feedback: {
     title: "Feedback for \"{{bookTitle}}\"",
     total: "total",
-    stats: {
-      suggestions: "suggestions",
-      implemented: "implemented"
-    },
     giveFeedback: "Give Feedback",
     cancel: "Cancel",
     bookInfo: {
@@ -361,6 +462,7 @@ export default {
       placeholder: "What do you think about this page? Provide specific, constructive feedback...",
       ratingLabel: "Rating",
       typeLabel: "Feedback Type",
+      typePlaceholder: "Select feedback type",
       types: {
         general: "General Feedback",
         story: "Story & Narrative",
@@ -407,6 +509,8 @@ export default {
       }
     },
     stats: {
+      suggestions: "suggestions",
+      implemented: "implemented",
       title: "Feedback Statistics",
       ratingsOverview: "Ratings Overview",
       fromRatings: "from {{count}} ratings",
@@ -419,7 +523,23 @@ export default {
     title: "Community",
     subtitle: "Discover and share stories created by our community",
     shareBook: "Share Your Book",
+    shareYourBook: "Share Your Book",
     featuredStories: "Featured Stories",
+    search: "Search stories, authors or topics...",
+    mostRecent: "Most Recent",
+    mostPopular: "Most Popular",
+    allStories: "All Stories",
+    mySharedStories: "My Shared Stories",
+    clearFilters: "Clear filters",
+    noStories: "No stories found",
+    adjustFilters: "Try adjusting your search or filters",
+    beFirst: "Be the first to share a story with the community",
+    shareYourStory: "Share Your Story",
+    previous: "Previous",
+    next: "Next",
+    noSharedYet: "No shared stories yet",
+    notSharedYet: "You haven't shared any books with the community yet",
+    shareFirstStory: "Share Your First Story",
     filters: {
       recent: "Most Recent",
       popular: "Most Popular",
@@ -433,12 +553,6 @@ export default {
     tabs: {
       allStories: "All Stories",
       myShared: "My Shared Stories"
-    },
-    noStories: {
-      title: "No stories found",
-      tryFilters: "Try adjusting your search or filters",
-      beFirst: "Be the first to share a story with the community",
-      shareStory: "Share Your Story"
     },
     post: {
       readMore: "Read More",
@@ -455,47 +569,138 @@ export default {
       loading: "Loading books...",
       noBooks: "No books found",
       postTitle: "Post Title",
-      description: "Description",
+      postTitlePlaceholder: "Give your post a title",
+      descriptionLabel: "Description",
       descriptionPlaceholder: "Tell the community about this book and why you created it...",
       tags: "Tags",
       addTagPlaceholder: "Add a tag...",
       add: "Add",
       suggestedTags: "Suggested tags:",
       sharing: "Sharing...",
-      shareBook: "Share Book"
+      shareBook: "Share Book",
+      cancel: "Cancel",
+      defaultTitle: "Check out my book:",
+      tagLabels: {
+        adventure: "Adventure",
+        fantasy: "Fantasy",
+        education: "Education",
+        animals: "Animals",
+        family: "Family",
+        friendship: "Friendship",
+        science: "Science",
+        values: "Values",
+        learning: "Learning",
+        fun: "Fun"
+      }
+    },
+    comment: {
+      reply: "Reply",
+      replyPlaceholder: "Write a reply...",
+      cancel: "Cancel",
+      posting: "Posting...",
+      postReply: "Post Reply",
+      unknownUser: "Unknown User"
+    },
+    featured: {
+      badge: "Featured",
+      sharedBy: "Shared by",
+      unknownUser: "Unknown User",
+      readMore: "Read More"
+    },
+    toast: {
+      loadError: "Failed to load community data. Please try again.",
+      postsError: "Failed to load posts. Please try again.",
+      likeRemoved: "Like removed",
+      likeAdded: "You liked this post!",
+      likeError: "Failed to update like. Please try again.",
+      shareSuccess: "Your book has been shared with the community!",
+      shareError: "Failed to share book. Please try again."
     }
+  },
+  pageNotFound: {
+    title: "Page Not Found",
+    notFound: "could not be found",
+    adminNote: "Admin Note",
+    goHome: "Go Home"
   },
   settings: {
     title: "Settings",
-    subtitle: "Customize your app experience and preferences",
+    subtitle: "Manage your preferences and account settings",
+    loading: "Loading settings...",
+    save: "Save Changes",
+    saving: "Saving...",
+    saved: "Settings saved successfully!",
+    saveSettings: "Save Settings",
+    language: "Interface Language",
+    defaultStoryLanguage: "Default Story Language",
+    notifications: "Notifications",
+    audio: "Audio Settings",
+    audioEnabled: "Enable Audio Narration",
+    audioSpeed: "Narration Speed",
+    darkMode: "Dark Mode",
+    textDensity: "Text Density",
+    fontSize: "Font Size",
+    tabs: {
+      general: "General",
+      appearance: "Appearance",
+      ai: "AI Studio",
+      account: "Account",
+      billing: "Billing",
+      parental: "Parental Controls"
+    },
+    general: {
+      languageSettings: "Language Settings"
+    },
     appearance: {
       title: "Appearance",
+      desc: "Customize how the app looks and feels.",
       description: "Customize how the application looks",
       darkMode: "Dark Mode",
       darkModeDescription: "Switch to dark theme",
       textDensity: "Text Density",
+      density: {
+        low: "Low",
+        medium: "Medium",
+        high: "High"
+      },
       densityOptions: {
         low: "Low - More spacing, larger text",
         medium: "Medium - Balanced (recommended)",
         high: "High - Compact layout"
+      },
+      fontSize: {
+        small: "Small",
+        medium: "Medium",
+        large: "Large",
+        xLarge: "Extra Large"
+      },
+      fontSizes: {
+        small: "Small",
+        medium: "Medium",
+        large: "Large",
+        xlarge: "Extra Large"
       }
     },
-    language: {
-      title: "Language & Region",
-      description: "Set your preferred language and regional settings",
-      appLanguage: "Application Language",
-      appLanguageDescription: "Changing language will translate the interface",
-      defaultStoryLanguage: "Default Story Language"
+    notification: {
+      enable: "Enable notifications for new features and updates"
     },
-    notifications: {
-      title: "Notifications",
-      description: "Manage how and when you receive notifications",
-      enableNotifications: "Enable Notifications",
-      enableDescription: "Receive notifications about your books",
-      bookCompletion: "Book Completion",
-      bookCompletionDescription: "Notify when a book is ready",
-      newFeatures: "New Features",
-      newFeaturesDescription: "Notify about app updates"
+    ai: {
+      title: "AI Preferences",
+      description: "Configure your AI models and generation preferences"
+    },
+    account: {
+      title: "Account Information",
+      desc: "View and manage your account details.",
+      name: "Full Name",
+      email: "Email Address",
+      manageSub: "Manage Subscription",
+      logout: "Logout"
+    },
+    billing: {
+      title: "Billing & Subscription",
+      desc: "View your current plan, usage, and billing history.",
+      comingSoon: "Billing management is coming soon.",
+      upgradePlan: "Upgrade Plan"
     },
     accessibility: {
       title: "Accessibility",
@@ -503,28 +708,811 @@ export default {
       audioNarration: "Audio Narration",
       audioDescription: "Enable automatic narration of books",
       fontSize: "Font Size",
+      audioSpeed: "Audio Speed",
       fontSizes: {
         small: "Small",
         medium: "Medium",
         large: "Large",
         xlarge: "Extra Large"
       },
-      audioSpeed: "Audio Speed",
       audioSpeeds: {
         slow: "Slow (0.75x)",
         normal: "Normal (1x)",
         fast: "Fast (1.25x)",
         veryFast: "Very Fast (1.5x)"
       }
-    },
-    saveSettings: "Save Settings",
-    saved: "Settings saved successfully!"
+    }
   },
   bookView: {
     noBook: {
       title: "Book not found",
       description: "The book you're looking for might have been removed or doesn't exist.",
       goToLibrary: "Go to Library"
+    }
+  },
+  wizard: {
+    title: "Book Creation Wizard",
+    subtitle: "Create an amazing children's book in four simple steps",
+    loading: "Getting everything ready...",
+    creatingBook: "Creating your magical book...",
+    steps: {
+      topic: "Choose a Topic",
+      characters: "Choose Characters",
+      preview: "Preview & Edit",
+      create: "Create Book"
+    },
+    topic: {
+      title: "What story would you like to create?",
+      customIdea: "My Own Idea",
+      customIdeaDesc: "Write your own story idea",
+      useSavedIdea: "Use Saved Idea",
+      useSavedIdeaDesc: "Pick from your saved story ideas",
+      customPlaceholder: "Describe your story idea..."
+    },
+    characters: {
+      title: "Choose your characters",
+      subtitle: "Select characters for your story",
+      addMore: "Add More Characters"
+    },
+    preview: {
+      title: "Preview & Edit Your Book",
+      language: "Story Language",
+      advanced: "Advanced Options",
+      tone: "Tone",
+      ageRange: "Age Range",
+      moral: "Moral / Lesson"
+    },
+    creating: {
+      title: "Creating your book...",
+      generatingOutline: "Writing the story outline...",
+      generatingCover: "Creating cover art...",
+      generatingPages: "Writing pages...",
+      generatingImages: "Creating illustrations...",
+      savingBook: "Saving your masterpiece...",
+      almostDone: "Almost done!"
+    },
+    generatingOutline: "Creating your story outline...",
+    generatingOutlineDesc: "The AI is crafting a personalized story for you",
+    nav: {
+      next: "Next",
+      back: "Back",
+      createBook: "Create My Book!",
+      generating: "Generating..."
+    },
+    error: {
+      inappropriateContent: "Inappropriate content",
+      nameInappropriate: "One of the names contains inappropriate content",
+      contentIssue: "Content issue",
+      contentNotAppropriate: "Generated content was not appropriate. Trying again...",
+      outlineTitle: "Oops! Something went wrong",
+      outlineMessage: "We couldn't generate the story. Let's try again!",
+      createTitle: "Oops! Couldn't create the book",
+      createMessage: "Something went wrong. Let's try again!",
+      titleDescInappropriate: "The title or description contains inappropriate content"
+    },
+    toast: {
+      retryingImages: "Retrying failed illustrations...",
+      retryingImagesDesc: "Attempting to regenerate {count} illustrations",
+      allImagesGenerated: "All illustrations generated!",
+      imagesFailed: "{count} illustrations still failed",
+      imagesFailedRetry: "You can retry again later",
+      bookCreatedWithIssues: "Book created with issues",
+      imagesPartialSuccess: "{success} of {total} illustrations generated successfully. {failed} failed.",
+      bookCreated: "Book created!",
+      bookReady: "Your book is ready to read!"
+    },
+    progress: {
+      checkingContent: "Checking content...",
+      creatingStory: "Creating story & cover...",
+      savingBook: "Saving book...",
+      writingStory: "Writing the story...",
+      drawingIllustrations: "Drawing illustrations...",
+      savingPages: "Saving pages...",
+      bookReady: "Book ready!",
+      step1of4: "Step 1 of 4",
+      step2of4: "Step 2 of 4",
+      step3of4: "Step 3 of 4",
+      step4of4: "Step 4 of 4"
+    },
+    celebration: {
+      title: "Your book is ready!",
+      readButton: "Read My Book",
+      autoNavigate: "Opening automatically in a moment..."
+    }
+  },
+  characters: {
+    title: "My Characters",
+    subtitle: "Create and manage your story characters",
+    createNew: "Create Character",
+    noCharacters: "No characters found",
+    noCharactersDesc: "Create your first character to use in your stories",
+    createFirst: "Create your first character to get started",
+    adjustFilters: "Try adjusting your search or filters",
+    charactersFound: "characters found",
+    characterFound: "character found",
+    search: "Search characters...",
+    filters: "Filters",
+    allGenders: "All Genders",
+    boy: "Boy",
+    girl: "Girl",
+    neutral: "Neutral",
+    allStyles: "All Art Styles",
+    artStyles: {
+      cartoon: "Cartoon",
+      disney: "Disney",
+      pixar: "Pixar",
+      watercolor: "Watercolor",
+      sketch: "Sketch",
+      realistic: "Realistic",
+      anime: "Anime"
+    },
+    loadingAria: "Loading characters...",
+    viewGrid: "Grid View",
+    viewList: "List View",
+    age: "Age",
+    years: "years",
+    edit: "Edit",
+    editCharacter: "Edit Character",
+    deleteCharacter: "Delete Character",
+    confirmDelete: "Are you sure you want to delete this character?",
+    fields: {
+      name: "Name",
+      age: "Age",
+      gender: "Gender",
+      personality: "Personality",
+      appearance: "Appearance",
+      backstory: "Backstory"
+    }
+  },
+  leaderboard: {
+    title: "Storytellers Leaderboard",
+    subtitle: "See who's creating the most magical stories",
+    rank: "Rank",
+    author: "Author",
+    books: "Books",
+    likes: "Likes",
+    score: "Score",
+    noData: "No leaderboard data yet",
+    yourRank: "Your Rank",
+    topCreators: "Top Creators",
+    loading: "Loading leaderboard...",
+    search: "Search storytellers...",
+    empty: "No storytellers found for this period",
+    you: "You",
+    user: "Storyteller",
+    level: "Level",
+    xp: "XP Points",
+    streak: "Streak",
+    tabs: {
+      weekly: "This Week",
+      monthly: "This Month",
+      allTime: "All Time"
+    },
+    filter: {
+      title: "Filter by",
+      all: "Overall XP",
+      books: "Books Created",
+      streak: "Longest Streak"
+    },
+    your: {
+      rank: "Your Rank"
+    },
+    top: {
+      storytellers: "Top Storytellers"
+    },
+    rising: {
+      stars: "Active This Week"
+    },
+    view: {
+      profile: "View Profile"
+    }
+  },
+  storyIdeas: {
+    title: "Story Ideas",
+    subtitle: "Discover and create amazing story concepts",
+    generate: "Generate Ideas",
+    generating: "Generating...",
+    saveIdea: "Save Idea",
+    saved: "Saved Ideas",
+    savedIdeas: "Saved Ideas",
+    daily: "Daily Prompt",
+    noIdeas: "No saved ideas yet",
+    noIdeasDesc: "Generate or write your own story ideas",
+    startGenerating: "Start generating your first story idea!",
+    generatedIdeaTitle: "Generated Idea",
+    titleLabel: "Title:",
+    descriptionLabel: "Description:",
+    saveButton: "Save Idea",
+    regenerateButton: "Regenerate",
+    saveSuccess: "Idea saved successfully!",
+    saveFailed: "Failed to save idea.",
+    useInBook: "Use in Book",
+    deleteIdea: "Delete Idea",
+    generateError: "Error generating idea. Please try again.",
+    inappropriateInput: "Some input contains inappropriate content. Please revise."
+  },
+  onboarding: {
+    welcome: {
+      title: "Welcome to Sipurai!",
+      subtitle: "Let's set up your creative space"
+    },
+    profile: {
+      title: "Tell us about yourself",
+      nameLabel: "Your Name",
+      ageLabel: "Age Group"
+    },
+    language: {
+      title: "Choose your language",
+      subtitle: "You can change this later in settings"
+    },
+    topics: {
+      title: "What topics do you love?",
+      subtitle: "We'll suggest story ideas based on your interests"
+    },
+    done: {
+      title: "You're all set!",
+      subtitle: "Start creating your first magical story",
+      startButton: "Let's Go!"
+    },
+    nav: {
+      next: "Next",
+      back: "Back",
+      skip: "Skip"
+    }
+  },
+  advancedEditor: {
+    title: "Advanced Editor",
+    subtitle: "Edit and fine-tune your book",
+    openEditor: "Edit in Advanced Editor"
+  },
+  communityPost: {
+    title: "Community Post",
+    editPost: "Edit Post",
+    deletePost: "Delete Post",
+    report: "Report",
+    likes: "Likes",
+    comments: "Comments",
+    view: "View",
+    shareBy: "Shared by",
+    backToCommunity: "Back to Community",
+    notFound: "Post not found",
+    notFoundDesc: "This post may have been removed or doesn't exist",
+    returnToCommunity: "Return to Community",
+    personalizedStoryFor: "A personalized story for",
+    years: "years",
+    share: "Share",
+    linkCopied: "Link copied!",
+    addComment: "Add a comment...",
+    postComment: "Post Comment",
+    posting: "Posting...",
+    noComments: "No comments yet",
+    beFirstComment: "Be the first to share your thoughts!",
+    loadError: "Failed to load post data. Please try again.",
+    loadCommentsError: "Failed to load comments. Please try again.",
+    likeSuccess: "Thanks for liking this post!",
+    likeError: "Failed to like post. Please try again.",
+    inappropriateTitle: "Inappropriate content",
+    inappropriateDesc: "Your comment contains content not suitable for children. Please revise it.",
+    commentSuccess: "Comment added successfully!",
+    commentError: "Failed to add comment. Please try again.",
+    replySuccess: "Reply added successfully!",
+    replyError: "Failed to add reply. Please try again."
+  },
+  sharing: {
+    communityTitle: "Share with Community",
+    communityDesc: "Share your book with other Sipurai users",
+    postTitle: "Post Title",
+    postTitlePlaceholder: "Enter a title for your community post",
+    descriptionLabel: "Description",
+    descriptionPlaceholder: "Share the story behind your book...",
+    tags: "Tags",
+    addTag: "Add tag",
+    sharing: "Sharing...",
+    shareLinkTitle: "Share Book Link",
+    shareLinkDesc: "Get a link to share your book with friends and family",
+    shareOnSocial: "Share on social media",
+    shareWhatsApp: "Share on WhatsApp",
+    shareFacebook: "Share on Facebook",
+    shareTwitter: "Share on Twitter/X",
+    copyInstagram: "Copy for Instagram",
+    shareEmail: "Share via Email",
+    copyShareLink: "Copy Share Link",
+    inviteTitle: "Send Direct Invitation",
+    inviteDesc: "Invite others to read your book via email",
+    emailLabel: "Email Address",
+    emailPlaceholder: "Enter email address",
+    personalMessage: "Personal Message",
+    personalMessagePlaceholder: "Add a personal message to your invitation...",
+    sendInvitation: "Send Invitation",
+    inviteSubject: "You're invited to read:",
+    aChildrensBook: "a children's book",
+    readBookHere: "Read the book here:",
+    socialShareText: "Check out this amazing children's book:",
+    missingInfo: "Missing information",
+    missingInfoDesc: "Please provide a title and description for your post.",
+    shareSuccess: "Book shared successfully!",
+    shareSuccessDesc: "Your book is now available in the community section.",
+    shareError: "Error sharing book",
+    shareErrorDesc: "There was a problem sharing your book. Please try again.",
+    linkCopied: "Link copied!",
+    linkCopiedDesc: "Book link has been copied to clipboard.",
+    copiedForInstagram: "Copied for Instagram!",
+    copiedForInstagramDesc: "Text and link copied to clipboard. Paste it in your Instagram post."
+  },
+  ideaGenerator: {
+    title: "Story Idea Generator",
+    description: "Generate creative story ideas for your children's book",
+    childNames: "Main Characters",
+    childNamesPlaceholder: "Add character name...",
+    childNamesHelp: "Add one or more characters who will be the main characters in the story",
+    existingChildren: "Your existing characters:",
+    myCharacters: "My Characters",
+    childAge: "Age Range",
+    genres: "Story Genres",
+    genresPlaceholder: "Select genres",
+    genreAdventure: "Adventure",
+    genreFairyTale: "Fairy Tale",
+    genreEducational: "Educational",
+    genreBedtime: "Bedtime",
+    genreFantasy: "Fantasy",
+    genreScience: "Science",
+    genreAnimals: "Animals",
+    genreSports: "Sports",
+    themes: "Themes",
+    themesPlaceholder: "Add themes...",
+    characters: "Characters",
+    charactersPlaceholder: "Add characters...",
+    setting: "Settings",
+    settingPlaceholder: "Add settings...",
+    additional: "Additional Details (Optional)",
+    additionalPlaceholder: "Any other preferences or details",
+    generate: "Generate Idea",
+    generating: "Generating...",
+    useDailyPrompt: "Use Today's Prompt",
+    addTag: "Add",
+    suggestedTags: "Suggested:",
+    customGenresPlaceholder: "Add custom genres...",
+    moreOptions: "More Options",
+    lessOptions: "Less Options"
+  },
+  savedIdeas: {
+    title: "Saved Story Ideas",
+    subtitle: "Your collection of previously generated story ideas",
+    emptyTitle: "No Saved Ideas Yet",
+    emptyDesc: "Generate and save some ideas to see them here, or try generating a new one.",
+    newIdea: "Create New Idea",
+    use: "Use This Idea",
+    recent: "Recent",
+    language: "Language",
+    createdOn: "Created on",
+    edit: "Edit",
+    delete: "Delete"
+  },
+  ideaResult: {
+    title: "Your Story Idea is Ready!",
+    editTitle: "Edit Your Story Idea",
+    subtitle: "Review the details below. You can refine them in the next step.",
+    ideaTitle: "Story Title",
+    ideaDesc: "Description",
+    plotPoints: "Key Plot Points",
+    charDev: "Character Development",
+    moral: "Moral of the Story",
+    continue: "Continue to Next Step",
+    regenerate: "Try a new idea",
+    regenerating: "Generating...",
+    save: "Save Idea",
+    saving: "Saving...",
+    edit: "Edit",
+    delete: "Delete",
+    saveAndContinue: "Save & Create Book",
+    cancel: "Cancel",
+    saveChanges: "Save Changes"
+  },
+  dailyPrompt: {
+    title: "Daily Story Prompt",
+    subtitle: "From today's featured story prompt",
+    use: "Use this prompt",
+    dismiss: "Dismiss"
+  },
+  artStyles: {
+    title: "Choose Art Style",
+    subtitle: "Select the visual style for your story's illustrations",
+    artStyle: "Art Style",
+    disney: "Disney",
+    disneyDesc: "Magical, expressive characters with smooth animation style",
+    pixar: "Pixar",
+    pixarDesc: "3D animation with detailed textures and expressive features",
+    watercolor: "Watercolor",
+    watercolorDesc: "Soft, flowing illustrations with gentle color blending",
+    sketch: "Sketch",
+    sketchDesc: "Hand-drawn pencil illustrations with detailed linework",
+    cartoon: "Cartoon",
+    cartoonDesc: "Bold outlines with simple, vibrant colors",
+    realistic: "Realistic",
+    realisticDesc: "Detailed illustrations with natural proportions and textures",
+    anime: "Anime",
+    animeDesc: "Japanese-inspired style with characteristic eyes and expressions",
+    clay: "Clay Animation",
+    clayDesc: "3D style reminiscent of clay or plasticine figures",
+    popup: "Pop-up Book",
+    popupDesc: "3D paper craft style with fold and cut aesthetics",
+    minimalist: "Minimalist",
+    minimalistDesc: "Simple shapes and limited color palette with clean design",
+    vintage: "Vintage",
+    vintageDesc: "Classic illustration style reminiscent of older children's books",
+    cultural: "Cultural",
+    culturalDesc: "Incorporates traditional art elements from various cultures"
+  },
+  bookPreview: {
+    title: "Book Preview",
+    subtitle: "Preview your book settings before creation",
+    cover: "Cover Preview",
+    generating: "Generating cover...",
+    coverPlaceholder: "Cover will be generated when you proceed",
+    details: "Book Details",
+    for: "For",
+    ageYears: "years old",
+    genre: "Genre",
+    length: "Length",
+    artStyle: "Art Style",
+    language: "Language",
+    shortLength: "Short (5-10 pages)",
+    mediumLength: "Medium (11-20 pages)",
+    longLength: "Long (21-30 pages)",
+    genreAdventure: "Adventure",
+    genreFairyTale: "Fairy Tale",
+    genreEducational: "Educational",
+    genreBedtime: "Bedtime Story",
+    genreFantasy: "Fantasy",
+    genreScience: "Science",
+    genreAnimals: "Animals",
+    genreSports: "Sports",
+    artStyleDisney: "Disney Animation",
+    artStylePixar: "Pixar 3D",
+    artStyleWatercolor: "Watercolor Painting",
+    artStyleSketch: "Pencil Sketch",
+    artStyleCartoon: "Bright Cartoon",
+    artStyleRealistic: "Semi-Realistic",
+    artStyleAnime: "Anime/Manga",
+    artStyleClay: "Clay/Stop-Motion",
+    artStylePopup: "Pop-Up Book",
+    artStyleMinimalist: "Minimalist",
+    artStyleVintage: "Vintage",
+    artStyleCultural: "Folk Art",
+    languageEnglish: "English",
+    languageHebrew: "Hebrew",
+    languageYiddish: "Yiddish"
+  },
+  social: {
+    follow: "Follow",
+    following: "Following",
+    followers: "followers",
+    unfollow: "Unfollow",
+    notifications: "Notifications",
+    noNotifications: "No notifications yet",
+    unread: "unread",
+    markAllRead: "Mark all as read"
+  },
+  bookCard: {
+    draft: "Draft",
+    generating: "Generating",
+    complete: "Complete",
+    for: "For",
+    years: "years",
+    view: "View",
+    edit: "Edit",
+    feedback: "Feedback",
+    share: "Share"
+  },
+  myBooks: {
+    title: "My Books",
+    recent: "Recent Books",
+    noBooks: "No books created yet",
+    startCreating: "Start creating your first book",
+    createBook: "Create Book",
+    viewAll: "View All",
+    read: "Read",
+    edit: "Edit"
+  },
+  parentalControls: {
+    protected: "Parental Controls Protected",
+    enterPin: "Enter PIN code to access settings",
+    pinPlaceholder: "PIN code",
+    incorrectPin: "Incorrect PIN",
+    unlock: "Unlock",
+    header: "Parental Controls",
+    headerDesc: "These settings let you control what content your child can create and view.",
+    pinProtection: "PIN Code Protection",
+    pinProtectedDesc: "Settings are protected with a PIN code",
+    pinUnprotectedDesc: "Set a PIN code to protect settings from being changed by children",
+    setPin: "Set PIN Code",
+    newPin: "New PIN (4-6 digits)",
+    confirmPin: "Confirm PIN",
+    pinMustBeDigits: "PIN must be 4-6 digits",
+    pinNoMatch: "PIN codes do not match",
+    pinSet: "PIN code set",
+    pinSetDesc: "Settings are now protected with a PIN",
+    pinActive: "PIN Active",
+    removePin: "Remove PIN",
+    pinRemoved: "PIN removed",
+    pinRemovedDesc: "Settings are no longer PIN-protected",
+    wrongPin: "Wrong PIN",
+    wrongPinDesc: "The PIN entered is incorrect",
+    enterCurrentPin: "Enter current PIN to remove",
+    remove: "Remove",
+    cancel: "Cancel",
+    save: "Save",
+    contentFilter: "Content Filter Level",
+    contentFilterDesc: "Set the filtering level for AI-generated content",
+    filterStrict: "Strict - Recommended for ages 3-5",
+    filterModerate: "Moderate - Recommended for ages 5-8",
+    filterRelaxed: "Relaxed - Recommended for ages 8-12",
+    selectFilter: "Select filter level",
+    ageRange: "Age Range",
+    selectAge: "Select age range",
+    ages35: "Ages 3-5",
+    ages57: "Ages 5-7",
+    ages710: "Ages 7-10",
+    ages1012: "Ages 10-12",
+    permissions: "Permissions",
+    allowAI: "Allow AI content generation",
+    allowCommunity: "Allow community sharing",
+    requireApproval: "Require parent approval before publishing",
+    dailyLimit: "Daily Limit",
+    dailyLimitDesc: "Maximum number of books that can be created per day",
+    booksPerDay: "books per day",
+    booksPerDayLabel: "Books per day",
+    saveButton: "Save Parental Controls",
+    saving: "Saving...",
+    savedTitle: "Settings saved",
+    savedDesc: "Parental controls have been updated"
+  },
+  landing: {
+    nav: {
+      features: "Features",
+      howItWorks: "How It Works",
+      pricing: "Pricing",
+      cta: "Start Free"
+    },
+    hero: {
+      badge: "AI-Powered Children's Book Creator",
+      title: "Your Child's Next Book \u2014 Created with AI Magic",
+      subtitle: "Choose characters, style and genre \u2014 and AI creates a complete children's book with a personalized story and illustrations",
+      primaryCta: "Create a Book \u2014 It's Free!",
+      secondaryCta: "Browse Community Books",
+      socialProof: "Hundreds of families already creating stories"
+    },
+    features: {
+      sectionTitle: "Everything in One Experience",
+      sectionSubtitle: "All the tools you need to create perfect children's books \u2014 from idea to print",
+      artStyles: {
+        title: "Art Style Selection",
+        description: "12 professional illustration styles \u2014 watercolor, comic, fantasy, anime, Disney and more"
+      },
+      trilingual: {
+        title: "Trilingual",
+        description: "Create books in Hebrew, English and Yiddish with full RTL support"
+      },
+      characters: {
+        title: "Custom Characters",
+        description: "Your child becomes the hero of the story \u2014 with their own name, appearance and personality"
+      },
+      gamification: {
+        title: "Gamification",
+        description: "XP, badges, daily streaks and leaderboard \u2014 every creation earns points"
+      },
+      pwa: {
+        title: "PWA \u2014 Any Device",
+        description: "Works on phone, tablet and computer \u2014 even offline, no installation needed"
+      },
+      community: {
+        title: "Vibrant Community",
+        description: "Share books, likes, comments and browse the community gallery"
+      }
+    },
+    howItWorks: {
+      sectionTitle: "How to Create a Book",
+      sectionSubtitle: "Four simple steps \u2014 from idea to a book ready for reading and printing",
+      stepLabel: "Step",
+      step1: {
+        title: "Choose a Topic",
+        description: "Pick from dozens of ready topics or write your own idea"
+      },
+      step2: {
+        title: "Design Characters",
+        description: "Add your child as the hero and choose supporting characters"
+      },
+      step3: {
+        title: "Customize Style",
+        description: "Choose illustration style, language and age-appropriate settings"
+      },
+      step4: {
+        title: "Get Your Book!",
+        description: "AI creates story and illustrations \u2014 ready to read and print"
+      }
+    },
+    testimonials: {
+      sectionTitle: "What Parents Say",
+      sectionSubtitle: "Families across the country are already creating magical stories for their kids",
+      t1: {
+        name: "Sarah Cohen",
+        role: "Mother of a 7-year-old",
+        quote: "My son can't stop asking for new books! He's so excited to see himself as the hero. The illustrations are simply amazing.",
+        initials: "SC"
+      },
+      t2: {
+        name: "Michelle Levi",
+        role: "Mother of two girls (5 & 9)",
+        quote: "My girls create books together every week. It's a wonderful tool that encourages creativity and reading instead of another hour on screens.",
+        initials: "ML"
+      },
+      t3: {
+        name: "Yossi Barak",
+        role: "Father of a 6-year-old",
+        quote: "The perfect birthday gift! We created a personalized book with all her friends, and she absolutely loves it. The process is easy and fast.",
+        initials: "YB"
+      }
+    },
+    pricing: {
+      sectionTitle: "Plans & Pricing",
+      sectionSubtitle: "Start free \u2014 upgrade when it suits you",
+      period: "month",
+      free: {
+        name: "Free",
+        price: "\u20AA0",
+        f1: "2 books per month",
+        f2: "Basic illustration styles",
+        f3: "Community access",
+        cta: "Start Free"
+      },
+      premium: {
+        name: "Premium",
+        price: "\u20AA29",
+        badge: "Most Popular",
+        f1: "Unlimited books",
+        f2: "All 12 illustration styles",
+        f3: "Print & PDF export",
+        f4: "No ads",
+        cta: "Upgrade to Premium"
+      },
+      family: {
+        name: "Family",
+        price: "\u20AA49",
+        f1: "Up to 5 child profiles",
+        f2: "All Premium features",
+        f3: "Priority support",
+        f4: "Early access to new features",
+        cta: "Choose Family"
+      }
+    },
+    footer: {
+      description: "An AI-powered platform for creating personalized children's books. Kids choose characters, style and genre \u2014 and AI creates a complete book.",
+      linksTitle: "Links",
+      about: "About",
+      blog: "Blog",
+      terms: "Terms of Service",
+      privacy: "Privacy",
+      contact: "Contact",
+      followUs: "Follow Us",
+      rights: "All rights reserved.",
+      madeWith: "Made with",
+      madeWithEnd: "& AI in Israel"
+    }
+  },
+  characterEditor: {
+    title: "Character Editor",
+    createNew: "Create New Character",
+    editCharacter: "Edit Character",
+    back: "Back to Characters",
+    basicInfo: "Basic Information",
+    name: "Name",
+    age: "Age",
+    gender: "Gender",
+    boy: "Boy",
+    girl: "Girl",
+    neutral: "Neutral",
+    personalityAppearance: "Personality & Appearance",
+    personalityDesc: "These details will help the AI create consistent stories and images.",
+    personality: "Personality",
+    personalityPlaceholder: "e.g., Brave, curious, loves animals, a bit shy...",
+    appearance: "Appearance",
+    appearancePlaceholder: "e.g., Red curly hair, green eyes, wears glasses, has freckles...",
+    visuals: "Visuals",
+    artStyle: "Preferred Art Style",
+    createCharacter: "Create Character",
+    saveChanges: "Save Changes",
+    deleteCharacter: "Delete Character",
+    deleteConfirm: "Are you sure you want to delete this character?",
+    successCreate: "Character created successfully.",
+    successUpdate: "Character updated successfully.",
+    successDelete: "Character deleted.",
+    errorCreate: "Failed to create character.",
+    errorUpdate: "Failed to update character.",
+    errorDelete: "Failed to delete character.",
+    errorLoad: "Failed to load character.",
+    missingInfo: "Missing Information",
+    missingFields: "Please fill in Name, Personality, and Appearance.",
+    saving: "Saving...",
+    deleting: "Deleting..."
+  },
+  blog: {
+    title: "Our Blog",
+    subtitle: "Tips, insights, and inspiration for creative storytellers and parents",
+    postsCount: "articles",
+    searchPlaceholder: "Search articles...",
+    clearSearch: "Clear search",
+    clearCategory: "Clear category filter",
+    allCategories: "All Topics",
+    filtering: "Filtering",
+    featuredBadge: "Featured",
+    latestPostsTitle: "Latest Articles",
+    categoriesTitle: "Topics",
+    recentPostsTitle: "Recent Posts",
+    sidebar: "Blog sidebar",
+    minRead: "min read",
+    readMore: "Read more",
+    loadMore: "Load more articles",
+    noResultsTitle: "No articles found",
+    noResultsDesc: "Try a different search term or category.",
+    emptyTitle: "Our blog is on its way! Check back soon",
+    emptyDesc: "We are working on some great articles for you. Come back soon!",
+    postNotFound: "Article not found",
+    postNotFoundDesc: "This article may have been removed or the link is incorrect.",
+    backToBlog: "Back to Blog",
+    writtenBy: "Written by",
+    sharePost: "Share this article",
+    copyLink: "Copy link",
+    linkCopied: "Copied!",
+    relatedPostsTitle: "Related Articles",
+    newsletterTitle: "Stay in the loop",
+    newsletterDesc: "Get our latest articles and tips delivered to your inbox.",
+    subscribeBtn: "Subscribe"
+  },
+  profile: {
+    title: "Profile",
+    editProfile: "Edit Profile",
+    saveChanges: "Save Changes",
+    cancel: "Cancel",
+    saving: "Saving...",
+    saved: "Profile updated successfully",
+    error: "Error updating profile",
+    loading: "Loading profile...",
+    tabs: {
+      overview: "Overview",
+      books: "My Books",
+      achievements: "Achievements",
+      activity: "Activity"
+    },
+    level: "Level",
+    booksCreated: "Books Created",
+    joined: "Joined",
+    recentBooks: "Recent Books",
+    noBooks: "No books created yet",
+    startCreating: "Start creating your first book",
+    viewAll: "View All",
+    recentAchievements: "Recent Achievements",
+    recentActivity: "Recent Activity",
+    form: {
+      displayName: "Display Name",
+      bio: "Bio",
+      email: "Email",
+      memberSince: "Member Since",
+      storytellerLevel: "Storyteller Level"
+    },
+    avatar: {
+      updated: "Avatar updated successfully",
+      error: "Failed to update avatar",
+      studio: "Avatar Studio",
+      description: "Customize your avatar"
+    },
+    createBook: "Create Book",
+    achievements: {
+      completed: "Completed",
+      earnMore: "Complete actions to earn achievements"
+    },
+    activity: {
+      bookCreated: "Created a new book",
+      untitled: "Untitled Book"
     }
   }
 };

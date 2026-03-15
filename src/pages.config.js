@@ -3,7 +3,8 @@ import Home from './pages/Home';
 import __Layout from './Layout.jsx';
 
 // Lazy-loaded pages for code splitting
-const App = lazy(() => import('./pages/App'));
+const Blog = lazy(() => import('./pages/Blog'));
+const BlogPost = lazy(() => import('./pages/BlogPost'));
 const BookCreation = lazy(() => import('./pages/BookCreation'));
 const BookView = lazy(() => import('./pages/BookView'));
 const BookWizard = lazy(() => import('./pages/BookWizard'));
@@ -12,15 +13,16 @@ const Characters = lazy(() => import('./pages/Characters'));
 const Community = lazy(() => import('./pages/Community'));
 const CommunityPost = lazy(() => import('./pages/CommunityPost'));
 const Feedback = lazy(() => import('./pages/Feedback'));
+const LandingPage = lazy(() => import('./pages/LandingPage'));
 const Leaderboard = lazy(() => import('./pages/Leaderboard'));
 const Library = lazy(() => import('./pages/Library'));
 const Profile = lazy(() => import('./pages/Profile'));
 const Settings = lazy(() => import('./pages/Settings'));
 const StoryIdeas = lazy(() => import('./pages/StoryIdeas'));
-const index = lazy(() => import('./pages/index'));
 
 export const PAGES = {
-    "App": App,
+    "Blog": Blog,
+    "BlogPost": BlogPost,
     "BookCreation": BookCreation,
     "BookView": BookView,
     "BookWizard": BookWizard,
@@ -30,12 +32,12 @@ export const PAGES = {
     "CommunityPost": CommunityPost,
     "Feedback": Feedback,
     "Home": Home,
+    "LandingPage": LandingPage,
     "Leaderboard": Leaderboard,
     "Library": Library,
     "Profile": Profile,
     "Settings": Settings,
     "StoryIdeas": StoryIdeas,
-    "index": index,
 }
 
 export const pagesConfig = {

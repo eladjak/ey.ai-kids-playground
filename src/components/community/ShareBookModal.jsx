@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { Book } from "@/entities/Book";
 import { User } from "@/entities/User";
+import { useI18n } from "@/components/i18n/i18nProvider";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +25,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 export default function ShareBookModal({ isOpen, onClose, onShare }) {
+  const { t } = useI18n();
   const [isLoading, setIsLoading] = useState(true);
   const [books, setBooks] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null);
@@ -44,7 +46,7 @@ export default function ShareBookModal({ isOpen, onClose, onShare }) {
       const bookObject = books.find(book => book.id === selectedBook);
       if (bookObject) {
         // Set default title based on book
-        setTitle(`Check out my book: ${bookObject.title}`);
+        setTitle(`${t("community.shareModal.defaultTitle")} ${bookObject.title}`);
         
         // Set default tags based on book genre
         if (bookObject.genre) {
@@ -114,34 +116,35 @@ export default function ShareBookModal({ isOpen, onClose, onShare }) {
     onClose();
   };
   
-  // Suggested tags
-  const suggestedTags = [
-    "adventure", "fantasy", "education", "animals", "family", 
+  // Suggested tags - keys are used as data, t() used for display
+  const suggestedTagKeys = [
+    "adventure", "fantasy", "education", "animals", "family",
     "friendship", "science", "values", "learning", "fun"
-  ].filter(tag => !tags.includes(tag));
+  ];
+  const suggestedTags = suggestedTagKeys.filter(tag => !tags.includes(tag));
   
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[550px]">
         <DialogHeader>
-          <DialogTitle>Share Your Book</DialogTitle>
+          <DialogTitle>{t("community.shareModal.title")}</DialogTitle>
           <DialogDescription>
-            Share your book with the community and inspire others
+            {t("community.shareModal.description")}
           </DialogDescription>
         </DialogHeader>
         
         <div className="py-4 space-y-4">
           <div>
             <Label htmlFor="book-select" className="block mb-2">
-              Select a book to share
+              {t("community.shareModal.selectBook")}
             </Label>
             <Select value={selectedBook} onValueChange={setSelectedBook}>
               <SelectTrigger>
-                <SelectValue placeholder="Choose a book..." />
+                <SelectValue placeholder={t("community.shareModal.choosePlaceholder")} />
               </SelectTrigger>
               <SelectContent>
                 {isLoading ? (
-                  <SelectItem value="loading" disabled>Loading books...</SelectItem>
+                  <SelectItem value="loading" disabled>{t("community.shareModal.loading")}</SelectItem>
                 ) : books.length > 0 ? (
                   books.map(book => (
                     <SelectItem key={book.id} value={book.id}>
@@ -149,7 +152,7 @@ export default function ShareBookModal({ isOpen, onClose, onShare }) {
                     </SelectItem>
                   ))
                 ) : (
-                  <SelectItem value="none" disabled>No books found</SelectItem>
+                  <SelectItem value="none" disabled>{t("community.shareModal.noBooks")}</SelectItem>
                 )}
               </SelectContent>
             </Select>
@@ -157,42 +160,42 @@ export default function ShareBookModal({ isOpen, onClose, onShare }) {
           
           <div>
             <Label htmlFor="title" className="block mb-2">
-              Post Title
+              {t("community.shareModal.postTitle")}
             </Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Give your post a title"
+              placeholder={t("community.shareModal.postTitlePlaceholder")}
             />
           </div>
           
           <div>
             <Label htmlFor="description" className="block mb-2">
-              Description
+              {t("community.shareModal.descriptionLabel")}
             </Label>
             <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Tell the community about this book and why you created it..."
+              placeholder={t("community.shareModal.descriptionPlaceholder")}
               className="min-h-[120px]"
             />
           </div>
           
           <div>
-            <Label className="block mb-2">Tags</Label>
+            <Label className="block mb-2">{t("community.shareModal.tags")}</Label>
             <div className="flex flex-wrap gap-2 mb-3">
               {tags.map(tag => (
-                <Badge 
+                <Badge
                   key={tag}
                   variant="secondary"
                   className="pl-2 flex items-center gap-1 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300"
                 >
-                  {tag}
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  {t(`community.shareModal.tagLabels.${tag}`) !== `community.shareModal.tagLabels.${tag}` ? t(`community.shareModal.tagLabels.${tag}`) : tag}
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     className="h-5 w-5 p-0 rounded-full text-purple-700 hover:text-purple-900 hover:bg-purple-200 dark:text-purple-300 dark:hover:bg-purple-800"
                     onClick={() => handleRemoveTag(tag)}
                   >
@@ -206,7 +209,7 @@ export default function ShareBookModal({ isOpen, onClose, onShare }) {
               <Input
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
-                placeholder="Add a tag..."
+                placeholder={t("community.shareModal.addTagPlaceholder")}
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
@@ -219,16 +222,16 @@ export default function ShareBookModal({ isOpen, onClose, onShare }) {
                 onClick={handleAddTag}
                 disabled={!tagInput.trim()}
               >
-                Add
+                {t("community.shareModal.add")}
               </Button>
             </div>
             
             {suggestedTags.length > 0 && (
               <div className="mt-3">
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Suggested tags:</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">{t("community.shareModal.suggestedTags")}</p>
                 <div className="flex flex-wrap gap-2">
                   {suggestedTags.slice(0, 5).map(tag => (
-                    <Badge 
+                    <Badge
                       key={tag}
                       variant="outline"
                       className="cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20"
@@ -236,7 +239,7 @@ export default function ShareBookModal({ isOpen, onClose, onShare }) {
                         setTags([...tags, tag]);
                       }}
                     >
-                      {tag}
+                      {t(`community.shareModal.tagLabels.${tag}`) !== `community.shareModal.tagLabels.${tag}` ? t(`community.shareModal.tagLabels.${tag}`) : tag}
                     </Badge>
                   ))}
                 </div>
@@ -247,14 +250,14 @@ export default function ShareBookModal({ isOpen, onClose, onShare }) {
         
         <DialogFooter>
           <Button variant="outline" onClick={handleClose}>
-            Cancel
+            {t("community.shareModal.cancel")}
           </Button>
-          <Button 
+          <Button
             onClick={handleSubmit}
             disabled={!selectedBook || !title.trim() || !description.trim() || isSubmitting}
             className="bg-purple-600 hover:bg-purple-700"
           >
-            {isSubmitting ? 'Sharing...' : 'Share Book'}
+            {isSubmitting ? t("common.saving") : t("community.shareModal.shareBook")}
           </Button>
         </DialogFooter>
       </DialogContent>

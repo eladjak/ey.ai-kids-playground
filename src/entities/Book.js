@@ -1,3 +1,11 @@
-import { base44 } from '../api/base44Client';
+import { createSupabaseEntity } from '../lib/supabaseEntity';
+import { createSecureEntity } from '../lib/secureEntity';
 
-export const Book = base44.entities.Book;
+export const Book = createSecureEntity(
+  createSupabaseEntity('books', {
+    columnMap: {
+      childNames: 'child_names',
+      selectedCharacters: 'selected_characters',
+    },
+  })
+);

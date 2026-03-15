@@ -29,3 +29,11 @@ dist-ssr
 
 .env
 .vercel
+
+# Generated HTML guides (contain setup credentials)
+UMAMI-SETUP-GUIDE.html
+SERVICES-GUIDE.html
+DOMAIN-SETUP-GUIDE.html
+MASTER-PLAN-REPORT.html
+PROGRESS-REPORT-*.html
+PROGRESS-REVIEW-*.html

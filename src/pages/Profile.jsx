@@ -4,9 +4,12 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { User } from "@/entities/User";
 import { Book } from "@/entities/Book";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { UserBadge } from "@/entities/UserBadge";
 import useGamification, { BADGE_DEFINITIONS } from "@/hooks/useGamification";
 import { useI18n } from "@/components/i18n/i18nProvider";
+import FollowButton from "@/components/social/FollowButton";
+import { useToast } from "@/components/ui/use-toast";
 import {
   User as UserIcon,
   Settings,
@@ -59,31 +62,20 @@ import RecentActivity from "../components/profile/RecentActivity";
 import MyBooksSection from "../components/profile/MyBooksSection";
 
 export default function Profile() {
-  const { language: i18nLanguage, isRTL: i18nIsRTL } = useI18n();
+  const { t, language: i18nLanguage, isRTL } = useI18n();
+  const { toast } = useToast();
+  const { user: hookUser } = useCurrentUser();
 
   const showToast = (message, type = "info") => {
-    const toastClass = type === "error" ? "bg-red-100 border-red-200 text-red-800" : 
-                      type === "success" ? "bg-green-100 border-green-200 text-green-800" : 
-                      "bg-blue-100 border-blue-200 text-blue-800";
-
-    const toastElement = document.createElement("div");
-    const toastSide = i18nIsRTL ? "left-4" : "right-4";
-    toastElement.className = `fixed bottom-4 ${toastSide} p-4 rounded-md border ${toastClass} shadow-md transition-all duration-500 z-50`;
-    toastElement.textContent = message;
-    document.body.appendChild(toastElement);
-    
-    setTimeout(() => {
-      toastElement.style.opacity = "0";
-      setTimeout(() => {
-        document.body.removeChild(toastElement);
-      }, 500);
-    }, 3000);
+    toast({
+      title: message,
+      variant: type === "error" ? "destructive" : "default",
+    });
   };
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState(i18nLanguage);
-  const isRTL = i18nIsRTL;
   const [activeTab, setActiveTab] = useState("overview");
   const [editMode, setEditMode] = useState(false);
   const [avatarEditorOpen, setAvatarEditorOpen] = useState(false);
@@ -118,89 +110,15 @@ export default function Profile() {
   const [achievements, setAchievements] = useState([]);
   const [recentBooks, setRecentBooks] = useState([]);
 
-  const translations = {
-    english: {
-      "profile.title": "Profile",
-      "profile.editProfile": "Edit Profile",
-      "profile.saveChanges": "Save Changes",
-      "profile.cancel": "Cancel",
-      "profile.saving": "Saving...",
-      "profile.saved": "Profile updated successfully",
-      "profile.error": "Error updating profile",
-      "profile.loading": "Loading profile...",
-      "profile.tabs.overview": "Overview",
-      "profile.tabs.books": "My Books",
-      "profile.tabs.achievements": "Achievements",
-      "profile.tabs.activity": "Activity",
-      "profile.level": "Level",
-      "profile.booksCreated": "Books Created",
-      "profile.joined": "Joined",
-      "profile.recentBooks": "Recent Books",
-      "profile.noBooks": "No books created yet",
-      "profile.startCreating": "Start creating your first book",
-      "profile.viewAll": "View All",
-      "profile.recentAchievements": "Recent Achievements",
-      "profile.recentActivity": "Recent Activity",
-      "profile.form.displayName": "Display Name",
-      "profile.form.bio": "Bio",
-      "profile.form.email": "Email",
-      "profile.form.memberSince": "Member Since",
-      "profile.form.storytellerLevel": "Storyteller Level",
-      "profile.avatar.updated": "Avatar updated successfully",
-      "profile.avatar.error": "Failed to update avatar",
-      "profile.avatar.studio": "Avatar Studio",
-      "profile.avatar.description": "Customize your avatar",
-      "profile.createBook": "Create Book"
-    },
-    hebrew: {
-      "profile.title": "פרופיל",
-      "profile.editProfile": "עריכת פרופיל",
-      "profile.saveChanges": "שמירת שינויים",
-      "profile.cancel": "ביטול",
-      "profile.saving": "שומר...",
-      "profile.saved": "הפרופיל עודכן בהצלחה",
-      "profile.error": "שגיאה בעדכון הפרופיל",
-      "profile.loading": "טוען פרופיל...",
-      "profile.tabs.overview": "סקירה כללית",
-      "profile.tabs.books": "הספרים שלי",
-      "profile.tabs.achievements": "הישגים",
-      "profile.tabs.activity": "פעילות",
-      "profile.level": "רמה",
-      "profile.booksCreated": "ספרים שנוצרו",
-      "profile.joined": "הצטרף",
-      "profile.recentBooks": "ספרים אחרונים",
-      "profile.noBooks": "עדיין לא נוצרו ספרים",
-      "profile.startCreating": "התחל ליצור את הספר הראשון שלך",
-      "profile.viewAll": "צפה בהכל",
-      "profile.recentAchievements": "הישגים אחרונים",
-      "profile.recentActivity": "פעילות אחרונה",
-      "profile.form.displayName": "שם תצוגה",
-      "profile.form.bio": "ביוגרפיה",
-      "profile.form.email": "דוא\"ל",
-      "profile.form.memberSince": "חבר מאז",
-      "profile.form.storytellerLevel": "רמת מספר סיפורים",
-      "profile.avatar.updated": "התמונה עודכנה בהצלחה",
-      "profile.avatar.error": "שגיאה בעדכון התמונה",
-      "profile.avatar.studio": "סטודיו לתמונות",
-      "profile.avatar.description": "התאם אישית את התמונה שלך",
-      "profile.createBook": "יצירת ספר"
-    }
-  };
-
-  const t = (key) => {
-    return translations[currentLanguage]?.[key] || 
-           translations.english[key] || 
-           key;
-  };
-
   useEffect(() => {
     const loadUserData = async () => {
       try {
         setIsLoading(true);
-        
-        const user = await User.me();
+
+        const user = hookUser;
         if (!user) {
-          showToast("Failed to load user data", "error");
+          // Hook may still be loading; wait for it
+          setIsLoading(false);
           return;
         }
         
@@ -237,14 +155,15 @@ export default function Profile() {
         loadRecentActivityData(allBooks);
         
       } catch (error) {
-        showToast("Failed to load profile", "error");
+        showToast(t("profile.error"), "error");
       } finally {
         setIsLoading(false);
       }
     };
     
     loadUserData();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hookUser]);
 
   const loadAchievementsData = async (user, books) => {
     try {
@@ -303,8 +222,8 @@ export default function Profile() {
     const activities = books.slice(0, 10).map((book, i) => ({
       id: `book_${book.id}`,
       type: "book_created",
-      title: currentLanguage === "hebrew" ? "נוצר ספר חדש" : "Created a new book",
-      description: book.title || (currentLanguage === "hebrew" ? "ספר ללא שם" : "Untitled Book"),
+      title: t("profile.activity.bookCreated"),
+      description: book.title || t("profile.activity.untitled"),
       date: new Date(book.created_date || Date.now()),
       icon: BookOpen,
       iconColor: "text-blue-500"
@@ -443,6 +362,10 @@ export default function Profile() {
             </div>
           </div>
           
+          {/* Show follow button when viewing other profiles - ready for public profiles */}
+          {userData.email && hookUser?.email && userData.email !== hookUser.email && (
+            <FollowButton targetEmail={userData.email} />
+          )}
           <Button onClick={() => setEditMode(true)} variant="outline" className="mt-4 md:mt-0">
             <Edit className="h-4 w-4 me-2" />
             {t("profile.editProfile")}
@@ -503,7 +426,7 @@ export default function Profile() {
                                 </h4>
                                 {achievement.completed ? (
                                   <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                                    {currentLanguage === "hebrew" ? "הושלם" : "Completed"}
+                                    {t("profile.achievements.completed")}
                                   </Badge>
                                 ) : (
                                   <div className="w-full mt-2">
@@ -527,9 +450,7 @@ export default function Profile() {
                     <div className="text-center py-4">
                       <Trophy className="h-12 w-12 text-gray-300 mx-auto mb-2" />
                       <p className="text-gray-500">
-                        {currentLanguage === "hebrew" 
-                          ? "השלם משימות כדי לקבל הישגים" 
-                          : "Complete actions to earn achievements"}
+                        {t("profile.achievements.earnMore")}
                       </p>
                     </div>
                   )}
@@ -552,7 +473,7 @@ export default function Profile() {
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-bold">{t("profile.tabs.books")}</h2>
-              <Link to={createPageUrl("CreativeStoryStudio")}>
+              <Link to={createPageUrl("BookWizard")}>
                 <Button>
                   <Plus className="h-4 w-4 mr-2" />
                   {t("profile.createBook")}

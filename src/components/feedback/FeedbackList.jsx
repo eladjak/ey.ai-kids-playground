@@ -119,11 +119,12 @@ export default function FeedbackList({ feedback, isOwner, isCollaborator, onUpda
       <Card key={item.id} className="p-4 mb-4">
         <div className="flex items-start gap-3">
           <Avatar className="h-10 w-10">
-            <AvatarImage src={item.user?.full_name ? 
-              `https://ui-avatars.com/api/?name=${item.user.full_name}&background=random` : 
-              undefined
-            } />
-            <AvatarFallback>{item.user?.full_name?.[0] || 'U'}</AvatarFallback>
+            {item.user?.avatar_url ? (
+              <AvatarImage src={item.user.avatar_url} alt={item.user.full_name} />
+            ) : null}
+            <AvatarFallback className="bg-gradient-to-br from-purple-500 to-indigo-500 text-white">
+              {item.user?.full_name?.charAt(0) || 'U'}
+            </AvatarFallback>
           </Avatar>
           
           <div className="flex-1">

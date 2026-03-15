@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Plus, Trash2, UserPlus, User, BookOpen } from "lucide-react";
+import { Plus, Trash2, UserPlus, User, BookOpen, Star } from "lucide-react";
 import useCharacterSelector from "@/hooks/useCharacterSelector";
 
 const CHARACTER_TEMPLATES = [
@@ -21,6 +21,8 @@ const CHARACTER_TEMPLATES = [
   { id: "wizard", emoji: "🧙", en: "Wizard", he: "קוסם", traits: "wise, powerful, mentoring" },
 ];
 
+const CHILD_CHARACTER_ID = "child_self";
+
 const templateVariants = {
   hidden: { opacity: 0, scale: 0.8 },
   visible: (i) => ({
@@ -31,10 +33,51 @@ const templateVariants = {
 };
 
 /**
+ * Reads the child's name from localStorage.
+ * Checks onboarding key "childName" and fallback "userName".
+ */
+function getChildNameFromStorage() {
+  try {
+    const childName = localStorage.getItem("childName");
+    if (childName && childName.trim()) return childName.trim();
+    const userName = localStorage.getItem("userName");
+    if (userName && userName.trim()) return userName.trim();
+    // Also check onboarding JSON blob if stored that way
+    const onboarding = localStorage.getItem("onboardingData");
+    if (onboarding) {
+      const parsed = JSON.parse(onboarding);
+      if (parsed.childName && parsed.childName.trim()) return parsed.childName.trim();
+      if (parsed.name && parsed.name.trim()) return parsed.name.trim();
+    }
+  } catch {
+    // ignore parse errors
+  }
+  return null;
+}
+
+/**
+ * Builds the "child self" character from a name.
+ */
+function buildChildCharacter(name, isHebrew) {
+  return {
+    id: CHILD_CHARACTER_ID,
+    name,
+    traits: "the main character, adventurous, kind",
+    emoji: "⭐",
+    avatar: null,
+    isTemplate: false,
+    isEntity: false,
+    isChildSelf: true,
+    label: isHebrew ? "זה אתה!" : "That's you!"
+  };
+}
+
+/**
  * CharacterPicker - Unified character selection with:
- * 1. "My Characters" - loaded from Character entities
- * 2. "Quick Templates" - emoji-based templates
- * 3. "Add Custom" - inline custom character name
+ * 1. Auto-added "You!" character if child name is found in onboarding data
+ * 2. "My Characters" - loaded from Character entities
+ * 3. "Quick Templates" - emoji-based templates
+ * 4. "Add Custom" - inline custom character name
  */
 export default function CharacterPicker({
   selectedCharacters,
@@ -46,6 +89,17 @@ export default function CharacterPicker({
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [customCharacterName, setCustomCharacterName] = useState("");
   const { savedCharacters, isLoading, entityToSelection } = useCharacterSelector();
+
+  // Auto-add child character on mount if name found and no characters selected yet
+  useEffect(() => {
+    if (selectedCharacters.length > 0) return;
+    const childName = getChildNameFromStorage();
+    if (!childName) return;
+    const childChar = buildChildCharacter(childName, isHebrew);
+    onCharactersChange([childChar]);
+  // Only run once on mount — intentionally omitting selectedCharacters to avoid loops
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const toggleCharacter = (charSelection) => {
     const exists = selectedCharacters.find((c) => c.id === charSelection.id);
@@ -126,7 +180,7 @@ export default function CharacterPicker({
             {isHebrew ? "הדמויות שלי" : "My Characters"}
           </Label>
           <div
-            className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3"
+            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"
             role="group"
             aria-label={isHebrew ? "הדמויות שלי" : "My Characters"}
           >
@@ -142,7 +196,7 @@ export default function CharacterPicker({
                   aria-pressed={isSelected}
                   aria-label={entity.name}
                   className={`
-                    flex flex-col items-center p-3 rounded-xl transition-all duration-200 cursor-pointer
+                    flex flex-col items-center p-3 rounded-xl transition-all duration-200 cursor-pointer w-full overflow-hidden
                     ${isSelected
                       ? "bg-purple-100 dark:bg-purple-900/40 ring-2 ring-purple-500 shadow-md"
                       : "bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700"
@@ -171,7 +225,7 @@ export default function CharacterPicker({
           {isHebrew ? "תבניות מהירות" : "Quick Templates"}
         </Label>
         <div
-          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"
           role="group"
           aria-label={isHebrew ? "תבניות דמויות" : "Character templates"}
         >
@@ -190,7 +244,7 @@ export default function CharacterPicker({
                 aria-pressed={isSelected}
                 aria-label={isHebrew ? template.he : template.en}
                 className={`
-                  flex flex-col items-center p-3 md:p-4 rounded-xl transition-all duration-200 cursor-pointer
+                  flex flex-col items-center p-3 md:p-4 rounded-xl transition-all duration-200 cursor-pointer w-full overflow-hidden
                   ${isSelected
                     ? "bg-purple-100 dark:bg-purple-900/40 ring-2 ring-purple-500 shadow-md"
                     : "bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700"
@@ -198,7 +252,7 @@ export default function CharacterPicker({
                 `}
               >
                 <span className="text-3xl md:text-4xl mb-2" aria-hidden="true">{template.emoji}</span>
-                <span className="text-xs md:text-sm font-medium text-gray-800 dark:text-gray-200 text-center">
+                <span className="text-xs md:text-sm font-medium text-gray-800 dark:text-gray-200 text-center line-clamp-2 w-full">
                   {isHebrew ? template.he : template.en}
                 </span>
               </motion.button>
@@ -221,9 +275,15 @@ export default function CharacterPicker({
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
-                  className="flex items-center gap-2 bg-purple-100 dark:bg-purple-900/40 px-3 py-1.5 rounded-full"
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${
+                    char.isChildSelf
+                      ? "bg-gradient-to-r from-yellow-100 to-amber-100 dark:from-yellow-900/40 dark:to-amber-900/40 ring-2 ring-yellow-400"
+                      : "bg-purple-100 dark:bg-purple-900/40"
+                  }`}
                 >
-                  {char.avatar ? (
+                  {char.isChildSelf ? (
+                    <Star className="h-3.5 w-3.5 text-yellow-500 fill-yellow-400" aria-hidden="true" />
+                  ) : char.avatar ? (
                     <Avatar className="h-5 w-5">
                       <AvatarImage src={char.avatar} alt={char.name} />
                       <AvatarFallback className="text-[10px]"><User className="h-3 w-3" /></AvatarFallback>
@@ -233,7 +293,14 @@ export default function CharacterPicker({
                   ) : (
                     <User className="h-3.5 w-3.5 text-purple-600" />
                   )}
-                  <span className="text-sm font-medium text-purple-800 dark:text-purple-200">{char.name}</span>
+                  <span className={`text-sm font-medium ${char.isChildSelf ? "text-yellow-800 dark:text-yellow-200" : "text-purple-800 dark:text-purple-200"}`}>
+                    {char.name}
+                  </span>
+                  {char.isChildSelf && (
+                    <span className="text-xs text-yellow-600 dark:text-yellow-400 font-medium">
+                      {char.label}
+                    </span>
+                  )}
                   <button
                     onClick={() => removeCharacter(char.id)}
                     className="text-purple-600 hover:text-red-500 transition-colors"

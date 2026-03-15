@@ -3,8 +3,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Book } from "@/entities/Book";
-import { User } from "@/entities/User";
 import { useI18n } from "@/components/i18n/i18nProvider";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import {
   PlusCircle,
   Search,
@@ -35,7 +35,8 @@ import BookCard from "../components/library/BookCard";
 import EmptyState from "../components/library/EmptyState";
 
 export default function Library() {
-  const { language: currentLanguage, isRTL } = useI18n();
+  const { t, isRTL } = useI18n();
+  const { user: hookUser } = useCurrentUser();
   const [books, setBooks] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -48,72 +49,10 @@ export default function Library() {
   });
   const [showFilters, setShowFilters] = useState(false);
 
-  const translations = {
-    english: {
-      "library.title": "My Library",
-      "library.subtitle": "View and manage your personalized storybooks",
-      "library.createNewBook": "Create New Book",
-      "library.search": "Search by title or child's name...",
-      "library.filters": "Filters",
-      "library.active": "Active",
-      "library.reset": "Reset",
-      "library.status": "Status",
-      "library.allStatus": "All Status",
-      "library.draft": "Draft",
-      "library.generating": "Generating",
-      "library.complete": "Complete",
-      "library.genre": "Genre",
-      "library.allGenres": "All Genres",
-      "library.ageRange": "Age Range",
-      "library.allAges": "All Ages",
-      "library.language": "Language",
-      "library.allLanguages": "All Languages",
-      "library.booksFound": "books found",
-      "library.bookFound": "book found",
-      "library.noBooks": "No books found",
-      "library.adjustFilters": "Try adjusting your filters or search terms",
-      "library.createFirst": "Create your first personalized storybook",
-      "library.createBook": "Create a Book"
-    },
-    hebrew: {
-      "library.title": "הספרייה שלי",
-      "library.subtitle": "צפייה וניהול ספרי הסיפורים המותאמים אישית שלך",
-      "library.createNewBook": "צור ספר חדש",
-      "library.search": "חפש לפי כותרת או שם הילד...",
-      "library.filters": "סינון",
-      "library.active": "פעיל",
-      "library.reset": "איפוס",
-      "library.status": "סטטוס",
-      "library.allStatus": "כל הסטטוסים",
-      "library.draft": "טיוטה",
-      "library.generating": "בתהליך יצירה",
-      "library.complete": "הושלם",
-      "library.genre": "ז'אנר",
-      "library.allGenres": "כל הז'אנרים",
-      "library.ageRange": "טווח גיל",
-      "library.allAges": "כל הגילאים",
-      "library.language": "שפה",
-      "library.allLanguages": "כל השפות",
-      "library.booksFound": "ספרים נמצאו",
-      "library.bookFound": "ספר נמצא",
-      "library.noBooks": "לא נמצאו ספרים",
-      "library.adjustFilters": "נסה להתאים את המסננים או מונחי החיפוש שלך",
-      "library.createFirst": "צור את ספר הסיפורים המותאם אישית הראשון שלך",
-      "library.createBook": "צור ספר"
-    },
-    yiddish: {
-      "library.title": "מײַן ביבליאָטעק",
-      "library.createNewBook": "שאַפֿן אַ נײַ בוך"
-    }
-  };
-
-  const t = (key) => {
-    return translations[currentLanguage]?.[key] || translations.english[key] || key;
-  };
-
   useEffect(() => {
     loadBooks();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hookUser]);
 
   useEffect(() => {
     filterBooks();
@@ -122,9 +61,10 @@ export default function Library() {
   const loadBooks = async () => {
     try {
       setIsLoading(true);
-      const user = await User.me();
-      const loadedBooks = await Book.filter({ created_by: user.email });
-      setBooks(loadedBooks);
+      if (hookUser?.email) {
+        const loadedBooks = await Book.filter({ created_by: hookUser.email });
+        setBooks(loadedBooks);
+      }
     } catch (error) {
       // silently handled
     } finally {
@@ -181,29 +121,29 @@ export default function Library() {
 
   const genreOptions = [
     { value: "all", label: t("library.allGenres") },
-    { value: "adventure", label: "Adventure" },
-    { value: "fairy_tale", label: "Fairy Tale" },
-    { value: "educational", label: "Educational" },
-    { value: "bedtime", label: "Bedtime" },
-    { value: "fantasy", label: "Fantasy" },
-    { value: "science", label: "Science" },
-    { value: "animals", label: "Animals" },
-    { value: "sports", label: "Sports" }
+    { value: "adventure", label: t("library.genreOptions.adventure") },
+    { value: "fairy_tale", label: t("library.genreOptions.fairy_tale") },
+    { value: "educational", label: t("library.genreOptions.educational") },
+    { value: "bedtime", label: t("library.genreOptions.bedtime") },
+    { value: "fantasy", label: t("library.genreOptions.fantasy") },
+    { value: "science", label: t("library.genreOptions.science") },
+    { value: "animals", label: t("library.genreOptions.animals") },
+    { value: "sports", label: t("library.genreOptions.sports") }
   ];
 
   const ageRangeOptions = [
     { value: "all", label: t("library.allAges") },
-    { value: "2-4", label: "2-4 years" },
-    { value: "5-7", label: "5-7 years" },
-    { value: "8-10", label: "8-10 years" },
-    { value: "11+", label: "11+ years" }
+    { value: "2-4", label: t("library.ageRangeOptions.years_2_4") },
+    { value: "5-7", label: t("library.ageRangeOptions.years_5_7") },
+    { value: "8-10", label: t("library.ageRangeOptions.years_8_10") },
+    { value: "11+", label: t("library.ageRangeOptions.years_11plus") }
   ];
 
   const languageOptions = [
     { value: "all", label: t("library.allLanguages") },
-    { value: "english", label: "English" },
-    { value: "hebrew", label: "Hebrew" },
-    { value: "yiddish", label: "Yiddish" }
+    { value: "english", label: t("library.languageOptions.english") },
+    { value: "hebrew", label: t("library.languageOptions.hebrew") },
+    { value: "yiddish", label: t("library.languageOptions.yiddish") }
   ];
 
   return (
@@ -215,7 +155,7 @@ export default function Library() {
             {t("library.subtitle")}
           </p>
         </div>
-        <Link to={createPageUrl("CreativeStoryStudio")}>
+        <Link to={createPageUrl("BookWizard")}>
           <Button className="bg-purple-600 hover:bg-purple-700">
             <PlusCircle className="mr-2 h-4 w-4" />
             {t("library.createNewBook")}
@@ -404,7 +344,7 @@ export default function Library() {
               }
               icon={<BookOpen className="h-12 w-12 text-gray-400" />}
               actionLabel={t("library.createBook")}
-              actionLink={createPageUrl("CreativeStoryStudio")}
+              actionLink={createPageUrl("BookWizard")}
             />
           )}
         </TabsContent>
@@ -441,7 +381,7 @@ export default function Library() {
               }
               icon={<BookOpen className="h-12 w-12 text-gray-400" />}
               actionLabel={t("library.createBook")}
-              actionLink={createPageUrl("CreativeStoryStudio")}
+              actionLink={createPageUrl("BookWizard")}
             />
           )}
         </TabsContent>

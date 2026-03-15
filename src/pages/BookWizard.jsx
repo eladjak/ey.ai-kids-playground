@@ -1,18 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Book } from "@/entities/Book";
 import { Page } from "@/entities/Page";
-import { User } from "@/entities/User";
+import { Follow } from "@/entities/Follow";
+import { Notification } from "@/entities/Notification";
 import { createPageUrl } from "@/utils";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, BookOpen, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { InvokeLLM, GenerateImage } from "@/integrations/Core";
 import { moderateInput, buildSafetyPromptPrefix, sanitizeAIOutput } from "@/utils/content-moderation";
 import { checkAgeAppropriateLanguage } from "@/utils/content-moderation";
 import useGamification from "@/hooks/useGamification";
-import GamificationOverlay from "@/components/gamification/GamificationOverlay";
+import { useI18n } from "@/components/i18n/i18nProvider";
+import confetti from "canvas-confetti";
+import { trackEvent } from "@/lib/analytics";
+import { captureError } from "@/lib/errorTracking";
 
 import WizardProgress from "@/components/wizard/WizardProgress";
 import TopicStep from "@/components/wizard/TopicStep";
@@ -26,9 +31,13 @@ export default function BookWizard() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const gamification = useGamification();
+  const { t, language: uiLanguage, isRTL } = useI18n();
+  const { user: currentUserData } = useCurrentUser();
 
   // Wizard state
   const [currentStep, setCurrentStep] = useState(0);
+  // currentLanguage is the BOOK CONTENT language (used for AI prompts and bookData.language).
+  // It is distinct from uiLanguage (the UI display language from useI18n).
   const [currentLanguage, setCurrentLanguage] = useState("english");
   const [isCreating, setIsCreating] = useState(false);
   const [isGeneratingOutline, setIsGeneratingOutline] = useState(false);
@@ -46,6 +55,11 @@ export default function BookWizard() {
   const [creationProgress, setCreationProgress] = useState(null);
   // Track image generation failures for retry
   const [imageFailures, setImageFailures] = useState([]);
+
+  // Celebration state after book creation
+  const [celebrationBook, setCelebrationBook] = useState(null); // { id, title, cover_image }
+  const [showCelebration, setShowCelebration] = useState(false);
+  const celebrationTimerRef = useRef(null);
 
   // Step 3: Book data (preview/edit)
   const [bookData, setBookData] = useState({
@@ -69,33 +83,21 @@ export default function BookWizard() {
 
   const [generatedOutline, setGeneratedOutline] = useState(null);
 
-  const isRTL = currentLanguage === "hebrew" || currentLanguage === "yiddish";
-  const isHebrew = currentLanguage === "hebrew";
-
-  // Step definitions
+  // Step definitions using i18n
   const steps = [
-    { id: "topic", title: isHebrew ? "בחר נושא" : "Choose Topic" },
-    { id: "characters", title: isHebrew ? "בחר דמויות" : "Characters" },
-    { id: "preview", title: isHebrew ? "תצוגה ועריכה" : "Preview & Edit" },
-    { id: "save", title: isHebrew ? "יצירה" : "Create" }
+    { id: "topic", title: t("wizard.steps.topic") },
+    { id: "characters", title: t("wizard.steps.characters") },
+    { id: "preview", title: t("wizard.steps.preview") },
+    { id: "save", title: t("wizard.steps.create") }
   ];
 
-  // Load user language
+  // Load user language (book content language) from hook data
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const user = await User.me();
-        const lang = user.language || localStorage.getItem("language") || "english";
-        setCurrentLanguage(lang);
-        setBookData((prev) => ({ ...prev, language: lang }));
-      } catch {
-        // Use default language
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadUser();
-  }, []);
+    const lang = currentUserData?.language || localStorage.getItem("language") || "english";
+    setCurrentLanguage(lang);
+    setBookData((prev) => ({ ...prev, language: lang }));
+    setIsLoading(false);
+  }, [currentUserData]);
 
   // Navigation
   const canGoNext = () => {
@@ -149,8 +151,8 @@ export default function BookWizard() {
         if (modResult.blocked) {
           toast({
             variant: "destructive",
-            title: isHebrew ? "תוכן לא מתאים" : "Inappropriate content",
-            description: isHebrew ? "אחד השמות מכיל תוכן לא מתאים" : "One of the names contains inappropriate content"
+            title: t("wizard.error.inappropriateContent"),
+            description: t("wizard.error.nameInappropriate")
           });
           setIsGeneratingOutline(false);
           return;
@@ -160,8 +162,11 @@ export default function BookWizard() {
       // Use bookData.age_range, fallback to preferredAgeRange from onboarding, then default
       const ageRange = bookData.age_range || localStorage.getItem("preferredAgeRange") || "5-10";
       const safetyPrefix = buildSafetyPromptPrefix(ageRange);
-      const langInstruction = isHebrew
+      // Use currentLanguage (book content language) for AI prompt instruction
+      const langInstruction = currentLanguage === "hebrew"
         ? "יש ליצור את כל התוכן בעברית בלבד. "
+        : currentLanguage === "yiddish"
+        ? "שרייב דעם גאנצן אינהאלט אויף יידיש. "
         : "Create all content in English only. ";
 
       const topicDescription = selectedTopic === "custom" && customIdea
@@ -201,8 +206,8 @@ The story should be age-appropriate for children ages ${ageRange}, fun, engaging
           // but double-check just in case
           toast({
             variant: "destructive",
-            title: isHebrew ? "בעיה בתוכן" : "Content issue",
-            description: isHebrew ? "התוכן שנוצר לא מתאים. מנסה שוב..." : "Generated content was not appropriate. Trying again..."
+            title: t("wizard.error.contentIssue"),
+            description: t("wizard.error.contentNotAppropriate")
           });
           setIsGeneratingOutline(false);
           return;
@@ -229,10 +234,8 @@ The story should be age-appropriate for children ages ${ageRange}, fun, engaging
       }
     } catch {
       setError({
-        title: isHebrew ? "אופס! משהו השתבש" : "Oops! Something went wrong",
-        message: isHebrew
-          ? "לא הצלחנו ליצור את הסיפור. אפשר לנסות שוב!"
-          : "We couldn't generate the story. Let's try again!",
+        title: t("wizard.error.outlineTitle"),
+        message: t("wizard.error.outlineMessage"),
         onRetry: generateOutline
       });
     } finally {
@@ -245,10 +248,8 @@ The story should be age-appropriate for children ages ${ageRange}, fun, engaging
     if (!failures || failures.length === 0) return;
 
     toast({
-      title: isHebrew ? "מנסה שוב איורים שנכשלו..." : "Retrying failed illustrations...",
-      description: isHebrew
-        ? `מנסה ליצור ${failures.length} איורים מחדש`
-        : `Attempting to regenerate ${failures.length} illustrations`
+      title: t("wizard.toast.retryingImages"),
+      description: t("wizard.toast.retryingImagesDesc").replace("{count}", failures.length)
     });
 
     const retryResults = await Promise.allSettled(
@@ -274,14 +275,14 @@ The story should be age-appropriate for children ages ${ageRange}, fun, engaging
 
     if (stillFailed.length === 0) {
       toast({
-        title: isHebrew ? "כל האיורים נוצרו!" : "All illustrations generated!",
+        title: t("wizard.toast.allImagesGenerated"),
         className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100"
       });
     } else {
       toast({
         variant: "destructive",
-        title: isHebrew ? `${stillFailed.length} איורים עדיין נכשלו` : `${stillFailed.length} illustrations still failed`,
-        description: isHebrew ? "ניתן לנסות שוב מאוחר יותר" : "You can retry again later"
+        title: t("wizard.toast.imagesFailed").replace("{count}", stillFailed.length),
+        description: t("wizard.toast.imagesFailedRetry")
       });
     }
   };
@@ -292,7 +293,7 @@ The story should be age-appropriate for children ages ${ageRange}, fun, engaging
       setIsCreating(true);
       setError(null);
       setImageFailures([]);
-      setCreationProgress({ label: isHebrew ? "בודק תוכן..." : "Checking content...", percent: 5, step: "" });
+      setCreationProgress({ label: t("wizard.progress.checkingContent"), percent: 5, step: "" });
 
       // Moderate title and description
       const titleCheck = moderateInput(bookData.title, "title");
@@ -301,8 +302,8 @@ The story should be age-appropriate for children ages ${ageRange}, fun, engaging
       if (titleCheck.blocked || descCheck.blocked) {
         toast({
           variant: "destructive",
-          title: isHebrew ? "תוכן לא מתאים" : "Inappropriate content",
-          description: isHebrew ? "הכותרת או התיאור מכילים תוכן לא מתאים" : "The title or description contains inappropriate content"
+          title: t("wizard.error.inappropriateContent"),
+          description: t("wizard.error.titleDescInappropriate")
         });
         setIsCreating(false);
         setCreationProgress(null);
@@ -311,9 +312,9 @@ The story should be age-appropriate for children ages ${ageRange}, fun, engaging
 
       // Step 1: Generate story outline + cover image in parallel
       setCreationProgress({
-        label: isHebrew ? "יוצר עלילה ועטיפה..." : "Creating story & cover...",
+        label: t("wizard.progress.creatingStory"),
         percent: 10,
-        step: isHebrew ? "שלב 1 מתוך 4" : "Step 1 of 4"
+        step: t("wizard.progress.step1of4")
       });
 
       let pageCount = 10;
@@ -338,6 +339,8 @@ The story should be age-appropriate for children ages ${ageRange}, fun, engaging
       const safetyPrefix = buildSafetyPromptPrefix(ageRange);
       const langInstruction = bookData.language === "hebrew"
         ? "יש ליצור את כל התוכן בעברית בלבד. "
+        : bookData.language === "yiddish"
+        ? "שרייב דעם גאנצן אינהאלט אויף יידיש. "
         : "Create all content in English only. ";
 
       const outlinePrompt = `${safetyPrefix}${langInstruction}Create a detailed outline for a children's book:
@@ -383,9 +386,9 @@ The story should have a clear beginning, middle, and end.`;
 
       // Step 2: Create book entity
       setCreationProgress({
-        label: isHebrew ? "שומר את הספר..." : "Saving book...",
+        label: t("wizard.progress.savingBook"),
         percent: 25,
-        step: isHebrew ? "שלב 2 מתוך 4" : "Step 2 of 4"
+        step: t("wizard.progress.step2of4")
       });
 
       // Sanitize AI-generated title before saving
@@ -402,9 +405,9 @@ The story should have a clear beginning, middle, and end.`;
 
       // Step 3: Generate ALL page texts in parallel
       setCreationProgress({
-        label: isHebrew ? "כותב את הסיפור..." : "Writing the story...",
+        label: t("wizard.progress.writingStory"),
         percent: 35,
-        step: isHebrew ? "שלב 3 מתוך 4" : "Step 3 of 4"
+        step: t("wizard.progress.step3of4")
       });
 
       const outlinePages = outlineResult?.outline || [];
@@ -448,9 +451,9 @@ Return as JSON with:
       // Step 4: Generate ALL illustrations in parallel
       // Use Promise.allSettled so one failure doesn't cancel the rest
       setCreationProgress({
-        label: isHebrew ? "מצייר איורים..." : "Drawing illustrations...",
+        label: t("wizard.progress.drawingIllustrations"),
         percent: 60,
-        step: isHebrew ? "שלב 4 מתוך 4" : "Step 4 of 4"
+        step: t("wizard.progress.step4of4")
       });
 
       const imagePromises = sanitizedPageTexts.map((pageText) => {
@@ -462,7 +465,7 @@ Return as JSON with:
         return GenerateImage({ prompt: imagePrompt })
           .then((result) => ({ url: result?.url || "", prompt: imagePrompt }))
           .catch((err) => {
-            console.error("[BookWizard] Image generation failed:", err?.message || err);
+            captureError(err instanceof Error ? err : new Error(String(err?.message || err)), { context: "BookWizard image generation" });
             return { url: "", prompt: imagePrompt, failed: true };
           });
       });
@@ -483,7 +486,7 @@ Return as JSON with:
             pendingFailures.push({ index: i, prompt: outcome.value.prompt });
           }
         } else {
-          console.error("[BookWizard] Image promise rejected for page", i, outcome.reason);
+          captureError(outcome.reason instanceof Error ? outcome.reason : new Error(String(outcome.reason)), { page: i, context: "BookWizard image promise" });
           imageResults.push({ url: "", prompt: sanitizedPageTexts[i]?.image_prompt || "", failed: true });
           pendingFailures.push({ index: i, prompt: sanitizedPageTexts[i]?.image_prompt || "" });
         }
@@ -495,7 +498,7 @@ Return as JSON with:
 
       // Save all pages in parallel
       setCreationProgress({
-        label: isHebrew ? "שומר עמודים..." : "Saving pages...",
+        label: t("wizard.progress.savingPages"),
         percent: 85,
         step: ""
       });
@@ -529,10 +532,36 @@ Return as JSON with:
       await Book.update(createdBook.id, { status: "complete" });
 
       setCreationProgress({
-        label: isHebrew ? "הספר מוכן!" : "Book ready!",
+        label: t("wizard.progress.bookReady"),
         percent: 100,
         step: ""
       });
+
+      // Track book creation event
+      trackEvent('book_created', { book_id: createdBook.id });
+
+      // Notify followers about the new book (fire-and-forget)
+      if (currentUserData?.email) {
+        Follow.filter({ following_email: currentUserData.email })
+          .then((followers) => {
+            if (followers.length > 0) {
+              const authorName = currentUserData.full_name || 'Someone you follow';
+              Promise.allSettled(
+                followers.map((follower) =>
+                  Notification.create({
+                    user_email: follower.follower_email,
+                    type: 'new_book',
+                    title: `${authorName} created a new book!`,
+                    message: finalBookData.title,
+                    link: `/BookView?id=${createdBook.id}`,
+                    read: false,
+                  })
+                )
+              );
+            }
+          })
+          .catch(() => {}); // notification failures must never block book creation
+      }
 
       // Award XP for book creation
       try {
@@ -545,39 +574,59 @@ Return as JSON with:
       // Show summary: how many images succeeded, and offer retry if any failed
       if (failuresWithPageIds.length > 0) {
         setImageFailures(failuresWithPageIds);
-        toast({
-          variant: "destructive",
-          title: isHebrew ? "הספר נוצר עם בעיות" : "Book created with issues",
-          description: isHebrew
-            ? `${successCount} מתוך ${sanitizedPageTexts.length} איורים נוצרו בהצלחה. האחרים נכשלו.`
-            : `${successCount} of ${sanitizedPageTexts.length} illustrations generated successfully. ${failuresWithPageIds.length} failed.`
-        });
-      } else {
-        toast({
-          title: isHebrew ? "הספר נוצר!" : "Book created!",
-          description: isHebrew ? "הספר שלך מוכן לקריאה!" : "Your book is ready to read!",
-          className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100"
-        });
       }
 
-      // Navigate to BookView
-      navigate(`${createPageUrl("BookView")}?id=${createdBook.id}`);
+      // Show celebration screen instead of navigating immediately
+      setCelebrationBook({
+        id: createdBook.id,
+        title: finalBookData.title,
+        cover_image: coverImage,
+        failures: failuresWithPageIds
+      });
+      setShowCelebration(true);
 
-      // If there were failures, offer retry after navigation (non-blocking)
-      if (failuresWithPageIds.length > 0) {
-        setTimeout(() => {
-          retryFailedImages(createdBook.id, failuresWithPageIds);
-        }, 2000);
-      }
+      // Fire confetti!
+      confetti({
+        particleCount: 160,
+        spread: 80,
+        origin: { y: 0.6 },
+        colors: ["#7c3aed", "#a855f7", "#ec4899", "#f59e0b", "#3b82f6", "#10b981"]
+      });
+
+      // Auto-navigate after 3 seconds
+      celebrationTimerRef.current = setTimeout(() => {
+        navigateToBook(createdBook.id, failuresWithPageIds);
+      }, 3000);
     } catch {
       setError({
-        title: isHebrew ? "אופס! לא הצלחנו ליצור את הספר" : "Oops! Couldn't create the book",
-        message: isHebrew ? "משהו השתבש. בואו ננסה שוב!" : "Something went wrong. Let's try again!",
+        title: t("wizard.error.createTitle"),
+        message: t("wizard.error.createMessage"),
         onRetry: createBook
       });
     } finally {
       setIsCreating(false);
       setCreationProgress(null);
+    }
+  };
+
+  // Cleanup celebration timer on unmount
+  useEffect(() => {
+    return () => {
+      if (celebrationTimerRef.current) {
+        clearTimeout(celebrationTimerRef.current);
+      }
+    };
+  }, []);
+
+  const navigateToBook = (bookId, failures) => {
+    setShowCelebration(false);
+    setCelebrationBook(null);
+    navigate(`${createPageUrl("BookView")}?id=${bookId}`);
+    // Retry failed images after navigation (non-blocking)
+    if (failures && failures.length > 0) {
+      setTimeout(() => {
+        retryFailedImages(bookId, failures);
+      }, 2000);
     }
   };
 
@@ -589,7 +638,7 @@ Return as JSON with:
   if (isLoading) {
     return (
       <LoadingOverlay
-        message={isHebrew ? "מכינים הכל בשבילך..." : "Getting everything ready..."}
+        message={t("wizard.loading")}
         isRTL={isRTL}
       />
     );
@@ -667,6 +716,119 @@ Return as JSON with:
     }
   };
 
+  // Celebration screen — shown for 3 seconds after book creation
+  if (showCelebration && celebrationBook) {
+    const celebrationTitle = t("wizard.celebration.title");
+    const readLabel = t("wizard.celebration.readButton");
+
+    return (
+      <motion.div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-purple-600 via-fuchsia-500 to-indigo-600"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        dir={isRTL ? "rtl" : "ltr"}
+      >
+        <motion.div
+          className="flex flex-col items-center gap-6 p-8 max-w-sm w-full text-center"
+          initial={{ scale: 0.6, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 260, damping: 20, delay: 0.1 }}
+        >
+          {/* Stars decoration */}
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+            className="absolute top-8 left-8 text-4xl opacity-50"
+            aria-hidden="true"
+          >
+            ✨
+          </motion.div>
+          <motion.div
+            animate={{ rotate: -360 }}
+            transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+            className="absolute top-12 right-12 text-3xl opacity-40"
+            aria-hidden="true"
+          >
+            🌟
+          </motion.div>
+
+          {/* Book cover */}
+          {celebrationBook.cover_image ? (
+            <motion.img
+              src={celebrationBook.cover_image}
+              alt={celebrationBook.title}
+              className="w-40 h-52 object-cover rounded-2xl shadow-2xl border-4 border-white/30"
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            />
+          ) : (
+            <motion.div
+              className="w-40 h-52 rounded-2xl shadow-2xl bg-white/20 flex items-center justify-center border-4 border-white/30"
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              <BookOpen className="h-16 w-16 text-white/70" aria-hidden="true" />
+            </motion.div>
+          )}
+
+          {/* Title */}
+          <motion.h1
+            className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            {celebrationTitle}
+          </motion.h1>
+
+          {/* Book title */}
+          {celebrationBook.title && (
+            <motion.p
+              className="text-lg text-white/90 font-medium"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              {celebrationBook.title}
+            </motion.p>
+          )}
+
+          {/* CTA Button */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <Button
+              onClick={() => {
+                if (celebrationTimerRef.current) clearTimeout(celebrationTimerRef.current);
+                navigateToBook(celebrationBook.id, celebrationBook.failures);
+              }}
+              className="bg-white text-purple-700 hover:bg-purple-50 font-bold text-lg px-8 py-4 h-auto rounded-full shadow-xl gap-2"
+              aria-label={readLabel}
+            >
+              <Sparkles className="h-5 w-5" aria-hidden="true" />
+              {readLabel}
+            </Button>
+          </motion.div>
+
+          {/* Auto-navigate hint */}
+          <motion.p
+            className="text-sm text-white/60"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
+          >
+            {t("wizard.celebration.autoNavigate")}
+          </motion.p>
+        </motion.div>
+      </motion.div>
+    );
+  }
+
   return (
     <motion.div
       className="max-w-4xl mx-auto p-4 md:p-6 lg:p-8"
@@ -682,7 +844,7 @@ Return as JSON with:
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          {isHebrew ? "אשף יצירת ספר" : "Book Creation Wizard"}
+          {t("wizard.title")}
         </motion.h1>
         <motion.p
           className="text-gray-600 dark:text-gray-300 text-lg"
@@ -690,7 +852,7 @@ Return as JSON with:
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          {isHebrew ? "צור ספר ילדים מדהים בארבעה שלבים פשוטים" : "Create an amazing children's book in four simple steps"}
+          {t("wizard.subtitle")}
         </motion.p>
       </div>
 
@@ -710,9 +872,36 @@ Return as JSON with:
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: isRTL ? 30 : -30 }}
           transition={{ duration: 0.3 }}
-          className="mb-8 min-h-[400px]"
+          className="mb-8 min-h-[400px] relative"
         >
           {renderStep()}
+
+          {/* Outline generation loading overlay */}
+          {isGeneratingOutline && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-2xl z-10"
+              aria-live="polite"
+              role="status"
+            >
+              <div className="flex flex-col items-center gap-4 text-center px-6">
+                <div
+                  className="w-12 h-12 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"
+                  aria-hidden="true"
+                />
+                <div>
+                  <p className="text-lg font-semibold text-purple-700 dark:text-purple-300">
+                    {t("wizard.generatingOutline")}
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    {t("wizard.generatingOutlineDesc")}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          )}
         </motion.div>
       </AnimatePresence>
 
@@ -723,17 +912,17 @@ Return as JSON with:
           onClick={prevStep}
           disabled={currentStep === 0}
           className="flex items-center gap-2"
-          aria-label={isHebrew ? "חזור" : "Back"}
+          aria-label={t("wizard.nav.back")}
         >
           {isRTL ? (
             <>
-              {isHebrew ? "חזור" : "Back"}
+              {t("wizard.nav.back")}
               <ChevronRight className="h-4 w-4" aria-hidden="true" />
             </>
           ) : (
             <>
               <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-              Back
+              {t("wizard.nav.back")}
             </>
           )}
         </Button>
@@ -743,18 +932,18 @@ Return as JSON with:
             onClick={nextStep}
             disabled={!canGoNext() || isGeneratingOutline}
             className="bg-purple-600 hover:bg-purple-700 flex items-center gap-2"
-            aria-label={isHebrew ? "השלב הבא" : "Next step"}
+            aria-label={t("wizard.nav.next")}
           >
             {isGeneratingOutline ? (
-              <span>{isHebrew ? "מייצר..." : "Generating..."}</span>
+              <span>{t("wizard.nav.generating")}</span>
             ) : isRTL ? (
               <>
                 <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-                {isHebrew ? "הבא" : "Next"}
+                {t("wizard.nav.next")}
               </>
             ) : (
               <>
-                Next
+                {t("wizard.nav.next")}
                 <ChevronRight className="h-4 w-4" aria-hidden="true" />
               </>
             )}
@@ -765,19 +954,12 @@ Return as JSON with:
       {/* Creating overlay */}
       {isCreating && (
         <LoadingOverlay
-          message={isHebrew ? "יוצר את הספר הקסום שלך..." : "Creating your magical book..."}
+          message={t("wizard.creatingBook")}
           isRTL={isRTL}
           overlay
         />
       )}
 
-      {/* Gamification celebrations */}
-      <GamificationOverlay
-        pendingCelebrations={gamification.pendingCelebrations}
-        onDismiss={gamification.dismissCelebration}
-        isRTL={isRTL}
-        isHebrew={isHebrew}
-      />
     </motion.div>
   );
 }

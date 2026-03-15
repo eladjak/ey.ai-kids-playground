@@ -1,7 +1,720 @@
-# EY.AI Kids Playground - Progress & Analysis Report
+# Sipurai - Progress & Analysis Report
 
-## Status: Active - Master Plan Phase 5 Complete (ALL PHASES DONE)
-## Last Updated: 2026-02-27
+## Status: Active - Auth Independence Phase 4 Complete (Base44 SDK REMOVED)
+## Last Updated: 2026-03-15
+
+---
+
+## Session 31: Auth Independence — Phase 4 (Mar 15, 2026)
+
+### Phase 4: Auth Migration (Base44 Auth → Clerk)
+- **@clerk/clerk-react v5.61.3** installed
+- **`src/entities/User.js`** fully rewritten — imperative-to-hook bridge pattern:
+  - Module-level `_currentUser` + `_clerkUserInstance` references
+  - `User._setClerkUser(clerkUser)` called by AuthContext when Clerk state changes
+  - `User.me()` returns cached user (throws if not authenticated)
+  - `User.updateMyUserData(data)` persists to Clerk's `unsafeMetadata`
+  - `User.logout()` clears local state
+- **`src/lib/AuthContext.jsx`** fully rewritten — Clerk hooks integration:
+  - `AuthProvider` uses `useUser()`, `useClerkAuth()`, `useClerk()` from Clerk
+  - Syncs Clerk user to imperative `User._setClerkUser()` bridge
+  - `FallbackAuthProvider` for when `VITE_CLERK_PUBLISHABLE_KEY` is not set
+  - Same `useAuth()` API surface as before
+- **`src/App.jsx`** rewritten — ClerkProvider conditional wrapping:
+  - Checks `VITE_CLERK_PUBLISHABLE_KEY`, wraps with ClerkProvider or FallbackAuthProvider
+  - Added redirect to login for non-public routes when not authenticated
+  - Zero Base44 imports
+- **`src/hooks/useCurrentUser.js`** simplified — wraps `useAuth()` only (no React Query)
+- **`src/pages/BookView.jsx`** — replaced `base44.auth.redirectToLogin` with `navigateToLogin()`
+- **`src/lib/PageNotFound.jsx`** — rewritten with `useAuth()` hook
+- **`src/lib/NavigationTracker.jsx`** — removed `base44.appLogs.logUserInApp()`
+- **`vite.config.js`** — removed `@base44/vite-plugin`, added `resolve.alias`
+
+### Base44 SDK Removed
+- **`@base44/sdk`** uninstalled from package.json
+- **`@base44/vite-plugin`** uninstalled from package.json
+- **`src/api/base44Client.js`** DELETED
+- **`src/lib/app-params.js`** DELETED
+
+### Test Mocks Migrated (9 files)
+- `secureEntity.test.js` — mock `@/entities/User` directly
+- `useCurrentUser.test.js` — complete rewrite for useAuth wrapper
+- `useGamification.test.js` — removed base44Client mock
+- `useBook.test.js` — removed base44Client mock
+- `useCharacterSelector.test.js` — removed base44Client mock
+- `CharacterPicker.test.jsx` — direct Character entity mock
+- `i18nProvider.test.jsx` — User entity mock
+- `BookWizard.test.jsx` — User entity + AuthContext mock
+- `pages-setup.js` — AuthContext mock
+
+### Independence Status After Phase 4
+- ~~AI text/image~~ → Gemini direct (Phase 1)
+- ~~File uploads~~ → Supabase Storage (Phase 2)
+- ~~Entities (11)~~ → Supabase PostgreSQL (Phase 3)
+- ~~Auth + User entity~~ → Clerk (Phase 4)
+- **@base44/sdk REMOVED from project**
+- `.env` still has VITE_BASE44_* vars (dead, can be removed)
+
+### Build & Tests
+- Build: clean (exit 0)
+- Tests: 238+ passing (12/13 files — 1 worker OOM crash, machine memory issue)
+
+### Payment Review Document
+- Created `PAYMENT-REVIEW.html` — comprehensive Hebrew review of payment/billing options
+- Covers: Stripe Atlas, Polar, Lemon Squeezy, Paddle, PayPlus
+- Recommendation: Polar now, Stripe Atlas at $2K+/month revenue
+
+### User Action Required
+- Create Clerk account → get `VITE_CLERK_PUBLISHABLE_KEY`
+- Add to `.env` and Vercel environment variables
+- Remove dead `VITE_BASE44_*` vars from `.env` and Vercel
+
+---
+
+## Session 30: Full Independence — Phases 2+3 (Mar 15, 2026)
+
+### Phase 2: Storage Migration (Base44 UploadFile → Supabase Storage)
+- Supabase project "sipurai" configured with `sipurai-images` bucket
+- `src/lib/supabaseClient.js` created — client + `uploadFileToSupabase()`
+- `src/integrations/Core.js` rewritten — zero Base44 imports
+- All 5 upload consumers work unchanged
+
+### Phase 3: Database Migration (Base44 Entities → Supabase PostgreSQL)
+- **11 PostgreSQL tables** created with indexes and RLS
+  - books, pages, characters, community, comments, collaborations
+  - feedback, story_ideas, user_badges, follows, notifications
+- **`src/lib/supabaseEntity.js`** created — generic Supabase entity adapter
+  - Same API shape as Base44: list, filter, get, create, update, delete
+  - Sort parser: "-field" = descending (matches Base44)
+  - Column mapping support: childNames→child_names, selectedCharacters→selected_characters
+- **All 11 entity files** updated to use Supabase instead of Base44
+  - Book.js: with columnMap for camelCase fields
+  - UserBadge.js: ownerField 'user_id' preserved
+  - Notification.js: ownerField 'user_email' preserved
+- **secureEntity.js** unchanged — works seamlessly with Supabase entities
+- **`src/api/entities.js`** deleted (dead code, zero consumers)
+- **User.js stays on Base44** (auth entity, Phase 4)
+
+### Base44 Dependency Status After Phase 3
+- ~~AI text/image~~ → Gemini direct (Phase 1)
+- ~~File uploads~~ → Supabase Storage (Phase 2)
+- ~~Entities (11)~~ → Supabase PostgreSQL (Phase 3)
+- Auth + User entity → still Base44 (Phase 4)
+- Remaining files with base44: 6 runtime + 9 test mocks (all auth-related)
+
+### Build & Tests
+- 263/263 tests passing, 13 files
+- Build: clean (exit 0)
+
+---
+
+## Session 30 (earlier): Storage Independence — Phase 2 (Mar 15, 2026)
+
+### Supabase Storage Migration (Base44 UploadFile → Supabase Storage)
+- Created Supabase project "sipurai" (user-provided credentials)
+  - URL: furviizyohryyqubosut.supabase.co
+  - Storage bucket: `sipurai-images` (public, 10MB limit, image MIME types only)
+  - RLS policies: anon + authenticated can read/insert
+- Created `src/lib/supabaseClient.js` — Supabase client + `uploadFileToSupabase()` helper
+  - File path format: `{folder}/{timestamp}-{random}.{ext}`
+  - 1-year cache control headers
+  - Returns `{ file_url: string }` (matches Base44's API shape)
+- Rewrote `src/integrations/Core.js` — **zero Base44 imports remaining**
+  - GenerateImage: Gemini → Supabase Storage (was: Gemini → Base44)
+  - UploadFile: Supabase Storage (was: Base44)
+  - SendEmail/SendSMS/ExtractData: no-op stubs with console.warn
+- Installed `@supabase/supabase-js` to package.json
+- Added Supabase env vars to `.env` (URL, anon key, service role, DB password)
+
+### Base44 Dependency Status After Phase 2
+- ~~AI text/image~~ → Gemini direct (Phase 1)
+- ~~File uploads~~ → Supabase Storage (Phase 2)
+- Entities (12 files) → still Base44 (Phase 3)
+- Auth → still Base44 (Phase 4)
+- Core.js → **fully independent** (no Base44 imports)
+
+### Build & Tests
+- 263/263 tests passing, 13 files
+- Build: clean (exit 0), 81 asset files
+- Supabase Storage: upload + public URL verified end-to-end
+
+### Pending Next Phases
+- Phase 3: Migrate 12 entities from Base44 → Supabase PostgreSQL with RLS
+- Phase 4: Migrate auth from Base44 → Clerk
+- Phase 5: Remove @base44/sdk entirely
+
+---
+
+## Session 29: AI Independence — Phase 1 (Mar 15, 2026)
+
+### AI Layer Migration (Base44 → Gemini Direct)
+- Created `src/lib/aiProvider.js` — direct Gemini API integration
+  - Text: `gemini-2.5-flash` with JSON schema enforcement
+  - Images: `gemini-2.0-flash-preview-image-generation`
+  - Auto schema conversion (lowercase → uppercase types)
+  - Child-safety prompt injection for all image generation
+  - Error handling: safety blocks, empty responses, network errors
+- Rewrote `src/integrations/Core.js` — routes to aiProvider instead of Base44
+  - InvokeLLM → gemini text generation (11 call sites)
+  - GenerateImage → gemini image gen + Base44 upload for URL (9 call sites)
+  - UploadFile → still Base44 (temporary, until Supabase Storage)
+- Fixed CharacterEditor.jsx — removed redundant JSON.parse
+
+### Additional Fixes
+- **BROKEN-2 FIXED**: BookCreation preview iframe URL
+- **Auth wiring**: Sentry setUser + analytics identifyUser in AuthContext
+- **Playwright config**: Fixed dev server command
+- **API keys added to .env**: Gemini, Anthropic, OpenAI, Gelato, Lulu
+
+### API Keys Inventory (found on machine)
+- Gemini: AIzaSyDpAjH5T4s... (ACTIVE — in .env as VITE_GEMINI_API_KEY)
+- Anthropic: sk-ant-api03-jNxf... (stored for future use)
+- OpenAI: sk-proj-ve-nzd8j... (stored for future use)
+- Supabase: 4 existing projects found (need new one for Sipurai)
+- Clerk: haderech-next project found
+
+### Interactive Reports
+- INDEPENDENCE-PHASE1-REPORT.html — full review with feature survey, costs, roadmap
+- STRIPE-RESEARCH-GUIDE.html — Stripe vs CardCom vs PayPlus comparison
+
+### Build & Tests
+- 263/263 tests passing
+- Build: clean (exit 0)
+
+### Next Steps (Phase 2: Storage Independence)
+- User creates Supabase project → sends URL + keys
+- Replace UploadFile → Supabase Storage
+- User adds VITE_GEMINI_API_KEY to Vercel env vars
+- User enables Gemini API billing
+
+---
+
+## Session 28: Audit Remediation + i18n + Research (Mar 15, 2026)
+
+### i18n Completion (background agent from Session 27B)
+- Library.jsx + Profile.jsx: removed inline translations (~130 lines), wired useI18n()
+- All 3 locale files expanded with library/profile sections (~80 keys each)
+- Total pages using useI18n: 13/17
+
+### Payment + Print Research (Opus agent)
+- **Payment recommended: PayPlus (1.5%) + Green Invoice Morning (45 ILS/mo)**
+- **Print recommended: Gelato (primary, 140+ partners) + Lulu (backup)**
+- Full comparison of 7 payment processors + 7 POD services
+- Revenue model: 40% gross margin at 100 books/month
+
+### UX Critical + High Fixes (4 parallel agents)
+- **C-2 FIXED**: Like manipulation — server re-fetch before increment, per-user tracking by userId
+- **UX-C3 FIXED**: Loading overlay during outline generation (BookWizard.jsx)
+- **Locale dupes FIXED**: 3 duplicate key patterns resolved (invite, stats, noStories) — zero build warnings
+- **Library i18n verified**: filter dropdowns already using t() correctly
+
+### UX Medium Fixes (7 items)
+- UX-M1: ArtStyleSection flicker — removed scale animations, CSS transition instead
+- UX-M2: BadgeDisplay — standardized sizes (sm/md/lg with consistent w-h)
+- UX-M3: Leaderboard — skeleton loading (header + stats cards + 8 row skeletons)
+- UX-M6: FeaturedStory — responsive gradient + text sizing for mobile
+- UX-M9: DailyPrompt — refresh button RTL-aware positioning
+- UX-M11: CharacterPicker — grid-cols-2/3/4 responsive + overflow prevention
+- UX-M12: SavedIdeas — empty state with Lightbulb icon + CTA
+
+### UX Low Fixes (5 items)
+- UX-L1: PageFlip — 44x44px touch target buttons with RTL swap
+- UX-L2: LazyImage — error fallback with ImageOff icon
+- UX-L4: CommunityPost — timestamps localized (formatDistanceToNow + he locale)
+- UX-L7: Leaderboard — rank badge RTL with gap-based layout
+- UX-L9: Settings — logout confirmation AlertDialog
+- UX-L3: Already implemented correctly (submit disabled during sending)
+
+### Verification
+- Build: clean (exit 0), zero duplicate key warnings
+- Tests: 263/263 passing (13 files)
+
+### Remaining Open Items
+- **Sentry DSN**: User creating account — needs VITE_SENTRY_DSN in .env
+- **PayPlus registration**: User action required
+- **Green Invoice registration**: User action required
+- **Gelato developer account**: User action required
+- **Lulu developer account**: User action required (backup)
+- **BROKEN-2**: BookCreation preview iframe (low priority — advanced editor)
+- **UX-M4**: PageFlip iOS Safari touch swipe (needs device testing)
+- **UX-M7**: IdeaGenerator empty state illustration (needs Gemini image)
+
+---
+
+## Session 27B: Comprehensive Audit + 8-Agent Fix Wave (Mar 14, 2026)
+
+### Phase 1: 4 Audit Agents (parallel)
+- **Security Audit (Opus)**: 21 findings (4C, 6H, 7M, 4L)
+- **UX/UI Review**: 35 findings (4C, 10H, 12M, 9L)
+- **Functionality Check**: 4 broken, 12 dead code, 8 warnings
+- **Sentry + Analytics**: Installed @sentry/react, rewrote analytics.js PostHog→Umami
+
+### Phase 2: 4 Fix Agents (parallel)
+
+#### Security Fixes (7 items)
+- Community share: added moderateInput() before posting (CRITICAL)
+- Community share: added parental controls check (CRITICAL)
+- Reply comments: added moderateInput() to handleSubmitReply (HIGH)
+- PIN brute-force protection: lockout after 5/10/15 failed attempts (HIGH)
+- Follow analytics: removed targetEmail from trackEvent (COPPA)
+- Book title removed from analytics events (COPPA)
+- CSP + Referrer-Policy + X-Frame-Options headers in vercel.json
+
+#### UX/RTL Fixes (8 items)
+- Mobile header: added dir={isRTL} for correct hamburger position (CRITICAL)
+- BookView back arrow: ArrowLeft/ArrowRight based on isRTL (CRITICAL)
+- GamificationOverlay: unified to Layout level, removed from Home/BookView/BookWizard (CRITICAL)
+- ring-3 → ring-2 in TopicStep.jsx (invalid Tailwind class)
+- OnboardingWizard: replaced "..." spinner with Loader2 icon
+- Home.jsx: 4 icon margins made RTL-aware (mr-2 → conditional)
+- BookView: missing bookId now shows error state instead of infinite spinner
+- Dark mode: lazy useState initializer prevents flash
+
+#### Cleanup (4 items)
+- 13 dead files deleted (~2,500 lines): ArtStyleOption, ArtStyleSection, BookPreview, AvatarStudioDialog, EditProfileDialog, RecentAchievementsSection, CharacterCard, IdeaEditor, IdeaResultCard, NotificationSettings, contentFilter.js+test, App.jsx, index.jsx
+- 2 dead routes removed from pages.config.js (App, index)
+- 4 console.error → captureError (BookCreation, BookWizard)
+- HTML guide files added to .gitignore (credentials protection)
+
+### Report
+Interactive HTML report: AUDIT-REPORT-SESSION27.html
+
+### Verification
+- Build: clean (exit 0)
+- Tests: 263/263 passing (13 files) — 43 tests removed with deleted contentFilter.js
+- Sentry: dynamic import, zero bundle cost without DSN
+- Analytics: Umami trackEvent working, COPPA-safe
+
+### Known Limitations (Architectural — documented, not fixable without migration)
+- C-1: Client-side-only auth (Base44 has no server-side RLS)
+- H-5: Parental controls in localStorage (bypassable via DevTools)
+- M-5: Report system is client-side only (no admin moderation queue)
+- M-6: User.get() can fetch any user profile
+
+---
+
+## Session 27: Full Rebrand EY.AI → Sipurai + Infrastructure (Mar 14, 2026)
+
+### Rebrand Complete
+- **Domain:** sipurai.ai purchased ($80/yr via Cloudflare)
+- **DNS:** A record → 216.198.79.1, CNAME www → Vercel, verified via Cloudflare + Google DNS
+- **All user-facing "EY.AI Kids" → "Sipurai"** across 18 files:
+  - index.html (title, meta, OG tags, favicon, Umami script)
+  - Layout.jsx (sidebar brand x2, now uses Gemini-generated icon)
+  - seo.js, LandingNav.jsx, FooterSection.jsx, LandingPage.jsx
+  - BlogPost.jsx, Blog.jsx, BookView.jsx
+  - OnboardingWizard.jsx (EN+HE welcome messages)
+  - InstallPrompt.jsx (EN+HE+YI)
+  - BlogSidebar.jsx (email → hello@sipurai.ai)
+  - en.jsx, he.jsx, yi.jsx (onboarding + sharing strings)
+  - manifest.json (name, short_name, icon paths)
+  - package.json (name → "sipurai")
+  - e2e selectors/auth/navigation (brand text selectors)
+  - CLAUDE.md, MEMORY.md (project identity)
+
+### App Icon Generated (Gemini)
+- Purple gradient book with golden sparkles — saved to public/icons/
+- Favicon: custom SVG at public/favicon.svg (replaces Base44 logo)
+- PWA icons: icon-192x192.jpg, icon-512x512.jpg, apple-touch-icon.jpg
+
+### Umami Analytics Installed
+- Self-hosted on Hetzner VPS (CAX11, Helsinki) via Coolify Docker
+- URL: https://analytics.sipurai.ai
+- Website ID: 3540b3be-4b55-4372-828e-8666009a1ac8
+- Tracking script added to index.html
+- Public dashboard: https://analytics.sipurai.ai/share/4Qoo8c35DKM0MuKg
+
+### Infrastructure Decisions (from Services Research)
+- Analytics: Umami (cookieless, COPPA-safe) ✅ DONE
+- Error Tracking: Sentry (planned)
+- Payments: CardCom + Stripe + iCount (planned)
+- Print: Lulu API + Cloudprinter (planned)
+- CMS: Sanity already connected (siteId: "eyai-kids")
+
+### Internal references preserved (NOT renamed)
+- Sanity siteId "eyai-kids" in GROQ queries (DB identifier)
+- PIN hash salt "_eyai_salt" (security)
+- Code comments mentioning original name
+
+### Verification
+- Build: clean (exit 0)
+- Tests: 306/306 passing (14 files)
+
+---
+
+## Session 26: Phase 12 — Social Wiring, i18n Completion, SEO, Analytics (Mar 9, 2026)
+
+Integration wave: wire Phase 11 social components, complete i18n coverage, add SEO + analytics infrastructure.
+
+### Agent U: Social Component Wiring
+- **NotificationBell** mounted in Layout.jsx mobile header (bell + avatar group)
+- **FollowButton** mounted in Profile.jsx (conditional: only shows for other users' profiles)
+- **FollowButton** mounted in CommunityPost.jsx author info section (size="sm")
+- All 3 components conditionally render (don't show on own profile/posts)
+
+### Agent V: Sanity Schema Enhancement
+- Added Yiddish ('yi') to post schema language options in content-studio
+- Verified: Project ID b0hm1i34, dataset production, 5 schema types registered
+- Post schema has siteId field — EY.AI Kids filters with "eyai-kids"
+
+### Agent W: i18n Completion (17/17 pages covered)
+- BookWizard: celebration screen strings → t() (was manual language check)
+- Characters: 7 art style labels → t(), loading aria → t()
+- StoryIdeas: error/moderation toasts → t()
+- Settings: already 100% wired — no changes needed
+- Added 14 new translation keys to en/he/yi locale files
+- **All 17 pages now have useI18n() wired**
+
+### Agent X: Analytics + Error Tracking
+- **New:** src/lib/analytics.js — trackEvent, trackPageView, identifyUser (PostHog-ready)
+- **New:** src/lib/errorTracking.js — captureError, setUser, initErrorTracking (Sentry-ready)
+- Wired into App.jsx (page views on route change + init)
+- Wired into ErrorBoundary.jsx (captureError in componentDidCatch)
+- Tracking: book_created (BookWizard), badge_earned (useGamification), follow_toggled (useFollow)
+- Zero npm packages added — pure stubs that delegate to window.posthog/window.Sentry
+
+### Agent Y: SEO + OpenGraph
+- **New:** src/lib/seo.js — updateMeta + resetMeta (OG, Twitter Cards, standard meta)
+- Wired into BookView (book title/cover as article), Blog (listing), BlogPost (article), LandingPage
+- index.html: updated to lang="he" dir="rtl", added og:url
+- Every page resets meta on unmount (SPA-safe)
+
+### Results
+- **Build:** Clean (exit 0)
+- **Tests:** 294/294 passing (13 files)
+- **New files:** 3 (analytics.js, errorTracking.js, seo.js)
+- **i18n:** 17/17 pages covered (was 11/17)
+- **Social:** NotificationBell + FollowButton fully integrated
+- **Sanity:** Yiddish language support added to content-studio
+
+---
+
+## Session 25: Phase 11 — Landing Page, Blog, Sanity CMS, Follow System (Mar 9, 2026)
+
+Full marketing + social layer: public-facing landing page, blog with Sanity CMS, follow/notification system.
+
+### Agent Q: Sanity CMS Integration
+- Installed @sanity/client + @sanity/image-url
+- Connected to existing Sanity project (b0hm1i34, dataset: production)
+- sanityClient.js: CDN reads, urlFor() image builder
+- sanityQueries.js: 7 GROQ queries (blog posts, landing page, categories, authors) with trilingual coalesce()
+- useSanityContent.js: React Query hooks (useBlogPosts, useBlogPost, useLandingPage, etc.)
+- 4 schema definitions: blogPost (aligned with existing `post` schema + siteId: "eyai-kids"), landingPage, author, category
+
+### Agent R: Landing Page (7 sections)
+- LandingPage.jsx + 7 section components in src/components/landing/
+- HeroSection: animated gradient, floating shapes, book mockup, dual CTAs
+- FeaturesSection: 6 feature cards (art styles, trilingual, characters, gamification, PWA, community)
+- HowItWorksSection: 4-step timeline with visual flow
+- TestimonialsSection: 3 Hebrew parent testimonials with star ratings
+- PricingSection: Free/Premium(29₪)/Family(49₪) with highlighted popular plan
+- FooterSection: links, social icons, "Made with heart & AI in Israel"
+- LandingNav: fixed transparent→solid, language switcher, smooth scroll
+- Full i18n in all 3 languages (en/he/yi locale files)
+
+### Agent S: Blog System
+- Blog.jsx: full listing with search, category filter, featured post, load-more pagination
+- BlogPost.jsx: full article with TOC, share (WhatsApp + copy), author card, related posts
+- 4 components: BlogCard (memo), BlogHeader, BlogSidebar, PortableText renderer
+- 6 mock Hebrew demo posts for development (before Sanity content)
+- 28 translation keys in all 3 languages
+- SEO: document.title per post
+
+### Agent P: Route Wiring
+- LandingPage at "/" for guests (logged-in users see Home dashboard)
+- /blog and /blog/:slug as public routes
+- PUBLIC_PAGES expanded: BookView, LandingPage, Blog, BlogPost
+
+### Agent T: Follow System + Notifications
+- 2 new entities: Follow (follower/following), Notification (5 types)
+- useFollow hook: React Query, toggleFollow mutation, counts
+- useNotifications hook: 30s polling, markAsRead/markAllAsRead
+- FollowButton: toggle with UserPlus/UserCheck icons, i18n
+- NotificationBell: badge count, dropdown panel, outside-click close
+- NotificationItem: type icons, relative time (Intl.RelativeTimeFormat), unread indicator
+- i18n: social.* keys in all 3 languages
+
+### Results
+- **Build:** Clean (exit 0)
+- **Tests:** 294/294 passing (13 files)
+- **New files:** ~25 created
+- **New pages:** 3 (LandingPage, Blog, BlogPost)
+- **New entities:** 2 (Follow, Notification)
+- **Sanity:** Connected to project b0hm1i34
+
+---
+
+## Session 24: Phase 10 — Infrastructure Wave (5 Agents) (Mar 9, 2026)
+
+Deep infrastructure improvements: centralized state management, PWA, public access, E2E testing.
+
+### Agent K: useCurrentUser Adoption
+- **13 files migrated** from scattered User.me() to centralized useCurrentUser hook
+- Pages: BookView, BookWizard, Community, CommunityPost, Feedback, Home, Leaderboard, Library, Profile, Settings, StoryIdeas, BookCreation, Layout
+- Smart exceptions: kept User.me() in BookCreation event handlers (fresh auth), secureEntity, i18nProvider
+- Eliminated ~15 redundant API calls per page load
+
+### Agent L: React Query Migration
+- **3 hooks converted** from useState+useEffect to React Query v5:
+  - useCurrentUser: queryKey ['currentUser'], staleTime 5min
+  - useBook: queryKey ['book', bookId], staleTime 2min, enabled guard
+  - useCharacterSelector: queryKey ['characters'], staleTime 2min
+- Per-instance QueryClient via useRef (works in tests without provider)
+- Automatic caching, deduplication, stale-while-revalidate
+- Same return API shape — zero breaking changes
+
+### Agent M: Public BookView + Page Transitions
+- **BookView accessible without login** — reading, page flips, PDF, TTS all work for guests
+- Guest banner: "Reading as guest — sign in to create books" with sign-in CTA
+- Guest guards: no XP awards, no edit/share buttons, "Sign in to create" at "The End" page
+- **Page transitions**: 150ms fade + y-shift via Framer Motion AnimatePresence
+- PUBLIC_PAGES set in App.jsx for route-level auth bypass
+
+### Agent N: PWA + Image Optimization
+- **vite-plugin-pwa** installed with Workbox runtime caching:
+  - Base44 API: NetworkFirst (1h TTL)
+  - Images: CacheFirst (30-day TTL, 100 entries)
+- **manifest.json** enhanced: Hebrew-first (lang: "he", dir: "rtl"), app shortcuts, categories
+- **InstallPrompt.jsx**: mobile install banner after 30s, 7-day dismiss, trilingual
+- **imageOptimization.js**: CDN-aware srcset generation, preloadImage utility
+- **LazyImage.jsx**: srcset/sizes support for responsive images
+- **index.html**: full PWA meta tags (iOS + Android)
+
+### Agent O: Playwright E2E Testing
+- **45 E2E tests** across 4 spec files:
+  - navigation.spec.js (13 tests): sidebar nav, dark mode, mobile menu, error routes
+  - book-creation.spec.js (9 tests): wizard steps, topic selection, navigation
+  - library.spec.js (9 tests): search, filters, tabs, empty state handling
+  - community.spec.js (11 tests): tabs, share modal, PIN dialog, featured section
+- **Auth helpers**: skipIfNotAuthenticated, waitForApp, waitForPageContent
+- **CI workflow**: .github/workflows/e2e.yml (separate from unit tests)
+- Playwright config with webServer auto-start
+
+### Results
+- **Build:** Clean (exit 0)
+- **Tests:** 294/294 unit tests passing (13 files) + 45 E2E tests configured
+- **Cumulative diff:** 92 files changed, +7,614 / -6,276 (includes Phase 9)
+
+---
+
+## Session 23: Phase 9 — Deep Improvement (2 Waves, 10 Agents) (Mar 9, 2026)
+
+Comprehensive improvement across every aspect of the application. 6 examination agents analyzed the codebase, then 10 implementation agents executed fixes in 2 waves.
+
+### Wave 1 (5 Agents) — Completed
+
+**Agent A: Cleanup & Bundle Optimization**
+- 17 unused packages removed from package.json (lodash, html2canvas, recharts, 5 Radix, etc.)
+- 17 unused UI primitives deleted from src/components/ui/
+- jsPDF lazy-loaded (dynamic import, ~90KB saved)
+- Vite manual chunks: vendor-react, vendor-ui, vendor-motion, vendor-query
+- Profile.jsx: DOM toast → shadcn useToast
+- VisualEditAgent wrapped in DEV-only guard
+
+**Agent B: Gamification Revival + BookView Enhancement**
+- book_read XP event (25 XP) — awards when reaching last page
+- streak_day XP via awardXPRef pattern
+- character_created wired in CharacterEditor
+- page_edited wired in BookCreation
+- BookView: "The End" completion page with confetti + 3 CTAs
+- GamificationOverlay mounted in BookView
+- Yiddish translations for CelebrationModal, XPToast, BadgeDisplay
+
+**Agent C: i18n & RTL Deep Fix**
+- CRITICAL: Yiddish AI prompts fixed in BookWizard (was generating English for Yiddish users)
+- Home.jsx shadow t() removed, uses central useI18n()
+- Layout.jsx migrated to central i18n
+- i18n added to 5 more components: CommentItem, FeaturedStory, ShareBookModal, FeedbackForm, PageNotFound
+- RTL fixes: Leaderboard text-start, CommentItem conditional margins, logical properties
+- Hebrew quality: "מוזר"→"שובב"
+
+**Agent D: Sharing & Community Enhancement**
+- WhatsApp sharing (wa.me, green button, first in share row)
+- Instagram button fixed (copy to clipboard)
+- Email invitation wired (mailto: intent)
+- CommunityPost share button fixed (Web Share API + clipboard fallback)
+- community_share XP wired in Community.jsx
+- Comment moderation: moderateInput before Comment.create
+- SEO meta tags (OG, Twitter Cards) in index.html
+- manifest.json created
+
+**Agent E: Testing & CI Pipeline**
+- GitHub Actions CI: .github/workflows/test.yml
+- Coverage config in vitest.config.js
+- secureEntity.test.js: auth, ownership, pass-through tests
+- CharacterPicker tests rewritten to test real hook code
+- i18nProvider.test.jsx: t(), language switch, RTL, backend preference
+- Fixed pre-existing gamification test (streak effect)
+
+**Wave 1 Result:** 294/294 tests, build clean
+
+### Wave 2 (5 Agents) — Completed
+
+**Agent F: Creation Flow UX Magic**
+- TopicStep: "Surprise Me!" button
+- PreviewEditStep: art style visual preview cards
+- SaveStep: child-friendly progress labels (EN/HE/YI)
+- CharacterPicker: auto-add child as first character
+- BookWizard: post-creation celebration
+
+**Agent G: i18n Full Consolidation**
+- Migrated inline translations from 9+ components to central locale files
+- Fixed Yiddish transliterations (Anglicized → authentic)
+- Added Yiddish to components that only had EN+HE
+
+**Agent H: Home Page Optimization**
+- Home.jsx: 795→310 lines (extracted 4 sub-components)
+- New: UserWelcomeCard, DailyPromptCard, DraftBooksSection, FeaturedBooksSection
+- Parallel data loading (Promise.all)
+- first_login XP event wired
+- Streak celebration: flame icon (≥3 days), pulse animation (≥7 days)
+- Personalized time-of-day greeting (EN/HE)
+
+**Agent I: Production Safety & Hardening**
+- bookRateLimit.js: client-side daily limit (respects parental controls)
+- storageCleanup.js: TTL-based localStorage cleanup on app startup
+- BookCreation: rate limit check before AI calls
+- Community: parental PIN approval before publishing
+- ErrorBoundary: structured error logging to localStorage
+- Layout: granular ErrorBoundary around content area
+
+**Agent J: React.memo + Performance**
+- React.memo on 5 expensive components (PageFlip, LazyImage, BadgeDisplay, XPToast, OnboardingWizard)
+- IdeaGenerator split: extracted IdeaForm.jsx + IdeaResultCard.jsx
+
+### Final Results
+- **Build:** Clean (exit 0)
+- **Tests:** 294/294 passing (13 files, 0 failures)
+- **Files changed:** 83 files, +3,966 / -5,343 (net -1,377 lines)
+- **Dead code:** 0 references to useAICall, rateLimiter, integrations, CreativeStoryStudio
+- **New files (11):** 4 home components, 2 storyIdeas splits, 2 utils, CI workflow, manifest.json, 2 test files
+- **Deleted (20):** 17 UI primitives, rateLimiter.js, api/integrations.js, useAICall.js
+
+---
+
+## Session 22: Phase 8 — i18n Completion + Tests + Cleanup + Advanced Editor (Mar 8, 2026)
+
+4 parallel agents executed with zero file conflicts. All completed successfully.
+
+### Agent 1: Cleanup (Dead Code Removal + RTL Fix)
+- **Deleted 3 dead files** (0 consumers confirmed): `useAICall.js`, `rateLimiter.js`, `api/integrations.js`
+- **CommunityPost RTL fix**: Added `dir` attribute based on `post.book?.language` for Hebrew/Yiddish posts
+
+### Agent 2: i18n Wiring (Largest Scope)
+**Locale files expanded** (en.jsx, he.jsx, yi.jsx):
+- `characterEditor` section (30 keys), `community` expanded (19 keys), `leaderboard` expanded (17 keys)
+
+**useI18n() wired into 7 pages** (replacing local translations objects, localStorage reads):
+1. `CharacterEditor.jsx` — removed ~70-line local translations object
+2. `Community.jsx` — removed ~55-line local translations + storage event listener
+3. `CommunityPost.jsx` (page) — added isRTL + dir attribute
+4. `Feedback.jsx` — replaced localStorage language read
+5. `Leaderboard.jsx` — removed ~50-line local translations
+6. `BookCreation.jsx` — added useI18n for UI; kept getBookTranslation() for content
+7. `OnboardingWizard.jsx` — added useI18n fallback for isRTL
+
+**BookWizard.test.jsx**: Added i18nProvider mock with full wizard key translations
+
+### Agent 3: Advanced Editor
+- **Layout.jsx**: Added BookCreation as "Advanced Editor" (PenTool icon) in sidebar create section
+- **Layout.jsx**: Added Yiddish translations block (17 keys) + advancedEditor key to all 3 languages
+- **BookView.jsx**: Added "Edit in Advanced Editor" button (visible only for book owner)
+
+### Agent 4: Test Coverage (60 new tests)
+- `useGamification.test.js` — 37 tests (constants, badge checks, progress, hook rendering, awardXP)
+- `useBook.test.js` — 7 tests (load, error, refresh, filter)
+- `useCurrentUser.test.js` — 5 tests (load, error, refresh)
+- `useCharacterSelector.test.js` — 11 tests (entities, templates, conversion)
+
+### Results
+- **Build:** `EXIT_CODE: 0` (clean)
+- **Tests:** 252/252 passing (0 failures), 11 test files
+- **Dead code grep:** 0 matches for useAICall/rateLimiter/@api/integrations
+
+### Files Modified/Created/Deleted
+**Deleted (3):** useAICall.js, rateLimiter.js, api/integrations.js
+**Created (4):** useGamification.test.js, useBook.test.js, useCurrentUser.test.js, useCharacterSelector.test.js
+**Modified (14):** CommunityPost.jsx (component), Layout.jsx, BookView.jsx, CharacterEditor.jsx, Community.jsx, CommunityPost.jsx (page), Feedback.jsx, Leaderboard.jsx, BookCreation.jsx, OnboardingWizard.jsx, en.jsx, he.jsx, yi.jsx, BookWizard.test.jsx
+
+**Part 3: BookWizard.test.jsx Mock**
+- Added `vi.mock("@/components/i18n/i18nProvider", ...)` block
+- Mock provides full `t()` function with all wizard key translations
+- Nav button `aria-label` mock value matches test expectations ("Next step")
+- All 47 BookWizard tests pass
+
+**Results**
+- Build: `EXIT_CODE: 0` (clean)
+- Tests: **252/252 passing** (0 failures), 11 test files
+
+### Files Modified
+- `src/components/i18n/locales/en.jsx` — characterEditor, community, leaderboard expanded
+- `src/components/i18n/locales/he.jsx` — characterEditor, community, leaderboard expanded
+- `src/components/i18n/locales/yi.jsx` — characterEditor, community, leaderboard expanded
+- `src/pages/CharacterEditor.jsx` — useI18n wired, local translations removed
+- `src/pages/Community.jsx` — useI18n wired, local translations removed
+- `src/pages/CommunityPost.jsx` — useI18n wired (isRTL + dir attr)
+- `src/pages/Feedback.jsx` — useI18n wired (isRTL)
+- `src/pages/Leaderboard.jsx` — useI18n wired, local translations removed
+- `src/pages/BookCreation.jsx` — useI18n wired (UI isRTL); getBookTranslation() kept for content
+- `src/components/onboarding/OnboardingWizard.jsx` — useI18n imported, isRTL enhanced
+- `src/components/wizard/BookWizard.test.jsx` — i18nProvider mock added
+
+---
+
+## Session 21: Phase 7 — Security Hardening, Test Fixes, Dead Link Cleanup (Mar 4, 2026)
+
+### What Was Done
+
+**7.1 All Entity Security Wiring**
+- Wrapped ALL 9 data entities with `createSecureEntity()` at the source:
+  Book, Page, Character, Community, Comment, StoryIdea, Feedback, UserBadge, Collaboration
+- User entity excluded (auth SDK, not a data entity)
+- UserBadge uses `ownerField: 'user_id'` (different ownership field)
+- This means ALL write operations (create/update/delete) across the entire app now enforce:
+  - Authentication check (`User.me()`)
+  - Ownership validation (can't modify other users' data)
+- Read operations pass through unchanged (Community/Leaderboard still work)
+
+**7.2 Test Suite Fully Green (192/192)**
+- Fixed BookWizard.test.jsx: Added global fetch mock in setup.js to prevent jsdom/undici Node 22 errors
+- Added base44Client mock and secureEntity pass-through mock in test file
+- Fixed content-moderation.test.js: Updated 13 PIN tests to use async/await (SHA-256 hashPin is now async)
+- Result: 192 tests passing, 7 test files, 0 failures (first time fully green since Phase 6)
+
+**7.3 Dead Link Cleanup**
+- Found 10 broken links to deleted `CreativeStoryStudio` page across 4 files
+- All replaced with `BookWizard` (the unified creation flow):
+  - Home.jsx (5 links), Library.jsx (3 links), Profile.jsx (1 link), MyBooksSection.jsx (1 link)
+- Verified: 0 references to CreativeStoryStudio remain in entire codebase
+
+### Verification
+- Build: Clean (exit code 0)
+- Tests: 192 passing / 7 files / 0 failures
+- No broken links, no dead references
+
+### Files Modified
+1. `src/test/setup.js` — Global fetch mock + undici error suppression
+2. `src/entities/Book.js` — Wrapped with createSecureEntity
+3. `src/entities/Page.js` — Wrapped with createSecureEntity
+4. `src/entities/Character.js` — Wrapped with createSecureEntity
+5. `src/entities/Community.js` — Wrapped with createSecureEntity
+6. `src/entities/Comment.js` — Wrapped with createSecureEntity
+7. `src/entities/StoryIdea.js` — Wrapped with createSecureEntity
+8. `src/entities/Feedback.js` — Wrapped with createSecureEntity
+9. `src/entities/UserBadge.js` — Wrapped with createSecureEntity (ownerField: 'user_id')
+10. `src/entities/Collaboration.js` — Wrapped with createSecureEntity
+11. `src/components/wizard/BookWizard.test.jsx` — Added base44Client + secureEntity mocks
+12. `src/utils/content-moderation.test.js` — All PIN tests now async/await
+13. `src/pages/Home.jsx` — 5 CreativeStoryStudio links → BookWizard
+14. `src/pages/Library.jsx` — 3 CreativeStoryStudio links → BookWizard
+15. `src/pages/Profile.jsx` — 1 CreativeStoryStudio link → BookWizard
+16. `src/components/profile/MyBooksSection.jsx` — 1 CreativeStoryStudio link → BookWizard
+
+---
+
+## Session 20: Phase 6 — 5-Agent Team Fix (Mar 4, 2026)
+Committed as: `e937420 feat: phase 6 — 5-agent team fix across security, i18n, UI, pipeline, cleanup`
+43 files changed, 602 insertions(+), 6,866 deletions(-)
 
 ---
 

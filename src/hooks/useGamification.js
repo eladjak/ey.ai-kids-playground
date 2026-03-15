@@ -1,16 +1,18 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { User } from "@/entities/User";
 import { Book } from "@/entities/Book";
 import { UserBadge } from "@/entities/UserBadge";
+import { trackEvent } from "@/lib/analytics";
 
 // XP rewards for different actions
 const XP_EVENTS = {
   book_created: 100,
+  book_read: 25,       // Reading a complete book awards XP (fired from BookView on last page)
   page_edited: 10,
   character_created: 50,
   community_share: 30,
   streak_day: 20,
-  book_completed: 50,
+  book_completed: 50,  // Fired when book status transitions to "complete" (BookWizard/BookCreation)
   first_login: 10
 };
 
@@ -165,6 +167,9 @@ export default function useGamification() {
   const [isLoading, setIsLoading] = useState(true);
   const [pendingCelebrations, setPendingCelebrations] = useState([]);
 
+  // Ref so the streak effect can call awardXP without it being a dependency
+  const awardXPRef = useRef(null);
+
   // Load user data and compute gamification state
   const loadGamificationData = useCallback(async () => {
     try {
@@ -258,6 +263,10 @@ export default function useGamification() {
         } catch {
           // silently handled
         }
+        // Award streak XP for continuing or starting a streak
+        if (awardXPRef.current) {
+          await awardXPRef.current("streak_day");
+        }
       }
     };
 
@@ -328,6 +337,11 @@ export default function useGamification() {
     };
   }, [xp, level]);
 
+  // Keep the ref in sync so streak effect can call awardXP safely
+  useEffect(() => {
+    awardXPRef.current = awardXP;
+  }, [awardXP]);
+
   /**
    * Check and award any newly earned badges
    */
@@ -348,6 +362,7 @@ export default function useGamification() {
           });
 
           newlyEarned.push(def);
+          trackEvent('badge_earned', { badge_id: def.id, badge_name: def.nameEn });
 
           // Award badge XP bonus
           const bonusXP = def.xpReward || 0;

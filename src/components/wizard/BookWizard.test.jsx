@@ -2,6 +2,34 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import React from "react";
 
+// Mock secureEntity to pass through in tests
+vi.mock("@/lib/secureEntity", () => ({
+  createSecureEntity: (entity) => entity,
+}));
+
+vi.mock("@/entities/User", () => ({
+  User: {
+    me: vi.fn().mockResolvedValue({ email: "test@test.com", language: "english" }),
+    updateMyUserData: vi.fn().mockResolvedValue({}),
+    _setClerkUser: vi.fn(),
+    logout: vi.fn(),
+  },
+}));
+
+// Mock AuthContext (useCurrentUser depends on useAuth)
+vi.mock("@/lib/AuthContext", () => ({
+  useAuth: () => ({
+    user: { email: "test@test.com", full_name: "Test User", language: "english" },
+    isAuthenticated: true,
+    isLoadingAuth: false,
+    navigateToLogin: vi.fn(),
+    logout: vi.fn(),
+    checkAppState: vi.fn(),
+  }),
+  AuthProvider: ({ children }) => children,
+  FallbackAuthProvider: ({ children }) => children,
+}));
+
 // Mock dependencies
 vi.mock("react-router-dom", () => ({
   useNavigate: () => vi.fn(),
@@ -33,6 +61,60 @@ vi.mock("@/integrations/Core", () => ({
 vi.mock("@/components/ui/use-toast", () => ({
   useToast: () => ({
     toast: vi.fn(),
+  }),
+}));
+
+vi.mock("@/components/i18n/i18nProvider", () => ({
+  useI18n: () => ({
+    t: (key) => {
+      const translations = {
+        "wizard.title": "Book Creation Wizard",
+        "wizard.subtitle": "Create an amazing children's book in four simple steps",
+        "wizard.loading": "Getting everything ready...",
+        "wizard.creatingBook": "Creating your magical book...",
+        "wizard.steps.topic": "Choose Topic",
+        "wizard.steps.characters": "Characters",
+        "wizard.steps.preview": "Preview & Edit",
+        "wizard.steps.create": "Create",
+        "wizard.nav.next": "Next step",
+        "wizard.nav.back": "Back",
+        "wizard.nav.createBook": "Create My Book!",
+        "wizard.nav.generating": "Generating...",
+        "wizard.error.outlineTitle": "Oops! Something went wrong",
+        "wizard.error.outlineMessage": "We couldn't generate the story. Let's try again!",
+        "wizard.error.createTitle": "Oops! Couldn't create the book",
+        "wizard.error.createMessage": "Something went wrong. Let's try again!",
+        "wizard.error.inappropriateContent": "Inappropriate content",
+        "wizard.error.nameInappropriate": "One of the names contains inappropriate content",
+        "wizard.error.contentIssue": "Content issue",
+        "wizard.error.contentNotAppropriate": "Generated content was not appropriate. Trying again...",
+        "wizard.error.titleDescInappropriate": "The title or description contains inappropriate content",
+        "wizard.toast.retryingImages": "Retrying failed illustrations...",
+        "wizard.toast.allImagesGenerated": "All illustrations generated!",
+        "wizard.toast.bookCreated": "Book created!",
+        "wizard.toast.bookReady": "Your book is ready to read!",
+        "wizard.progress.checkingContent": "Checking content...",
+        "wizard.progress.creatingStory": "Creating story & cover...",
+        "wizard.progress.savingBook": "Saving book...",
+        "wizard.progress.writingStory": "Writing the story...",
+        "wizard.progress.drawingIllustrations": "Drawing illustrations...",
+        "wizard.progress.savingPages": "Saving pages...",
+        "wizard.progress.bookReady": "Book ready!",
+        "wizard.topic.title": "What story would you like to create?",
+        "wizard.topic.customIdea": "My Own Idea",
+        "wizard.topic.customPlaceholder": "Describe your story idea...",
+        "wizard.characters.title": "Choose your characters",
+        "wizard.characters.subtitle": "Select characters for your story",
+        "wizard.preview.title": "Preview & Edit Your Book",
+      };
+      return translations[key] || key;
+    },
+    language: "english",
+    isRTL: false,
+    changeLanguage: vi.fn(),
+    loading: false,
+    isReady: true,
+    languages: ["english", "hebrew", "yiddish"],
   }),
 }));
 

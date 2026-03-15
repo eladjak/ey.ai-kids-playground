@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, RefreshCw, Home } from "lucide-react";
+import { captureError } from "@/lib/errorTracking";
 
 export default class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -13,7 +14,28 @@ export default class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    // Could send to error tracking service in the future
+    // Log to console in development
+    if (import.meta.env.DEV) {
+      console.error('ErrorBoundary caught:', error, errorInfo);
+    }
+
+    // Store error for potential reporting
+    try {
+      const errorLog = JSON.parse(localStorage.getItem('error_log') || '[]');
+      errorLog.push({
+        message: error.message,
+        stack: error.stack?.slice(0, 500),
+        componentStack: errorInfo.componentStack?.slice(0, 500),
+        timestamp: Date.now(),
+        url: window.location.href,
+      });
+      // Keep only last 20 errors
+      if (errorLog.length > 20) errorLog.splice(0, errorLog.length - 20);
+      localStorage.setItem('error_log', JSON.stringify(errorLog));
+    } catch (e) { /* ignore storage errors */ }
+
+    // Forward to error tracking (Sentry when available, console in dev)
+    captureError(error, { componentStack: errorInfo.componentStack });
   }
 
   handleReset = () => {

@@ -1,3 +1,4 @@
-import { base44 } from '../api/base44Client';
+import { createSupabaseEntity } from '../lib/supabaseEntity';
+import { createSecureEntity } from '../lib/secureEntity';
 
-export const Community = base44.entities.Community;
+export const Community = createSecureEntity(createSupabaseEntity('community'));

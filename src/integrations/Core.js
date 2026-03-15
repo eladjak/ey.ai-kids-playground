@@ -1,15 +1,63 @@
-import { base44 } from '../api/base44Client';
+/**
+ * Core integrations — AI text, image generation, and file uploads.
+ *
+ * Phase 1: AI text + image generation → Gemini API (direct, no Base44)
+ * Phase 2: File uploads → Supabase Storage (no more Base44 for storage)
+ *
+ * All existing callers import from this file and need NO changes.
+ */
 
-export const Core = base44.integrations.Core;
+import {
+  invokeLLM as geminiInvokeLLM,
+  generateImage as geminiGenerateImage,
+  base64ToFile,
+} from '../lib/aiProvider';
+import { uploadFileToSupabase } from '../lib/supabaseClient';
 
-export const InvokeLLM = base44.integrations.Core.InvokeLLM;
+// ─── Text Generation ────────────────────────────────────────────────────────
+// Powered by Gemini API directly
 
-export const SendEmail = base44.integrations.Core.SendEmail;
+export async function InvokeLLM(params) {
+  return geminiInvokeLLM(params);
+}
 
-export const SendSMS = base44.integrations.Core.SendSMS;
+// ─── Image Generation ───────────────────────────────────────────────────────
+// Gemini generates base64 → upload to Supabase Storage → persistent URL
 
-export const UploadFile = base44.integrations.Core.UploadFile;
+export async function GenerateImage({ prompt, quality, size }) {
+  const { base64, mimeType } = await geminiGenerateImage({ prompt });
 
-export const GenerateImage = base44.integrations.Core.GenerateImage;
+  const file = base64ToFile(base64, mimeType, `sipurai-${Date.now()}.png`);
 
-export const ExtractDataFromUploadedFile = base44.integrations.Core.ExtractDataFromUploadedFile;
+  try {
+    const result = await uploadFileToSupabase(file, 'generated');
+    return { url: result.file_url };
+  } catch {
+    // Fallback to base64 data URI if upload fails
+    return { url: `data:${mimeType};base64,${base64}` };
+  }
+}
+
+// ─── File Upload ────────────────────────────────────────────────────────────
+// Now uses Supabase Storage
+
+export async function UploadFile({ file }) {
+  return uploadFileToSupabase(file, 'uploads');
+}
+
+// ─── Legacy exports (no-ops, kept for import compatibility) ─────────────────
+
+export async function SendEmail() {
+  console.warn('SendEmail: not implemented (Base44 removed)');
+  return {};
+}
+
+export async function SendSMS() {
+  console.warn('SendSMS: not implemented (Base44 removed)');
+  return {};
+}
+
+export async function ExtractDataFromUploadedFile() {
+  console.warn('ExtractDataFromUploadedFile: not implemented (Base44 removed)');
+  return {};
+}

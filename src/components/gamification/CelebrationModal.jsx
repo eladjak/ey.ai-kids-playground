@@ -8,11 +8,19 @@ import confetti from "canvas-confetti";
  * CelebrationModal - Shows level-up and badge unlock celebrations
  * with confetti animation.
  */
+// Language helper used for Yiddish-aware text
+function getLabel(isHebrew, isYiddish, heText, yiText, enText) {
+  if (isYiddish) return yiText;
+  if (isHebrew) return heText;
+  return enText;
+}
+
 export default function CelebrationModal({
   celebration,
   onDismiss,
   isRTL = false,
-  isHebrew = false
+  isHebrew = false,
+  isYiddish = false
 }) {
   const hasFireRef = useRef(false);
   const modalRef = useRef(null);
@@ -121,7 +129,7 @@ export default function CelebrationModal({
           dir={isRTL ? "rtl" : "ltr"}
           role="dialog"
           aria-modal="true"
-          aria-label={isHebrew ? "חגיגה" : "Celebration"}
+          aria-label={getLabel(isHebrew, isYiddish, "חגיגה", "פֿייַערן", "Celebration")}
         >
           {/* Decorative gradient top */}
           <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-500 via-amber-400 to-indigo-500" />
@@ -130,7 +138,7 @@ export default function CelebrationModal({
           <button
             onClick={onDismiss}
             className={`absolute top-3 ${isRTL ? "left-3" : "right-3"} text-gray-400 hover:text-gray-600 dark:hover:text-gray-300`}
-            aria-label={isHebrew ? "סגור" : "Close"}
+            aria-label={getLabel(isHebrew, isYiddish, "סגור", "פֿאַרמאַכן", "Close")}
           >
             <X className="h-5 w-5" />
           </button>
@@ -153,7 +161,7 @@ export default function CelebrationModal({
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
-                {isHebrew ? "עלית רמה!" : "Level Up!"}
+                {getLabel(isHebrew, isYiddish, "עלית רמה!", "לעוועל הויך!", "Level Up!")}
               </motion.h2>
 
               <motion.div
@@ -166,9 +174,11 @@ export default function CelebrationModal({
               </motion.div>
 
               <p className="text-gray-500 dark:text-gray-400 mb-6">
-                {isHebrew
-                  ? `עלית מרמה ${celebration.oldLevel} לרמה ${celebration.newLevel}!`
-                  : `You advanced from level ${celebration.oldLevel} to level ${celebration.newLevel}!`}
+                {isYiddish
+                  ? `דו ביסט אויפגעגאנגן פֿון לעוועל ${celebration.oldLevel} צו לעוועל ${celebration.newLevel}!`
+                  : isHebrew
+                    ? `עלית מרמה ${celebration.oldLevel} לרמה ${celebration.newLevel}!`
+                    : `You advanced from level ${celebration.oldLevel} to level ${celebration.newLevel}!`}
               </p>
             </>
           )}
@@ -191,7 +201,7 @@ export default function CelebrationModal({
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
-                {isHebrew ? "תג חדש!" : "New Badge!"}
+                {getLabel(isHebrew, isYiddish, "תג חדש!", "נײַ אַבצייכן!", "New Badge!")}
               </motion.h2>
 
               <motion.p
@@ -200,11 +210,19 @@ export default function CelebrationModal({
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.4 }}
               >
-                {isHebrew ? celebration.badge.nameHe : celebration.badge.nameEn}
+                {isYiddish
+                  ? (celebration.badge.nameYi || celebration.badge.nameHe || celebration.badge.nameEn)
+                  : isHebrew
+                    ? celebration.badge.nameHe
+                    : celebration.badge.nameEn}
               </motion.p>
 
               <p className="text-gray-500 dark:text-gray-400 mb-2">
-                {isHebrew ? celebration.badge.descHe : celebration.badge.descEn}
+                {isYiddish
+                  ? (celebration.badge.descYi || celebration.badge.descHe || celebration.badge.descEn)
+                  : isHebrew
+                    ? celebration.badge.descHe
+                    : celebration.badge.descEn}
               </p>
 
               {celebration.badge.xpReward > 0 && (
@@ -225,7 +243,7 @@ export default function CelebrationModal({
             onClick={onDismiss}
             className="mt-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
           >
-            {isHebrew ? "מעולה!" : "Awesome!"}
+            {getLabel(isHebrew, isYiddish, "מעולה!", "וווּנדערלעך!", "Awesome!")}
           </Button>
         </motion.div>
       </motion.div>

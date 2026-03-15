@@ -241,89 +241,89 @@ describe('PIN Code Protection', () => {
     localStorage.clear();
   });
 
-  it('hashPin returns empty string for invalid input', () => {
-    expect(hashPin('')).toBe('');
-    expect(hashPin('12')).toBe('');
-    expect(hashPin(null)).toBe('');
-    expect(hashPin(undefined)).toBe('');
+  it('hashPin returns empty string for invalid input', async () => {
+    expect(await hashPin('')).toBe('');
+    expect(await hashPin('12')).toBe('');
+    expect(await hashPin(null)).toBe('');
+    expect(await hashPin(undefined)).toBe('');
   });
 
-  it('hashPin returns a non-empty string for valid PINs', () => {
-    const hash = hashPin('1234');
+  it('hashPin returns a non-empty string for valid PINs', async () => {
+    const hash = await hashPin('1234');
     expect(hash).toBeTruthy();
     expect(typeof hash).toBe('string');
     expect(hash.length).toBeGreaterThan(0);
   });
 
-  it('hashPin produces consistent results for same input', () => {
-    expect(hashPin('1234')).toBe(hashPin('1234'));
-    expect(hashPin('9999')).toBe(hashPin('9999'));
+  it('hashPin produces consistent results for same input', async () => {
+    expect(await hashPin('1234')).toBe(await hashPin('1234'));
+    expect(await hashPin('9999')).toBe(await hashPin('9999'));
   });
 
-  it('hashPin produces different results for different inputs', () => {
-    expect(hashPin('1234')).not.toBe(hashPin('5678'));
-    expect(hashPin('1111')).not.toBe(hashPin('2222'));
+  it('hashPin produces different results for different inputs', async () => {
+    expect(await hashPin('1234')).not.toBe(await hashPin('5678'));
+    expect(await hashPin('1111')).not.toBe(await hashPin('2222'));
   });
 
   it('isPinSet returns false when no PIN is set', () => {
     expect(isPinSet()).toBe(false);
   });
 
-  it('isPinSet returns true after setting a PIN', () => {
-    setParentalPin('1234');
+  it('isPinSet returns true after setting a PIN', async () => {
+    await setParentalPin('1234');
     expect(isPinSet()).toBe(true);
   });
 
-  it('setParentalPin rejects non-numeric PINs', () => {
-    expect(setParentalPin('abcd')).toBe(false);
-    expect(setParentalPin('12ab')).toBe(false);
+  it('setParentalPin rejects non-numeric PINs', async () => {
+    expect(await setParentalPin('abcd')).toBe(false);
+    expect(await setParentalPin('12ab')).toBe(false);
     expect(isPinSet()).toBe(false);
   });
 
-  it('setParentalPin rejects PINs shorter than 4 digits', () => {
-    expect(setParentalPin('123')).toBe(false);
-    expect(setParentalPin('1')).toBe(false);
+  it('setParentalPin rejects PINs shorter than 4 digits', async () => {
+    expect(await setParentalPin('123')).toBe(false);
+    expect(await setParentalPin('1')).toBe(false);
     expect(isPinSet()).toBe(false);
   });
 
-  it('setParentalPin rejects PINs longer than 6 digits', () => {
-    expect(setParentalPin('1234567')).toBe(false);
+  it('setParentalPin rejects PINs longer than 6 digits', async () => {
+    expect(await setParentalPin('1234567')).toBe(false);
     expect(isPinSet()).toBe(false);
   });
 
-  it('setParentalPin accepts valid 4-6 digit PINs', () => {
-    expect(setParentalPin('1234')).toBe(true);
+  it('setParentalPin accepts valid 4-6 digit PINs', async () => {
+    expect(await setParentalPin('1234')).toBe(true);
     localStorage.clear();
-    expect(setParentalPin('12345')).toBe(true);
+    expect(await setParentalPin('12345')).toBe(true);
     localStorage.clear();
-    expect(setParentalPin('123456')).toBe(true);
+    expect(await setParentalPin('123456')).toBe(true);
   });
 
-  it('verifyParentalPin returns true when no PIN is set', () => {
-    expect(verifyParentalPin('anything')).toBe(true);
-    expect(verifyParentalPin('')).toBe(true);
+  it('verifyParentalPin returns true when no PIN is set', async () => {
+    expect(await verifyParentalPin('anything')).toBe(true);
+    expect(await verifyParentalPin('')).toBe(true);
   });
 
-  it('verifyParentalPin validates correct PIN', () => {
-    setParentalPin('4567');
-    expect(verifyParentalPin('4567')).toBe(true);
+  it('verifyParentalPin validates correct PIN', async () => {
+    await setParentalPin('4567');
+    expect(await verifyParentalPin('4567')).toBe(true);
   });
 
-  it('verifyParentalPin rejects wrong PIN', () => {
-    setParentalPin('4567');
-    expect(verifyParentalPin('1234')).toBe(false);
-    expect(verifyParentalPin('4566')).toBe(false);
+  it('verifyParentalPin rejects wrong PIN', async () => {
+    await setParentalPin('4567');
+    expect(await verifyParentalPin('1234')).toBe(false);
+    expect(await verifyParentalPin('4566')).toBe(false);
   });
 
-  it('removeParentalPin requires correct PIN', () => {
-    setParentalPin('1234');
-    expect(removeParentalPin('0000')).toBe(false);
+  it('removeParentalPin requires correct PIN', async () => {
+    await setParentalPin('1234');
+    expect(await removeParentalPin('0000')).toBe(false);
     expect(isPinSet()).toBe(true);
   });
 
-  it('removeParentalPin succeeds with correct PIN', () => {
-    setParentalPin('1234');
-    expect(removeParentalPin('1234')).toBe(true);
+  it('removeParentalPin succeeds with correct PIN', async () => {
+    await setParentalPin('1234');
+    expect(await removeParentalPin('1234')).toBe(true);
     expect(isPinSet()).toBe(false);
   });
 });

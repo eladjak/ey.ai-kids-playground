@@ -25,7 +25,7 @@ const BadgeIcons = {
 };
 
 // הוספת ייצוא ברירת מחדל לפונקציה
-export default function BadgeDisplay({ 
+const BadgeDisplay = React.memo(function BadgeDisplay({
   badgeId, 
   size = "md", 
   showLabel = true, 
@@ -74,35 +74,56 @@ export default function BadgeDisplay({
       "fast_learner": "לומד מהיר",
       "star_author": "סופר כוכב",
       "collector": "אספן"
+    },
+    yiddish: {
+      "first_book": "ערשטן בוך",
+      "storyteller": "מעשהזאָגער",
+      "prolific_author": "פּראָדוקטיווער מחבר",
+      "character_creator": "כאַראַקטער שאַפֿער",
+      "community_star": "קהילה שטערן",
+      "streak_master": "שטרייַף מייסטער",
+      "genre_explorer": "זשאַנר אַנטדעקער",
+      "multilingual": "פֿיל-שפּראַכיק",
+      "creative_mind": "קרעאַטיווער קאָפּ",
+      "dedicated_author": "דעדיקירטער מחבר",
+      "steady_creator": "שטענדיקער שאַפֿער",
+      "adventurer": "אַוואַנטוריסט",
+      "social_butterfly": "חברותשאַפֿטלעכער",
+      "feedback_expert": "פֿידבעק מומחה",
+      "community_fan": "קהילה ליבהאָבער",
+      "fast_learner": "שנעלער לערנער",
+      "star_author": "שטערן מחבר",
+      "collector": "זאַמלער"
     }
   };
-  
+
   // Get the appropriate icon or use a fallback
   const IconComponent = BadgeIcons[badgeId] || Trophy;
-  
+
   // Get translated name or fall back to badge ID
-  const badgeName = badgeTranslations[currentLanguage]?.[badgeId] || 
-                   badgeTranslations.english[badgeId] || 
+  const badgeName = badgeTranslations[currentLanguage]?.[badgeId] ||
+                   badgeTranslations.english[badgeId] ||
                    badgeId;
   
+  // Standardized sizes: sm = compact (w-10 h-10 container), lg = large (w-16 h-16 container)
   const sizeMappings = {
     sm: {
-      container: "p-1.5",
-      icon: "h-3 w-3",
-      labelClass: "text-xs"
+      container: "w-10 h-10 flex items-center justify-center",
+      icon: "h-5 w-5",
+      labelClass: "text-xs mt-1"
     },
     md: {
-      container: "p-2",
-      icon: "h-4 w-4",
-      labelClass: "text-xs font-medium"
+      container: "w-12 h-12 flex items-center justify-center",
+      icon: "h-6 w-6",
+      labelClass: "text-xs font-medium mt-1"
     },
     lg: {
-      container: "p-3",
-      icon: "h-5 w-5",
-      labelClass: "text-sm font-medium"
+      container: "w-16 h-16 flex items-center justify-center",
+      icon: "h-8 w-8",
+      labelClass: "text-sm font-medium mt-1"
     }
   };
-  
+
   const { container, icon, labelClass } = sizeMappings[size] || sizeMappings.md;
   
   const getIconColor = () => {
@@ -119,14 +140,16 @@ export default function BadgeDisplay({
   
   return (
     <div className="flex flex-col items-center">
-      <div className={`${container} ${getContainerColor()} rounded-full mb-1`}>
+      <div className={`${container} ${getContainerColor()} rounded-full`}>
         <IconComponent className={`${icon} ${getIconColor()}`} />
       </div>
       {showLabel && (
-        <span className={labelClass}>
+        <span className={`${labelClass} text-center`}>
           {badgeName}
         </span>
       )}
     </div>
   );
-}
+});
+
+export default BadgeDisplay;

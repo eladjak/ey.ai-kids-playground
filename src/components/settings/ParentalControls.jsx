@@ -21,14 +21,15 @@ import {
   verifyParentalPin,
   removeParentalPin,
 } from "@/utils/content-moderation";
+import { useI18n } from "@/components/i18n/i18nProvider";
 
 /**
  * ParentalControls - Parental controls settings panel with PIN protection.
  * PIN code required to view/modify settings when set.
  */
-export default function ParentalControls({ currentLanguage, isRTL }) {
+export default function ParentalControls() {
+  const { t, isRTL } = useI18n();
   const { toast } = useToast();
-  const isHebrew = currentLanguage === "hebrew";
   const [controls, setControls] = useState(getParentalControls());
   const [isSaving, setIsSaving] = useState(false);
 
@@ -48,8 +49,6 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
   const [isRemovingPin, setIsRemovingPin] = useState(false);
   const [removeConfirmPin, setRemoveConfirmPin] = useState("");
 
-  const t = (he, en) => (isHebrew ? he : en);
-
   const updateControl = (key, value) => {
     setControls((prev) => ({ ...prev, [key]: value }));
   };
@@ -60,8 +59,8 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
     setTimeout(() => {
       setIsSaving(false);
       toast({
-        title: t("הגדרות נשמרו", "Settings saved"),
-        description: t("הגדרות בקרת ההורים עודכנו בהצלחה", "Parental controls have been updated"),
+        title: t("parentalControls.savedTitle"),
+        description: t("parentalControls.savedDesc"),
         className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100"
       });
     }, 300);
@@ -81,11 +80,11 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
   const handleSetPin = async () => {
     setPinSetupError("");
     if (!/^\d{4,6}$/.test(newPin)) {
-      setPinSetupError(t("קוד PIN חייב להיות 4-6 ספרות", "PIN must be 4-6 digits"));
+      setPinSetupError(t("parentalControls.pinMustBeDigits"));
       return;
     }
     if (newPin !== confirmPin) {
-      setPinSetupError(t("קודי ה-PIN לא תואמים", "PIN codes do not match"));
+      setPinSetupError(t("parentalControls.pinNoMatch"));
       return;
     }
     const success = await setParentalPin(newPin);
@@ -95,8 +94,8 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
       setNewPin("");
       setConfirmPin("");
       toast({
-        title: t("קוד PIN נקבע", "PIN code set"),
-        description: t("ההגדרות מוגנות כעת בקוד PIN", "Settings are now protected with a PIN"),
+        title: t("parentalControls.pinSet"),
+        description: t("parentalControls.pinSetDesc"),
         className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100"
       });
     }
@@ -109,14 +108,14 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
       setIsRemovingPin(false);
       setRemoveConfirmPin("");
       toast({
-        title: t("קוד PIN הוסר", "PIN removed"),
-        description: t("ההגדרות אינן מוגנות יותר בקוד PIN", "Settings are no longer PIN-protected"),
+        title: t("parentalControls.pinRemoved"),
+        description: t("parentalControls.pinRemovedDesc"),
       });
     } else {
       toast({
         variant: "destructive",
-        title: t("קוד PIN שגוי", "Wrong PIN"),
-        description: t("הקוד שהוזן אינו נכון", "The PIN entered is incorrect"),
+        title: t("parentalControls.wrongPin"),
+        description: t("parentalControls.wrongPinDesc"),
       });
       setRemoveConfirmPin("");
     }
@@ -133,10 +132,10 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
                 <Lock className="h-8 w-8 text-amber-600" />
               </div>
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                {t("בקרת הורים מוגנת", "Parental Controls Protected")}
+                {t("parentalControls.protected")}
               </h2>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                {t("הזן קוד PIN כדי לגשת להגדרות", "Enter PIN code to access settings")}
+                {t("parentalControls.enterPin")}
               </p>
 
               <div className="w-full max-w-[200px] space-y-3">
@@ -145,7 +144,7 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
                   inputMode="numeric"
                   pattern="[0-9]*"
                   maxLength={6}
-                  placeholder={t("קוד PIN", "PIN code")}
+                  placeholder={t("parentalControls.pinPlaceholder")}
                   value={pinInput}
                   onChange={(e) => {
                     setPinInput(e.target.value.replace(/\D/g, ''));
@@ -153,11 +152,11 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
                   }}
                   onKeyDown={(e) => e.key === 'Enter' && handlePinUnlock()}
                   className={`text-center text-2xl tracking-[0.5em] ${pinError ? 'border-red-500' : ''}`}
-                  aria-label={t("הזן קוד PIN", "Enter PIN code")}
+                  aria-label={t("parentalControls.enterPin")}
                 />
                 {pinError && (
                   <p className="text-sm text-red-500" role="alert">
-                    {t("קוד PIN שגוי", "Incorrect PIN")}
+                    {t("parentalControls.incorrectPin")}
                   </p>
                 )}
                 <Button
@@ -166,7 +165,7 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
                   className="w-full bg-purple-600 hover:bg-purple-700"
                 >
                   <KeyRound className="h-4 w-4 ml-2" aria-hidden="true" />
-                  {t("פתח", "Unlock")}
+                  {t("parentalControls.unlock")}
                 </Button>
               </div>
             </div>
@@ -186,13 +185,10 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
             <Lock className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" aria-hidden="true" />
             <div>
               <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
-                {t("בקרת הורים", "Parental Controls")}
+                {t("parentalControls.header")}
               </p>
               <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
-                {t(
-                  "הגדרות אלו מאפשרות לך לשלוט בתוכן שהילד שלך יכול ליצור ולצפות.",
-                  "These settings let you control what content your child can create and view."
-                )}
+                {t("parentalControls.headerDesc")}
               </p>
             </div>
           </div>
@@ -204,12 +200,12 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
         <CardHeader>
           <CardTitle className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse text-right" : ""}`}>
             <KeyRound className="h-5 w-5 text-indigo-600" />
-            {t("הגנת קוד PIN", "PIN Code Protection")}
+            {t("parentalControls.pinProtection")}
           </CardTitle>
           <CardDescription className={isRTL ? "text-right" : ""}>
             {hasPinSet
-              ? t("ההגדרות מוגנות בקוד PIN", "Settings are protected with a PIN code")
-              : t("הגדר קוד PIN כדי להגן על ההגדרות מפני שינוי על ידי ילדים", "Set a PIN code to protect settings from being changed by children")
+              ? t("parentalControls.pinProtectedDesc")
+              : t("parentalControls.pinUnprotectedDesc")
             }
           </CardDescription>
         </CardHeader>
@@ -221,14 +217,14 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
               className="gap-2"
             >
               <Lock className="h-4 w-4" aria-hidden="true" />
-              {t("הגדר קוד PIN", "Set PIN Code")}
+              {t("parentalControls.setPin")}
             </Button>
           )}
 
           {isSettingPin && (
             <div className="space-y-3 max-w-xs">
               <div>
-                <Label>{t("קוד PIN חדש (4-6 ספרות)", "New PIN (4-6 digits)")}</Label>
+                <Label>{t("parentalControls.newPin")}</Label>
                 <Input
                   type="password"
                   inputMode="numeric"
@@ -238,11 +234,11 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
                   onChange={(e) => setNewPin(e.target.value.replace(/\D/g, ''))}
                   placeholder="****"
                   className="text-center tracking-widest"
-                  aria-label={t("קוד PIN חדש", "New PIN code")}
+                  aria-label={t("parentalControls.newPin")}
                 />
               </div>
               <div>
-                <Label>{t("אשר קוד PIN", "Confirm PIN")}</Label>
+                <Label>{t("parentalControls.confirmPin")}</Label>
                 <Input
                   type="password"
                   inputMode="numeric"
@@ -252,7 +248,7 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
                   onChange={(e) => setConfirmPin(e.target.value.replace(/\D/g, ''))}
                   placeholder="****"
                   className="text-center tracking-widest"
-                  aria-label={t("אשר קוד PIN", "Confirm PIN")}
+                  aria-label={t("parentalControls.confirmPin")}
                 />
               </div>
               {pinSetupError && (
@@ -261,7 +257,7 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
               <div className="flex gap-2">
                 <Button onClick={handleSetPin} className="bg-purple-600 hover:bg-purple-700 gap-1">
                   <Check className="h-4 w-4" aria-hidden="true" />
-                  {t("שמור", "Save")}
+                  {t("parentalControls.save")}
                 </Button>
                 <Button
                   variant="ghost"
@@ -273,7 +269,7 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
                   }}
                 >
                   <X className="h-4 w-4" aria-hidden="true" />
-                  {t("ביטול", "Cancel")}
+                  {t("parentalControls.cancel")}
                 </Button>
               </div>
             </div>
@@ -283,7 +279,7 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
             <div className="flex items-center gap-3">
               <Badge variant="outline" className="border-green-300 text-green-700 dark:text-green-300 gap-1">
                 <Check className="h-3 w-3" />
-                {t("PIN פעיל", "PIN Active")}
+                {t("parentalControls.pinActive")}
               </Badge>
               <Button
                 variant="outline"
@@ -291,14 +287,14 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
                 onClick={() => setIsRemovingPin(true)}
                 className="text-red-500 hover:text-red-700"
               >
-                {t("הסר PIN", "Remove PIN")}
+                {t("parentalControls.removePin")}
               </Button>
             </div>
           )}
 
           {isRemovingPin && (
             <div className="space-y-3 max-w-xs">
-              <Label>{t("הזן קוד PIN הנוכחי כדי להסיר", "Enter current PIN to remove")}</Label>
+              <Label>{t("parentalControls.enterCurrentPin")}</Label>
               <Input
                 type="password"
                 inputMode="numeric"
@@ -308,11 +304,11 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
                 onChange={(e) => setRemoveConfirmPin(e.target.value.replace(/\D/g, ''))}
                 placeholder="****"
                 className="text-center tracking-widest"
-                aria-label={t("קוד PIN נוכחי", "Current PIN")}
+                aria-label={t("parentalControls.enterCurrentPin")}
               />
               <div className="flex gap-2">
                 <Button onClick={handleRemovePin} variant="destructive" size="sm" className="gap-1">
-                  {t("הסר", "Remove")}
+                  {t("parentalControls.remove")}
                 </Button>
                 <Button
                   variant="ghost"
@@ -322,7 +318,7 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
                     setRemoveConfirmPin("");
                   }}
                 >
-                  {t("ביטול", "Cancel")}
+                  {t("parentalControls.cancel")}
                 </Button>
               </div>
             </div>
@@ -335,10 +331,10 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
         <CardHeader>
           <CardTitle className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse text-right" : ""}`}>
             <Shield className="h-5 w-5 text-purple-600" />
-            {t("רמת סינון תוכן", "Content Filter Level")}
+            {t("parentalControls.contentFilter")}
           </CardTitle>
           <CardDescription className={isRTL ? "text-right" : ""}>
-            {t("קבע את רמת הסינון עבור תוכן שנוצר על ידי AI", "Set the filtering level for AI-generated content")}
+            {t("parentalControls.contentFilterDesc")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -346,18 +342,18 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
             value={controls.contentFilterLevel}
             onValueChange={(value) => updateControl("contentFilterLevel", value)}
           >
-            <SelectTrigger aria-label={t("בחר רמת סינון", "Select filter level")}>
+            <SelectTrigger aria-label={t("parentalControls.selectFilter")}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="strict">
-                {t("מחמיר - מומלץ לגילאי 3-5", "Strict - Recommended for ages 3-5")}
+                {t("parentalControls.filterStrict")}
               </SelectItem>
               <SelectItem value="moderate">
-                {t("בינוני - מומלץ לגילאי 5-8", "Moderate - Recommended for ages 5-8")}
+                {t("parentalControls.filterModerate")}
               </SelectItem>
               <SelectItem value="relaxed">
-                {t("מרוכך - מומלץ לגילאי 8-12", "Relaxed - Recommended for ages 8-12")}
+                {t("parentalControls.filterRelaxed")}
               </SelectItem>
             </SelectContent>
           </Select>
@@ -368,7 +364,7 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
       <Card>
         <CardHeader>
           <CardTitle className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse text-right" : ""}`}>
-            {t("טווח גילאים", "Age Range")}
+            {t("parentalControls.ageRange")}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -376,14 +372,14 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
             value={controls.ageRange}
             onValueChange={(value) => updateControl("ageRange", value)}
           >
-            <SelectTrigger aria-label={t("בחר טווח גילאים", "Select age range")}>
+            <SelectTrigger aria-label={t("parentalControls.selectAge")}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="3-5">{t("גילאי 3-5", "Ages 3-5")}</SelectItem>
-              <SelectItem value="5-7">{t("גילאי 5-7", "Ages 5-7")}</SelectItem>
-              <SelectItem value="7-10">{t("גילאי 7-10", "Ages 7-10")}</SelectItem>
-              <SelectItem value="10-12">{t("גילאי 10-12", "Ages 10-12")}</SelectItem>
+              <SelectItem value="3-5">{t("parentalControls.ages35")}</SelectItem>
+              <SelectItem value="5-7">{t("parentalControls.ages57")}</SelectItem>
+              <SelectItem value="7-10">{t("parentalControls.ages710")}</SelectItem>
+              <SelectItem value="10-12">{t("parentalControls.ages1012")}</SelectItem>
             </SelectContent>
           </Select>
         </CardContent>
@@ -393,38 +389,38 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
       <Card>
         <CardHeader>
           <CardTitle className={isRTL ? "text-right" : ""}>
-            {t("הרשאות", "Permissions")}
+            {t("parentalControls.permissions")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className={`flex items-center justify-between ${isRTL ? "flex-row-reverse" : ""}`}>
             <Label className={isRTL ? "text-right" : ""}>
-              {t("אפשר יצירת תוכן עם AI", "Allow AI content generation")}
+              {t("parentalControls.allowAI")}
             </Label>
             <Switch
               checked={controls.allowAIGeneration}
               onCheckedChange={(checked) => updateControl("allowAIGeneration", checked)}
-              aria-label={t("אפשר יצירת תוכן עם AI", "Allow AI content generation")}
+              aria-label={t("parentalControls.allowAI")}
             />
           </div>
           <div className={`flex items-center justify-between ${isRTL ? "flex-row-reverse" : ""}`}>
             <Label className={isRTL ? "text-right" : ""}>
-              {t("אפשר שיתוף בקהילה", "Allow community sharing")}
+              {t("parentalControls.allowCommunity")}
             </Label>
             <Switch
               checked={controls.allowCommunitySharing}
               onCheckedChange={(checked) => updateControl("allowCommunitySharing", checked)}
-              aria-label={t("אפשר שיתוף בקהילה", "Allow community sharing")}
+              aria-label={t("parentalControls.allowCommunity")}
             />
           </div>
           <div className={`flex items-center justify-between ${isRTL ? "flex-row-reverse" : ""}`}>
             <Label className={isRTL ? "text-right" : ""}>
-              {t("דרוש אישור הורה לפני פרסום", "Require parent approval before publishing")}
+              {t("parentalControls.requireApproval")}
             </Label>
             <Switch
               checked={controls.requireApprovalBeforePublish}
               onCheckedChange={(checked) => updateControl("requireApprovalBeforePublish", checked)}
-              aria-label={t("דרוש אישור הורה לפני פרסום", "Require parent approval before publishing")}
+              aria-label={t("parentalControls.requireApproval")}
             />
           </div>
         </CardContent>
@@ -434,10 +430,10 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
       <Card>
         <CardHeader>
           <CardTitle className={isRTL ? "text-right" : ""}>
-            {t("מגבלה יומית", "Daily Limit")}
+            {t("parentalControls.dailyLimit")}
           </CardTitle>
           <CardDescription className={isRTL ? "text-right" : ""}>
-            {t("מספר ספרים מקסימלי שניתן ליצור ביום", "Maximum number of books that can be created per day")}
+            {t("parentalControls.dailyLimitDesc")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -449,10 +445,10 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
               value={controls.maxDailyBooks}
               onChange={(e) => updateControl("maxDailyBooks", parseInt(e.target.value) || 1)}
               className="w-24"
-              aria-label={t("מספר ספרים ביום", "Books per day")}
+              aria-label={t("parentalControls.booksPerDayLabel")}
             />
             <span className="text-sm text-gray-500">
-              {t("ספרים ביום", "books per day")}
+              {t("parentalControls.booksPerDay")}
             </span>
           </div>
         </CardContent>
@@ -463,10 +459,10 @@ export default function ParentalControls({ currentLanguage, isRTL }) {
         onClick={handleSave}
         disabled={isSaving}
         className="w-full bg-purple-600 hover:bg-purple-700 gap-2"
-        aria-label={t("שמור הגדרות", "Save settings")}
+        aria-label={t("parentalControls.saveButton")}
       >
         <Save className="h-4 w-4" aria-hidden="true" />
-        {isSaving ? t("שומר...", "Saving...") : t("שמור הגדרות בקרת הורים", "Save Parental Controls")}
+        {isSaving ? t("parentalControls.saving") : t("parentalControls.saveButton")}
       </Button>
     </div>
   );

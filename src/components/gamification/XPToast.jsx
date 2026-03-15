@@ -8,6 +8,7 @@ import { Star, Zap } from "lucide-react";
 const EVENT_LABELS = {
   english: {
     book_created: "Book Created",
+    book_read: "Book Read",
     page_edited: "Page Edited",
     character_created: "Character Created",
     community_share: "Shared with Community",
@@ -17,29 +18,43 @@ const EVENT_LABELS = {
   },
   hebrew: {
     book_created: "ספר נוצר",
+    book_read: "ספר נקרא",
     page_edited: "עמוד נערך",
     character_created: "דמות נוצרה",
     community_share: "שותף עם הקהילה",
     streak_day: "רצף יומי",
     book_completed: "ספר הושלם",
     first_login: "ברוך שובך"
+  },
+  yiddish: {
+    book_created: "בוך געשאַפֿן",
+    book_read: "בוך געלייענט",
+    page_edited: "בלאַט רעדאַקטירט",
+    character_created: "כאַראַקטער געשאַפֿן",
+    community_share: "געטיילט מיט קהילה",
+    streak_day: "טעגלעכע שטרייַף",
+    book_completed: "בוך פֿאַרענדיקט",
+    first_login: "ברוכים הבאים צוריק"
   }
 };
 
 /**
  * XPToast - Floating +XP animation that appears when XP is awarded.
  */
-export default function XPToast({
+const XPToast = React.memo(function XPToast({
   celebration,
   onDismiss,
   isHebrew = false,
+  isYiddish = false,
   isRTL = false
 }) {
   if (!celebration || celebration.type !== "xp") return null;
 
-  const eventLabel = isHebrew
-    ? EVENT_LABELS.hebrew[celebration.eventType] || ""
-    : EVENT_LABELS.english[celebration.eventType] || "";
+  const eventLabel = isYiddish
+    ? EVENT_LABELS.yiddish[celebration.eventType] || ""
+    : isHebrew
+      ? EVENT_LABELS.hebrew[celebration.eventType] || ""
+      : EVENT_LABELS.english[celebration.eventType] || "";
 
   // In RTL layouts, toast appears on the left side
   const positionClass = isRTL ? "fixed top-20 left-4 z-40 pointer-events-none" : "fixed top-20 right-4 z-40 pointer-events-none";
@@ -89,4 +104,6 @@ export default function XPToast({
       </motion.div>
     </AnimatePresence>
   );
-}
+});
+
+export default XPToast;

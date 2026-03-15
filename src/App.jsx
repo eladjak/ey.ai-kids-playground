@@ -1,31 +1,83 @@
 import './App.css'
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
+import { cleanupStorage } from '@/utils/storageCleanup'
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import VisualEditAgent from '@/lib/VisualEditAgent'
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
-import { AuthProvider, useAuth } from '@/lib/AuthContext';
+import { ClerkProvider } from '@clerk/clerk-react';
+import { AuthProvider, FallbackAuthProvider, useAuth } from '@/lib/AuthContext';
 import { I18nProvider } from '@/components/i18n/i18nProvider';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { AnimatePresence, motion } from 'framer-motion';
+import { trackPageView } from '@/lib/analytics';
+import { initErrorTracking } from '@/lib/errorTracking';
+
+const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
 const MainPage = mainPageKey ? Pages[mainPageKey] : <></>;
+const LandingPage = Pages['LandingPage'];
+const Blog = Pages['Blog'];
+const BlogPost = Pages['BlogPost'];
+
+// Pages accessible without authentication (public routes)
+const PUBLIC_PAGES = new Set(['BookView', 'LandingPage', 'Blog', 'BlogPost']);
+
+const pageTransition = {
+  initial: { opacity: 0, y: 8 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -8 },
+  transition: { duration: 0.15, ease: 'easeInOut' },
+};
 
 const LayoutWrapper = ({ children, currentPageName }) => Layout ?
   <Layout currentPageName={currentPageName}>{children}</Layout>
   : <>{children}</>;
 
+const AnimatedPage = ({ children }) => {
+  const location = useLocation();
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={location.pathname + location.search}
+        initial={pageTransition.initial}
+        animate={pageTransition.animate}
+        exit={pageTransition.exit}
+        transition={pageTransition.transition}
+      >
+        {children}
+      </motion.div>
+    </AnimatePresence>
+  );
+};
+
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, isAuthenticated, navigateToLogin } = useAuth();
+  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, user } = useAuth();
+  const location = useLocation();
+
+  // Track page views on route change
+  useEffect(() => {
+    const pageName = location.pathname.replace(/^\//, '') || 'Home';
+    trackPageView(pageName);
+  }, [location.pathname]);
+
+  // Check if the current route is a public page that doesn't need auth
+  const currentPath = location.pathname.replace(/^\//, '') || mainPageKey;
+  const isPublicRoute =
+    PUBLIC_PAGES.has(currentPath) ||
+    location.pathname === '/' ||
+    location.pathname.startsWith('/blog');
 
   // Show loading spinner while checking app public settings or auth
-  if (isLoadingPublicSettings || isLoadingAuth) {
+  // For public routes, skip auth loading wait (user will be null but that's fine)
+  if (!isPublicRoute && (isLoadingPublicSettings || isLoadingAuth)) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
@@ -33,15 +85,21 @@ const AuthenticatedApp = () => {
     );
   }
 
-  // Handle authentication errors
-  if (authError) {
+  // Handle authentication errors — but only redirect for non-public routes
+  if (!isPublicRoute && authError) {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
+      // Redirect to login automatically for protected routes
       navigateToLogin();
       return null;
     }
+  }
+
+  // For non-public routes, redirect to login if not authenticated
+  if (!isPublicRoute && !isLoadingAuth && !user) {
+    navigateToLogin();
+    return null;
   }
 
   // Render the main app
@@ -51,46 +109,70 @@ const AuthenticatedApp = () => {
         <div className="w-8 h-8 border-4 border-purple-200 border-t-purple-700 rounded-full animate-spin"></div>
       </div>
     }>
-      <Routes>
-        <Route path="/" element={
-          <LayoutWrapper currentPageName={mainPageKey}>
-            <MainPage />
-          </LayoutWrapper>
-        } />
-        {Object.entries(Pages).map(([path, Page]) => (
-          <Route
-            key={path}
-            path={`/${path}`}
-            element={
-              <LayoutWrapper currentPageName={path}>
-                <Page />
+      <AnimatedPage>
+        <Routes location={location}>
+          {/* Root: logged-in users see Home dashboard; guests see LandingPage */}
+          <Route path="/" element={
+            user ? (
+              <LayoutWrapper currentPageName={mainPageKey}>
+                <MainPage />
               </LayoutWrapper>
-            }
-          />
-        ))}
-        <Route path="*" element={<PageNotFound />} />
-      </Routes>
+            ) : (
+              <LandingPage />
+            )
+          } />
+          {/* Public blog routes */}
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
+          {/* All registered pages (auto-generated) */}
+          {Object.entries(Pages).map(([path, Page]) => (
+            <Route
+              key={path}
+              path={`/${path}`}
+              element={
+                <LayoutWrapper currentPageName={path}>
+                  <Page />
+                </LayoutWrapper>
+              }
+            />
+          ))}
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+      </AnimatedPage>
     </Suspense>
   );
 };
 
 
 function App() {
+  // Run storage cleanup and initialise error tracking once on app startup
+  useEffect(() => {
+    cleanupStorage();
+    initErrorTracking();
+  }, []);
+
+  const inner = (
+    <I18nProvider>
+      <QueryClientProvider client={queryClientInstance}>
+        <Router>
+          <NavigationTracker />
+          <AuthenticatedApp />
+        </Router>
+        <Toaster />
+        {import.meta.env.DEV && <VisualEditAgent />}
+      </QueryClientProvider>
+    </I18nProvider>
+  );
 
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <I18nProvider>
-          <QueryClientProvider client={queryClientInstance}>
-            <Router>
-              <NavigationTracker />
-              <AuthenticatedApp />
-            </Router>
-            <Toaster />
-            <VisualEditAgent />
-          </QueryClientProvider>
-        </I18nProvider>
-      </AuthProvider>
+      {CLERK_PUBLISHABLE_KEY ? (
+        <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
+          <AuthProvider>{inner}</AuthProvider>
+        </ClerkProvider>
+      ) : (
+        <FallbackAuthProvider>{inner}</FallbackAuthProvider>
+      )}
     </ErrorBoundary>
   )
 }

@@ -1,7 +1,8 @@
-# EY.AI Kids Playground - Project Instructions
+# Sipurai - Project Instructions
 
 ## Project Overview
-**EY.AI Kids Playground** - פלטפורמה מקיפה ליצירה, שיתוף והדפסת ספרי ילדים מותאמים אישית עם AI.
+**Sipurai** (formerly EY.AI Kids Playground) - פלטפורמה מקיפה ליצירה, שיתוף והדפסת ספרי ילדים מותאמים אישית עם AI.
+**Domain:** https://sipurai.ai | **Analytics:** https://analytics.sipurai.ai
 הילד/ההורה בוחר דמויות, סגנון, שפה וז'אנר - וה-AI יוצר ספר שלם עם סיפור ואיורים.
 
 ## Tech Stack

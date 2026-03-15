@@ -392,17 +392,83 @@ export async function setParentalPin(pin) {
   return true;
 }
 
+// Lockout durations in milliseconds based on total attempt count
+const PIN_LOCKOUT_THRESHOLDS = [
+  { attempts: 5,  lockoutMs: 60 * 1000 },          // 5 fails  → 60 seconds
+  { attempts: 10, lockoutMs: 5 * 60 * 1000 },       // 10 fails → 5 minutes
+  { attempts: 15, lockoutMs: 30 * 60 * 1000 },      // 15 fails → 30 minutes
+];
+
+/**
+ * Get the current PIN lockout state from localStorage.
+ * @returns {{ attempts: number, lockedUntil: number }}
+ */
+function getPinLockoutState() {
+  try {
+    return {
+      attempts: parseInt(localStorage.getItem('pin_attempts') || '0', 10),
+      lockedUntil: parseInt(localStorage.getItem('pin_lockout_until') || '0', 10),
+    };
+  } catch {
+    return { attempts: 0, lockedUntil: 0 };
+  }
+}
+
+/**
+ * Persist PIN lockout state.
+ * @param {number} attempts
+ * @param {number} lockedUntil - epoch ms when lockout expires (0 = not locked)
+ */
+function setPinLockoutState(attempts, lockedUntil) {
+  localStorage.setItem('pin_attempts', String(attempts));
+  localStorage.setItem('pin_lockout_until', String(lockedUntil));
+}
+
 /**
  * Verify a PIN against the stored hash.
+ * Applies progressive lockout after repeated failures.
+ *
  * @param {string} pin - PIN to verify
- * @returns {Promise<boolean>} Whether the PIN matches
+ * @returns {Promise<boolean | { locked: true, retryAfterMs: number }>}
+ *   - true:  PIN matches (or no PIN set)
+ *   - false: PIN does not match
+ *   - { locked, retryAfterMs }: currently locked out
  */
 export async function verifyParentalPin(pin) {
   if (typeof pin !== 'string') return false;
+
   const storedHash = localStorage.getItem('parentalPin');
   if (!storedHash) return true; // No PIN set = always pass
+
+  // Check if currently locked out
+  const { attempts, lockedUntil } = getPinLockoutState();
+  const now = Date.now();
+  if (lockedUntil > now) {
+    return { locked: true, retryAfterMs: lockedUntil - now };
+  }
+
   const inputHash = await hashPin(pin);
-  return inputHash === storedHash;
+  const isCorrect = inputHash === storedHash;
+
+  if (isCorrect) {
+    // Reset attempt counter on success
+    setPinLockoutState(0, 0);
+    return true;
+  }
+
+  // Wrong PIN — increment attempts and apply lockout if threshold reached
+  const newAttempts = attempts + 1;
+  let newLockedUntil = 0;
+
+  // Apply the most severe matching threshold
+  for (const threshold of PIN_LOCKOUT_THRESHOLDS) {
+    if (newAttempts >= threshold.attempts) {
+      newLockedUntil = now + threshold.lockoutMs;
+    }
+  }
+
+  setPinLockoutState(newAttempts, newLockedUntil);
+  return false;
 }
 
 /**

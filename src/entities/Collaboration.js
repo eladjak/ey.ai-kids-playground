@@ -1,3 +1,4 @@
-import { base44 } from '../api/base44Client';
+import { createSupabaseEntity } from '../lib/supabaseEntity';
+import { createSecureEntity } from '../lib/secureEntity';
 
-export const Collaboration = base44.entities.Collaboration;
+export const Collaboration = createSecureEntity(createSupabaseEntity('collaborations'));

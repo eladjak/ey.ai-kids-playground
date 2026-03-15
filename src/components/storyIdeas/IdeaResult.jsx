@@ -6,87 +6,41 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { 
-  Check, 
-  Wand2, 
-  BookOpen, 
-  User, 
-  Lightbulb, 
-  ListOrdered, 
+import {
+  Check,
+  Wand2,
+  BookOpen,
+  User,
+  Lightbulb,
+  ListOrdered,
   Save,
   Edit,
   Trash2,
   Rocket,
-  Loader2 // Added Loader2 import
+  Loader2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useI18n } from "@/components/i18n/i18nProvider";
 
-export default function IdeaResult({ 
-  idea, 
-  onContinue, // This prop is no longer used in the UI based on the outline
-  onRegenerate, 
+export default function IdeaResult({
+  idea,
+  onContinue,
+  onRegenerate,
   onSave,
   onSaveAndContinue,
   onEdit,
   onDelete,
-  isRegenerating, 
+  isRegenerating,
   isSaving,
-  currentLanguage,
-  isEditingMode = false // New prop to control UI for editing
+  isEditingMode = false
 }) {
+  const { t, isRTL } = useI18n();
   const [isEditing, setIsEditing] = useState(isEditingMode);
   const [editedIdea, setEditedIdea] = useState(idea);
 
   useEffect(() => {
-    setEditedIdea(idea); // Sync with prop changes
+    setEditedIdea(idea);
   }, [idea]);
-
-  const isRTL = currentLanguage === 'hebrew' || currentLanguage === 'yiddish';
-
-  const translations = {
-    english: {
-      title: "Your Story Idea is Ready!",
-      editTitle: "Edit Your Story Idea", // New translation
-      subtitle: "Review the details below. You can refine them in the next step.",
-      ideaTitle: "Story Title",
-      ideaDesc: "Description",
-      plotPoints: "Key Plot Points",
-      charDev: "Character Development",
-      moral: "Moral of the Story",
-      continue: "Continue to Next Step", // Still in translations, but UI button removed
-      regenerate: "Try a new idea",
-      regenerating: "Generating...",
-      save: "Save Idea",
-      saving: "Saving...",
-      edit: "Edit",
-      delete: "Delete",
-      saveAndContinue: "Save & Create Book",
-      cancel: "Cancel",
-      saveChanges: "Save Changes"
-    },
-    hebrew: {
-      title: "רעיון הסיפור שלך מוכן!",
-      editTitle: "ערוך את רעיון הסיפור", // New translation
-      subtitle: "בדוק את הפרטים למטה. תוכל לשנות אותם בשלב הבא.",
-      ideaTitle: "כותרת הסיפור",
-      ideaDesc: "תיאור",
-      plotPoints: "נקודות עלילה מרכזיות",
-      charDev: "פיתוח דמויות",
-      moral: "מוסר השכל",
-      continue: "המשך לשלב הבא", // Still in translations, but UI button removed
-      regenerate: "נסה רעיון חדש",
-      regenerating: "יוצר רעיון...",
-      save: "שמור רעיון",
-      saving: "שומר...",
-      edit: "ערוך",
-      delete: "מחק",
-      saveAndContinue: "שמור וצור ספר",
-      cancel: "ביטול",
-      saveChanges: "שמור שינויים"
-    }
-  };
-
-  const t = (key) => translations[currentLanguage]?.[key] || translations.english[key];
 
   if (!idea) return null;
 
@@ -114,7 +68,7 @@ export default function IdeaResult({
             className="space-y-4 p-4 bg-white dark:bg-gray-800/30 rounded-lg shadow-sm"
           >
             <div>
-              <Label htmlFor="edit-title">{t('ideaTitle')}</Label>
+              <Label htmlFor="edit-title">{t('ideaResult.ideaTitle')}</Label>
               <Input
                 id="edit-title"
                 value={editedIdea.title}
@@ -122,7 +76,7 @@ export default function IdeaResult({
               />
             </div>
             <div>
-              <Label htmlFor="edit-description">{t('ideaDesc')}</Label>
+              <Label htmlFor="edit-description">{t('ideaResult.ideaDesc')}</Label>
               <Textarea
                 id="edit-description"
                 value={editedIdea.description}
@@ -131,7 +85,7 @@ export default function IdeaResult({
               />
             </div>
             <div>
-              <Label htmlFor="edit-moral">{t('moral')}</Label>
+              <Label htmlFor="edit-moral">{t('ideaResult.moral')}</Label>
               <Textarea
                 id="edit-moral"
                 value={editedIdea.moral_lesson}
@@ -142,10 +96,10 @@ export default function IdeaResult({
             <div className="flex gap-2">
               <Button onClick={handleSaveChanges} disabled={isSaving}>
                 <Save className="h-4 w-4 mr-2" /> {/* Changed icon to Save */}
-                {t('saveChanges')}
+                {t('ideaResult.saveChanges')}
               </Button>
               <Button variant="ghost" onClick={handleCancelEdit}>
-                {t('cancel')}
+                {t('ideaResult.cancel')}
               </Button>
             </div>
           </motion.div>
@@ -158,10 +112,10 @@ export default function IdeaResult({
             className="space-y-4 p-4 bg-white dark:bg-gray-800/30 rounded-lg shadow-sm"
           >
             <h3 className="font-bold text-lg text-gray-800 dark:text-gray-200">
-              {t('ideaTitle')}: <span className="font-normal">{idea.title}</span>
+              {t('ideaResult.ideaTitle')}: <span className="font-normal">{idea.title}</span>
             </h3>
             <p className="text-gray-600 dark:text-gray-300">
-              <span className="font-semibold text-gray-700 dark:text-gray-200">{t('ideaDesc')}:</span> {idea.description}
+              <span className="font-semibold text-gray-700 dark:text-gray-200">{t('ideaResult.ideaDesc')}:</span> {idea.description}
             </p>
           </motion.div>
         )}
@@ -181,9 +135,9 @@ export default function IdeaResult({
             {!isEditingMode && ( // Show check icon only when not in full editing mode
               <Check className="w-8 h-8 p-1.5 bg-purple-100 dark:bg-purple-900/30 rounded-full" />
             )}
-            {isEditingMode ? t("editTitle") : t("title")}
+            {isEditingMode ? t("ideaResult.editTitle") : t("ideaResult.title")}
           </CardTitle>
-          {!isEditingMode && <CardDescription className="text-gray-600 dark:text-gray-400">{t("subtitle")}</CardDescription>}
+          {!isEditingMode && <CardDescription className="text-gray-600 dark:text-gray-400">{t("ideaResult.subtitle")}</CardDescription>}
         </CardHeader>
         <CardContent className="space-y-6">
           {renderContent()}
@@ -192,7 +146,7 @@ export default function IdeaResult({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-3">
                 <h4 className="font-semibold flex items-center gap-2 text-gray-700 dark:text-gray-200">
-                  <ListOrdered className="w-5 h-5 text-purple-500" /> {t('plotPoints')}
+                  <ListOrdered className="w-5 h-5 text-purple-500" /> {t('ideaResult.plotPoints')}
                 </h4>
                 <ul className={`list-disc space-y-2 ${isRTL ? 'list-inside' : 'pl-5'}`}>
                   {(idea.plot_points || []).map((point, index) => (
@@ -203,13 +157,13 @@ export default function IdeaResult({
               <div className="space-y-6">
                 <div className="space-y-2">
                   <h4 className="font-semibold flex items-center gap-2 text-gray-700 dark:text-gray-200">
-                    <User className="w-5 h-5 text-purple-500" /> {t('charDev')}
+                    <User className="w-5 h-5 text-purple-500" /> {t('ideaResult.charDev')}
                   </h4>
                   <p className="text-gray-600 dark:text-gray-300">{idea.character_development}</p>
                 </div>
                 <div className="space-y-2">
                   <h4 className="font-semibold flex items-center gap-2 text-gray-700 dark:text-gray-200">
-                    <Lightbulb className="w-5 h-5 text-purple-500" /> {t('moral')}
+                    <Lightbulb className="w-5 h-5 text-purple-500" /> {t('ideaResult.moral')}
                   </h4>
                   <p className="text-gray-600 dark:text-gray-300">{idea.moral_lesson}</p>
                 </div>
@@ -221,23 +175,23 @@ export default function IdeaResult({
           <CardFooter className="flex flex-wrap gap-2 justify-end bg-transparent pt-4">
             <Button variant="ghost" onClick={onDelete} className="text-red-500 hover:text-red-600">
               <Trash2 className="h-4 w-4 mr-2" />
-              {t("delete")}
+              {t("ideaResult.delete")}
             </Button>
             <Button variant="outline" onClick={() => setIsEditing(true)}>
               <Edit className="h-4 w-4 mr-2" />
-              {t("edit")}
+              {t("ideaResult.edit")}
             </Button>
             <Button variant="outline" onClick={onRegenerate} disabled={isRegenerating}>
               {isRegenerating ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Wand2 className="h-4 w-4 mr-2" />}
-              {isRegenerating ? t("regenerating") : t("regenerate")}
+              {isRegenerating ? t("ideaResult.regenerating") : t("ideaResult.regenerate")}
             </Button>
             <Button onClick={onSave} disabled={isSaving}>
               {isSaving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
-              {isSaving ? t("saving") : t("save")}
+              {isSaving ? t("ideaResult.saving") : t("ideaResult.save")}
             </Button>
             <Button onClick={onSaveAndContinue} disabled={isSaving} className="bg-purple-600 hover:bg-purple-700">
               <Rocket className="h-4 w-4 mr-2" />
-              {t("saveAndContinue")}
+              {t("ideaResult.saveAndContinue")}
             </Button>
           </CardFooter>
         )}

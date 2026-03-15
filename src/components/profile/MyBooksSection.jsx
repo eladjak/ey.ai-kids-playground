@@ -6,44 +6,16 @@ import { createPageUrl } from "@/utils";
 import {
   BookOpen,
   ChevronRight,
-  PlusCircle // Changed from Plus to PlusCircle as per outline
+  PlusCircle
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-// Badge is no longer used in the new card design, can be removed if not used elsewhere in this component
-// import { Badge } from "@/components/ui/badge"; 
+import { useI18n } from "@/components/i18n/i18nProvider";
 
-export default function MyBooksSection({ books = [], currentLanguage = "english", showAll = false }) {
-  const translations = {
-    english: {
-      "myBooks.title": "My Books",
-      "myBooks.recent": "Recent Books",
-      "myBooks.noBooks": "No books created yet", // Updated key
-      "myBooks.startCreating": "Start creating your first book", // Updated key
-      "myBooks.createBook": "Create Book", // Updated key
-      "myBooks.viewAll": "View All",
-      "myBooks.read": "Read", // New translation
-      "myBooks.edit": "Edit" // New translation
-    },
-    hebrew: {
-      "myBooks.title": "הספרים שלי",
-      "myBooks.recent": "ספרים אחרונים",
-      "myBooks.noBooks": "עדיין לא נוצרו ספרים", // Updated key
-      "myBooks.startCreating": "התחל ליצור את הספר הראשון שלך", // Updated key
-      "myBooks.createBook": "צור ספר", // Updated key
-      "myBooks.viewAll": "צפה בהכל",
-      "myBooks.read": "קרא", // New translation
-      "myBooks.edit": "ערוך" // New translation
-    }
-  };
+export default function MyBooksSection({ books = [], showAll = false }) {
+  const { t } = useI18n();
 
-  const t = (key) => {
-    return translations[currentLanguage]?.[key] || translations.english[key] || key;
-  };
-
-  // Removed isRTL, formatDate, getStatusBadgeStyles as they are no longer used in the new design
-
-  const displayBooks = showAll ? books : books.slice(0, 3); // Defined displayBooks here
+  const displayBooks = showAll ? books : books.slice(0, 3);
 
   return (
     <Card className="h-full"> {/* Removed dir prop as it's not in the outline */}
@@ -108,7 +80,7 @@ export default function MyBooksSection({ books = [], currentLanguage = "english"
             <BookOpen className="h-12 w-12 text-gray-300 mx-auto mb-4" /> {/* Updated margin */}
             <h4 className="text-lg font-medium mb-2">{t("myBooks.noBooks")}</h4> {/* Updated key */}
             <p className="text-gray-500 mb-4">{t("myBooks.startCreating")}</p> {/* Updated key */}
-            <Link to={createPageUrl("CreativeStoryStudio")}> {/* Updated link target */}
+            <Link to={createPageUrl("BookWizard")}> {/* Updated link target */}
               <Button>
                 <PlusCircle className="h-4 w-4 mr-2" /> {/* Changed icon to PlusCircle */}
                 {t("myBooks.createBook")} {/* Updated key */}

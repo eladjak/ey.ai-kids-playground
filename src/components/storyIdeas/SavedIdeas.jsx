@@ -4,58 +4,40 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/componen
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { FileText, Edit, Trash2, Rocket } from "lucide-react";
-import EmptyState from '../library/EmptyState'; // Assuming EmptyState is in '../library/EmptyState.jsx' or '.tsx'
+import { Lightbulb, Edit, Trash2, Rocket } from "lucide-react";
+import { useI18n } from "@/components/i18n/i18nProvider";
 
 export default function SavedIdeas({
   ideas = [],
   onUseIdea,
   onEditIdea,
   onDeleteIdea,
-  currentLanguage = "english",
-  isRTL = false,
+  onGenerateNew,
 }) {
-
-  const translations = {
-    english: {
-      "savedIdeas.title": "Saved Story Ideas",
-      "savedIdeas.subtitle": "Your collection of previously generated story ideas",
-      "savedIdeas.emptyTitle": "No Saved Ideas Yet",
-      "savedIdeas.emptyDesc": "Generate and save some ideas to see them here, or try generating a new one.",
-      "savedIdeas.newIdea": "Create New Idea", // Not used in this version but kept for consistency
-      "savedIdeas.use": "Use This Idea",
-      "savedIdeas.recent": "Recent", // Not used in this version but kept for consistency
-      "savedIdeas.language": "Language", // Not used in this version but kept for consistency
-      "savedIdeas.createdOn": "Created on", // Not used in this version but kept for consistency
-      "savedIdeas.edit": "Edit",
-      "savedIdeas.delete": "Delete",
-    },
-    hebrew: {
-      "savedIdeas.title": "רעיונות סיפורים שנשמרו",
-      "savedIdeas.subtitle": "האוסף שלך של רעיונות סיפורים שנוצרו בעבר",
-      "savedIdeas.emptyTitle": "אין עדיין רעיונות שמורים",
-      "savedIdeas.emptyDesc": "צור ושמור רעיונות כדי לראות אותם כאן, או נסה ליצור רעיון חדש.",
-      "savedIdeas.newIdea": "צור רעיון חדש", // Not used in this version but kept for consistency
-      "savedIdeas.use": "השתמש ברעיון זה",
-      "savedIdeas.recent": "נוצר לאחרונה", // Not used in this version but kept for consistency
-      "savedIdeas.language": "שפה", // Not used in this version but kept for consistency
-      "savedIdeas.createdOn": "נוצר ב", // Not used in this version but kept for consistency
-      "savedIdeas.edit": "ערוך",
-      "savedIdeas.delete": "מחק",
-    }
-  };
-
-  const t = (key) => {
-    return translations[currentLanguage]?.[key] || translations.english[key] || key;
-  };
+  const { t, isRTL } = useI18n();
 
   if (ideas.length === 0) {
     return (
-      <EmptyState
-        title={t("savedIdeas.emptyTitle")}
-        description={t("savedIdeas.emptyDesc")}
-        icon={<FileText className="h-12 w-12 text-gray-400 mb-4" />}
-      />
+      <div className="flex flex-col items-center justify-center py-16 px-4 text-center" dir={isRTL ? "rtl" : "ltr"}>
+        <div className="rounded-full bg-amber-100 dark:bg-amber-900/30 p-5 mb-5">
+          <Lightbulb className="h-10 w-10 text-amber-500" />
+        </div>
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+          {t("savedIdeas.emptyTitle")}
+        </h3>
+        <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-sm">
+          {t("savedIdeas.emptyDesc")}
+        </p>
+        {onGenerateNew && (
+          <Button
+            onClick={onGenerateNew}
+            className="bg-purple-600 hover:bg-purple-700 gap-2"
+          >
+            <Lightbulb className="h-4 w-4" />
+            {isRTL ? "צור רעיון חדש" : "Generate new idea"}
+          </Button>
+        )}
+      </div>
     );
   }
 

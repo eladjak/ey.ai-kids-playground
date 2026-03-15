@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from "react";
+import { useI18n } from "@/components/i18n/i18nProvider";
 import { StoryIdea } from "@/entities/StoryIdea";
-import { User } from "@/entities/User";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import {
   InvokeLLM
 } from "@/integrations/Core";
@@ -28,6 +29,9 @@ import DailyPrompt from "../components/storyIdeas/DailyPrompt";
 
 export default function StoryIdeas() {
   const { toast } = useToast();
+  const { t, language, isRTL } = useI18n();
+  const { user: hookUser } = useCurrentUser();
+  // currentLanguage: the AI generation language (from user profile, may differ from UI language)
   const [currentLanguage, setCurrentLanguage] = useState("english");
   const [savedIdeas, setSavedIdeas] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -49,64 +53,24 @@ export default function StoryIdeas() {
   useEffect(() => {
     const loadUserSettings = async () => {
       try {
-        const user = await User.me();
-        const storedLanguage = user.language || localStorage.getItem("language") || "english";
+        // currentLanguage is the AI generation language from user profile
+        const storedLanguage = hookUser?.language || localStorage.getItem("language") || "english";
         setCurrentLanguage(storedLanguage);
-        
+
         // Load saved ideas
         const ideas = await StoryIdea.list("-created_date", 20);
         setSavedIdeas(ideas);
-        
+
       } catch (error) {
         // silently handled
       } finally {
         setIsLoading(false);
       }
     };
-    
+
     loadUserSettings();
-  }, []);
-
-  const translations = {
-    english: {
-      "storyIdeas.title": "Story Ideas",
-      "storyIdeas.subtitle": "Discover and create amazing story concepts",
-      "storyIdeas.generate": "Generate Ideas",
-      "storyIdeas.saved": "Saved Ideas",
-      "storyIdeas.daily": "Daily Prompt",
-      "storyIdeas.noIdeas": "No saved ideas yet",
-      "storyIdeas.startGenerating": "Start generating your first story idea!",
-      "storyIdeas.generatedIdeaTitle": "Generated Idea",
-      "storyIdeas.titleLabel": "Title:",
-      "storyIdeas.descriptionLabel": "Description:",
-      "storyIdeas.saveButton": "Save Idea",
-      "storyIdeas.regenerateButton": "Regenerate",
-      "storyIdeas.saveSuccess": "Idea saved successfully!",
-      "storyIdeas.saveFailed": "Failed to save idea.",
-    },
-    hebrew: {
-      "storyIdeas.title": "רעיונות לסיפורים",
-      "storyIdeas.subtitle": "גלה ויצור רעיונות מדהימים לסיפורים",
-      "storyIdeas.generate": "יצירת רעיונות",
-      "storyIdeas.saved": "רעיונות שמורים",
-      "storyIdeas.daily": "רעיון יומי",
-      "storyIdeas.noIdeas": "אין עדיין רעיונות שמורים",
-      "storyIdeas.startGenerating": "התחל לייצר את הרעיון הראשון שלך!",
-      "storyIdeas.generatedIdeaTitle": "רעיון שנוצר",
-      "storyIdeas.titleLabel": "כותרת:",
-      "storyIdeas.descriptionLabel": "תיאור:",
-      "storyIdeas.saveButton": "שמור רעיון",
-      "storyIdeas.regenerateButton": "צור מחדש",
-      "storyIdeas.saveSuccess": "הרעיון נשמר בהצלחה!",
-      "storyIdeas.saveFailed": "שמירת הרעיון נכשלה.",
-    }
-  };
-
-  const t = (key) => {
-    return translations[currentLanguage]?.[key] || translations.english[key] || key;
-  };
-
-  const isRTL = currentLanguage === "hebrew" || currentLanguage === "yiddish";
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hookUser]);
 
   const handleIdeaSaved = async () => {
     // Reload saved ideas
@@ -125,7 +89,7 @@ export default function StoryIdeas() {
       : null;
 
     if (moderatedDetails && moderatedDetails.blocked) {
-      toast({ variant: "destructive", description: "Some input contains inappropriate content. Please revise." });
+      toast({ variant: "destructive", description: t("storyIdeas.inappropriateInput") });
       return null;
     }
 
@@ -208,7 +172,7 @@ export default function StoryIdeas() {
         });
       }
     } catch (error) {
-      toast({ variant: "destructive", description: "Error generating idea. Please try again." });
+      toast({ variant: "destructive", description: t("storyIdeas.generateError") });
     } finally {
       setIsGenerating(false);
     }

@@ -1,5 +1,3 @@
-import jsPDF from 'jspdf';
-
 /**
  * Export a book with its pages to a PDF document.
  *
@@ -11,6 +9,7 @@ import jsPDF from 'jspdf';
  * @returns {Promise<void>} - Downloads the PDF
  */
 export async function exportBookToPDF(book, pages, { format = 'a4', onProgress } = {}) {
+  const { default: jsPDF } = await import('jspdf');
   const isA4 = format === 'a4';
   const pageWidth = isA4 ? 210 : 215.9;
   const pageHeight = isA4 ? 297 : 279.4;

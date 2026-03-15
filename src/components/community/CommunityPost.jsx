@@ -1,7 +1,9 @@
 import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from "@/utils";
-import { format } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
+import { he as dateFnsHe } from 'date-fns/locale';
+import { useI18n } from "@/components/i18n/i18nProvider";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -23,8 +25,23 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 function CommunityPost({ post, onLike, isLiked = false, isOwner = false, onReport }) {
+  const { language } = useI18n();
   if (!post || !post.book) return null;
-  
+
+  const isHebrewOrYiddish = language === "hebrew" || language === "yiddish";
+
+  const formatTimestamp = (dateStr) => {
+    if (!dateStr) return "";
+    try {
+      return formatDistanceToNow(new Date(dateStr), {
+        addSuffix: true,
+        locale: isHebrewOrYiddish ? dateFnsHe : undefined
+      });
+    } catch {
+      return "";
+    }
+  };
+
   const truncate = (text, maxLength = 150) => {
     if (!text) return '';
     if (text.length <= maxLength) return text;
@@ -32,7 +49,7 @@ function CommunityPost({ post, onLike, isLiked = false, isOwner = false, onRepor
   };
   
   return (
-    <Card className="overflow-hidden transition-all hover:shadow-md">
+    <Card className="overflow-hidden transition-all hover:shadow-md" dir={['hebrew', 'yiddish'].includes(post.book?.language) ? 'rtl' : 'ltr'}>
       <CardContent className="p-0">
         <div className="flex flex-col md:flex-row">
           {/* Book Cover */}
@@ -58,13 +75,17 @@ function CommunityPost({ post, onLike, isLiked = false, isOwner = false, onRepor
               {/* Author info */}
               <div className="flex items-center gap-2 mb-3">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={`https://ui-avatars.com/api/?name=${post.user?.full_name || 'User'}&background=random`} />
-                  <AvatarFallback>{post.user?.full_name?.[0] || 'U'}</AvatarFallback>
+                  {post.user?.avatar_url ? (
+                    <AvatarImage src={post.user.avatar_url} alt={post.user.full_name} />
+                  ) : null}
+                  <AvatarFallback className="bg-gradient-to-br from-purple-500 to-indigo-500 text-white">
+                    {post.user?.full_name?.charAt(0) || 'U'}
+                  </AvatarFallback>
                 </Avatar>
                 <div>
                   <p className="text-sm font-medium">{post.user?.full_name || 'Unknown User'}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {post.created_date && format(new Date(post.created_date), 'MMM d, yyyy')}
+                    {formatTimestamp(post.created_date)}
                   </p>
                 </div>
               </div>

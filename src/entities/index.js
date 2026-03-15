@@ -8,3 +8,5 @@ export { StoryIdea } from './StoryIdea';
 export { Feedback } from './Feedback';
 export { Character } from './Character';
 export { UserBadge } from './UserBadge';
+export { Follow } from './Follow';
+export { Notification } from './Notification';

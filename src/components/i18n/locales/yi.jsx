@@ -5,17 +5,19 @@ export default {
     library: "מײַן ביבליאָטעק",
     community: "קהילה",
     settings: "אײַנשטעלונגען",
-    createBook: "שאַפֿן אַ נײַ בוך",
+    createBook: "שאַפֿן בוך",
+    advancedEditor: "אַדוואַנסד עדיטאָר",
     collaborate: "צוזאַמענאַרבעט",
     feedback: "פֿידבעק",
-    save: "היט",
+    save: "אָפּהיטן",
+    saving: "אָפּהיטן...",
     cancel: "אָפּזאָגן",
     edit: "רעדאַקטירן",
     view: "קוק",
-    next: "נעקסט",
+    next: "ווײַטער",
     previous: "פֿריערדיק",
     submit: "דערלאַנגען",
-    loading: "לאָודינג...",
+    loading: "לאָדן...",
     search: "זוכן",
     logout: "אַרויסלאָגירן",
     darkMode: "טונקל מאָדע",
@@ -26,10 +28,19 @@ export default {
     page: "בלאַט",
     of: "פֿון",
     for: "פֿאַר",
+    main: "הויפּט",
+    create: "שאַפֿן",
+    mySpace: "מײַן פּלאַץ",
+    communitySection: "קהילה",
+    system: "סיסטעם",
+    myProfile: "מײַן פּראָפֿיל",
+    characters: "מײַנע כאַראַקטערס",
+    leaderboard: "ליידערבאָרד",
+    unknownUser: "אומבאַוווּסטן ניצער",
     status: {
       draft: "דראַפֿט",
-      generating: "שאַפֿנדיק",
-      complete: "קאָמפּליט",
+      generating: "שאַפֿן...",
+      complete: "פֿאַרטיק",
       pending: "אױסשטיענדיק",
       accepted: "אָנגענומען",
       declined: "אָפּגעלייגט",
@@ -41,6 +52,61 @@ export default {
     subtitle: "פֿונק דיין קינד'ס פֿאַנטאַזיע מיט קאַסטאָם געשיכטעס",
     createBookBtn: "שאַפֿן אַ בוך",
     viewLibraryBtn: "זען ביבליאָטעק",
+    noBooks: {
+      title: "נאָך קיין ביכער",
+      subtitle: "שאַפֿן דיין ערשטן פּערזאַנאַלייזד סטאָריבוך צו אָנהייבן!"
+    },
+    welcome: "ברוכים הבאים,",
+    level: "לעוועל",
+    xp: "XP",
+    books: "ביכער",
+    streak: "טעג שטרייַף",
+    progress: {
+      title: "דיין פֿאָרשריט",
+      toNext: "צום נעקסטן לעוועל"
+    },
+    badges: {
+      recent: "לעצטיקע בייַדזשעס"
+    },
+    create: {
+      button: "שאַפֿן בוך",
+      new: "שאַפֿן נײַע בוך"
+    },
+    library: {
+      button: "זען ביבליאָטעק"
+    },
+    search: {
+      placeholder: "זוכן ביכער, אידעען אָדער טעמעס..."
+    },
+    tabs: {
+      featured: "פֿיטשערד ביכער",
+      recent: "לעצטיקע ביכער",
+      all: "אַלע ביכער"
+    },
+    book: {
+      read: "לייענען בוך",
+      continue: "פֿאָרזעצן לייענען",
+      edit: "רעדאַקטירן בוך",
+      age: "עלטער קייט",
+      genre: "זשאַנער",
+      lastEdit: "לעצט רעדאַקטירט"
+    },
+    dailyPrompt: {
+      title: "טעגלעכע פּראָמפּט",
+      try: "פּרוּוון דעם פּראָמפּט",
+      use: "ניצן דעם פּראָמפּט",
+      loading: "לאָדן אינספּיראַציע...",
+      explore: "אַנטדעקן מער אידעען"
+    },
+    promptSaved: "פּראָמפּט גע-היט! גיין צו סטאָרי אידעען צו ניצן עס.",
+    drafts: {
+      title: "פֿאָרזעצן פֿון וואו דו האָסט אויפֿגעהערט",
+      continue: "פֿאָרזעצן",
+      status: {
+        draft: "דראַפֿט",
+        generating: "שאַפֿנדיק..."
+      }
+    },
     features: {
       personalized: {
         title: "פּערזאַנאַלייזד געשיכטעס",
@@ -221,19 +287,60 @@ export default {
   },
   library: {
     title: "מײַן ביבליאָטעק",
-    subtitle: "זען און פֿאַרװאַל דײַן פּערזאַנאַלישט געשיכטע ביכער",
-    createNewBook: "שאַפֿן נײַע בוך",
+    subtitle: "זען און פֿאַרװאַלטן דײַנע פּערזענלעכע מעשׂה-ביכער",
+    createNewBook: "שאַפֿן אַ נײַ בוך",
     searchPlaceholder: "זוכן לויט טיטל אָדער קינד'ס נאָמען...",
+    search: "זוכן לויט טיטל אָדער קינד'ס נאָמען...",
     filters: "פֿילטערס",
     resetFilters: "צוריקשטעלן פֿילטערס",
+    active: "אַקטיוו",
+    reset: "אָפּשטעלן",
+    status: "סטאַטוס",
+    allStatus: "אַלע סטאַטוסן",
+    draft: "טיוועטע",
+    generating: "שאַפֿן",
+    complete: "פֿאַרענדיקט",
+    genre: "זשאַנר",
+    allGenres: "אַלע זשאַנרן",
+    ageRange: "עלטער-בריי",
+    allAges: "אַלע עלטערן",
+    language: "שפּראַך",
+    allLanguages: "אַלע שפּראַכן",
+    booksFound: "ביכער געפֿונען",
+    bookFound: "בוך געפֿונען",
+    noBooks: "קיין ביכער ניט געפֿונען",
+    adjustFilters: "פּרובירט צו פּאַסן דײַנע פֿילטערס אָדער זוכוואָרטן",
+    createFirst: "שאַפֿן דײַן ערשטן פּערזענלעכן מעשׂה-בוך",
+    createBook: "שאַפֿן אַ בוך",
+    genreOptions: {
+      adventure: "אַװאַנטורע",
+      fairy_tale: "מעשׂה",
+      educational: "לערנדיק",
+      bedtime: "שלאָפֿן-צײַט מעשׂה",
+      fantasy: "פֿאַנטאַזיע",
+      science: "װיסנשאַפֿט",
+      animals: "חיות",
+      sports: "ספּאָרט"
+    },
+    ageRangeOptions: {
+      years_2_4: "2-4 יאָר",
+      years_5_7: "5-7 יאָר",
+      years_8_10: "8-10 יאָר",
+      years_11plus: "11+ יאָר"
+    },
+    languageOptions: {
+      english: "ענגליש",
+      hebrew: "העברעיש",
+      yiddish: "ייִדיש"
+    },
     tabs: {
       all: "אַלע געשיכטעס",
-      myPosts: "מײַן געטיילט געשיכטעס"
+      myPosts: "מײַנע געטיילטע געשיכטעס"
     },
-    noBooks: {
-      title: "קיין ביכער געפֿונען",
+    noBookData: {
+      title: "קיין ביכער ניט געפֿונען",
       tryFilters: "פּרובירט צו פּאַסן דײַן זוכן אָדער פֿילטערס",
-      createFirst: "שאַפֿן דײַן ערשטער פּערזאַנאַלייזד געשיכטע בוך",
+      createFirstLong: "שאַפֿן דײַן ערשטן פּערזענלעכן מעשׂה-בוך",
       button: "שאַפֿן אַ בוך"
     }
   },
@@ -244,7 +351,6 @@ export default {
     statusLabels: {
       pageOf: "בלאַט {{current}} פֿון {{total}}"
     },
-    invite: "איינלאַדן",
     saving: "אײַנשפּאָרן...",
     tabs: {
       editor: "עדיטאָר",
@@ -321,10 +427,6 @@ export default {
   feedback: {
     title: "פֿידבעק פֿאַר \"{{bookTitle}}\"",
     total: "סך־הכל",
-    stats: {
-      suggestions: "פֿאָרשלאגן",
-      implemented: "אימפּלעמענטירט"
-    },
     giveFeedback: "געבן פֿידבעק",
     cancel: "אַנולירן",
     bookInfo: {
@@ -348,6 +450,7 @@ export default {
       placeholder: "װאָס טראַכסטו װעגן דעם בלאַט? צושטעלן ספּעציפֿיש, קאָנסטרוקטיוו פֿידבעק...",
       ratingLabel: "רייטינג",
       typeLabel: "פֿידבעק טיפּ",
+      typePlaceholder: "אויסקלייַבן פֿידבעק טיפּ",
       types: {
         general: "אַלגעמײן פֿידבעק",
         story: "געשיכטע און נאַראַטיוו",
@@ -394,6 +497,8 @@ export default {
       }
     },
     stats: {
+      suggestions: "פֿאָרשלאגן",
+      implemented: "אימפּלעמענטירט",
       title: "פֿידבעק סטאַטיסטיק",
       ratingsOverview: "רייטינג איבערבליק",
       fromRatings: "פֿון {{count}} רייטינגס",
@@ -406,7 +511,23 @@ export default {
     title: "קהילה",
     subtitle: "אַנטדעקן און טיילן געשיכטעס געשאַפֿן דורך אונדזער קהילה",
     shareBook: "טיילן דײַן בוך",
+    shareYourBook: "טיילן דיין בוך",
     featuredStories: "פֿיטשערד געשיכטעס",
+    search: "זוכן געשיכטעס, מחברים אָדער טעמעס...",
+    mostRecent: "מערסט לעצטיקע",
+    mostPopular: "מערסט פּאָפּולער",
+    allStories: "אַלע געשיכטעס",
+    mySharedStories: "מיינע געטיילטע געשיכטעס",
+    clearFilters: "קלאָרן פֿילטערס",
+    noStories: "קיין געשיכטעס ניט געפֿונען",
+    adjustFilters: "פּרובירט צו פּאַסן דיין זוכן אָדער פֿילטערס",
+    beFirst: "זײַ דער ערשטער צו טיילן אַ געשיכטע מיט דער קהילה",
+    shareYourStory: "טיילן דיין געשיכטע",
+    previous: "פֿריִערדיקע",
+    next: "ווײַטערע",
+    noSharedYet: "נאָך קיין געטיילטע געשיכטעס",
+    notSharedYet: "האָסטו נאָך ניט געטיילט קיין ביכער מיט דער קהילה",
+    shareFirstStory: "טיילן דיין ערשטע געשיכטע",
     filters: {
       recent: "מערסט לעצטיקע",
       popular: "מערסט פּאָפּולער",
@@ -421,12 +542,6 @@ export default {
       allStories: "אַלע געשיכטעס",
       myShared: "מײַן געטיילט געשיכטעס"
     },
-    noStories: {
-      title: "קיין געשיכטעס ניט געפֿונען",
-      tryFilters: "פּרובירט צו פּאַסן דײַן זוכן אָדער פֿילטערס",
-      beFirst: "זײַ דער ערשטער צו טיילן אַ געשיכטע מיט דער קהילה",
-      shareStory: "טיילן דײַן געשיכטע"
-    },
     post: {
       readMore: "לייענען מער",
       sharedBy: "געטיילט דורך {{name}}",
@@ -439,50 +554,141 @@ export default {
       description: "טיילן דײַן בוך מיט דער קהילה און אינספּירירן אַנדערע",
       selectBook: "אויסקלייַבן אַ בוך צו טיילן",
       choosePlaceholder: "אויסקלייַבן אַ בוך...",
-      loading: "לאָודינג ביכער...",
+      loading: "לאָדן ביכער...",
       noBooks: "קיין ביכער ניט געפֿונען",
       postTitle: "פּאָסט טיטל",
-      description: "באַשרייַבונג",
+      postTitlePlaceholder: "גיב דיין פּאָסט אַ טיטל",
+      descriptionLabel: "באַשרייַבונג",
       descriptionPlaceholder: "דערצייל דער קהילה וועגן דעם בוך און פֿאַרוואָס האָסטו עס געשאַפֿן...",
       tags: "טאַגס",
       addTagPlaceholder: "צולייגן אַ טאַג...",
       add: "צולייגן",
       suggestedTags: "פֿאָרגעשלאָגן טאַגס:",
       sharing: "טיילן...",
-      shareBook: "טיילן בוך"
+      shareBook: "טיילן בוך",
+      cancel: "אָפּזאָגן",
+      defaultTitle: "קוקט אויף מיין בוך:",
+      tagLabels: {
+        adventure: "אַוואַנטורע",
+        fantasy: "פֿאַנטאַזיע",
+        education: "בילדונג",
+        animals: "חיות",
+        family: "משפּחה",
+        friendship: "פֿרײַנדשאַפֿט",
+        science: "וויסנשאַפֿט",
+        values: "ווערטן",
+        learning: "לערנען",
+        fun: "שפּאַס"
+      }
+    },
+    comment: {
+      reply: "ענטפֿערן",
+      replyPlaceholder: "שרייַב אַ ענטפֿער...",
+      cancel: "אָפּזאָגן",
+      posting: "פּאָסטינג...",
+      postReply: "פּאָסטירן ענטפֿער",
+      unknownUser: "אומבאַוווּסטן ניצער"
+    },
+    featured: {
+      badge: "פֿיטשערד",
+      sharedBy: "געטיילט דורך",
+      unknownUser: "אומבאַוווּסטן ניצער",
+      readMore: "לייענען מער"
+    },
+    toast: {
+      loadError: "לאָדן קהילה דאַטן האָט פֿאַרזאָגט. פּרוביר ווידעראַמאָל.",
+      postsError: "לאָדן פּאָסטן האָט פֿאַרזאָגט. פּרוביר ווידעראַמאָל.",
+      likeRemoved: "לייק אָפּגענומען",
+      likeAdded: "האָסט גענוצן דעם פּאָסט!",
+      likeError: "עדכון לייק האָט פֿאַרזאָגט. פּרוביר ווידעראַמאָל.",
+      shareSuccess: "דיין בוך איז געטיילט מיט דער קהילה!",
+      shareError: "טיילן בוך האָט פֿאַרזאָגט. פּרוביר ווידעראַמאָל."
     }
+  },
+  pageNotFound: {
+    title: "בלאַט ניט געפֿונען",
+    notFound: "ניט צו געפֿינען",
+    adminNote: "אַדמין באַמערקונג",
+    goHome: "גיין אַהיים"
   },
   settings: {
     title: "אײַנשטעלונגען",
-    subtitle: "קאָסטאָמייז דײַן אַפּ ערפֿאַרונג און פּרעפֿערענסן",
+    subtitle: "פֿאַרװאַלטן דיינע פּרעפֿערענסן און חשבון אײַנשטעלונגען",
+    loading: "לאָדן אײַנשטעלונגען...",
+    save: "היטן ענדערונגען",
+    saving: "היטן...",
+    saved: "אײַנשטעלונגען געהיט מיט דערפֿאָלג!",
+    saveSettings: "היטן אײַנשטעלונגען",
+    language: "שניטשטעל שפּראַך",
+    defaultStoryLanguage: "דיפֿאָלט געשיכטע שפּראַך",
+    notifications: "נאָטיפֿיקאַציעס",
+    audio: "אודיא אײַנשטעלונגען",
+    audioEnabled: "דערמעגלעכן אודיא דערציילונג",
+    audioSpeed: "דערציילונג געשווינדיקייט",
+    darkMode: "טונקל מאָדע",
+    textDensity: "טעקסט געדיכטקייַט",
+    fontSize: "שריפֿט גרייס",
+    tabs: {
+      general: "אַלגעמיין",
+      appearance: "אויסזען",
+      ai: "AI סטודיאָ",
+      account: "חשבון",
+      billing: "חיוב",
+      parental: "עלטערן קאָנטראָל"
+    },
+    general: {
+      languageSettings: "שפּראַך אײַנשטעלונגען"
+    },
     appearance: {
       title: "אויסזען",
+      desc: "קאָסטאָמייז װי די אַפּ זעט אויס.",
       description: "קאָסטאָמייז װי די אַפּליקאַציע זעט אויס",
       darkMode: "טונקל מאָדע",
       darkModeDescription: "שאַלטן צו טונקל טעמע",
       textDensity: "טעקסט געדיכטקייַט",
+      density: {
+        low: "נידעריק",
+        medium: "מיטל",
+        high: "הויך"
+      },
       densityOptions: {
         low: "נידעריק - מער ספּייסינג, גרעסער טעקסט",
         medium: "מיטל - באַלאַנסירט (רעקאָמענדירט)",
         high: "הויך - קאָמפּאַקט לייאַוט"
+      },
+      fontSize: {
+        small: "קליין",
+        medium: "מיטל",
+        large: "גרויס",
+        xLarge: "עקסטרע גרויס"
+      },
+      fontSizes: {
+        small: "קליין",
+        medium: "מיטל",
+        large: "גרויס",
+        xlarge: "עקסטרע גרויס"
       }
     },
-    language: {
-      title: "שפּראַך און ראַיאָן",
-      description: "שטעלן דײַן פּרעפֿערירט שפּראַך און ראַיאָנאַל אײַנשטעלונגען",
-      appLanguage: "אַפּליקאַציע שפּראַך",
-      appLanguageDescription: "ענדערן שפּראַך װעט איבערזעצן די שניטשטעל",
-      defaultStoryLanguage: "דיפֿאָלט געשיכטע שפּראַך"
+    notification: {
+      enable: "דערמעגלעכן נאָטיפֿיקאַציעס פֿאַר נײַע פֿיטשערס"
     },
-    notifications: {
-      title: "נאָטיפֿיקאַציעס",
-      description: "פֿאַרװאַלטן װי און װען איר באַקומען נאָטיפֿיקאַציעס",
-      enableNotifications: "דערמעגלעכן נאָטיפֿיקאַציעס",
-      enableDescription: "באַקומען נאָטיפֿיקאַציעס װעגן דײַנע ביכער",
-      bookCompletion: "בוך פֿאַרענדיקן",
-      bookCompletionDescription: "מעלדן װען אַ בוך איז גרייט",
-      newFeatures: "נײַע פֿיטשערס",
-      newFeaturesDescription: "מעלדן װעגן אַפּ דערהײַנטיקונגען"
+    ai: {
+      title: "AI פּרעפֿערענסן",
+      description: "קאָנפֿיגורירן דיינע AI מאָדעלס"
+    },
+    account: {
+      title: "חשבון אינפֿאָרמאַציע",
+      desc: "זעען און פֿאַרװאַלטן דיינע חשבון דעטאַלן.",
+      name: "פֿולע נאָמען",
+      email: "אימייל אַדרעס",
+      manageSub: "פֿאַרװאַלטן אַבאָנעמענט",
+      logout: "אויסלאָגן"
+    },
+    billing: {
+      title: "חיוב און אַבאָנעמענט",
+      desc: "זען דיין אַקטועלן פּלאַן, ניצן, און חיוב היסטאָריע.",
+      comingSoon: "חיוב פֿאַרװאַלטן קומט באַלד.",
+      upgradePlan: "אַפּגרייד פּלאַן"
     },
     accessibility: {
       title: "אַקסעסאַביליטי",
@@ -490,28 +696,811 @@ export default {
       audioNarration: "אודיא דערציילונג",
       audioDescription: "דערמעגלעכן אוטאָמאַטיש דערציילונג פֿון ביכער",
       fontSize: "שריפֿט גרייס",
+      audioSpeed: "אודיא געשווינדיקייט",
       fontSizes: {
         small: "קליין",
         medium: "מיטל",
         large: "גרויס",
         xlarge: "עקסטרע גרויס"
       },
-      audioSpeed: "אודיא געשווינדיקייט",
       audioSpeeds: {
         slow: "פּאַמעלעך (0.75x)",
         normal: "נאָרמאַל (1x)",
         fast: "שנעל (1.25x)",
         veryFast: "זייער שנעל (1.5x)"
       }
-    },
-    saveSettings: "היטן אײַנשטעלונגען",
-    saved: "אײַנשטעלונגען געהיט מיט דערפֿאָלג!"
+    }
   },
   bookView: {
     noBook: {
       title: "בוך ניט געפֿונען",
       description: "דער בוך װאָס איר זוכט קען זײַן אַראָפּגענומען אָדער עקזיסטירט ניט.",
       goToLibrary: "גיין צו ביבליאָטעק"
+    }
+  },
+  wizard: {
+    title: "בוך שאַפֿונגס וויזאַרד",
+    subtitle: "שאַפֿן אַ וווּנדערלעכן קינדער בוך אין פֿיר פּשוטע טריט",
+    loading: "מאַכן אַלץ גרייט פֿאַר דיר...",
+    creatingBook: "שאַפֿן דיין קסם בוך...",
+    steps: {
+      topic: "קלייַב אַ טעמע",
+      characters: "קלייַב כאַראַקטערס",
+      preview: "פּרעוויו און רעדאַקטירן",
+      create: "שאַפֿן בוך"
+    },
+    topic: {
+      title: "וואָס פֿאַר אַ געשיכטע ווילסט שאַפֿן?",
+      customIdea: "מײַן אייגן אידעע",
+      customIdeaDesc: "שרייַב דיין אייגן געשיכטע אידעע",
+      useSavedIdea: "ניצן געהיטן אידעע",
+      useSavedIdeaDesc: "קלייַב פֿון דיינע געהיטענע אידעען",
+      customPlaceholder: "באַשרייַב דיין געשיכטע אידעע..."
+    },
+    characters: {
+      title: "קלייַב דיינע כאַראַקטערס",
+      subtitle: "אויסקלייַבן כאַראַקטערס פֿאַר דיין געשיכטע",
+      addMore: "צולייגן מער כאַראַקטערס"
+    },
+    preview: {
+      title: "פּרעוויו און רעדאַקטירן דיין בוך",
+      language: "געשיכטע שפּראַך",
+      advanced: "אַדוואַנסד אָפּציעס",
+      tone: "טאָן",
+      ageRange: "עלטער קייט",
+      moral: "מאָראַל / לעסאַן"
+    },
+    creating: {
+      title: "שאַפֿן דיין בוך...",
+      generatingOutline: "שרייַבן דעם געשיכטע אויסריס...",
+      generatingCover: "שאַפֿן דעקונג קונסט...",
+      generatingPages: "שרייַבן בלעטער...",
+      generatingImages: "שאַפֿן אילוסטראַציעס...",
+      savingBook: "היטן דיין מייסטערשטיק...",
+      almostDone: "כּמעט פֿאַרטיק!"
+    },
+    generatingOutline: "שאַפֿן דעם סיפּור גליד...",
+    generatingOutlineDesc: "דאָס AI מאַכט אַ פּערזענלעכן סיפּור פֿאַר דיר",
+    nav: {
+      next: "ווײַטער",
+      back: "צוריק",
+      createBook: "שאַפֿן מיין בוך!",
+      generating: "שאַפֿן..."
+    },
+    error: {
+      inappropriateContent: "אומפּאַסיקן אינהאַלט",
+      nameInappropriate: "איינעם פֿון די נעמען האָט אומפּאַסיקן אינהאַלט",
+      contentIssue: "אינהאַלט פּראָבלעם",
+      contentNotAppropriate: "דער דזשענערייטיד אינהאַלט איז נישט פּאַסיק. פּרוּוון נאָך אַ מאָל...",
+      outlineTitle: "אויס! עפּעס איז פֿאַלש",
+      outlineMessage: "מיר האָבן נישט געקענט שאַפֿן דעם סיפּור. לאָמיר פּרוּוון נאָך אַ מאָל!",
+      createTitle: "אויס! מיר האָבן נישט געקענט שאַפֿן דעם בוך",
+      createMessage: "עפּעס איז פֿאַלש. לאָמיר פּרוּוון נאָך אַ מאָל!",
+      titleDescInappropriate: "דער טיטל אָדער באַשרייַבונג האָט אומפּאַסיקן אינהאַלט"
+    },
+    toast: {
+      retryingImages: "פּרוּוון נאָך אַ מאָל פֿאַרפֿעלטע אילוסטראַציעס...",
+      retryingImagesDesc: "פּרוּוון צו דזשענעראַטן {count} אילוסטראַציעס נאָך אַ מאָל",
+      allImagesGenerated: "אַלע אילוסטראַציעס דזשענעראַטיד!",
+      imagesFailed: "{count} אילוסטראַציעס זענען נאָך אַ מאָל פֿאַרפֿעלט",
+      imagesFailedRetry: "מעגסט פּרוּוון נאָך אַ מאָל שפּעטער",
+      bookCreatedWithIssues: "בוך שאַפֿן מיט פּראָבלעמען",
+      imagesPartialSuccess: "{success} פֿון {total} אילוסטראַציעס דזשענעראַטיד מיט הצלחה. {failed} פֿאַרפֿעלט.",
+      bookCreated: "בוך שאַפֿן!",
+      bookReady: "דיין בוך איז גרייט צו לייענען!"
+    },
+    progress: {
+      checkingContent: "פּריוון אינהאַלט...",
+      creatingStory: "שאַפֿן סיפּור און קאָווועראַ...",
+      savingBook: "היטן בוך...",
+      writingStory: "שרייַבן דעם סיפּור...",
+      drawingIllustrations: "צייכענען אילוסטראַציעס...",
+      savingPages: "היטן בלעטער...",
+      bookReady: "בוך גרייט!",
+      step1of4: "טריט 1 פֿון 4",
+      step2of4: "טריט 2 פֿון 4",
+      step3of4: "טריט 3 פֿון 4",
+      step4of4: "טריט 4 פֿון 4"
+    },
+    celebration: {
+      title: "דײַן ביכל איז גרייט!",
+      readButton: "לייענען מײַן ביכל",
+      autoNavigate: "עפֿענען אויטאָמאַטיש אין אַ רגע..."
+    }
+  },
+  characters: {
+    title: "מײַנע כאַראַקטערס",
+    subtitle: "שאַפֿן און פֿאַרוואַלטן דיינע געשיכטע כאַראַקטערס",
+    createNew: "שאַפֿן כאַראַקטער",
+    noCharacters: "קיין כאַראַקטערס נישט געפֿונען",
+    noCharactersDesc: "שאַפֿן דיין ערשטן כאַראַקטער צו ניצן אין דיינע געשיכטעס",
+    createFirst: "שאַפֿן דיין ערשטן כאַראַקטער כדי אָנצוהויבן",
+    adjustFilters: "פּרוּוו צו שטעלן דיין זוך אָדער פֿילטערס",
+    charactersFound: "כאַראַקטערס געפֿונען",
+    characterFound: "כאַראַקטער געפֿונען",
+    search: "זוכן כאַראַקטערס...",
+    filters: "פֿילטערס",
+    allGenders: "אַלע גענדערס",
+    boy: "יינגל",
+    girl: "מיידל",
+    neutral: "נייטראַל",
+    allStyles: "אַלע קונסט סטילן",
+    artStyles: {
+      cartoon: "קאַרטון",
+      disney: "דיסני",
+      pixar: "פּיקסאַר",
+      watercolor: "וואַסערפֿאַרב",
+      sketch: "סקיצע",
+      realistic: "רעאַליסטיש",
+      anime: "אַנימע"
+    },
+    loadingAria: "לאָדן כאַראַקטערס...",
+    viewGrid: "גריד פֿיו",
+    viewList: "ליסטע פֿיו",
+    age: "עלטער",
+    years: "יאָר",
+    edit: "רעדאַקטירן",
+    editCharacter: "רעדאַקטירן כאַראַקטער",
+    deleteCharacter: "מעקן כאַראַקטער",
+    confirmDelete: "ביסט זיכער אַז דו ווילסט מעקן דעם כאַראַקטער?",
+    fields: {
+      name: "נאָמען",
+      age: "עלטער",
+      gender: "געשלעכט",
+      personality: "פּערזענלעכקייט",
+      appearance: "אויסזען",
+      backstory: "הינטערגרונט געשיכטע"
+    }
+  },
+  leaderboard: {
+    title: "ליידערבאָרד",
+    subtitle: "זען ווער שאַפֿט די מערסט מאַגישע געשיכטעס",
+    rank: "ראַנג",
+    author: "מחבר",
+    books: "ביכער",
+    likes: "לייקס",
+    score: "פּאָענט",
+    noData: "נאָך קיין ליידערבאָרד דאַטע",
+    yourRank: "דיין ראַנג",
+    topCreators: "שפּיץ שאַפֿערס",
+    loading: "לאָדן ליידערבאָרד...",
+    search: "זוכן מדרשנים...",
+    empty: "קיין מדרשנים ניט געפֿונען פֿאַר דעם צייַטראַום",
+    you: "דו",
+    user: "מדרשן",
+    level: "לעוועל",
+    xp: "XP פּאָינטס",
+    streak: "שטרייַף",
+    tabs: {
+      weekly: "דעם וואָך",
+      monthly: "דעם חודש",
+      allTime: "אַלע צייַטן"
+    },
+    filter: {
+      title: "פֿילטערן לויט",
+      all: "אַלגעמיינע XP",
+      books: "ביכער שאַפֿן",
+      streak: "לענגסטע שטרייַף"
+    },
+    your: {
+      rank: "דיין ראַנג"
+    },
+    top: {
+      storytellers: "שפּיץ מדרשנים"
+    },
+    rising: {
+      stars: "אַקטיוו דעם וואָך"
+    },
+    view: {
+      profile: "זען פּראָפֿיל"
+    }
+  },
+  storyIdeas: {
+    title: "געשיכטע אידעען",
+    subtitle: "אַנטדעקן און שאַפֿן אַמייזינג געשיכטע קאָנצעפּטן",
+    generate: "שאַפֿן אידעען",
+    generating: "שאַפֿנדיק...",
+    saveIdea: "היטן אידעע",
+    saved: "געהיטענע אידעען",
+    savedIdeas: "געהיטענע אידעען",
+    daily: "טעגלעכע פּראָמפּט",
+    noIdeas: "נאָך קיין געהיטענע אידעען",
+    noIdeasDesc: "שאַפֿן אָדער שרייַב דיינע אייגענע געשיכטע אידעען",
+    startGenerating: "אָנהויבן שאַפֿן דיין ערשטע אידעע!",
+    generatedIdeaTitle: "שאַפֿן אידעע",
+    titleLabel: "טיטל:",
+    descriptionLabel: "באַשרייַבונג:",
+    saveButton: "היטן אידעע",
+    regenerateButton: "נאָך אַ מאָל שאַפֿן",
+    saveSuccess: "אידעע מיט דערפֿאָלג געהיט!",
+    saveFailed: "אידעע היטן פֿאַרפֿעלט.",
+    useInBook: "ניצן אין בוך",
+    deleteIdea: "מעקן אידעע",
+    generateError: "טעות ביי שאַפֿן אידעע. פּרוּוו נאָך אַ מאָל.",
+    inappropriateInput: "טייל פֿון דער אַרייַנגאַבע האָט אומפּאַסיקן אינהאַלט. ביטע פֿאַרריכט."
+  },
+  onboarding: {
+    welcome: {
+      title: "!ברוכים הבאים צו Sipurai",
+      subtitle: "לאָמיר אויפשטעלן דיין קרעאַטיוו פּלאַץ"
+    },
+    profile: {
+      title: "דערציילט אונדז וועגן זיך",
+      nameLabel: "דיין נאָמען",
+      ageLabel: "עלטער גרופּע"
+    },
+    language: {
+      title: "קלייַב דיין שפּראַך",
+      subtitle: "קענסט דאָס ענדערן שפּעטער אין אײַנשטעלונגען"
+    },
+    topics: {
+      title: "וואָס פֿאַר טעמעס האָסטו ליב?",
+      subtitle: "מיר וועלן פֿאָרשלאָגן געשיכטע אידעען באַזירט אויף דיינע אינטערעסן"
+    },
+    done: {
+      title: "!ביסט גרייט",
+      subtitle: "אָנהייב שאַפֿן דיין ערשטע מאַגישע געשיכטע",
+      startButton: "!לאָמיר גיין"
+    },
+    nav: {
+      next: "ווײַטער",
+      back: "צוריק",
+      skip: "איבערשפּרינגען"
+    }
+  },
+  advancedEditor: {
+    title: "אַדוואַנסד עדיטאָר",
+    subtitle: "רעדאַקטירן און פֿייַן-טיונען דיין בוך",
+    openEditor: "רעדאַקטירן אין אַדוואַנסד עדיטאָר"
+  },
+  communityPost: {
+    title: "קהילה פּאָסט",
+    editPost: "רעדאַקטירן פּאָסט",
+    deletePost: "מעקן פּאָסט",
+    report: "באַריכט",
+    likes: "לייקס",
+    comments: "קאָמענטאַרן",
+    view: "זען",
+    shareBy: "געטיילט דורך",
+    backToCommunity: "צוריק צו קהילה",
+    notFound: "פּאָסט ניט געפֿונען",
+    notFoundDesc: "דער פּאָסט קען זײַן אַראָפּגענומען אָדער עקזיסטירט ניט",
+    returnToCommunity: "צוריק צו קהילה",
+    personalizedStoryFor: "אַ פּערזענלעכע געשיכטע פֿאַר",
+    years: "יאָר",
+    share: "טיילן",
+    linkCopied: "לינק קאָפּירט!",
+    addComment: "צולייגן אַ קאָמענטאַר...",
+    postComment: "פּאָסטירן קאָמענטאַר",
+    posting: "פּאָסטירן...",
+    noComments: "נאָך קיין קאָמענטאַרן",
+    beFirstComment: "זײַ דער ערשטער צו טיילן דײַנע געדאַנקען!",
+    loadError: "לאָדן פּאָסט דאַטן האָט ניט געקלאַפּט. פּרובירט ווידער.",
+    loadCommentsError: "לאָדן קאָמענטאַרן האָט ניט געקלאַפּט. פּרובירט ווידער.",
+    likeSuccess: "אַ דאַנק פֿאַרן לייקן דעם פּאָסט!",
+    likeError: "לייקן פּאָסט האָט ניט געקלאַפּט. פּרובירט ווידער.",
+    inappropriateTitle: "ניט פּאַסיקער אינהאַלט",
+    inappropriateDesc: "דיין קאָמענטאַר אַנטהאַלט אינהאַלט וואָס איז ניט פּאַסיק פֿאַר קינדער. ביטע פֿאַרריכט עס.",
+    commentSuccess: "קאָמענטאַר צוגעלייגט מיט דערפֿאָלג!",
+    commentError: "צולייגן קאָמענטאַר האָט ניט געקלאַפּט. פּרובירט ווידער.",
+    replySuccess: "ענטפֿער צוגעלייגט מיט דערפֿאָלג!",
+    replyError: "צולייגן ענטפֿער האָט ניט געקלאַפּט. פּרובירט ווידער."
+  },
+  sharing: {
+    communityTitle: "טיילן מיט קהילה",
+    communityDesc: "טיילן דיין בוך מיט אַנדערע Sipurai ניצערס",
+    postTitle: "פּאָסט טיטל",
+    postTitlePlaceholder: "שרייַב אַ טיטל פֿאַר דיין קהילה פּאָסט",
+    descriptionLabel: "באַשרייַבונג",
+    descriptionPlaceholder: "טיילן דעם סיפּור הינטער דיין בוך...",
+    tags: "טאַגס",
+    addTag: "צולייגן טאַג",
+    sharing: "טיילן...",
+    shareLinkTitle: "טיילן בוך לינק",
+    shareLinkDesc: "באַקום אַ לינק צו טיילן דיין בוך מיט פֿרײַנד און משפּחה",
+    shareOnSocial: "טיילן אויף סאָציאַלע מעדיע",
+    shareWhatsApp: "טיילן אויף וואַטסעפּ",
+    shareFacebook: "טיילן אויף פֿייסבוק",
+    shareTwitter: "טיילן אויף טוויטער/X",
+    copyInstagram: "קאָפּירן פֿאַר אינסטאַגראַם",
+    shareEmail: "טיילן דורך אימייל",
+    copyShareLink: "קאָפּירן טיילן לינק",
+    inviteTitle: "שיקן דירעקטע הזמנה",
+    inviteDesc: "פֿאַרבעטן אַנדערע צו לייענען דיין בוך דורך אימייל",
+    emailLabel: "אימייל אַדרעס",
+    emailPlaceholder: "שרייַב אימייל אַדרעס",
+    personalMessage: "פּערזענלעכע הודעה",
+    personalMessagePlaceholder: "צולייגן אַ פּערזענלעכע הודעה צו דיין הזמנה...",
+    sendInvitation: "שיקן הזמנה",
+    inviteSubject: "איר זענט פֿאַרבעטן צו לייענען:",
+    aChildrensBook: "אַ קינדער בוך",
+    readBookHere: "לייענט דאָס בוך דאָ:",
+    socialShareText: "קוקט אויף דעם וווּנדערלעכן קינדער בוך:",
+    missingInfo: "פֿעלנדע אינפֿאָרמאַציע",
+    missingInfoDesc: "ביטע שרייַב אַ טיטל און באַשרייַבונג פֿאַר דיין פּאָסט.",
+    shareSuccess: "בוך געטיילט מיט דערפֿאָלג!",
+    shareSuccessDesc: "דיין בוך איז איצט צוגענגלעך אין דער קהילה סעקציע.",
+    shareError: "טעות בײַם טיילן בוך",
+    shareErrorDesc: "עס איז געווען אַ פּראָבלעם בײַם טיילן דיין בוך. פּרובירט ווידער.",
+    linkCopied: "לינק קאָפּירט!",
+    linkCopiedDesc: "בוך לינק איז קאָפּירט צום קליפּבאָרד.",
+    copiedForInstagram: "קאָפּירט פֿאַר אינסטאַגראַם!",
+    copiedForInstagramDesc: "טעקסט און לינק קאָפּירט צום קליפּבאָרד. פּייסט עס אין דיין אינסטאַגראַם פּאָסט."
+  },
+  landing: {
+    nav: {
+      features: "פֿיטשערס",
+      howItWorks: "ווי עס אַרבעט",
+      pricing: "פּרײַזן",
+      cta: "אָנהייב אומזיסט"
+    },
+    hero: {
+      badge: "AI-אַנגעטריבן קינדער בוך שאַפֿער",
+      title: "דיין קינד'ס נעקסטער בוך — שאַפֿן מיט AI קסם",
+      subtitle: "קלייַב כאַראַקטערס, סטייל און זשאַנער — און AI שאַפֿט אַ גאַנצן קינדער בוך מיט אַ פּערזאַנאַלייזד סיפּור און אילוסטראַציעס",
+      primaryCta: "שאַפֿן אַ בוך — אומזיסט!",
+      secondaryCta: "קוקן קהילה ביכער",
+      socialProof: "הונדערטער משפּחות שאַפֿן שוין געשיכטעס"
+    },
+    features: {
+      sectionTitle: "אַלץ אין איין דערפֿאַרונג",
+      sectionSubtitle: "אַלע כּלים וואָס מען דאַרף צו שאַפֿן פּערפֿעקטע קינדער ביכער",
+      artStyles: {
+        title: "קונסט סטייל אויסקלייַב",
+        description: "12 פּראָפֿעסיאָנעלע אילוסטראַציע סטיילן — וואַסערפֿאַרב, קאָמיקס, פֿאַנטאַזיע, אַנימע, דיסני און מער"
+      },
+      trilingual: {
+        title: "דרײַ-שפּראַכיק",
+        description: "שאַפֿן ביכער אין העברעיש, ענגליש און ייִדיש מיט פֿולע RTL שטיצע"
+      },
+      characters: {
+        title: "קאַסטאָם כאַראַקטערס",
+        description: "דיין קינד ווערט דער העלד פֿון דער געשיכטע — מיט זייער אייגן נאָמען, אויסזען און פּערזענלעכקייט"
+      },
+      gamification: {
+        title: "גיימיפֿיקאַציע",
+        description: "XP, בייַדזשעס, טעגלעכע שטרייַפֿס און ליידערבאָרד — יעדע שאַפֿונג פֿאַרדינט פּאָינטס"
+      },
+      pwa: {
+        title: "PWA — יעדער מכשיר",
+        description: "אַרבעט אויף טעלעפֿאָן, טאַבלעט און קאָמפּיוטער — אפֿילו אָפֿלאַין"
+      },
+      community: {
+        title: "לעבעדיקע קהילה",
+        description: "טיילן ביכער, לייקס, קאָמענטאַרן און בלעטערן דורך דער קהילה גאַלעריע"
+      }
+    },
+    howItWorks: {
+      sectionTitle: "ווי שאַפֿט מען אַ בוך?",
+      sectionSubtitle: "פֿיר פּשוטע טריט — פֿון אידעע ביז אַ בוך גרייט צו לייענען",
+      stepLabel: "טריט",
+      step1: {
+        title: "קלייַב אַ טעמע",
+        description: "קלייַב פֿון דוצנט גרייטע טעמעס אָדער שרייַב דיין אייגענע אידעע"
+      },
+      step2: {
+        title: "געשטאַלט כאַראַקטערס",
+        description: "לייג צו דיין קינד אַלס דער העלד און קלייַב שטיצנדיקע כאַראַקטערס"
+      },
+      step3: {
+        title: "קאַסטאָמייז סטייל",
+        description: "קלייַב אילוסטראַציע סטייל, שפּראַך און עלטער-צוגעפּאַסטע אײַנשטעלונגען"
+      },
+      step4: {
+        title: "קריג דיין בוך!",
+        description: "AI שאַפֿט סיפּור און אילוסטראַציעס — גרייט צו לייענען און דרוקן"
+      }
+    },
+    testimonials: {
+      sectionTitle: "וואָס עלטערן זאָגן",
+      sectionSubtitle: "משפּחות איבער דעם לאַנד שאַפֿן שוין מאַגישע געשיכטעס פֿאַר זייערע קינדער",
+      t1: {
+        name: "שרה כהן",
+        role: "מאַמע פֿון אַ 7-יאָריק",
+        quote: "מיין זון הערט ניט אויף צו בעטן נייע ביכער! ער איז אַזוי אויפֿגערעגט צו זען זיך אַלס דער העלד. די אילוסטראַציעס זענען פּשוט אַמייזינג.",
+        initials: "שכ"
+      },
+      t2: {
+        name: "מיכל לוי",
+        role: "מאַמע פֿון צוויי מיידלעך (5 און 9)",
+        quote: "מיינע מיידלעך שאַפֿן ביכער צוזאַמען יעדע וואָך. עס איז אַ וווּנדערלעכע כּלי וואָס מוטיקט קרעאַטיוויטעט.",
+        initials: "מל"
+      },
+      t3: {
+        name: "יוסי ברק",
+        role: "טאַטע פֿון אַ 6-יאָריקע",
+        quote: "דער פּערפֿעקטער געבורטסטאָג מתנה! מיר האָבן שאַפֿן אַ פּערזאַנאַלייזד בוך מיט אַלע אירע חברטעס.",
+        initials: "יב"
+      }
+    },
+    pricing: {
+      sectionTitle: "פּלענער און פּרייַזן",
+      sectionSubtitle: "אָנהייב אומזיסט — אַפּגרייד ווען עס פּאַסט",
+      period: "חודש",
+      free: {
+        name: "אומזיסט",
+        price: "₪0",
+        f1: "2 ביכער אַ חודש",
+        f2: "באַסיק אילוסטראַציע סטיילן",
+        f3: "קהילה צוגאַנג",
+        cta: "אָנהייב אומזיסט"
+      },
+      premium: {
+        name: "פּרימיום",
+        price: "₪29",
+        badge: "מערסט פּאָפּולער",
+        f1: "אומבאַגרענעצטע ביכער",
+        f2: "אַלע 12 אילוסטראַציע סטיילן",
+        f3: "דרוק און PDF עקספּאָרט",
+        f4: "קיין רעקלאַמע",
+        cta: "אַפּגרייד צו פּרימיום"
+      },
+      family: {
+        name: "משפּחה",
+        price: "₪49",
+        f1: "ביז 5 קינדער פּראָפֿילן",
+        f2: "אַלע פּרימיום פֿיטשערס",
+        f3: "פּריאָריטעט שטיצע",
+        f4: "פֿריע צוגאַנג צו נייע פֿיטשערס",
+        cta: "קלייַב משפּחה"
+      }
+    },
+    footer: {
+      description: "אַ AI-אַנגעטריבן פּלאַטפֿאָרמע פֿאַר שאַפֿן פּערזאַנאַלייזד קינדער ביכער.",
+      linksTitle: "לינקס",
+      about: "וועגן אונדז",
+      blog: "בלאָג",
+      terms: "באַדינגונגען",
+      privacy: "פּריוואַטקייט",
+      contact: "קאָנטאַקט",
+      followUs: "פֿאָלג אונדז",
+      rights: "אַלע רעכטן רעזערווירט.",
+      madeWith: "געבויט מיט",
+      madeWithEnd: "און AI אין ישראל"
+    }
+  },
+  characterEditor: {
+    title: "כאַראַקטער עדיטאָר",
+    createNew: "שאַפֿן נייעם כאַראַקטער",
+    editCharacter: "רעדאַקטירן כאַראַקטער",
+    back: "צוריק צו כאַראַקטערן",
+    basicInfo: "גרונטלעכע אינפֿאָרמאַציע",
+    name: "נאָמען",
+    age: "עלטער",
+    gender: "מין",
+    boy: "יינגל",
+    girl: "מיידל",
+    neutral: "נייטראַל",
+    personalityAppearance: "פּערזענלעכקייט און אויסזען",
+    personalityDesc: "די פּרטים וועלן העלפֿן דעם AI שאַפֿן קאָנסיסטענטע געשיכטעס און בילדער.",
+    personality: "פּערזענלעכקייט",
+    personalityPlaceholder: "פּאָ: מוטיק, נייגעריק, האָט ליב חיות, אַביסל שיכחנדיק...",
+    appearance: "אויסזען",
+    appearancePlaceholder: "פּאָ: רויטע קרייזלדיקע האָר, גרינע אויגן, ברילן, שפּרינקלז...",
+    visuals: "ווידזשועלז",
+    artStyle: "באַוווּסטע קונסט סטיל",
+    createCharacter: "שאַפֿן כאַראַקטער",
+    saveChanges: "היטן ענדערונגען",
+    deleteCharacter: "מעקן כאַראַקטער",
+    deleteConfirm: "ביסטו זיכער אַז דו ווילסט מעקן דעם כאַראַקטער?",
+    successCreate: "כאַראַקטער מיט דערפֿאָלג געשאַפֿן.",
+    successUpdate: "כאַראַקטער מיט דערפֿאָלג דערנייערט.",
+    successDelete: "כאַראַקטער געמעקט.",
+    errorCreate: "כאַראַקטער שאַפֿן פֿאַרפֿעלט.",
+    errorUpdate: "כאַראַקטער דערנייערן פֿאַרפֿעלט.",
+    errorDelete: "כאַראַקטער מעקן פֿאַרפֿעלט.",
+    errorLoad: "כאַראַקטער לאָדן פֿאַרפֿעלט.",
+    missingInfo: "פֿעלנדיקע אינפֿאָרמאַציע",
+    missingFields: "ביטע פֿילן אין נאָמען, פּערזענלעכקייט, און אויסזען.",
+    saving: "אָפּהיטן...",
+    deleting: "מעקן..."
+  },
+  ideaGenerator: {
+    title: "געשיכטע אידעע שאַפֿער",
+    description: "שאַפֿן קרעאַטיווע געשיכטע אידעען פֿאַר דיין קינדער בוך",
+    childNames: "הויפּט כאַראַקטערס",
+    childNamesPlaceholder: "צולייגן כאַראַקטער נאָמען...",
+    childNamesHelp: "צולייגן איין אָדער מער כאַראַקטערס וואָס וועלן זײַן די הויפּט כאַראַקטערס אין דער געשיכטע",
+    existingChildren: "דיינע פֿאַראַנענע כאַראַקטערס:",
+    myCharacters: "מײַנע כאַראַקטערס",
+    childAge: "עלטער קייט",
+    genres: "געשיכטע זשאַנערס",
+    genresPlaceholder: "קלייַב זשאַנערס",
+    genreAdventure: "אַדווענטשער",
+    genreFairyTale: "פֿעיריטאַלע",
+    genreEducational: "לערנדיק",
+    genreBedtime: "שלאָף פֿאַר שלאָפֿן",
+    genreFantasy: "פֿאַנטאַזיע",
+    genreScience: "וויסנשאַפֿט",
+    genreAnimals: "חיות",
+    genreSports: "ספּאָרט",
+    themes: "טעמעס",
+    themesPlaceholder: "צולייגן טעמעס...",
+    characters: "כאַראַקטערס",
+    charactersPlaceholder: "צולייגן כאַראַקטערס...",
+    setting: "סביבות",
+    settingPlaceholder: "צולייגן סביבות...",
+    additional: "נאָך פּרטים (אָפּציאָנאַל)",
+    additionalPlaceholder: "קיין אַנדערע פּרעפֿערענסן אָדער פּרטים",
+    generate: "שאַפֿן אידעע",
+    generating: "שאַפֿן...",
+    useDailyPrompt: "ניצן הייַנטיקן פּראָמפּט",
+    addTag: "צולייגן",
+    suggestedTags: "פֿאָרגעשלאָגן:",
+    customGenresPlaceholder: "צולייגן קאַסטאַם זשאַנערס...",
+    moreOptions: "מער אָפּציעס",
+    lessOptions: "ווייניקער אָפּציעס"
+  },
+  savedIdeas: {
+    title: "גע-היטענע געשיכטע אידעען",
+    subtitle: "דיין זאַמלונג פֿון פֿריִער שאַפֿן אידעען",
+    emptyTitle: "נאָך קיין גע-היטענע אידעען",
+    emptyDesc: "שאַפֿן און היט אידעען כדי זיי צו זען דאָ, אָדער פּרוּוו שאַפֿן אַ נײַע.",
+    newIdea: "שאַפֿן נײַע אידעע",
+    use: "ניצן דעם אידעע",
+    recent: "לעצטיקע",
+    language: "שפּראַך",
+    createdOn: "שאַפֿן אויף",
+    edit: "רעדאַקטירן",
+    delete: "אויסמעקן"
+  },
+  ideaResult: {
+    title: "דיין געשיכטע אידעע איז גרייט!",
+    editTitle: "רעדאַקטירן דיין געשיכטע אידעע",
+    subtitle: "קוק דורך די פּרטים אונטן. קענסט זיי פֿאַרבעסערן אין דעם נעקסטן טריט.",
+    ideaTitle: "געשיכטע טיטל",
+    ideaDesc: "באַשרייַבונג",
+    plotPoints: "הויפּט עלילה פּונקטן",
+    charDev: "כאַראַקטער אַנטוויקלונג",
+    moral: "מאָראַל פֿון דער געשיכטע",
+    continue: "פֿאָרזעצן צום נעקסטן טריט",
+    regenerate: "פּרוּוון אַ נײַע אידעע",
+    regenerating: "שאַפֿן...",
+    save: "היטן אידעע",
+    saving: "אָפּהיטן...",
+    edit: "רעדאַקטירן",
+    delete: "אויסמעקן",
+    saveAndContinue: "היטן און שאַפֿן בוך",
+    cancel: "אָפּזאָגן",
+    saveChanges: "היטן ענדערונגען"
+  },
+  dailyPrompt: {
+    title: "טעגלעכע פּראָמפּט",
+    subtitle: "פֿון הייַנטיקן פֿיטשערד פּראָמפּט",
+    use: "ניצן דעם פּראָמפּט",
+    dismiss: "פֿאַרמאַכן"
+  },
+  artStyles: {
+    title: "קלייַב קונסט סטייל",
+    subtitle: "קלייַב דעם וויזשאַוואַל סטייל פֿאַר דיין אילוסטראַציעס",
+    artStyle: "קונסט סטייל",
+    disney: "דיסני",
+    disneyDesc: "מאַגישע, אויסדריקלעכע כאַראַקטערס מיט גלאַטן אַנימאַציע סטייל",
+    pixar: "פּיקסאַר",
+    pixarDesc: "3D אַנימאַציע מיט דעטאַלירטע טעקסטורן",
+    watercolor: "וואַסערפֿאַרב",
+    watercolorDesc: "ווייכע, פֿליסנדיקע אילוסטראַציעס מיט פֿייַנעם קאָלירמישן",
+    sketch: "סקעטש",
+    sketchDesc: "האַנט-געצייכנטע בלייַער אילוסטראַציעס מיט דעטאַלירטע ליניעס",
+    cartoon: "קאַרטון",
+    cartoonDesc: "שטאַרקע קאָנטורן מיט פּשוטע, לעבעדיקע קאָלירן",
+    realistic: "רעאַליסטיש",
+    realisticDesc: "דעטאַלירטע אילוסטראַציעס מיט נאַטירלעכע פּראָפּאָרציעס",
+    anime: "אַנימע",
+    animeDesc: "יאַפּאַניש אינספּירירטן סטייל מיט כאַראַקטעריסטישע אויגן",
+    clay: "טיין אַנימאַציע",
+    clayDesc: "3D סטייל דערמאָנענדיק טיין אָדער פּלאַסטעלין פֿיגורן",
+    popup: "פּאָפּ-אַפּ בוך",
+    popupDesc: "3D פּאַפּיר קראַפֿט סטייל",
+    minimalist: "מינימאַליסטיש",
+    minimalistDesc: "פּשוטע פֿיגורן מיט באַגרענעצטע קאָלירן",
+    vintage: "וואַנטאַדזש",
+    vintageDesc: "קלאַסישע איבלוסטראַציע סטייל",
+    cultural: "קולטורעל",
+    culturalDesc: "כולל טראַדיציאָנעלע קונסט עלעמענטן"
+  },
+  bookPreview: {
+    title: "בוך פֿאָרויסבליק",
+    subtitle: "קוק דיין בוך סעטינגס פֿאַר שאַפֿן",
+    cover: "דעקונג פֿאָרויסבליק",
+    generating: "שאַפֿן דעקונג...",
+    coverPlaceholder: "דעקונג וועט שאַפֿן ווען דו גייסט ווײַטער",
+    details: "בוך דעטאַילס",
+    for: "פֿאַר",
+    ageYears: "יאָר אַלט",
+    genre: "זשאַנער",
+    length: "לענג",
+    artStyle: "קונסט סטייל",
+    language: "שפּראַך",
+    shortLength: "קורץ (5-10 בלעטער)",
+    mediumLength: "מיטל (11-20 בלעטער)",
+    longLength: "לאַנג (21-30 בלעטער)",
+    genreAdventure: "אַדווענטשער",
+    genreFairyTale: "פֿעיריטאַלע",
+    genreEducational: "לערנדיק",
+    genreBedtime: "שלאָף געשיכטע",
+    genreFantasy: "פֿאַנטאַזיע",
+    genreScience: "וויסנשאַפֿט",
+    genreAnimals: "חיות",
+    genreSports: "ספּאָרט",
+    artStyleDisney: "דיסני אַנימאַציע",
+    artStylePixar: "פּיקסאַר 3D",
+    artStyleWatercolor: "וואַסערפֿאַרב",
+    artStyleSketch: "בלייַער סקעטש",
+    artStyleCartoon: "קאַרטון",
+    artStyleRealistic: "האַלב-רעאַליסטיש",
+    artStyleAnime: "אַנימע/מאַנגאַ",
+    artStyleClay: "טיין/סטאָפּ-מאָושאַן",
+    artStylePopup: "פּאָפּ-אַפּ בוך",
+    artStyleMinimalist: "מינימאַליסטיש",
+    artStyleVintage: "וואַנטאַדזש",
+    artStyleCultural: "פֿאָלק קונסט",
+    languageEnglish: "ענגליש",
+    languageHebrew: "העברעיש",
+    languageYiddish: "ייִדיש"
+  },
+  social: {
+    follow: "פֿאָלגן",
+    following: "פֿאָלגנדיק",
+    followers: "פֿאָלגערס",
+    unfollow: "אויפֿהערן פֿאָלגן",
+    notifications: "הודעות",
+    noNotifications: "קיין הודעות נאָך נישט",
+    unread: "אומגעלייענט",
+    markAllRead: "מאַרקירן אַלץ ווי געלייענט"
+  },
+  bookCard: {
+    draft: "אַנטווורף",
+    generating: "שאַפֿן...",
+    complete: "פֿאַרטיק",
+    for: "פֿאַר",
+    years: "יאָר",
+    view: "קוקן",
+    edit: "רעדאַקטירן",
+    feedback: "פֿידבעק",
+    share: "טיילן"
+  },
+  myBooks: {
+    title: "מײַנע ביכער",
+    recent: "לעצטיקע ביכער",
+    noBooks: "נאָך קיין ביכער שאַפֿן",
+    startCreating: "אָנהייבן שאַפֿן דיין ערשטן בוך",
+    createBook: "שאַפֿן בוך",
+    viewAll: "זען אַלץ",
+    read: "לייענען",
+    edit: "רעדאַקטירן"
+  },
+  parentalControls: {
+    protected: "עלטערן קאָנטראָל באַשיצט",
+    enterPin: "אַרייַנגעבן PIN קאָד צו צוגאַנג צו אײַנשטעלונגען",
+    pinPlaceholder: "PIN קאָד",
+    incorrectPin: "פֿאַלשער PIN קאָד",
+    unlock: "אויפֿמאַכן",
+    header: "עלטערן קאָנטראָל",
+    headerDesc: "דאָ אײַנשטעלונגען לאָזן דיך קאָנטראָלירן וואָס דיין קינד קען שאַפֿן און זען.",
+    pinProtection: "PIN קאָד שוץ",
+    pinProtectedDesc: "אײַנשטעלונגען זענען באַשיצט מיט אַ PIN קאָד",
+    pinUnprotectedDesc: "שטעל אַ PIN קאָד אָן כדי שיצן אײַנשטעלונגען",
+    setPin: "שטעלן PIN קאָד",
+    newPin: "נײַ PIN (4-6 ציפֿערן)",
+    confirmPin: "באַשטעטיקן PIN",
+    pinMustBeDigits: "PIN מוז זײַן 4-6 ציפֿערן",
+    pinNoMatch: "PIN קאָדן שטימען ניט",
+    pinSet: "PIN קאָד שאַפֿן",
+    pinSetDesc: "אײַנשטעלונגען זענען איצט באַשיצט מיט אַ PIN",
+    pinActive: "PIN אַקטיוו",
+    removePin: "אַראָפּנעמען PIN",
+    pinRemoved: "PIN אַראָפּגענומען",
+    pinRemovedDesc: "אײַנשטעלונגען זענען ניט מער PIN-באַשיצט",
+    wrongPin: "פֿאַלשער PIN",
+    wrongPinDesc: "דער PIN וואָס אייינגעגעבן איז פֿאַלש",
+    enterCurrentPin: "אַרייַנגעבן אַקטועלן PIN כדי אַראָפּנעמען",
+    remove: "אַראָפּנעמען",
+    cancel: "אָפּזאָגן",
+    save: "אָפּהיטן",
+    contentFilter: "אינהאַלט פֿילטער לעוועל",
+    contentFilterDesc: "שטעלן דעם פֿילטער לעוועל פֿאַר AI-שאַפֿן אינהאַלט",
+    filterStrict: "שטרענג - רעקאָמענדירט פֿאַר עלטערן 3-5",
+    filterModerate: "מיטלמעסיק - רעקאָמענדירט פֿאַר עלטערן 5-8",
+    filterRelaxed: "לייַכט - רעקאָמענדירט פֿאַר עלטערן 8-12",
+    selectFilter: "קלייַב פֿילטער לעוועל",
+    ageRange: "עלטער קייט",
+    selectAge: "קלייַב עלטער קייט",
+    ages35: "עלטערן 3-5",
+    ages57: "עלטערן 5-7",
+    ages710: "עלטערן 7-10",
+    ages1012: "עלטערן 10-12",
+    permissions: "דערלויבונגען",
+    allowAI: "דערלויבן AI אינהאַלט שאַפֿן",
+    allowCommunity: "דערלויבן קהילה טיילן",
+    requireApproval: "פֿאָדערן עלטערן גענעמיקונג פֿאַר פֿאַרעפֿנטלעכן",
+    dailyLimit: "טעגלעכע באַגרענעצונג",
+    dailyLimitDesc: "מאַקסימום צאָל ביכער וואָס קענען שאַפֿן ביים טאָג",
+    booksPerDay: "ביכער ביים טאָג",
+    booksPerDayLabel: "ביכער ביים טאָג",
+    saveButton: "אָפּהיטן עלטערן קאָנטראָל",
+    saving: "אָפּהיטן...",
+    savedTitle: "אײַנשטעלונגען אָפּגעהיט",
+    savedDesc: "עלטערן קאָנטראָל אייַנשטעלונגען דערנייערט"
+  },
+  blog: {
+    title: "אונדזער בלאג",
+    subtitle: "טיפס, איינזיקטן און אינספיראציע פאר קרייטיווע סטאריטעלערס",
+    postsCount: "ארטיקלן",
+    searchPlaceholder: "זוכן ארטיקלן...",
+    clearSearch: "קלייער זוכן",
+    clearCategory: "קלייער קאטעגאריע פילטער",
+    allCategories: "אלע טעמעס",
+    filtering: "פילטערינג",
+    featuredBadge: "פיטשערד",
+    latestPostsTitle: "לעצטיקע ארטיקלן",
+    categoriesTitle: "טעמעס",
+    recentPostsTitle: "לעצטיקע פאסטן",
+    sidebar: "בלאג זייטלישע לייסטע",
+    minRead: "מינוט לייענען",
+    readMore: "לייען מער",
+    loadMore: "לאדן מער ארטיקלן",
+    noResultsTitle: "קיין ארטיקלן געפונען",
+    noResultsDesc: "פרובירט אןדערע זוךשן אדער קאטעגאריע.",
+    emptyTitle: "אונדזער בלאג איז אוףן וועג! קומט באלד",
+    emptyDesc: "מיר ארבעטן אויף אינטערעסאנטע ארטיקלן.",
+    postNotFound: "ארטיקל נישט געפונען",
+    postNotFoundDesc: "דער ארטיקל איז מענליך אפגעהיבן געווארן אדער דער קשיר איז נישט ריכטיק.",
+    backToBlog: "צוריק צו בלאג",
+    writtenBy: "געשריבן דורך",
+    sharePost: "טיילן דעם ארטיקל",
+    copyLink: "קאפירן קשיר",
+    linkCopied: "קאפירט!",
+    relatedPostsTitle: "פארבונדענע ארטיקלן",
+    newsletterTitle: "בלייבט אקטועל",
+    newsletterDesc: "קריגט אונדזערע לעצטיקע ארטיקלן און טיפס גלייך אין אייער בריוו.",
+    subscribeBtn: "אבאנירן"
+  },
+  profile: {
+    title: "פּראָפֿיל",
+    editProfile: "רעדאַקטירן פּראָפֿיל",
+    saveChanges: "שפּייכלערן ענדערונגען",
+    cancel: "אַנולירן",
+    saving: "שפּייכלערט...",
+    saved: "פּראָפֿיל דערהייַנטיקט מיט הצלחה",
+    error: "טעות בײַם דערהייַנטיקן פּראָפֿיל",
+    loading: "לאָדט פּראָפֿיל...",
+    tabs: {
+      overview: "איבערבליק",
+      books: "מײַנע ביכער",
+      achievements: "הישׂגים",
+      activity: "טעטיקייט"
+    },
+    level: "מדרגה",
+    booksCreated: "ביכער נשאַפֿן",
+    joined: "איינגעשריבן",
+    recentBooks: "לעצטע ביכער",
+    noBooks: "נאָך קיין ביכער נישט נשאַפֿן",
+    startCreating: "הייב אָן שאַפֿן דײַן ערשטן בוך",
+    viewAll: "זען אַלץ",
+    recentAchievements: "לעצטע הישׂגים",
+    recentActivity: "לעצטע טעטיקייט",
+    form: {
+      displayName: "אַנצייג-נאָמען",
+      bio: "ביאָגראַפֿיע",
+      email: "בריוו-אַדרעס",
+      memberSince: "מיטגליד זינט",
+      storytellerLevel: "מדרגה פֿון מעשׂה-זאָגער"
+    },
+    avatar: {
+      updated: "בילד דערהייַנטיקט מיט הצלחה",
+      error: "טעות בײַם דערהייַנטיקן בילד",
+      studio: "בילד-סטודיע",
+      description: "פּערזענלעכן דײַן בילד"
+    },
+    createBook: "שאַפֿן בוך",
+    achievements: {
+      completed: "פֿאַרענדיקט",
+      earnMore: "פֿאַרענדיקט אויפֿגאַבן כדי צו קריגן הישׂגים"
+    },
+    activity: {
+      bookCreated: "אַ נײַ בוך נשאַפֿן",
+      untitled: "בוך אָן נאָמען"
     }
   }
 };

@@ -1,144 +1,105 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
-import { appParams } from '@/lib/app-params';
-import { createAxiosClient } from '@base44/sdk/dist/utils/axios-client';
+import React, { createContext, useContext, useEffect, useMemo } from 'react';
+import { useUser, useAuth as useClerkAuth, useClerk } from '@clerk/clerk-react';
+import { User } from '@/entities/User';
+import { setUser as setSentryUser } from '@/lib/errorTracking';
+import { identifyUser } from '@/lib/analytics';
 
 const AuthContext = createContext();
 
+/**
+ * Clerk-backed AuthProvider.
+ * Must be rendered inside <ClerkProvider>.
+ * Keeps the same context shape that the rest of the app expects.
+ */
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
-  const [isLoadingPublicSettings, setIsLoadingPublicSettings] = useState(true);
-  const [authError, setAuthError] = useState(null);
-  const [appPublicSettings, setAppPublicSettings] = useState(null); // Contains only { id, public_settings }
+  const { user: clerkUser, isLoaded: isUserLoaded } = useUser();
+  const { isSignedIn, isLoaded: isAuthLoaded } = useClerkAuth();
+  const clerk = useClerk();
 
+  // Sync the Clerk user to the imperative User module so
+  // secureEntity, useGamification, etc. can call User.me().
   useEffect(() => {
-    checkAppState();
-  }, []);
+    User._setClerkUser(clerkUser || null);
 
-  const checkAppState = async () => {
-    try {
-      setIsLoadingPublicSettings(true);
-      setAuthError(null);
-      
-      // First, check app public settings (with token if available)
-      // This will tell us if auth is required, user not registered, etc.
-      const appClient = createAxiosClient({
-        baseURL: `${appParams.serverUrl}/api/apps/public`,
-        headers: {
-          'X-App-Id': appParams.appId
-        },
-        token: appParams.token, // Include token if available
-        interceptResponses: true
-      });
-      
-      try {
-        const publicSettings = await appClient.get(`/prod/public-settings/by-id/${appParams.appId}`);
-        setAppPublicSettings(publicSettings);
-        
-        // If we got the app public settings successfully, check if user is authenticated
-        if (appParams.token) {
-          await checkUserAuth();
-        } else {
-          setIsLoadingAuth(false);
-          setIsAuthenticated(false);
-        }
-        setIsLoadingPublicSettings(false);
-      } catch (appError) {
-        // Handle app-level errors
-        if (appError.status === 403 && appError.data?.extra_data?.reason) {
-          const reason = appError.data.extra_data.reason;
-          if (reason === 'auth_required') {
-            setAuthError({
-              type: 'auth_required',
-              message: 'Authentication required'
-            });
-          } else if (reason === 'user_not_registered') {
-            setAuthError({
-              type: 'user_not_registered',
-              message: 'User not registered for this app'
-            });
-          } else {
-            setAuthError({
-              type: reason,
-              message: appError.message
-            });
-          }
-        } else {
-          setAuthError({
-            type: 'unknown',
-            message: appError.message || 'Failed to load app'
-          });
-        }
-        setIsLoadingPublicSettings(false);
-        setIsLoadingAuth(false);
-      }
-    } catch (error) {
-      setAuthError({
-        type: 'unknown',
-        message: error.message || 'An unexpected error occurred'
-      });
-      setIsLoadingPublicSettings(false);
-      setIsLoadingAuth(false);
-    }
-  };
-
-  const checkUserAuth = async () => {
-    try {
-      // Now check if the user is authenticated
-      setIsLoadingAuth(true);
-      const currentUser = await base44.auth.me();
-      setUser(currentUser);
-      setIsAuthenticated(true);
-      setIsLoadingAuth(false);
-    } catch (error) {
-      setIsLoadingAuth(false);
-      setIsAuthenticated(false);
-      
-      // If user auth fails, it might be an expired token
-      if (error.status === 401 || error.status === 403) {
-        setAuthError({
-          type: 'auth_required',
-          message: 'Authentication required'
-        });
-      }
-    }
-  };
-
-  const logout = (shouldRedirect = true) => {
-    setUser(null);
-    setIsAuthenticated(false);
-    
-    if (shouldRedirect) {
-      // Use the SDK's logout method which handles token cleanup and redirect
-      base44.auth.logout(window.location.href);
+    if (clerkUser) {
+      const email =
+        clerkUser.primaryEmailAddress?.emailAddress ||
+        clerkUser.emailAddresses?.[0]?.emailAddress;
+      setSentryUser({ id: clerkUser.id, email });
+      identifyUser({ id: clerkUser.id, email });
     } else {
-      // Just remove the token without redirect
-      base44.auth.logout();
+      setSentryUser(null);
     }
-  };
+  }, [clerkUser]);
 
-  const navigateToLogin = () => {
-    // Use the SDK's redirectToLogin method
-    base44.auth.redirectToLogin(window.location.href);
-  };
+  const mappedUser = useMemo(() => {
+    if (!clerkUser) return null;
+    const meta = clerkUser.unsafeMetadata || {};
+    return {
+      id: clerkUser.id,
+      email:
+        clerkUser.primaryEmailAddress?.emailAddress ||
+        clerkUser.emailAddresses?.[0]?.emailAddress,
+      full_name: clerkUser.fullName,
+      name: clerkUser.fullName,
+      display_name: meta.display_name || clerkUser.firstName || clerkUser.fullName,
+      avatar_url: meta.avatar_url || clerkUser.imageUrl,
+      role: meta.role || 'user',
+      language: meta.language,
+      ...meta,
+    };
+  }, [clerkUser]);
 
-  return (
-    <AuthContext.Provider value={{ 
-      user, 
-      isAuthenticated, 
-      isLoadingAuth,
-      isLoadingPublicSettings,
-      authError,
-      appPublicSettings,
-      logout,
-      navigateToLogin,
-      checkAppState
-    }}>
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      user: mappedUser,
+      isAuthenticated: !!isSignedIn,
+      isLoadingAuth: !isAuthLoaded || !isUserLoaded,
+      isLoadingPublicSettings: false,
+      authError: null,
+      appPublicSettings: null,
+      logout: (shouldRedirect = true) => {
+        User.logout();
+        if (shouldRedirect) {
+          clerk.signOut({ redirectUrl: '/' });
+        } else {
+          clerk.signOut();
+        }
+      },
+      navigateToLogin: () => {
+        clerk.redirectToSignIn({ redirectUrl: window.location.href });
+      },
+      checkAppState: () => {},
+    }),
+    [mappedUser, isSignedIn, isAuthLoaded, isUserLoaded, clerk],
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+/**
+ * Fallback provider used when VITE_CLERK_PUBLISHABLE_KEY is not set.
+ * The app runs without authentication — useful during local development.
+ */
+export const FallbackAuthProvider = ({ children }) => {
+  const value = useMemo(
+    () => ({
+      user: null,
+      isAuthenticated: false,
+      isLoadingAuth: false,
+      isLoadingPublicSettings: false,
+      authError: null,
+      appPublicSettings: null,
+      logout: () => {},
+      navigateToLogin: () => {
+        window.location.href = '/';
+      },
+      checkAppState: () => {},
+    }),
+    [],
+  );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

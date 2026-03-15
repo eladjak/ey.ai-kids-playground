@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useI18n } from '@/components/i18n/i18nProvider';
 import { Character } from '@/entities/Character';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
@@ -28,6 +29,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Characters() {
+  const { t, isRTL } = useI18n();
   const [characters, setCharacters] = useState([]);
   const [filteredCharacters, setFilteredCharacters] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -37,74 +39,14 @@ export default function Characters() {
     gender: "all",
     artStyle: "all"
   });
-  const [currentLanguage, setCurrentLanguage] = useState("english");
 
   useEffect(() => {
-    const storedLanguage = localStorage.getItem("language") || "english";
-    setCurrentLanguage(storedLanguage);
     loadCharacters();
   }, []);
 
   useEffect(() => {
     filterCharacters();
   }, [characters, searchQuery, filters]);
-
-  const translations = {
-    english: {
-      "characters.title": "My Characters",
-      "characters.subtitle": "Create and manage your story characters",
-      "characters.createNew": "Create New Character",
-      "characters.search": "Search characters...",
-      "characters.filters": "Filters",
-      "characters.allGenders": "All Genders",
-      "characters.boy": "Boy",
-      "characters.girl": "Girl",
-      "characters.neutral": "Neutral",
-      "characters.allStyles": "All Art Styles",
-      "characters.noCharacters": "No characters found",
-      "characters.createFirst": "Create your first character to get started",
-      "characters.adjustFilters": "Try adjusting your search or filters",
-      "characters.charactersFound": "characters found",
-      "characters.characterFound": "character found",
-      "characters.viewGrid": "Grid View",
-      "characters.viewList": "List View",
-      "characters.age": "Age",
-      "characters.years": "years",
-      "characters.edit": "Edit",
-      "characters.personality": "Personality",
-      "characters.appearance": "Appearance"
-    },
-    hebrew: {
-      "characters.title": "הדמויות שלי",
-      "characters.subtitle": "צור ונהל את דמויות הסיפור שלך",
-      "characters.createNew": "צור דמות חדשה",
-      "characters.search": "חפש דמויות...",
-      "characters.filters": "מסננים",
-      "characters.allGenders": "כל המינים",
-      "characters.boy": "בן",
-      "characters.girl": "בת",
-      "characters.neutral": "ניטרלי",
-      "characters.allStyles": "כל סגנונות האיור",
-      "characters.noCharacters": "לא נמצאו דמויות",
-      "characters.createFirst": "צור את הדמות הראשונה שלך כדי להתחיל",
-      "characters.adjustFilters": "נסה להתאים את החיפוש או המסננים שלך",
-      "characters.charactersFound": "דמויות נמצאו",
-      "characters.characterFound": "דמות נמצאה",
-      "characters.viewGrid": "תצוגת רשת",
-      "characters.viewList": "תצוגת רשימה",
-      "characters.age": "גיל",
-      "characters.years": "שנים",
-      "characters.edit": "עריכה",
-      "characters.personality": "אישיות",
-      "characters.appearance": "מראה"
-    }
-  };
-
-  const t = (key) => {
-    return translations[currentLanguage]?.[key] || translations.english[key] || key;
-  };
-
-  const isRTL = currentLanguage === "hebrew";
 
   const loadCharacters = async () => {
     try {
@@ -150,13 +92,13 @@ export default function Characters() {
 
   const artStyleOptions = [
     { value: "all", label: t("characters.allStyles") },
-    { value: "cartoon", label: "Cartoon" },
-    { value: "disney", label: "Disney" },
-    { value: "pixar", label: "Pixar" },
-    { value: "watercolor", label: "Watercolor" },
-    { value: "sketch", label: "Sketch" },
-    { value: "realistic", label: "Realistic" },
-    { value: "anime", label: "Anime" }
+    { value: "cartoon", label: t("characters.artStyles.cartoon") },
+    { value: "disney", label: t("characters.artStyles.disney") },
+    { value: "pixar", label: t("characters.artStyles.pixar") },
+    { value: "watercolor", label: t("characters.artStyles.watercolor") },
+    { value: "sketch", label: t("characters.artStyles.sketch") },
+    { value: "realistic", label: t("characters.artStyles.realistic") },
+    { value: "anime", label: t("characters.artStyles.anime") }
   ];
 
   if (isLoading) {
@@ -196,7 +138,7 @@ export default function Characters() {
             </Card>
           ))}
         </div>
-        <span className="sr-only">{isRTL ? "טוען דמויות..." : "Loading characters..."}</span>
+        <span className="sr-only">{t("characters.loadingAria")}</span>
       </div>
     );
   }
