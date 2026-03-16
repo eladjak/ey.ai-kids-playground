@@ -2,10 +2,14 @@ import React, { useEffect } from 'react';
 import LandingNav from '@/components/landing/LandingNav';
 import { updateMeta, resetMeta } from '@/lib/seo';
 import HeroSection from '@/components/landing/HeroSection';
+import StatsSection from '@/components/landing/StatsSection';
 import FeaturesSection from '@/components/landing/FeaturesSection';
+import ShowcaseSection from '@/components/landing/ShowcaseSection';
 import HowItWorksSection from '@/components/landing/HowItWorksSection';
 import TestimonialsSection from '@/components/landing/TestimonialsSection';
 import PricingSection from '@/components/landing/PricingSection';
+import FAQSection from '@/components/landing/FAQSection';
+import CTASection from '@/components/landing/CTASection';
 import FooterSection from '@/components/landing/FooterSection';
 import { useI18n } from '@/components/i18n/i18nProvider';
 
@@ -24,10 +28,14 @@ const LandingPage = () => {
     <div className="min-h-screen bg-white dark:bg-gray-950 overflow-x-hidden" dir={isRTL ? 'rtl' : 'ltr'}>
       <LandingNav />
       <HeroSection />
+      <StatsSection />
       <FeaturesSection />
+      <ShowcaseSection />
       <HowItWorksSection />
       <TestimonialsSection />
       <PricingSection />
+      <FAQSection />
+      <CTASection />
       <FooterSection />
     </div>
   );

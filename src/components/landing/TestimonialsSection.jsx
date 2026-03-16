@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Star, Quote } from 'lucide-react';
+import { Star, Quote, Shield, ShieldCheck, Ban } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { useI18n } from '@/components/i18n/i18nProvider';
 
@@ -14,6 +14,7 @@ const TestimonialsSection = () => {
       quote: t('landing.testimonials.t1.quote'),
       initials: t('landing.testimonials.t1.initials'),
       gradient: 'from-purple-400 to-indigo-500',
+      stars: 5,
     },
     {
       name: t('landing.testimonials.t2.name'),
@@ -21,6 +22,7 @@ const TestimonialsSection = () => {
       quote: t('landing.testimonials.t2.quote'),
       initials: t('landing.testimonials.t2.initials'),
       gradient: 'from-pink-400 to-rose-500',
+      stars: 5,
     },
     {
       name: t('landing.testimonials.t3.name'),
@@ -28,7 +30,38 @@ const TestimonialsSection = () => {
       quote: t('landing.testimonials.t3.quote'),
       initials: t('landing.testimonials.t3.initials'),
       gradient: 'from-amber-400 to-orange-500',
+      stars: 5,
     },
+    {
+      name: t('landing.testimonials.t4.name'),
+      role: t('landing.testimonials.t4.role'),
+      quote: t('landing.testimonials.t4.quote'),
+      initials: t('landing.testimonials.t4.initials'),
+      gradient: 'from-emerald-400 to-green-500',
+      stars: 5,
+    },
+    {
+      name: t('landing.testimonials.t5.name'),
+      role: t('landing.testimonials.t5.role'),
+      quote: t('landing.testimonials.t5.quote'),
+      initials: t('landing.testimonials.t5.initials'),
+      gradient: 'from-cyan-400 to-blue-500',
+      stars: 5,
+    },
+    {
+      name: t('landing.testimonials.t6.name'),
+      role: t('landing.testimonials.t6.role'),
+      quote: t('landing.testimonials.t6.quote'),
+      initials: t('landing.testimonials.t6.initials'),
+      gradient: 'from-violet-400 to-purple-500',
+      stars: 4,
+    },
+  ];
+
+  const trustBadges = [
+    { icon: ShieldCheck, label: t('landing.testimonials.trustCoppa'), color: 'text-green-600 dark:text-green-400' },
+    { icon: Shield, label: t('landing.testimonials.trustChildSafe'), color: 'text-blue-600 dark:text-blue-400' },
+    { icon: Ban, label: t('landing.testimonials.trustNoAds'), color: 'text-purple-600 dark:text-purple-400' },
   ];
 
   return (
@@ -45,27 +78,29 @@ const TestimonialsSection = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 dark:text-white mb-4">
             {t('landing.testimonials.sectionTitle')}
           </h2>
+          <div className="mx-auto w-24 h-1.5 bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 rounded-full mb-6" />
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             {t('landing.testimonials.sectionSubtitle')}
           </p>
         </motion.div>
 
         {/* Testimonials Grid */}
-        <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
-              transition={{ duration: 0.5, delay: index * 0.15 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              whileHover={{ y: -4 }}
             >
-              <Card className="h-full border-0 shadow-sm hover:shadow-md transition-shadow duration-300 relative overflow-hidden">
-                {/* Subtle gradient top border */}
-                <div className={`absolute top-0 inset-x-0 h-1 bg-gradient-to-r ${testimonial.gradient}`} />
+              <Card className="h-full border-0 shadow-sm hover:shadow-lg transition-all duration-300 relative overflow-hidden">
+                {/* Gradient top border */}
+                <div className={`absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r ${testimonial.gradient}`} />
                 <CardContent className="p-6 sm:p-8">
                   {/* Quote icon */}
                   <Quote className="h-8 w-8 text-purple-200 dark:text-purple-800 mb-4" />
@@ -75,20 +110,20 @@ const TestimonialsSection = () => {
                     {[1, 2, 3, 4, 5].map((star) => (
                       <Star
                         key={star}
-                        className="h-4 w-4 fill-yellow-400 text-yellow-400"
+                        className={`h-4 w-4 ${star <= testimonial.stars ? 'fill-yellow-400 text-yellow-400' : 'fill-gray-200 text-gray-200'}`}
                       />
                     ))}
                   </div>
 
                   {/* Quote */}
-                  <blockquote className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed text-sm sm:text-base">
+                  <blockquote className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed text-sm sm:text-base min-h-[80px]">
                     &ldquo;{testimonial.quote}&rdquo;
                   </blockquote>
 
                   {/* Author */}
                   <div className="flex items-center gap-3">
                     <div
-                      className={`w-10 h-10 rounded-full bg-gradient-to-br ${testimonial.gradient} flex items-center justify-center text-white font-bold text-sm`}
+                      className={`w-12 h-12 rounded-full bg-gradient-to-br ${testimonial.gradient} flex items-center justify-center text-white font-bold text-sm shadow-md`}
                     >
                       {testimonial.initials}
                     </div>
@@ -106,6 +141,29 @@ const TestimonialsSection = () => {
             </motion.div>
           ))}
         </div>
+
+        {/* Trust Badges */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mt-16 flex flex-wrap items-center justify-center gap-6 sm:gap-10"
+        >
+          {trustBadges.map((badge, index) => {
+            const Icon = badge.icon;
+            return (
+              <div key={index} className="flex items-center gap-2.5">
+                <div className={`p-2 rounded-full bg-gray-100 dark:bg-gray-800 ${badge.color}`}>
+                  <Icon className="h-5 w-5" />
+                </div>
+                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  {badge.label}
+                </span>
+              </div>
+            );
+          })}
+        </motion.div>
       </div>
     </section>
   );

@@ -1294,13 +1294,18 @@ export default {
     },
     hero: {
       badge: "AI-Powered Children's Book Creator",
-      title: "Your Child's Next Book \u2014 Created with AI Magic",
+      titleLine1: "Your Child's Next Book",
+      titleLine2: "Created with AI Magic",
       subtitle: "Choose characters, style and genre \u2014 and AI creates a complete children's book with a personalized story and illustrations",
       primaryCta: "Create a Book \u2014 It's Free!",
       secondaryCta: "Browse Community Books",
       socialProof: "Hundreds of families already creating stories",
-      bookMockupTitle: "A Magical Adventure",
-      bookMockupAuthor: "By: Your Child"
+      stat1Value: "500+",
+      stat1Label: "Books Created",
+      stat2Value: "50+",
+      stat2Label: "Art Styles",
+      stat3Value: "3",
+      stat3Label: "Languages"
     },
     features: {
       sectionTitle: "Everything in One Experience",
@@ -1371,7 +1376,28 @@ export default {
         role: "Father of a 6-year-old",
         quote: "The perfect birthday gift! We created a personalized book with all her friends, and she absolutely loves it. The process is easy and fast.",
         initials: "YB"
-      }
+      },
+      t4: {
+        name: "Dana Friedman",
+        role: "Mother of twins (age 4)",
+        quote: "Both my kids want different stories and characters. With Sipurai they each get their own personalized book. It's become our bedtime ritual!",
+        initials: "DF"
+      },
+      t5: {
+        name: "Avi Goldstein",
+        role: "Grandfather of 3",
+        quote: "I create books with my grandchildren even from abroad. We choose characters together on video call, and the book arrives in their email. Pure magic.",
+        initials: "AG"
+      },
+      t6: {
+        name: "Noa Shapiro",
+        role: "Kindergarten teacher",
+        quote: "I use Sipurai in class to teach creative writing. The kids are so engaged when they see their ideas come to life with illustrations. Highly recommend!",
+        initials: "NS"
+      },
+      trustCoppa: "COPPA Compliant",
+      trustChildSafe: "Child-Safe AI",
+      trustNoAds: "No Ads"
     },
     pricing: {
       sectionTitle: "Plans & Pricing",
@@ -1404,6 +1430,47 @@ export default {
         f4: "Early access to new features",
         cta: "Choose Family"
       }
+    },
+    stats: {
+      sectionTitle: "Sipurai in Numbers",
+      sectionSubtitle: "Join the growing community of creative families",
+      booksCreated: "Books Created",
+      pagesIllustrated: "Pages Illustrated",
+      artStyles: "Art Styles",
+      languages: "Languages"
+    },
+    showcase: {
+      sectionTitle: "Books Created by Families Like Yours",
+      sectionSubtitle: "See what other families have created with Sipurai \u2014 every book is unique!",
+      book1Title: "The Dragon's Secret Garden",
+      book1Genre: "Fantasy",
+      book2Title: "Space Adventure with Yael",
+      book2Genre: "Science Fiction",
+      book3Title: "The Brave Little Fox",
+      book3Genre: "Adventure",
+      readSample: "Browse Books"
+    },
+    faq: {
+      sectionTitle: "Frequently Asked Questions",
+      sectionSubtitle: "Everything you need to know about Sipurai",
+      q1: "What is Sipurai?",
+      a1: "Sipurai is an AI-powered platform that lets children and parents create personalized illustrated storybooks. You choose characters, art style, genre, and language \u2014 and our AI generates a complete book with story and illustrations.",
+      q2: "Is Sipurai safe for children?",
+      a2: "Absolutely! Sipurai is COPPA compliant, uses child-safe AI content filters, has no ads, and includes parental controls. All generated content is age-appropriate and reviewed for safety.",
+      q3: "What ages is Sipurai designed for?",
+      a3: "Sipurai is designed for children ages 3\u201312, with age-appropriate content settings for each range. Parents can set the age range to ensure stories and vocabulary match their child's level.",
+      q4: "How does the AI create stories and illustrations?",
+      a4: "Our AI uses advanced language models to write original stories based on your chosen theme, characters, and preferences. Illustrations are generated to match the story and your selected art style \u2014 from watercolor to anime, Disney to comic book.",
+      q5: "Can I print the books?",
+      a5: "Yes! You can export any book as a PDF for home printing, and we're adding professional print-on-demand shipping soon so you can receive a real hardcover book at your door.",
+      q6: "Is Sipurai free to use?",
+      a6: "Yes! Sipurai offers a free plan with 2 books per month and basic art styles. Premium plans unlock unlimited books, all 12 art styles, PDF export, and more."
+    },
+    cta: {
+      headline: "Start Creating Your Child's Story Today",
+      subheadline: "Join hundreds of families who are already creating magical personalized books with AI",
+      button: "Create Your First Book",
+      note: "Free to start \u2014 no credit card required"
     },
     footer: {
       description: "An AI-powered platform for creating personalized children's books. Kids choose characters, style and genre \u2014 and AI creates a complete book.",

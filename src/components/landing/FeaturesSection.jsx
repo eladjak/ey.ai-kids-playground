@@ -4,7 +4,14 @@ import { Palette, Globe, UserCircle, Trophy, Smartphone, Users } from 'lucide-re
 import { Card, CardContent } from '@/components/ui/card';
 import { useI18n } from '@/components/i18n/i18nProvider';
 
-const featureIcons = [Palette, Globe, UserCircle, Trophy, Smartphone, Users];
+const featureImages = [
+  '/images/character-workshop.jpg',
+  '/images/community-sharing.jpg',
+  '/images/story-ideas.jpg',
+  '/images/achievements.jpg',
+  '/images/reading-magic.jpg',
+  '/images/leaderboard.jpg',
+];
 
 const FeaturesSection = () => {
   const { t, isRTL } = useI18n();
@@ -16,6 +23,7 @@ const FeaturesSection = () => {
       description: t('landing.features.artStyles.description'),
       color: 'from-pink-500 to-rose-500',
       bgColor: 'bg-pink-50 dark:bg-pink-950/20',
+      image: featureImages[0],
     },
     {
       icon: Globe,
@@ -23,6 +31,7 @@ const FeaturesSection = () => {
       description: t('landing.features.trilingual.description'),
       color: 'from-blue-500 to-cyan-500',
       bgColor: 'bg-blue-50 dark:bg-blue-950/20',
+      image: featureImages[1],
     },
     {
       icon: UserCircle,
@@ -30,6 +39,7 @@ const FeaturesSection = () => {
       description: t('landing.features.characters.description'),
       color: 'from-amber-500 to-orange-500',
       bgColor: 'bg-amber-50 dark:bg-amber-950/20',
+      image: featureImages[2],
     },
     {
       icon: Trophy,
@@ -37,6 +47,7 @@ const FeaturesSection = () => {
       description: t('landing.features.gamification.description'),
       color: 'from-emerald-500 to-green-500',
       bgColor: 'bg-emerald-50 dark:bg-emerald-950/20',
+      image: featureImages[3],
     },
     {
       icon: Smartphone,
@@ -44,6 +55,7 @@ const FeaturesSection = () => {
       description: t('landing.features.pwa.description'),
       color: 'from-purple-500 to-violet-500',
       bgColor: 'bg-purple-50 dark:bg-purple-950/20',
+      image: featureImages[4],
     },
     {
       icon: Users,
@@ -51,6 +63,7 @@ const FeaturesSection = () => {
       description: t('landing.features.community.description'),
       color: 'from-indigo-500 to-blue-500',
       bgColor: 'bg-indigo-50 dark:bg-indigo-950/20',
+      image: featureImages[5],
     },
   ];
 
@@ -69,9 +82,10 @@ const FeaturesSection = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 dark:text-white mb-4">
             {t('landing.features.sectionTitle')}
           </h2>
+          <div className="mx-auto w-24 h-1.5 bg-gradient-to-r from-purple-500 via-pink-500 to-indigo-500 rounded-full mb-6" />
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             {t('landing.features.sectionSubtitle')}
           </p>
@@ -84,22 +98,31 @@ const FeaturesSection = () => {
             return (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-50px' }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.5, delay: index * 0.15 }}
+                whileHover={{ scale: 1.03, y: -4 }}
                 className="group"
               >
-                <Card className="h-full border-0 shadow-sm hover:shadow-lg transition-shadow duration-300">
-                  <CardContent className="p-6 sm:p-8">
+                <Card className="h-full border-0 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+                  {/* Feature image */}
+                  <div className="relative h-40 overflow-hidden">
+                    <img
+                      src={feature.image}
+                      alt={feature.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className={`absolute inset-0 bg-gradient-to-t ${feature.color} opacity-30`} />
                     <div
-                      className={`w-14 h-14 rounded-2xl ${feature.bgColor} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-200`}
+                      className={`absolute bottom-3 ${isRTL ? 'right-3' : 'left-3'} w-12 h-12 rounded-xl bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm flex items-center justify-center shadow-lg`}
                     >
-                      <div className={`bg-gradient-to-br ${feature.color} rounded-xl p-2.5`}>
+                      <div className={`bg-gradient-to-br ${feature.color} rounded-lg p-2`}>
                         <Icon className="h-5 w-5 text-white" />
                       </div>
                     </div>
+                  </div>
+                  <CardContent className="p-6">
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                       {feature.title}
                     </h3>
@@ -112,6 +135,21 @@ const FeaturesSection = () => {
             );
           })}
         </div>
+
+        {/* Decorative divider illustration */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="mt-16 flex justify-center"
+        >
+          <div className="flex items-center gap-4 text-purple-300 dark:text-purple-700">
+            <div className="w-16 h-px bg-purple-200 dark:bg-purple-800" />
+            <Palette className="h-5 w-5" />
+            <div className="w-16 h-px bg-purple-200 dark:bg-purple-800" />
+          </div>
+        </motion.div>
       </div>
     </section>
   );
