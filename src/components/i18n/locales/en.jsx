@@ -1455,15 +1455,26 @@ export default {
     },
     pricing: {
       sectionTitle: "Plans & Pricing",
-      sectionSubtitle: "Start free \u2014 upgrade when it suits you",
+      sectionSubtitle: "Start with 5 free books a month \u2014 upgrade when you're hooked",
       period: "month",
+      firstBookNote: "First book with ALL styles \u2014 free!",
       free: {
         name: "Free",
         price: "\u20AA0",
-        f1: "2 books per month",
-        f2: "Basic illustration styles",
+        f1: "5 books per month",
+        f2: "6 illustration styles",
         f3: "Community access",
+        f4: "1 PDF export per month",
         cta: "Start Free"
+      },
+      lite: {
+        name: "Lite",
+        price: "\u20AA14.90",
+        f1: "15 books per month",
+        f2: "All 12 illustration styles",
+        f3: "Unlimited PDF export",
+        f4: "No ads",
+        cta: "Choose Lite"
       },
       premium: {
         name: "Premium",
@@ -1472,12 +1483,12 @@ export default {
         f1: "Unlimited books",
         f2: "All 12 illustration styles",
         f3: "Print & PDF export",
-        f4: "No ads",
+        f4: "Priority support",
         cta: "Upgrade to Premium"
       },
       family: {
         name: "Family",
-        price: "\u20AA49",
+        price: "\u20AA39",
         f1: "Up to 5 child profiles",
         f2: "All Premium features",
         f3: "Priority support",

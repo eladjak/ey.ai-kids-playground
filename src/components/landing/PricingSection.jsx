@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Check, Sparkles } from 'lucide-react';
+import { Check, Sparkles, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -19,10 +19,25 @@ const PricingSection = () => {
         t('landing.pricing.free.f1'),
         t('landing.pricing.free.f2'),
         t('landing.pricing.free.f3'),
+        t('landing.pricing.free.f4'),
       ],
       cta: t('landing.pricing.free.cta'),
       highlighted: false,
-      gradient: '',
+      link: '/sign-up',
+    },
+    {
+      name: t('landing.pricing.lite.name'),
+      price: t('landing.pricing.lite.price'),
+      period: t('landing.pricing.period'),
+      features: [
+        t('landing.pricing.lite.f1'),
+        t('landing.pricing.lite.f2'),
+        t('landing.pricing.lite.f3'),
+        t('landing.pricing.lite.f4'),
+      ],
+      cta: t('landing.pricing.lite.cta'),
+      highlighted: false,
+      link: '/sign-up',
     },
     {
       name: t('landing.pricing.premium.name'),
@@ -37,7 +52,7 @@ const PricingSection = () => {
       cta: t('landing.pricing.premium.cta'),
       highlighted: true,
       badge: t('landing.pricing.premium.badge'),
-      gradient: 'from-purple-600 to-indigo-600',
+      link: '/sign-up',
     },
     {
       name: t('landing.pricing.family.name'),
@@ -51,7 +66,7 @@ const PricingSection = () => {
       ],
       cta: t('landing.pricing.family.cta'),
       highlighted: false,
-      gradient: '',
+      link: '/sign-up',
     },
   ];
 
@@ -68,26 +83,43 @@ const PricingSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          className="text-center mb-12"
         >
           <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white mb-4">
             {t('landing.pricing.sectionTitle')}
           </h2>
+          <div className="mx-auto w-24 h-1.5 bg-gradient-to-r from-purple-500 via-pink-500 to-indigo-500 rounded-full mb-6" />
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             {t('landing.pricing.sectionSubtitle')}
           </p>
         </motion.div>
 
-        {/* Pricing Cards */}
-        <div className="grid md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto items-start">
+        {/* First Book Note */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4 }}
+          className="flex items-center justify-center gap-2 mb-10"
+        >
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 border border-amber-200 dark:border-amber-700 rounded-full px-5 py-2.5 shadow-sm">
+            <Gift className="h-5 w-5 text-amber-500" />
+            <span className="text-sm font-semibold text-amber-800 dark:text-amber-300">
+              {t('landing.pricing.firstBookNote')}
+            </span>
+          </div>
+        </motion.div>
+
+        {/* Pricing Cards - 4 columns */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 max-w-6xl mx-auto items-start">
           {plans.map((plan, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
-              transition={{ duration: 0.5, delay: index * 0.15 }}
-              className={plan.highlighted ? 'md:-mt-4' : ''}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className={plan.highlighted ? 'lg:-mt-4' : ''}
             >
               <Card
                 className={`h-full relative overflow-hidden ${
@@ -106,15 +138,15 @@ const PricingSection = () => {
                   </div>
                 )}
 
-                <CardContent className={`p-6 sm:p-8 ${plan.highlighted ? 'pt-8' : ''}`}>
+                <CardContent className={`p-5 sm:p-6 ${plan.highlighted ? 'pt-7' : ''}`}>
                   {/* Plan name */}
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+                  <h3 className="text-base font-bold text-gray-900 dark:text-white mb-2">
                     {plan.name}
                   </h3>
 
                   {/* Price */}
-                  <div className="flex items-baseline gap-1 mb-6">
-                    <span className={`text-4xl font-extrabold ${plan.highlighted ? 'text-purple-600' : 'text-gray-900 dark:text-white'}`}>
+                  <div className="flex items-baseline gap-1 mb-5">
+                    <span className={`text-3xl font-extrabold ${plan.highlighted ? 'text-purple-600' : 'text-gray-900 dark:text-white'}`}>
                       {plan.price}
                     </span>
                     <span className="text-gray-500 dark:text-gray-400 text-sm">
@@ -123,17 +155,17 @@ const PricingSection = () => {
                   </div>
 
                   {/* Features */}
-                  <ul className="space-y-3 mb-8">
+                  <ul className="space-y-2.5 mb-6">
                     {plan.features.map((feature, fIndex) => (
-                      <li key={fIndex} className="flex items-start gap-3">
+                      <li key={fIndex} className="flex items-start gap-2.5">
                         <Check
-                          className={`h-5 w-5 shrink-0 mt-0.5 ${
+                          className={`h-4 w-4 shrink-0 mt-0.5 ${
                             plan.highlighted
                               ? 'text-purple-500'
                               : 'text-green-500'
                           }`}
                         />
-                        <span className="text-gray-700 dark:text-gray-300 text-sm">
+                        <span className="text-gray-700 dark:text-gray-300 text-sm leading-snug">
                           {feature}
                         </span>
                       </li>
@@ -141,14 +173,14 @@ const PricingSection = () => {
                   </ul>
 
                   {/* CTA */}
-                  <Link to="/BookWizard">
+                  <Link to={plan.link}>
                     <Button
                       className={`w-full ${
                         plan.highlighted
                           ? 'bg-purple-600 hover:bg-purple-700 text-white shadow-lg'
                           : 'bg-gray-900 hover:bg-gray-800 text-white dark:bg-gray-100 dark:hover:bg-gray-200 dark:text-gray-900'
                       }`}
-                      size="lg"
+                      size="default"
                     >
                       {plan.cta}
                     </Button>
