@@ -1,0 +1,252 @@
+import React, { useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronRight, ChevronLeft, X, BookOpen, Sparkles } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from '@/components/ui/dialog';
+
+const artStyleLabels = {
+  watercolor: 'צבעי מים',
+  pixar: 'פיקסר תלת-ממד',
+  storybook: 'ספר סיפורים קלאסי',
+};
+
+const genreLabels = {
+  fantasy: 'פנטזיה',
+  'science-fiction': 'מדע בדיוני',
+  adventure: 'הרפתקאות',
+};
+
+const pageVariants = {
+  enter: (direction) => ({
+    x: direction > 0 ? 300 : -300,
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (direction) => ({
+    x: direction > 0 ? -300 : 300,
+    opacity: 0,
+  }),
+};
+
+const DemoBookViewer = ({ book, open, onClose }) => {
+  const [currentPage, setCurrentPage] = useState(-1); // -1 = cover
+  const [direction, setDirection] = useState(0);
+
+  const totalPages = book?.pages?.length || 0;
+
+  const goToNext = useCallback(() => {
+    if (currentPage < totalPages - 1) {
+      setDirection(1);
+      setCurrentPage((prev) => prev + 1);
+    }
+  }, [currentPage, totalPages]);
+
+  const goToPrev = useCallback(() => {
+    if (currentPage > -1) {
+      setDirection(-1);
+      setCurrentPage((prev) => prev - 1);
+    }
+  }, [currentPage]);
+
+  const handleClose = useCallback(() => {
+    setCurrentPage(-1);
+    setDirection(0);
+    onClose();
+  }, [onClose]);
+
+  if (!book) return null;
+
+  const isOnCover = currentPage === -1;
+  const isOnLastPage = currentPage === totalPages - 1;
+  const page = !isOnCover ? book.pages[currentPage] : null;
+
+  return (
+    <Dialog open={open} onOpenChange={(val) => !val && handleClose()}>
+      <DialogContent
+        className="max-w-2xl w-[95vw] max-h-[90dvh] p-0 overflow-hidden bg-white dark:bg-gray-900 border-0 rounded-2xl"
+        dir="rtl"
+      >
+        <DialogTitle className="sr-only">{book.title.he}</DialogTitle>
+
+        {/* Top bar */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800 bg-gray-50/80 dark:bg-gray-800/80 backdrop-blur-sm">
+          <div className="flex items-center gap-2">
+            <BookOpen className="h-4 w-4 text-purple-500" />
+            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 truncate max-w-[200px]">
+              {book.title.he}
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-gray-400">
+              {isOnCover
+                ? 'עטיפה'
+                : `עמוד ${currentPage + 1} מתוך ${totalPages}`}
+            </span>
+            <button
+              onClick={handleClose}
+              className="rounded-full p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              aria-label="סגור"
+            >
+              <X className="h-4 w-4 text-gray-500" />
+            </button>
+          </div>
+        </div>
+
+        {/* Page content area */}
+        <div className="relative overflow-hidden" style={{ minHeight: '400px' }}>
+          <AnimatePresence mode="wait" custom={direction}>
+            {isOnCover ? (
+              <motion.div
+                key="cover"
+                custom={direction}
+                variants={pageVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.2, ease: 'easeInOut' }}
+                className="flex flex-col items-center justify-center p-8 text-center"
+              >
+                {/* Cover illustration area */}
+                <div
+                  className={`w-full max-w-sm aspect-[3/4] rounded-2xl bg-gradient-to-br ${book.cover_gradient} flex flex-col items-center justify-center p-8 mb-6 shadow-xl`}
+                >
+                  <Sparkles className="h-12 w-12 text-white/80 mb-4" />
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-2 leading-tight">
+                    {book.title.he}
+                  </h2>
+                  <p className="text-white/80 text-sm">{book.title.en}</p>
+                </div>
+
+                {/* Book metadata */}
+                <div className="flex flex-wrap gap-2 justify-center mb-4">
+                  <span className="px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
+                    {genreLabels[book.genre] || book.genre}
+                  </span>
+                  <span className="px-3 py-1 rounded-full text-xs font-medium bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300">
+                    {artStyleLabels[book.art_style] || book.art_style}
+                  </span>
+                  <span className="px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
+                    גילאי {book.age_range}
+                  </span>
+                </div>
+
+                <p className="text-sm text-gray-500 dark:text-gray-400 italic mb-2">
+                  "{book.moral}"
+                </p>
+
+                <Button
+                  onClick={goToNext}
+                  className="mt-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+                >
+                  <BookOpen className="h-4 w-4" />
+                  התחילו לקרוא
+                </Button>
+              </motion.div>
+            ) : (
+              <motion.div
+                key={`page-${currentPage}`}
+                custom={direction}
+                variants={pageVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.2, ease: 'easeInOut' }}
+                className="flex flex-col p-6 sm:p-8"
+              >
+                {/* Illustration placeholder */}
+                <div
+                  className={`w-full aspect-[16/9] rounded-xl bg-gradient-to-br ${book.cover_gradient} opacity-20 flex items-center justify-center mb-6 relative overflow-hidden`}
+                >
+                  <div className="absolute inset-0 flex items-center justify-center p-4">
+                    <p className="text-center text-xs text-gray-600 dark:text-gray-400 opacity-70 max-w-md leading-relaxed">
+                      {page.imagePrompt}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Story text */}
+                <div className="flex-1">
+                  <p className="text-lg sm:text-xl leading-relaxed text-gray-800 dark:text-gray-200 font-medium">
+                    {page.text}
+                  </p>
+                </div>
+
+                {/* Page number */}
+                <div className="flex justify-center mt-6">
+                  <span className="text-xs text-gray-400 font-medium">
+                    - {currentPage + 1} -
+                  </span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Navigation bar */}
+        <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 dark:border-gray-800 bg-gray-50/80 dark:bg-gray-800/80">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={goToNext}
+            disabled={isOnLastPage}
+            className="flex items-center gap-1"
+          >
+            <ChevronRight className="h-4 w-4" />
+            {isOnLastPage ? 'סוף' : 'הבא'}
+          </Button>
+
+          {/* Progress dots */}
+          <div className="flex gap-1.5 items-center">
+            <button
+              onClick={() => {
+                setDirection(-1);
+                setCurrentPage(-1);
+              }}
+              className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                isOnCover
+                  ? 'bg-purple-500'
+                  : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400'
+              }`}
+              aria-label="עטיפה"
+            />
+            {book.pages.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => {
+                  setDirection(idx > currentPage ? 1 : -1);
+                  setCurrentPage(idx);
+                }}
+                className={`w-2 h-2 rounded-full transition-colors ${
+                  currentPage === idx
+                    ? 'bg-purple-500'
+                    : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400'
+                }`}
+                aria-label={`עמוד ${idx + 1}`}
+              />
+            ))}
+          </div>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={goToPrev}
+            disabled={isOnCover}
+            className="flex items-center gap-1"
+          >
+            {isOnCover ? 'עטיפה' : 'הקודם'}
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default DemoBookViewer;
