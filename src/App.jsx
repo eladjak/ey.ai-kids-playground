@@ -14,6 +14,8 @@ import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-route
 import PageNotFound from './lib/PageNotFound';
 import { ClerkProvider } from '@clerk/clerk-react';
 import { AuthProvider, FallbackAuthProvider, useAuth } from '@/lib/AuthContext';
+import SignIn from '@/pages/SignIn';
+import SignUp from '@/pages/SignUp';
 import { I18nProvider } from '@/components/i18n/i18nProvider';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ErrorBoundary from '@/components/ErrorBoundary';
@@ -31,7 +33,7 @@ const Blog = Pages['Blog'];
 const BlogPost = Pages['BlogPost'];
 
 // Pages accessible without authentication (public routes)
-const PUBLIC_PAGES = new Set(['BookView', 'LandingPage', 'Blog', 'BlogPost']);
+const PUBLIC_PAGES = new Set(['BookView', 'LandingPage', 'Blog', 'BlogPost', 'Community']);
 
 const pageTransition = {
   initial: { opacity: 0, y: 8 },
@@ -76,7 +78,9 @@ const AuthenticatedApp = () => {
   const isPublicRoute =
     PUBLIC_PAGES.has(currentPath) ||
     location.pathname === '/' ||
-    location.pathname.startsWith('/blog');
+    location.pathname.startsWith('/blog') ||
+    location.pathname.startsWith('/sign-in') ||
+    location.pathname.startsWith('/sign-up');
 
   // Show loading spinner while checking app public settings or auth
   // For public routes, skip auth loading wait (user will be null but that's fine)
@@ -124,6 +128,9 @@ const AuthenticatedApp = () => {
               <LandingPage />
             )
           } />
+          {/* Auth routes */}
+          <Route path="/sign-in/*" element={<SignIn />} />
+          <Route path="/sign-up/*" element={<SignUp />} />
           {/* Public blog routes */}
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />

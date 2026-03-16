@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
         }
       },
       navigateToLogin: () => {
-        clerk.redirectToSignIn({ redirectUrl: window.location.href });
+        window.location.href = `/sign-in?redirect_url=${encodeURIComponent(window.location.href)}`;
       },
       checkAppState: () => {},
     }),

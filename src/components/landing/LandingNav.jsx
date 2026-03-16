@@ -107,8 +107,16 @@ const LandingNav = () => {
               </div>
             </div>
 
+            {/* Sign In */}
+            <Link to="/sign-in">
+              <Button variant="ghost" className={`font-medium ${
+                scrolled ? 'text-gray-700 hover:text-purple-600 dark:text-gray-300' : 'text-white/90 hover:text-white hover:bg-white/10'
+              }`}>
+                {t('landing.nav.signIn')}
+              </Button>
+            </Link>
             {/* CTA Button */}
-            <Link to="/BookWizard">
+            <Link to="/sign-up">
               <Button className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg">
                 {t('landing.nav.cta')}
               </Button>
@@ -166,8 +174,13 @@ const LandingNav = () => {
                 </button>
               ))}
             </div>
-            <Link to="/BookWizard" onClick={() => setMobileMenuOpen(false)}>
-              <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white mt-2">
+            <Link to="/sign-in" onClick={() => setMobileMenuOpen(false)}>
+              <Button variant="outline" className="w-full mt-2">
+                {t('landing.nav.signIn')}
+              </Button>
+            </Link>
+            <Link to="/sign-up" onClick={() => setMobileMenuOpen(false)}>
+              <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white mt-1">
                 {t('landing.nav.cta')}
               </Button>
             </Link>

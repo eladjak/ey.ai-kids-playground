@@ -150,8 +150,8 @@ const HeroSection = () => {
               <Link to="/Community">
                 <Button
                   size="lg"
-                  variant="outline"
-                  className="border-white/30 text-white hover:bg-white/10 text-lg px-10 py-7 rounded-2xl font-medium w-full sm:w-auto"
+                  variant="ghost"
+                  className="bg-white/15 border-2 border-white/50 text-white hover:bg-white/25 hover:border-white/70 hover:text-white backdrop-blur-sm text-lg px-10 py-7 rounded-2xl font-medium w-full sm:w-auto transition-all duration-200"
                 >
                   <BookOpen className="h-6 w-6" />
                   {t('landing.hero.secondaryCta')}

@@ -1343,6 +1343,7 @@ export default {
       features: "Features",
       howItWorks: "How It Works",
       pricing: "Pricing",
+      signIn: "Sign In",
       cta: "Start Free"
     },
     hero: {
@@ -1502,6 +1503,38 @@ export default {
       book3Title: "The Brave Little Fox",
       book3Genre: "Adventure",
       readSample: "Browse Books"
+    },
+    whyUs: {
+      badge: "Why Sipurai?",
+      sectionTitle: "Why Families Choose Sipurai",
+      sectionSubtitle: "Unlike generic AI tools, Sipurai was built from the ground up for children and families \u2014 with safety, creativity, and joy at its core",
+      personalized: {
+        title: "Your Child is the Hero",
+        description: "Unlike other platforms where kids just read, here your child becomes the main character \u2014 with their name, look, and personality woven into every page of a truly personalized story."
+      },
+      safety: {
+        title: "Built for Kids, Trusted by Parents",
+        description: "COPPA-compliant, no ads, no data collection, parental controls built-in. Every AI-generated story is filtered for age-appropriate content. Your child's safety isn't an afterthought \u2014 it's our foundation."
+      },
+      trilingual: {
+        title: "Hebrew, English & Yiddish",
+        description: "The only children's book platform with native Hebrew and Yiddish support, full RTL layout, and culturally relevant content. Perfect for Israeli and Jewish families worldwide."
+      },
+      artStyles: {
+        title: "12 Professional Art Styles",
+        description: "From watercolor to anime, Disney to comic book \u2014 each book gets unique, high-quality illustrations that match your chosen style. No generic clip-art, only beautiful AI art."
+      },
+      gamification: {
+        title: "Learning Through Play",
+        description: "XP points, achievement badges, daily streaks, and a leaderboard turn reading and creating into an exciting game. Kids stay motivated and engaged \u2014 screen time parents can feel good about."
+      },
+      community: {
+        title: "Share & Inspire",
+        description: "A safe, moderated community where families share their creations, leave likes and comments, and get inspired by other kids' stories. Creativity is better together."
+      },
+      compare1: "The only Hebrew-native children's book AI",
+      compare2: "Trusted by hundreds of families",
+      compare3: "100% child-safe, no ads, COPPA compliant"
     },
     faq: {
       sectionTitle: "Frequently Asked Questions",

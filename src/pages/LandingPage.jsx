@@ -5,6 +5,7 @@ import HeroSection from '@/components/landing/HeroSection';
 import StatsSection from '@/components/landing/StatsSection';
 import FeaturesSection from '@/components/landing/FeaturesSection';
 import ShowcaseSection from '@/components/landing/ShowcaseSection';
+import WhyUsSection from '@/components/landing/WhyUsSection';
 import HowItWorksSection from '@/components/landing/HowItWorksSection';
 import TestimonialsSection from '@/components/landing/TestimonialsSection';
 import PricingSection from '@/components/landing/PricingSection';
@@ -31,6 +32,7 @@ const LandingPage = () => {
       <StatsSection />
       <FeaturesSection />
       <ShowcaseSection />
+      <WhyUsSection />
       <HowItWorksSection />
       <TestimonialsSection />
       <PricingSection />
