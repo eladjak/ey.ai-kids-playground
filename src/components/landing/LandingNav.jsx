@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, Globe, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useI18n } from '@/components/i18n/i18nProvider';
@@ -9,6 +9,8 @@ const LandingNav = () => {
   const { t, isRTL, language, changeLanguage, languages } = useI18n();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
+  const langDropdownRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,6 +18,25 @@ const LandingNav = () => {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (langDropdownRef.current && !langDropdownRef.current.contains(e.target)) {
+        setLangDropdownOpen(false);
+      }
+    };
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setLangDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   const navLinks = [
@@ -79,8 +100,11 @@ const LandingNav = () => {
           {/* Right Side: Language + CTA */}
           <div className="hidden md:flex items-center gap-3">
             {/* Language Switcher */}
-            <div className="relative group">
+            <div className="relative group" ref={langDropdownRef}>
               <button
+                onClick={() => setLangDropdownOpen((prev) => !prev)}
+                aria-haspopup="true"
+                aria-expanded={langDropdownOpen}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors ${
                   scrolled
                     ? 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
@@ -90,11 +114,22 @@ const LandingNav = () => {
                 <Globe className="h-4 w-4" />
                 <span>{languages[language]?.name}</span>
               </button>
-              <div className="absolute end-0 top-full mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 min-w-[140px]">
+              <div
+                role="menu"
+                className={`absolute end-0 top-full mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border transition-all duration-200 min-w-[140px] ${
+                  langDropdownOpen
+                    ? 'opacity-100 visible'
+                    : 'opacity-0 invisible group-hover:opacity-100 group-hover:visible'
+                }`}
+              >
                 {languageOptions.map((lang) => (
                   <button
                     key={lang.key}
-                    onClick={() => changeLanguage(lang.key)}
+                    role="menuitem"
+                    onClick={() => {
+                      changeLanguage(lang.key);
+                      setLangDropdownOpen(false);
+                    }}
                     className={`block w-full text-start px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg ${
                       language === lang.key
                         ? 'text-purple-600 font-medium bg-purple-50 dark:bg-purple-900/20'
@@ -137,6 +172,7 @@ const LandingNav = () => {
       </div>
 
       {/* Mobile Menu */}
+      <AnimatePresence>
       {mobileMenuOpen && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
@@ -187,6 +223,7 @@ const LandingNav = () => {
           </div>
         </motion.div>
       )}
+      </AnimatePresence>
     </motion.nav>
   );
 };
