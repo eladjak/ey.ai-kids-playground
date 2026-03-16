@@ -43,12 +43,15 @@ const NavLink = memo(function NavLink({ item, currentPath, isRTL }) {
     <Link to={createPageUrl(item.pageName)} className="w-full">
       <Button
         variant="ghost"
-        className={`w-full justify-start py-6 px-4 rounded-xl transition-all duration-200 ${
+        className={`w-full justify-start py-6 px-4 rounded-xl transition-all duration-200 relative ${
           isActive
-            ? 'bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 text-purple-700 dark:text-purple-300'
+            ? 'bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 text-purple-700 dark:text-purple-300 shadow-sm'
             : 'hover:bg-gray-50 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-200'
         }`}
       >
+        {isActive && (
+          <span className={`absolute ${isRTL ? 'right-0' : 'left-0'} top-1/2 -translate-y-1/2 w-1 h-8 rounded-full bg-purple-600 dark:bg-purple-400`} />
+        )}
         <item.icon className={`h-5 w-5 ${isRTL ? 'ml-3' : 'mr-3'} ${
           isActive ? 'text-purple-600 dark:text-purple-400' : 'text-gray-400 dark:text-gray-300'
         }`} />
@@ -230,7 +233,7 @@ export default function Layout({ children, currentPageName }) {
         Skip to main content
       </a>
       <div className={isRTL ? 'pr-64 max-lg:pr-0' : 'pl-64 max-lg:pl-0'}>
-        <aside className={`fixed top-0 ${isRTL ? 'right-0 border-l' : 'left-0 border-r'} h-full w-64 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 flex flex-col transition-transform duration-300 z-50 ${sidebarOpen ? 'translate-x-0' : (isRTL ? 'translate-x-full' : '-translate-x-full')} lg:translate-x-0`}>
+        <aside className={`fixed top-0 ${isRTL ? 'right-0 border-l' : 'left-0 border-r'} h-full w-64 bg-gradient-to-b from-white via-white to-purple-50/30 dark:from-gray-800 dark:via-gray-800 dark:to-purple-950/20 border-gray-200 dark:border-gray-700 flex flex-col transition-transform duration-300 z-50 ${sidebarOpen ? 'translate-x-0' : (isRTL ? 'translate-x-full' : '-translate-x-full')} lg:translate-x-0`}>
           <div className="p-6 flex items-center justify-between border-b border-gray-100 dark:border-gray-700">
             <Link to={createPageUrl("Home")} className="flex items-center gap-3">
               <img src="/icons/icon-192x192.jpg" alt="Sipurai" className="h-10 w-10 rounded-xl shadow-lg" />
@@ -350,7 +353,7 @@ export default function Layout({ children, currentPageName }) {
           </div>
         </aside>
 
-        <div className={`lg:hidden fixed top-0 inset-x-0 z-40 h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700`}>
+        <div className={`lg:hidden fixed top-0 inset-x-0 z-40 h-16 bg-white/95 dark:bg-gray-800/95 backdrop-blur-md border-b border-gray-200/80 dark:border-gray-700/80 shadow-sm`}>
           <div className="px-4 h-full flex items-center justify-between" dir={isRTL ? "rtl" : "ltr"}>
             <Button
               variant="ghost"

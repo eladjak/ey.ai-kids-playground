@@ -13,6 +13,7 @@ import UserWelcomeCard from "@/components/home/UserWelcomeCard";
 import DailyPromptCard from "@/components/home/DailyPromptCard";
 import DraftBooksSection from "@/components/home/DraftBooksSection";
 import FeaturedBooksSection from "@/components/home/FeaturedBooksSection";
+import { motion } from "framer-motion";
 
 import {
   BookOpen,
@@ -326,60 +327,103 @@ export default function Home() {
         </div>
 
         {/* Hero banner */}
-        <Card className="mt-6 overflow-hidden">
-          <div className="relative min-h-[220px] sm:min-h-[280px] md:min-h-[320px] bg-gradient-to-br from-purple-700 via-indigo-600 to-violet-800">
-            <div className="absolute inset-0 overflow-hidden">
-              <div className="absolute top-8 right-12 w-32 h-32 bg-white/5 rounded-full" />
-              <div className="absolute bottom-4 right-1/4 w-20 h-20 bg-white/5 rounded-full" />
-              <div className="absolute top-1/3 right-1/3 w-48 h-48 bg-purple-500/10 rounded-full blur-2xl" />
-              <Sparkles className="absolute top-6 right-8 h-6 w-6 text-white/20" />
-              <BookOpen className="absolute bottom-8 right-16 h-8 w-8 text-white/10" />
-            </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Card className="mt-6 overflow-hidden shadow-xl">
+            <div className="relative min-h-[220px] sm:min-h-[280px] md:min-h-[320px]">
+              <img
+                src="/images/hero-banner.jpg"
+                alt=""
+                className="absolute inset-0 w-full h-full object-cover"
+                aria-hidden="true"
+              />
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-900/85 via-indigo-800/80 to-violet-900/85" />
+              <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute top-8 right-12 w-32 h-32 bg-white/5 rounded-full" />
+                <div className="absolute bottom-4 right-1/4 w-20 h-20 bg-white/5 rounded-full" />
+                <div className="absolute top-1/3 right-1/3 w-48 h-48 bg-purple-500/10 rounded-full blur-2xl" />
+                <Sparkles className="absolute top-6 right-8 h-6 w-6 text-white/20" />
+                <BookOpen className="absolute bottom-8 right-16 h-8 w-8 text-white/10" />
+              </div>
 
-            <div className="relative flex items-center min-h-[220px] sm:min-h-[280px] md:min-h-[320px]">
-              <div className="p-4 md:p-6 lg:p-8 max-w-xl">
-                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-3 leading-tight">
-                  {t("home.title")}
-                </h1>
-                <p className="text-purple-100 text-sm md:text-base lg:text-lg mb-6 leading-relaxed">
-                  {t("home.subtitle")}
-                </p>
+              <div className="relative flex items-center min-h-[220px] sm:min-h-[280px] md:min-h-[320px]">
+                <div className="p-4 md:p-6 lg:p-8 max-w-xl">
+                  <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-3 leading-tight drop-shadow-lg">
+                    {t("home.title")}
+                  </h1>
+                  <p className="text-purple-100 text-sm md:text-base lg:text-lg mb-6 leading-relaxed drop-shadow-sm">
+                    {t("home.subtitle")}
+                  </p>
 
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Link to={createPageUrl("BookWizard")} className="w-full sm:w-auto">
-                    <Button className="w-full sm:w-auto bg-white text-purple-700 hover:bg-purple-50">
-                      <Wand2 className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                      {t("home.create.new")}
-                    </Button>
-                  </Link>
-                  <Link to={createPageUrl("Library")} className="w-full sm:w-auto">
-                    <Button
-                      variant="outline"
-                      className="w-full sm:w-auto text-white border-white bg-purple-700/40 hover:bg-purple-600/50 backdrop-blur-sm border-opacity-70 shadow-sm"
-                    >
-                      <BookOpen className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                      {t("home.library.button")}
-                    </Button>
-                  </Link>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Link to={createPageUrl("BookWizard")} className="w-full sm:w-auto">
+                      <Button className="w-full sm:w-auto bg-white text-purple-700 hover:bg-purple-50 shadow-lg">
+                        <Wand2 className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                        {t("home.create.new")}
+                      </Button>
+                    </Link>
+                    <Link to={createPageUrl("Library")} className="w-full sm:w-auto">
+                      <Button
+                        variant="outline"
+                        className="w-full sm:w-auto text-white border-white bg-purple-700/40 hover:bg-purple-600/50 backdrop-blur-sm border-opacity-70 shadow-sm"
+                      >
+                        <BookOpen className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                        {t("home.library.button")}
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </Card>
+          </Card>
+        </motion.div>
       </section>
 
+      {/* Gradient divider */}
+      <div className="h-1 mx-8 rounded-full bg-gradient-to-r from-transparent via-purple-300 dark:via-purple-700 to-transparent" />
+
       {/* Draft books (continue where you left off) */}
-      <DraftBooksSection draftBooks={draftBooks} />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+      >
+        <DraftBooksSection draftBooks={draftBooks} />
+      </motion.div>
+
+      {/* Gradient divider */}
+      <div className="h-1 mx-8 rounded-full bg-gradient-to-r from-transparent via-indigo-300 dark:via-indigo-700 to-transparent" />
 
       {/* Featured / recent books tabs */}
-      <FeaturedBooksSection
-        featuredBooks={featuredBooks}
-        recentBooks={recentBooks}
-        isLoading={isLoading}
-      />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.4, delay: 0.15 }}
+      >
+        <FeaturedBooksSection
+          featuredBooks={featuredBooks}
+          recentBooks={recentBooks}
+          isLoading={isLoading}
+        />
+      </motion.div>
+
+      {/* Gradient divider */}
+      <div className="h-1 mx-8 rounded-full bg-gradient-to-r from-transparent via-violet-300 dark:via-violet-700 to-transparent" />
 
       {/* Daily story prompt */}
-      <DailyPromptCard dailyPrompt={dailyPrompt} isPromptLoading={isPromptLoading} />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.4, delay: 0.2 }}
+      >
+        <DailyPromptCard dailyPrompt={dailyPrompt} isPromptLoading={isPromptLoading} />
+      </motion.div>
 
       {/* First-time onboarding wizard */}
       {showOnboarding && (

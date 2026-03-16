@@ -151,20 +151,23 @@ export default function Characters() {
 
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-6" dir={isRTL ? "rtl" : "ltr"}>
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t("characters.title")}</h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-1">
-            {t("characters.subtitle")}
-          </p>
+      {/* Header banner with image */}
+      <div className="relative mb-8 rounded-2xl overflow-hidden bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 p-6 md:p-8 shadow-lg">
+        <div className="absolute inset-0 bg-[url('/images/character-workshop.jpg')] bg-cover bg-center opacity-15" />
+        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-white drop-shadow-sm">{t("characters.title")}</h1>
+            <p className="text-purple-100 mt-1">
+              {t("characters.subtitle")}
+            </p>
+          </div>
+          <Link to={createPageUrl("CharacterEditor")}>
+            <Button className="bg-white text-purple-700 hover:bg-purple-50 shadow-md">
+              <Plus className="mr-2 h-4 w-4" />
+              {t("characters.createNew")}
+            </Button>
+          </Link>
         </div>
-        <Link to={createPageUrl("CharacterEditor")}>
-          <Button className="bg-purple-600 hover:bg-purple-700">
-            <Plus className="mr-2 h-4 w-4" />
-            {t("characters.createNew")}
-          </Button>
-        </Link>
       </div>
 
       {/* Search and Filters */}
@@ -260,10 +263,10 @@ export default function Characters() {
       ) : viewMode === "grid" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredCharacters.map((character) => (
-            <Card key={character.id} className="overflow-hidden hover:shadow-lg transition-all duration-300">
+            <Card key={character.id} className="overflow-hidden hover:shadow-xl transition-all duration-200 border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-700 hover:-translate-y-1 group">
               <CardContent className="p-4">
                 <div className="text-center">
-                  <Avatar className="h-20 w-20 mx-auto mb-3 border-4 border-purple-100 dark:border-purple-900">
+                  <Avatar className="h-20 w-20 mx-auto mb-3 border-4 border-purple-100 dark:border-purple-900 group-hover:border-purple-300 dark:group-hover:border-purple-700 transition-colors duration-200 shadow-md">
                     <AvatarImage src={character.primary_image_url} alt={character.name} />
                     <AvatarFallback className="bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 text-lg">
                       <User className="h-8 w-8" />

@@ -193,13 +193,17 @@ export default function StoryIdeas() {
 
   return (
     <div className="max-w-6xl mx-auto py-8" dir={isRTL ? "rtl" : "ltr"}>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          {t("storyIdeas.title")}
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          {t("storyIdeas.subtitle")}
-        </p>
+      {/* Header banner with image */}
+      <div className="relative mb-8 rounded-2xl overflow-hidden bg-gradient-to-r from-amber-500 via-purple-600 to-indigo-600 p-6 md:p-8 shadow-lg">
+        <div className="absolute inset-0 bg-[url('/images/story-ideas.jpg')] bg-cover bg-center opacity-15" />
+        <div className="relative">
+          <h1 className="text-3xl font-bold text-white mb-2 drop-shadow-sm">
+            {t("storyIdeas.title")}
+          </h1>
+          <p className="text-purple-100">
+            {t("storyIdeas.subtitle")}
+          </p>
+        </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
@@ -234,18 +238,21 @@ export default function StoryIdeas() {
               isGenerating={isGenerating} // Pass isGenerating to disable button in child
             />
             {generatedIdea && (
-                <Card>
+                <Card className="border-purple-200 dark:border-purple-800 shadow-lg bg-gradient-to-br from-white to-purple-50/50 dark:from-gray-800 dark:to-purple-900/20">
                     <CardHeader>
-                        <CardTitle>{t("storyIdeas.generatedIdeaTitle")}</CardTitle>
+                        <CardTitle className="flex items-center gap-2">
+                            <Sparkles className="h-5 w-5 text-purple-500" />
+                            {t("storyIdeas.generatedIdeaTitle")}
+                        </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p><strong>{t("storyIdeas.titleLabel")}</strong> {generatedIdea.title}</p>
-                        <p><strong>{t("storyIdeas.descriptionLabel")}</strong> {generatedIdea.description}</p>
+                        <p className="mb-2"><strong className="text-purple-700 dark:text-purple-300">{t("storyIdeas.titleLabel")}</strong> {generatedIdea.title}</p>
+                        <p className="text-gray-600 dark:text-gray-300"><strong className="text-purple-700 dark:text-purple-300">{t("storyIdeas.descriptionLabel")}</strong> {generatedIdea.description}</p>
                         <div className="mt-4 flex gap-2">
-                            <Button onClick={saveGeneratedIdea}>
+                            <Button onClick={saveGeneratedIdea} className="bg-purple-600 hover:bg-purple-700 shadow-sm">
                                 <Save className="mr-2 h-4 w-4" /> {t("storyIdeas.saveButton")}
                             </Button>
-                            <Button variant="outline" onClick={generateIdea} disabled={isGenerating}>
+                            <Button variant="outline" onClick={generateIdea} disabled={isGenerating} className="border-purple-200 dark:border-purple-800">
                                 <RefreshCw className={`mr-2 h-4 w-4 ${isGenerating ? 'animate-spin' : ''}`} /> {t("storyIdeas.regenerateButton")}
                             </Button>
                         </div>

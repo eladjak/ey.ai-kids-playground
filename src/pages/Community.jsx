@@ -374,20 +374,24 @@ export default function CommunityPage() {
 
   return (
     <div className="max-w-6xl mx-auto" dir={isRTL ? "rtl" : "ltr"}>
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t("community.title")}</h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-1">
-            {t("community.subtitle")}
-          </p>
+      {/* Header banner with image */}
+      <div className="relative mb-8 rounded-2xl overflow-hidden bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 p-6 md:p-8 shadow-lg">
+        <div className="absolute inset-0 bg-[url('/images/community-sharing.jpg')] bg-cover bg-center opacity-15" />
+        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-white drop-shadow-sm">{t("community.title")}</h1>
+            <p className="text-purple-100 mt-1">
+              {t("community.subtitle")}
+            </p>
+          </div>
+          <Button
+            onClick={() => setShowShareModal(true)}
+            className="bg-white text-purple-700 hover:bg-purple-50 shadow-md"
+          >
+            <BookOpen className={`${isRTL ? "ml-2" : "mr-2"} h-4 w-4`} />
+            {t("community.shareYourBook")}
+          </Button>
         </div>
-        <Button 
-          onClick={() => setShowShareModal(true)}
-          className="bg-purple-600 hover:bg-purple-700"
-        >
-          <BookOpen className={`${isRTL ? "ml-2" : "mr-2"} h-4 w-4`} />
-          {t("community.shareYourBook")}
-        </Button>
       </div>
 
       {/* Featured Stories Section */}
@@ -571,16 +575,18 @@ export default function CommunityPage() {
                 </div>
               </div>
             ) : (
-              <div className="text-center py-12 px-4 border border-dashed border-gray-300 dark:border-gray-700 rounded-lg">
-                <Users className="h-12 w-12 mx-auto text-gray-400" />
-                <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-white">{t("community.noStories")}</h3>
+              <div className="text-center py-12 px-4 border border-dashed border-purple-200 dark:border-gray-700 rounded-2xl bg-gradient-to-br from-purple-50/50 to-indigo-50/50 dark:from-gray-800/50 dark:to-gray-800/30">
+                <div className="rounded-full bg-purple-100 dark:bg-purple-900/30 p-4 inline-flex mb-4">
+                  <Users className="h-12 w-12 text-purple-400" />
+                </div>
+                <h3 className="mt-2 text-lg font-medium text-gray-900 dark:text-white">{t("community.noStories")}</h3>
                 <p className="mt-2 text-gray-500 dark:text-gray-400">
-                  {searchQuery || selectedTags.length > 0 
+                  {searchQuery || selectedTags.length > 0
                     ? t("community.adjustFilters")
                     : t("community.beFirst")}
                 </p>
-                <Button 
-                  className="mt-4 bg-purple-600 hover:bg-purple-700"
+                <Button
+                  className="mt-4 bg-purple-600 hover:bg-purple-700 shadow-sm"
                   onClick={() => setShowShareModal(true)}
                 >
                   {t("community.shareYourStory")}

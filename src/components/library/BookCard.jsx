@@ -72,27 +72,32 @@ function BookCard({ book, viewType = "grid", onDuplicate }) {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95 }}
         transition={{ duration: 0.3 }}
-        whileHover={{ y: -5 }}
+        whileHover={{ scale: 1.02, y: -4 }}
         className="h-full"
         dir={isRTL ? "rtl" : "ltr"}
       >
-        <Card 
-          className="overflow-hidden h-full transition-all duration-300 hover:shadow-xl border-gray-200 dark:border-gray-800 hover:border-purple-200 dark:hover:border-purple-800"
+        <Card
+          className="overflow-hidden h-full transition-all duration-200 shadow-md hover:shadow-2xl border-gray-200 dark:border-gray-800 hover:border-purple-300 dark:hover:border-purple-700"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
           <Link to={`${createPageUrl("BookView")}?id=${book.id}`}>
-            <div className="aspect-[3/4] relative overflow-hidden bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-950 dark:to-gray-900">
+            <div className="aspect-[3/4] relative overflow-hidden bg-gradient-to-br from-purple-100 via-indigo-50 to-violet-100 dark:from-purple-950 dark:via-indigo-950 dark:to-gray-900">
               {book.cover_image ? (
-                <LazyImage
-                  src={book.cover_image}
-                  alt={book.title}
-                  className="w-full h-full transition-transform duration-500 hover:scale-110"
-                />
+                <>
+                  <LazyImage
+                    src={book.cover_image}
+                    alt={book.title}
+                    className="w-full h-full transition-transform duration-200 hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+                </>
               ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center">
-                  <BookOpen className="h-16 w-16 text-purple-300 dark:text-purple-800 mb-4" />
-                  <p className="font-medium text-purple-600 dark:text-purple-400">{book.title || "Untitled Book"}</p>
+                <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-purple-200 via-indigo-100 to-violet-200 dark:from-purple-900 dark:via-indigo-950 dark:to-violet-900">
+                  <div className="rounded-full bg-white/60 dark:bg-gray-800/60 p-4 mb-3 shadow-inner">
+                    <BookOpen className="h-12 w-12 text-purple-500 dark:text-purple-400" />
+                  </div>
+                  <p className="font-medium text-purple-700 dark:text-purple-300 text-sm">{book.title || "Untitled Book"}</p>
                 </div>
               )}
               <Badge className={`absolute top-2 ${isRTL ? 'left-2' : 'right-2'} shadow-md ${statusStyles[book.status]}`}>

@@ -195,19 +195,23 @@ export default function Library() {
 
   return (
     <div className="max-w-6xl mx-auto" dir={isRTL ? "rtl" : "ltr"}>
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t("library.title")}</h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-1">
-            {t("library.subtitle")}
-          </p>
+      {/* Gradient header */}
+      <div className="relative mb-8 rounded-2xl overflow-hidden bg-gradient-to-r from-purple-600 via-indigo-600 to-violet-600 p-6 md:p-8 shadow-lg">
+        <div className="absolute inset-0 bg-[url('/images/empty-library.jpg')] bg-cover bg-center opacity-10" />
+        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-white drop-shadow-sm">{t("library.title")}</h1>
+            <p className="text-purple-100 mt-1">
+              {t("library.subtitle")}
+            </p>
+          </div>
+          <Link to={createPageUrl("BookWizard")}>
+            <Button className="bg-white text-purple-700 hover:bg-purple-50 shadow-md">
+              <PlusCircle className="mr-2 h-4 w-4" />
+              {t("library.createNewBook")}
+            </Button>
+          </Link>
         </div>
-        <Link to={createPageUrl("BookWizard")}>
-          <Button className="bg-purple-600 hover:bg-purple-700">
-            <PlusCircle className="mr-2 h-4 w-4" />
-            {t("library.createNewBook")}
-          </Button>
-        </Link>
       </div>
 
       <div className="mb-6 space-y-4">
@@ -383,17 +387,22 @@ export default function Library() {
               ))}
             </div>
           ) : (
-            <EmptyState
-              title={t("library.noBooks")}
-              description={searchQuery || (filters.status !== "all" || filters.genre !== "all" || 
-                filters.age_range !== "all" || filters.language !== "all") 
-                ? t("library.adjustFilters")
-                : t("library.createFirst")
-              }
-              icon={<BookOpen className="h-12 w-12 text-gray-400" />}
-              actionLabel={t("library.createBook")}
-              actionLink={createPageUrl("BookWizard")}
-            />
+            <div className="relative rounded-2xl overflow-hidden">
+              <div className="absolute inset-0 bg-[url('/images/empty-library.jpg')] bg-cover bg-center opacity-[0.07] dark:opacity-[0.04]" />
+              <div className="relative">
+                <EmptyState
+                  title={t("library.noBooks")}
+                  description={searchQuery || (filters.status !== "all" || filters.genre !== "all" ||
+                    filters.age_range !== "all" || filters.language !== "all")
+                    ? t("library.adjustFilters")
+                    : t("library.createFirst")
+                  }
+                  icon={<BookOpen className="h-12 w-12 text-gray-400" />}
+                  actionLabel={t("library.createBook")}
+                  actionLink={createPageUrl("BookWizard")}
+                />
+              </div>
+            </div>
           )}
         </TabsContent>
 
