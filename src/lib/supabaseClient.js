@@ -19,8 +19,7 @@ if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KE
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    // Phase 2: No auth yet (Base44 still handles auth).
-    // We disable auto-detection to avoid conflicts with Base44's auth.
+    // Auth is handled by Clerk — Supabase auth features disabled.
     persistSession: false,
     autoRefreshToken: false,
     detectSessionInUrl: false,

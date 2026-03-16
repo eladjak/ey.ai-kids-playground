@@ -1,10 +1,13 @@
 import './App.css'
-import { Suspense, useEffect } from 'react'
+import { Suspense, useEffect, lazy } from 'react'
 import { cleanupStorage } from '@/utils/storageCleanup'
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import VisualEditAgent from '@/lib/VisualEditAgent'
+// VisualEditAgent only loaded in dev — lazy import to keep it out of production bundle
+const VisualEditAgent = import.meta.env.DEV
+  ? lazy(() => import('@/lib/VisualEditAgent'))
+  : () => null;
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';

@@ -79,13 +79,20 @@ function convertSchemaToGemini(schema) {
 // ─── Handler ─────────────────────────────────────────────────────────────────
 
 export default async function handler(req, res) {
-  // CORS preflight
+  // CORS preflight — restrict to our domain only
+  const allowedOrigins = ['https://sipurai.ai', 'https://www.sipurai.ai', 'http://localhost:5173'];
+  const origin = req.headers.origin;
+  const corsOrigin = allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
+
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', corsOrigin);
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     return res.status(204).end();
   }
+
+  // Set CORS for all responses
+  res.setHeader('Access-Control-Allow-Origin', corsOrigin);
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
