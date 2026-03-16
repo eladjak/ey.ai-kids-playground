@@ -49,7 +49,7 @@ const StatsSection = () => {
     },
     {
       icon: Palette,
-      value: 8,
+      value: 18,
       suffix: '',
       label: t('landing.stats.artStyles'),
       color: 'from-amber-400 to-orange-500',

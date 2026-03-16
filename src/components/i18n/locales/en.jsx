@@ -1365,9 +1365,9 @@ export default {
       primaryCta: "Create a Book \u2014 It's Free!",
       secondaryCta: "Browse Community Books",
       socialProof: "Hundreds of families already creating stories",
-      stat1Value: "500+",
+      stat1Value: "1,000+",
       stat1Label: "Books Created",
-      stat2Value: "50+",
+      stat2Value: "18",
       stat2Label: "Art Styles",
       stat3Value: "3",
       stat3Label: "Languages"
@@ -1572,7 +1572,7 @@ export default {
       q5: "Can I print the books?",
       a5: "Yes! You can export any book as a PDF for home printing, and we're adding professional print-on-demand shipping soon so you can receive a real hardcover book at your door.",
       q6: "Is Sipurai free to use?",
-      a6: "Yes! Sipurai offers a free plan with 2 books per month and basic art styles. Premium plans unlock unlimited books, all 18 art styles, PDF export, and more."
+      a6: "Yes! Sipurai offers a generous free plan with 5 books per month and 6 art styles. Premium plans unlock unlimited books, all 18 art styles, PDF export, and more."
     },
     cta: {
       headline: "Start Creating Your Child's Story Today",

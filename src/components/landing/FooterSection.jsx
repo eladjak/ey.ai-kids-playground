@@ -7,19 +7,11 @@ const FooterSection = () => {
   const { t, isRTL } = useI18n();
 
   const links = [
-    { label: t('landing.footer.about'), href: '#' },
-    { label: t('landing.footer.blog'), href: '#' },
-    { label: t('landing.footer.terms'), href: '#' },
-    { label: t('landing.footer.privacy'), href: '#' },
-    { label: t('landing.footer.contact'), href: '#' },
+    { label: t('landing.footer.blog'), href: '/blog' },
+    { label: t('landing.footer.contact'), href: 'mailto:hello@sipurai.ai' },
   ];
 
-  const socialLinks = [
-    { icon: Twitter, href: '#', label: 'Twitter' },
-    { icon: Instagram, href: '#', label: 'Instagram' },
-    { icon: Facebook, href: '#', label: 'Facebook' },
-    { icon: Youtube, href: '#', label: 'YouTube' },
-  ];
+  const socialLinks = [];
 
   return (
     <footer

@@ -14,8 +14,8 @@ import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-route
 import PageNotFound from './lib/PageNotFound';
 import { ClerkProvider } from '@clerk/clerk-react';
 import { AuthProvider, FallbackAuthProvider, useAuth } from '@/lib/AuthContext';
-import SignIn from '@/pages/SignIn';
-import SignUp from '@/pages/SignUp';
+const SignIn = lazy(() => import('@/pages/SignIn'));
+const SignUp = lazy(() => import('@/pages/SignUp'));
 import { I18nProvider } from '@/components/i18n/i18nProvider';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ErrorBoundary from '@/components/ErrorBoundary';

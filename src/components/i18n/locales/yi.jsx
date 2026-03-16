@@ -1116,9 +1116,9 @@ export default {
       primaryCta: "שאַפֿן אַ בוך — אומזיסט!",
       secondaryCta: "קוקן קהילה ביכער",
       socialProof: "הונדערטער משפּחות שאַפֿן שוין געשיכטעס",
-      stat1Value: "500+",
+      stat1Value: "1,000+",
       stat1Label: "ביכער שאַפֿן",
-      stat2Value: "50+",
+      stat2Value: "18",
       stat2Label: "קונסט סטיילן",
       stat3Value: "3",
       stat3Label: "שפּראַכן"

@@ -2,10 +2,17 @@ import React from 'react';
 import { SignIn as ClerkSignIn } from '@clerk/clerk-react';
 import { useI18n } from '@/components/i18n/i18nProvider';
 import { BookOpen } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 const SignIn = () => {
   const { isRTL } = useI18n();
+  const [searchParams] = useSearchParams();
+
+  // Read redirect_url from query string, validate it's a relative path
+  const rawRedirect = searchParams.get('redirect_url') || '/';
+  const afterSignInUrl = rawRedirect.startsWith('/') && !rawRedirect.startsWith('//')
+    ? rawRedirect
+    : '/';
 
   return (
     <div
@@ -23,7 +30,7 @@ const SignIn = () => {
         routing="path"
         path="/sign-in"
         signUpUrl="/sign-up"
-        afterSignInUrl="/"
+        afterSignInUrl={afterSignInUrl}
         appearance={{
           elements: {
             rootBox: 'mx-auto',
