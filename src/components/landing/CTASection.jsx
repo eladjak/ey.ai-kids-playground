@@ -62,7 +62,7 @@ const CTASection = () => {
             {t('landing.cta.subheadline')}
           </p>
 
-          <Link to="/BookWizard">
+          <Link to="/sign-up">
             <motion.div
               animate={{ scale: [1, 1.04, 1] }}
               transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}

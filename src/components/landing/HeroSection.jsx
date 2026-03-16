@@ -133,7 +133,7 @@ const HeroSection = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Link to="/BookWizard">
+              <Link to="/sign-up">
                 <motion.div
                   animate={{ scale: [1, 1.03, 1] }}
                   transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
