@@ -521,6 +521,25 @@ export default {
       feedbackByType: "Feedback by Type",
       suggestionStatus: "Suggestion Status",
       recentFeedback: "Recent Feedback"
+    },
+    currentPage: "Current page",
+    noContent: "No content for this page",
+    feedbackForPage: "Feedback for Page {{page}}",
+    filter: {
+      all: "All Feedback",
+      suggestionsOnly: "Suggestions Only"
+    },
+    toast: {
+      loadBookError: "Failed to load book. Please try again.",
+      loadFeedbackError: "Failed to load feedback. Please try again.",
+      submitSuccess: "Feedback submitted successfully.",
+      submitError: "Failed to submit feedback. Please try again.",
+      statusImplemented: "Feedback marked as implemented.",
+      statusAccepted: "Feedback accepted.",
+      statusDeclined: "Feedback declined.",
+      statusPending: "Feedback status set to pending.",
+      statusUpdated: "Feedback status updated.",
+      statusUpdateError: "Failed to update feedback status. Please try again."
     }
   },
   community: {
@@ -1230,7 +1249,15 @@ export default {
     notifications: "Notifications",
     noNotifications: "No notifications yet",
     unread: "unread",
-    markAllRead: "Mark all as read"
+    markAllRead: "Mark all as read",
+    notificationTitle: {
+      new_follower: "You have a new follower!",
+      new_book: "{{authorName}} created a new book!"
+    },
+    notificationMessage: {
+      new_follower: "{{userName}} started following you",
+      new_book: "{{bookTitle}}"
+    }
   },
   bookCard: {
     draft: "Draft",
@@ -1654,5 +1681,62 @@ export default {
       memberSince: "Member Since",
       noGenre: "None yet"
     }
+  },
+  aiStudio: {
+    title: "AI Studio",
+    subtitle: "Choose your AI models and settings",
+    credits: "Credits",
+    upgrade: "Upgrade Plan",
+    mode: {
+      simple: "Simple Mode",
+      advanced: "Advanced Mode"
+    },
+    simple: {
+      title: "What do you want to create?",
+      quality: {
+        title: "Best Quality",
+        desc: "For stunning, artistic illustrations. (Best for final images)"
+      },
+      text: {
+        title: "Text in Image",
+        desc: "Perfect for including names or words in Hebrew/English."
+      },
+      fast: {
+        title: "Fast & Fun",
+        desc: "Great for quick ideas and drafts. (Most credit-efficient)"
+      }
+    },
+    categories: {
+      image: "Image Generation",
+      video: "Video Generation",
+      audio: "Audio Generation"
+    },
+    audio: {
+      narration: "Narration",
+      music: "Music & SFX",
+      selectVoice: "Select Voice",
+      voiceCloning: "Voice Cloning (Pro)",
+      voiceCloningDesc: "Upload a sample and use your own voice!",
+      uploadVoiceSample: "Upload Voice Sample",
+      poweredBy: "Powered by ElevenLabs"
+    },
+    model: {
+      free: "Free",
+      creator: "Creator",
+      pro: "Pro",
+      premium: "Premium"
+    },
+    prompt: {
+      label: "Describe the image you want to create",
+      placeholder: "e.g., A young child playing in a garden with a brown dog..."
+    },
+    button: {
+      generate: "Generate Image",
+      generating: "Generating..."
+    },
+    warning: {
+      noModel: "Please select an image model to start creating"
+    },
+    plan: "Plan"
   }
 };

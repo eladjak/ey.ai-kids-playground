@@ -224,8 +224,22 @@ export default function Layout({ children, currentPageName }) {
 
   const displayPageName = getLocalizedPageName(currentPageName || getCurrentPageFromPath());
 
+  // Map user font_size and text_density settings to Tailwind classes
+  const fontSizeClass = {
+    small: 'text-sm',
+    medium: '',
+    large: 'text-lg',
+    'x-large': 'text-xl',
+  }[user?.font_size] ?? '';
+
+  const textDensityClass = {
+    low: 'leading-relaxed space-y-3',
+    medium: '',
+    high: 'leading-tight space-y-1',
+  }[user?.text_density] ?? '';
+
   return (
-    <div className="min-h-screen w-full bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-sans transition-colors duration-300">
+    <div className={`min-h-screen w-full bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-sans transition-colors duration-300 ${fontSizeClass} ${textDensityClass}`.trim()}>
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-purple-600 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg"

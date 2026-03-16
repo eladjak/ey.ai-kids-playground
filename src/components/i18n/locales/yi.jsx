@@ -509,6 +509,25 @@ export default {
       feedbackByType: "פֿידבעק לויט טיפּ",
       suggestionStatus: "פֿאָרשלאָג סטאַטוס",
       recentFeedback: "לעצטיקער פֿידבעק"
+    },
+    currentPage: "יעצטיקער בלאַט",
+    noContent: "קיין אינהאַלט פֿאַר דעם בלאַט",
+    feedbackForPage: "פֿידבעק פֿאַר בלאַט {{page}}",
+    filter: {
+      all: "אַלע פֿידבעק",
+      suggestionsOnly: "פֿאָרשלאָגן בלויז"
+    },
+    toast: {
+      loadBookError: "דאָס בוך האָט זיך ניט אײַנגעלאָדן. ביטע פּרובירט נאָכאַמאָל.",
+      loadFeedbackError: "דער פֿידבעק האָט זיך ניט אײַנגעלאָדן. ביטע פּרובירט נאָכאַמאָל.",
+      submitSuccess: "פֿידבעק דערלאַנגט הצלחהדיק.",
+      submitError: "דערלאַנגען פֿידבעק האָט ניט געקלאַפּט. ביטע פּרובירט נאָכאַמאָל.",
+      statusImplemented: "פֿידבעק מאַרקירט אַלס אימפּלימענטירט.",
+      statusAccepted: "פֿידבעק אָנגענומען.",
+      statusDeclined: "פֿידבעק אָפּגעלייגט.",
+      statusPending: "פֿידבעק סטאַטוס באַשטימט אַלס אױסשטײענדיק.",
+      statusUpdated: "פֿידבעק סטאַטוס אַקטואַליזירט.",
+      statusUpdateError: "אַקטואַליזירן פֿידבעק סטאַטוס האָט ניט געקלאַפּט. ביטע פּרובירט נאָכאַמאָל."
     }
   },
   community: {
@@ -1478,7 +1497,15 @@ export default {
     notifications: "הודעות",
     noNotifications: "קיין הודעות נאָך נישט",
     unread: "אומגעלייענט",
-    markAllRead: "מאַרקירן אַלץ ווי געלייענט"
+    markAllRead: "מאַרקירן אַלץ ווי געלייענט",
+    notificationTitle: {
+      new_follower: "דו האָסט אַ נײַעם פֿאָלגער!",
+      new_book: "{{authorName}} האָט באַשאַפֿן אַ נײַ בוך!"
+    },
+    notificationMessage: {
+      new_follower: "{{userName}} האָט אָנגעהויבן דיר פֿאָלגן",
+      new_book: "{{bookTitle}}"
+    }
   },
   bookCard: {
     draft: "אַנטווורף",
@@ -1642,5 +1669,62 @@ export default {
       memberSince: "מיטגליד זינט",
       noGenre: "נאָך קיינס"
     }
+  },
+  aiStudio: {
+    title: "AI סטודיאָ",
+    subtitle: "קלײַבט אײַערע AI מאָדעלן און אײַנשטעלונגען",
+    credits: "קרעדיטן",
+    upgrade: "אַפּגרייד פּלאַן",
+    mode: {
+      simple: "פּשוטער מאָדע",
+      advanced: "אַדוואַנסטער מאָדע"
+    },
+    simple: {
+      title: "וואָס ווילט איר שאַפֿן?",
+      quality: {
+        title: "בעסטע קוואַליטעט",
+        desc: "פֿאַר שיינע, קינסטלערישע אילוסטראַציעס. (בעסט פֿאַר סופֿיקע בילדער)"
+      },
+      text: {
+        title: "טעקסט אין בילד",
+        desc: "פּערפֿעקט פֿאַר נעמען אָדער ווערטער אין העברעיש/ענגליש."
+      },
+      fast: {
+        title: "שנעל און לוסטיק",
+        desc: "גרויסאַרטיק פֿאַר שנעלע אידייען און טיוטעס. (מערסט שפּאָרעוודיק מיט קרעדיטן)"
+      }
+    },
+    categories: {
+      image: "בילד שאַפֿונג",
+      video: "ווידעאָ שאַפֿונג",
+      audio: "אַודיאָ שאַפֿונג"
+    },
+    audio: {
+      narration: "נאַראַציע",
+      music: "מוזיק און עפֿעקטן",
+      selectVoice: "קלײַבט אַ קול",
+      voiceCloning: "קול קלאָנירונג (פּראָפֿעסיאָנעל)",
+      voiceCloningDesc: "לאָדט אַרויף אַ מוסטער און ניצט אײַער אייגן קול!",
+      uploadVoiceSample: "אַרויפֿלאָדן קול מוסטער",
+      poweredBy: "באַטריבן דורך ElevenLabs"
+    },
+    model: {
+      free: "אומזיסט",
+      creator: "שעפֿער",
+      pro: "פּראָ",
+      premium: "פּרעמיום"
+    },
+    prompt: {
+      label: "באַשרײַבט דאָס בילד וואָס איר ווילט שאַפֿן",
+      placeholder: "למשל: אַ קליין קינד שפּילט זיך אין גאָרטן מיט אַ ברוינעם הונט..."
+    },
+    button: {
+      generate: "שאַפֿט בילד",
+      generating: "שאַפֿט..."
+    },
+    warning: {
+      noModel: "ביטע קלײַבט אַ בילד מאָדעל כּדי אָנצוהייבן שאַפֿן"
+    },
+    plan: "פּלאַן"
   }
 };

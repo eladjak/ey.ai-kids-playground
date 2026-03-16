@@ -509,6 +509,25 @@ export default {
       feedbackByType: "משוב לפי סוג",
       suggestionStatus: "מצב הצעות",
       recentFeedback: "משוב אחרון"
+    },
+    currentPage: "עמוד נוכחי",
+    noContent: "אין תוכן לעמוד זה",
+    feedbackForPage: "משוב לעמוד {{page}}",
+    filter: {
+      all: "כל המשוב",
+      suggestionsOnly: "הצעות בלבד"
+    },
+    toast: {
+      loadBookError: "טעינת הספר נכשלה. אנא נסה שנית.",
+      loadFeedbackError: "טעינת המשוב נכשלה. אנא נסה שנית.",
+      submitSuccess: "המשוב נשלח בהצלחה.",
+      submitError: "שליחת המשוב נכשלה. אנא נסה שנית.",
+      statusImplemented: "המשוב סומן כמיושם.",
+      statusAccepted: "המשוב התקבל.",
+      statusDeclined: "המשוב נדחה.",
+      statusPending: "סטטוס המשוב הוגדר כממתין.",
+      statusUpdated: "סטטוס המשוב עודכן.",
+      statusUpdateError: "עדכון סטטוס המשוב נכשל. אנא נסה שנית."
     }
   },
   community: {
@@ -1218,7 +1237,15 @@ export default {
     notifications: "התראות",
     noNotifications: "אין התראות עדיין",
     unread: "לא נקראו",
-    markAllRead: "סמן הכל כנקרא"
+    markAllRead: "סמן הכל כנקרא",
+    notificationTitle: {
+      new_follower: "יש לך עוקב חדש!",
+      new_book: "{{authorName}} יצר/ה ספר חדש!"
+    },
+    notificationMessage: {
+      new_follower: "{{userName}} התחיל/ה לעקוב אחריך",
+      new_book: "{{bookTitle}}"
+    }
   },
   bookCard: {
     draft: "טיוטה",
@@ -1642,5 +1669,62 @@ export default {
       memberSince: "חבר מאז",
       noGenre: "אין עדיין"
     }
+  },
+  aiStudio: {
+    title: "סטודיו AI",
+    subtitle: "בחר את מודלי ה-AI וההגדרות שלך",
+    credits: "קרדיטים",
+    upgrade: "שדרג חבילה",
+    mode: {
+      simple: "מצב פשוט",
+      advanced: "מצב מתקדם"
+    },
+    simple: {
+      title: "מה תרצו ליצור?",
+      quality: {
+        title: "האיכות הגבוהה ביותר",
+        desc: "לאיורים אמנותיים מרהיבים. (מעולה לתמונות סופיות)"
+      },
+      text: {
+        title: "טקסט בתמונה",
+        desc: "מושלם להוספת שמות או מילים בעברית/אנגלית."
+      },
+      fast: {
+        title: "מהיר וכיפי",
+        desc: "מעולה לרעיונות מהירים וטיוטות. (הכי חסכוני בקרדיטים)"
+      }
+    },
+    categories: {
+      image: "יצירת תמונות",
+      video: "יצירת וידאו",
+      audio: "יצירת אודיו"
+    },
+    audio: {
+      narration: "קריינות",
+      music: "מוזיקה ואפקטים",
+      selectVoice: "בחר קול",
+      voiceCloning: "שיבוט קולי (מקצועי)",
+      voiceCloningDesc: "העלה דגימה והשתמש בקול שלך!",
+      uploadVoiceSample: "העלה דגימת קול",
+      poweredBy: "מופעל על ידי ElevenLabs"
+    },
+    model: {
+      free: "חינם",
+      creator: "יוצר",
+      pro: "פרו",
+      premium: "פרימיום"
+    },
+    prompt: {
+      label: "תאר את התמונה שתרצה ליצור",
+      placeholder: "למשל: ילד קטן משחק בגינה עם כלב חום..."
+    },
+    button: {
+      generate: "צור תמונה",
+      generating: "יוצר..."
+    },
+    warning: {
+      noModel: "אנא בחר מודל תמונה כדי להתחיל ליצור"
+    },
+    plan: "חבילה"
   }
 };

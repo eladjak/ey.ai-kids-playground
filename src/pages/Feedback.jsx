@@ -53,7 +53,7 @@ export default function FeedbackPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
-  const { isRTL } = useI18n();
+  const { t, isRTL } = useI18n();
   const { user: hookUser } = useCurrentUser();
   const [isLoading, setIsLoading] = useState(true);
   const [book, setBook] = useState(null);
@@ -132,7 +132,7 @@ export default function FeedbackPage() {
     } catch (error) {
       toast({
         variant: "destructive",
-        description: "Failed to load book. Please try again."
+        description: t("feedback.toast.loadBookError")
       });
       navigate(createPageUrl("Library"));
     }
@@ -155,7 +155,7 @@ export default function FeedbackPage() {
           } catch (error) {
             return {
               ...feedback,
-              user: { full_name: "Unknown User" }
+              user: { full_name: t("common.unknownUser") }
             };
           }
         })
@@ -170,7 +170,7 @@ export default function FeedbackPage() {
     } catch (error) {
       toast({
         variant: "destructive",
-        description: "Failed to load feedback. Please try again."
+        description: t("feedback.toast.loadFeedbackError")
       });
     }
   };
@@ -220,14 +220,14 @@ export default function FeedbackPage() {
       setShowFeedbackForm(false);
       
       toast({
-        description: "Feedback submitted successfully."
+        description: t("feedback.toast.submitSuccess")
       });
       
       return true;
     } catch (error) {
       toast({
         variant: "destructive",
-        description: "Failed to submit feedback. Please try again."
+        description: t("feedback.toast.submitError")
       });
       return false;
     }
@@ -250,19 +250,19 @@ export default function FeedbackPage() {
       setPageFeedback(updatedPageFeedback);
       
       const statusMessages = {
-        "implemented": "Feedback marked as implemented.",
-        "accepted": "Feedback accepted.",
-        "declined": "Feedback declined.",
-        "pending": "Feedback status set to pending."
+        "implemented": t("feedback.toast.statusImplemented"),
+        "accepted": t("feedback.toast.statusAccepted"),
+        "declined": t("feedback.toast.statusDeclined"),
+        "pending": t("feedback.toast.statusPending")
       };
-      
+
       toast({
-        description: statusMessages[newStatus] || "Feedback status updated."
+        description: statusMessages[newStatus] || t("feedback.toast.statusUpdated")
       });
     } catch (error) {
       toast({
         variant: "destructive",
-        description: "Failed to update feedback status. Please try again."
+        description: t("feedback.toast.statusUpdateError")
       });
     }
   };
@@ -328,9 +328,9 @@ export default function FeedbackPage() {
               <div>
                 <h1 className="text-2xl font-bold text-white flex items-center gap-2">
                   <MessageSquare className="h-6 w-6" />
-                  Feedback for "{book?.title}"
+                  {t("feedback.title").replace("{{bookTitle}}", book?.title || "")}
                   <Badge variant="outline" className="ml-2 text-xs border-white/30 text-white/90 bg-white/10">
-                    {allFeedback.length} total
+                    {allFeedback.length} {t("feedback.total")}
                   </Badge>
                 </h1>
                 <div className="flex items-center text-white/70 mt-1">
@@ -345,11 +345,11 @@ export default function FeedbackPage() {
                   </div>
                   <Badge variant="outline" className="text-xs border-white/30 text-white/80 bg-white/10">
                     <Lightbulb className="h-3 w-3 mr-1" />
-                    {suggestionCount} suggestions
+                    {suggestionCount} {t("feedback.stats.suggestions")}
                   </Badge>
                   <Badge variant="outline" className="text-xs border-white/30 text-white/80 bg-white/10 ml-2">
                     <CheckCircle className="h-3 w-3 mr-1" />
-                    {implementedCount} implemented
+                    {implementedCount} {t("feedback.stats.implemented")}
                   </Badge>
                 </div>
               </div>
@@ -359,7 +359,7 @@ export default function FeedbackPage() {
               <Link to={`${createPageUrl("BookView")}?id=${bookId}`}>
                 <Button variant="outline" className="flex items-center gap-2 border-white/30 text-white bg-white/10 hover:bg-white/20">
                   <BookOpen className="h-4 w-4" />
-                  <span className="hidden sm:inline">View Book</span>
+                  <span className="hidden sm:inline">{t("feedback.bookInfo.viewBook")}</span>
                 </Button>
               </Link>
               <Button
@@ -369,12 +369,12 @@ export default function FeedbackPage() {
                 {showFeedbackForm ? (
                   <>
                     <X className="h-4 w-4 mr-2" />
-                    <span className="hidden sm:inline">Cancel</span>
+                    <span className="hidden sm:inline">{t("feedback.cancel")}</span>
                   </>
                 ) : (
                   <>
                     <MessageSquare className="h-4 w-4 mr-2" />
-                    <span className="hidden sm:inline">Give Feedback</span>
+                    <span className="hidden sm:inline">{t("feedback.giveFeedback")}</span>
                   </>
                 )}
               </Button>
@@ -405,13 +405,13 @@ export default function FeedbackPage() {
                 <div>
                   <h2 className="text-2xl font-bold mb-2">{book?.title}</h2>
                   <div className="flex flex-wrap gap-2 mb-4">
-                    <Badge>For {book?.child_name}</Badge>
+                    <Badge>{t("common.for")} {book?.child_name}</Badge>
                     <Badge variant="outline">{book?.age_range}</Badge>
                     <Badge variant="outline" className="capitalize">{book?.genre?.replace(/_/g, ' ')}</Badge>
                   </div>
                   
                   <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-6">
-                    <span className="mr-2">Current page:</span>
+                    <span className="mr-2">{t("feedback.currentPage")}:</span>
                     <Badge variant="outline">
                       {currentPageIndex + 1} of {pages.length}
                     </Badge>
@@ -426,7 +426,7 @@ export default function FeedbackPage() {
                     disabled={currentPageIndex === 0}
                   >
                     <ChevronLeft className="h-4 w-4 mr-2" />
-                    Previous
+                    {t("common.previous")}
                   </Button>
                   <Button
                     variant="outline"
@@ -434,7 +434,7 @@ export default function FeedbackPage() {
                     onClick={handleNextPage}
                     disabled={currentPageIndex === pages.length - 1}
                   >
-                    Next
+                    {t("common.next")}
                     <ChevronRight className="h-4 w-4 ml-2" />
                   </Button>
                 </div>
@@ -444,14 +444,14 @@ export default function FeedbackPage() {
             {/* Page content preview */}
             <div className="p-6 border-t border-gray-200 dark:border-gray-700">
               <h3 className="font-semibold mb-2 flex items-center">
-                <span>Page {currentPageIndex + 1} Content</span>
+                <span>{t("feedback.bookInfo.pageContent").replace("{{current}}", currentPageIndex + 1)}</span>
                 <Badge className="ml-2" variant="outline">
                   <MessageSquare className="h-3 w-3 mr-1" />
-                  {pageFeedback.length} feedback
+                  {pageFeedback.length} {t("feedback.bookInfo.feedback")}
                 </Badge>
               </h3>
               <p className="text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 p-4 rounded-md border border-gray-200 dark:border-gray-700">
-                {currentPage?.text_content || "No content for this page"}
+                {currentPage?.text_content || t("feedback.noContent")}
               </p>
             </div>
           </Card>
@@ -464,7 +464,7 @@ export default function FeedbackPage() {
                   <div className="p-1.5 rounded-lg bg-purple-100 dark:bg-purple-900/30">
                     <MessageSquare className="h-4 w-4 text-purple-600 dark:text-purple-400" />
                   </div>
-                  Give Feedback
+                  {t("feedback.giveFeedback")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -480,39 +480,39 @@ export default function FeedbackPage() {
           <div>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold">
-                Feedback for Page {currentPageIndex + 1}
+                {t("feedback.feedbackForPage").replace("{{page}}", currentPageIndex + 1)}
               </h2>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="flex items-center gap-2">
                     <Filter className="h-4 w-4" />
-                    {filter === "all" && "All Feedback"}
-                    {filter === "suggestions" && "Suggestions"}
-                    {filter === "story" && "Story Feedback"}
-                    {filter === "illustrations" && "Illustration Feedback"}
-                    {filter === "language" && "Language Feedback"}
-                    {filter === "age_appropriate" && "Age Appropriateness"}
+                    {filter === "all" && t("feedback.filter.all")}
+                    {filter === "suggestions" && t("common.suggestions")}
+                    {filter === "story" && t("feedback.form.types.story")}
+                    {filter === "illustrations" && t("feedback.form.types.illustrations")}
+                    {filter === "language" && t("feedback.form.types.language")}
+                    {filter === "age_appropriate" && t("feedback.form.types.age_appropriate")}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => setFilter("all")}>
-                    All Feedback
+                    {t("feedback.filter.all")}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setFilter("suggestions")}>
                     <Lightbulb className="h-4 w-4 mr-2" />
-                    Suggestions Only
+                    {t("feedback.filter.suggestionsOnly")}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setFilter("story")}>
-                    Story Feedback
+                    {t("feedback.form.types.story")}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setFilter("illustrations")}>
-                    Illustration Feedback
+                    {t("feedback.form.types.illustrations")}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setFilter("language")}>
-                    Language Feedback
+                    {t("feedback.form.types.language")}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setFilter("age_appropriate")}>
-                    Age Appropriateness
+                    {t("feedback.form.types.age_appropriate")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

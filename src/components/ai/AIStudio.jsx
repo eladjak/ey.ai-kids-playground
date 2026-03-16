@@ -29,6 +29,7 @@ import { Input } from '@/components/ui/input'; // New import for Input component
 import ModelSelector from './ModelSelector';
 import TextOverlay from './TextOverlay'; // Import the new component
 import { GenerateImage, UploadFile } from '@/integrations/Core'; // New imports for integrations
+import { useI18n } from '@/components/i18n/i18nProvider';
 
 export default function AIStudio({
   currentModel,
@@ -45,78 +46,7 @@ export default function AIStudio({
   const [isGenerating, setIsGenerating] = useState(false); // New state for loading
   const [prompt, setPrompt] = useState(''); // New state for prompt input
 
-  const translations = {
-    english: {
-      "studio.title": "AI Studio",
-      "studio.subtitle": "Choose your AI models and settings",
-      "studio.credits": "Credits",
-      "studio.upgrade": "Upgrade Plan",
-      "studio.mode.simple": "Simple Mode",
-      "studio.mode.advanced": "Advanced Mode",
-      "studio.simple.title": "What do you want to create?",
-      "studio.simple.quality.title": "🎨 Best Quality",
-      "studio.simple.quality.desc": "For stunning, artistic illustrations. (Best for final images)",
-      "studio.simple.text.title": "🔤 Text in Image",
-      "studio.simple.text.desc": "Perfect for including names or words in Hebrew/English.",
-      "studio.simple.fast.title": "⚡️ Fast & Fun",
-      "studio.simple.fast.desc": "Great for quick ideas and drafts. (Most credit-efficient)",
-      "studio.categories.image": "Image Generation",
-      "studio.categories.video": "Video Generation",
-      "studio.categories.audio": "Audio Generation",
-      "studio.audio.narration": "Narration",
-      "studio.audio.music": "Music & SFX",
-      "studio.audio.selectVoice": "Select Voice",
-      "studio.audio.voiceCloning": "Voice Cloning (Pro)",
-      "studio.audio.voiceCloningDesc": "Upload a sample and use your own voice!",
-      "model.free": "Free",
-      "model.creator": "Creator",
-      "model.pro": "Pro",
-      "model.premium": "Premium",
-      "studio.prompt.label": "Describe the image you want to create",
-      "studio.prompt.placeholder": "e.g., A young child playing in a garden with a brown dog...",
-      "studio.button.generate": "Generate Image",
-      "studio.button.generating": "Generating...",
-      "studio.warning.noModel": "Please select an image model to start creating"
-    },
-    hebrew: {
-      "studio.title": "סטודיו AI",
-      "studio.subtitle": "בחר את מודלי ה-AI וההגדרות שלך",
-      "studio.credits": "קרדיטים",
-      "studio.upgrade": "שדרג חבילה",
-      "studio.mode.simple": "מצב פשוט",
-      "studio.mode.advanced": "מצב מתקדם",
-      "studio.simple.title": "מה תרצו ליצור?",
-      "studio.simple.quality.title": "🎨 האיכות הגבוהה ביותר",
-      "studio.simple.quality.desc": "לאיורים אמנותיים מרהיבים. (מעולה לתמונות סופיות)",
-      "studio.simple.text.title": "🔤 טקסט בתמונה",
-      "studio.simple.text.desc": "מושלם להוספת שמות או מילים בעברית/אנגלית.",
-      "studio.simple.fast.title": "⚡️ מהיר וכיפי",
-      "studio.simple.fast.desc": "מעולה לרעיונות מהירים וטיוטות. (הכי חסכוני בקרדיטים)",
-      "studio.categories.image": "יצירת תמונות",
-      "studio.categories.video": "יצירת וידאו",
-      "studio.categories.audio": "יצירת אודיו",
-      "studio.audio.narration": "קריינות",
-      "studio.audio.music": "מוזיקה ואפקטים",
-      "studio.audio.selectVoice": "בחר קול",
-      "studio.audio.voiceCloning": "שיבוט קולי (מקצועי)",
-      "studio.audio.voiceCloningDesc": "העלה דגימה והשתמש בקול שלך!",
-      "model.free": "חינם",
-      "model.creator": "יוצר",
-      "model.pro": "פרו",
-      "model.premium": "פרימיום",
-      "studio.prompt.label": "תאר את התמונה שתרצה ליצור",
-      "studio.prompt.placeholder": "למשל: ילד קטן משחק בגינה עם כלב חום...",
-      "studio.button.generate": "צור תמונה",
-      "studio.button.generating": "יוצר...",
-      "studio.warning.noModel": "אנא בחר מודל תמונה כדי להתחיל ליצור"
-    }
-  };
-
-  const t = (key) => {
-    return translations[currentLanguage]?.[key] || translations.english[key] || key;
-  };
-
-  const isRTL = currentLanguage === "hebrew";
+  const { t, isRTL } = useI18n();
 
   const recommendedModels = {
     quality: { id: 'midjourney' },
@@ -207,37 +137,37 @@ export default function AIStudio({
             <div>
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-purple-500" />
-                {t("studio.title")}
+                {t("aiStudio.title")}
               </CardTitle>
-              <CardDescription>{t("studio.subtitle")}</CardDescription>
+              <CardDescription>{t("aiStudio.subtitle")}</CardDescription>
             </div>
             <div className="flex items-center gap-4">
                {/* Mode Switch */}
               <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                <Label htmlFor="mode-switch" className="text-sm font-medium">{t("studio.mode.simple")}</Label>
+                <Label htmlFor="mode-switch" className="text-sm font-medium">{t("aiStudio.mode.simple")}</Label>
                 <Switch
                   id="mode-switch"
                   checked={mode === 'advanced'}
                   onCheckedChange={(checked) => setMode(checked ? 'advanced' : 'simple')}
                 />
-                <Label htmlFor="mode-switch" className="text-sm font-medium">{t("studio.mode.advanced")}</Label>
+                <Label htmlFor="mode-switch" className="text-sm font-medium">{t("aiStudio.mode.advanced")}</Label>
               </div>
 
               {/* Credits and Tier Info */}
               <div className="text-right">
                 <div className="flex items-center gap-2 mb-2">
                   <Badge variant="outline" className="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                    {userTier} Plan
+                    {userTier} {t("aiStudio.plan")}
                   </Badge>
                   {userTier !== "pro" && (
                     <Button variant="outline" size="sm">
                       <Crown className="h-4 w-4 mr-1 rtl:ml-1" />
-                      {t("studio.upgrade")}
+                      {t("aiStudio.upgrade")}
                     </Button>
                   )}
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">
-                  <span>{t("studio.credits")}: </span>
+                  <span>{t("aiStudio.credits")}: </span>
                   <span className="font-medium">
                     {credits.total - credits.used}/{credits.total}
                   </span>
@@ -256,15 +186,15 @@ export default function AIStudio({
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="image" className="flex items-center gap-2">
             <Image className="h-4 w-4" />
-            {t("studio.categories.image")}
+            {t("aiStudio.categories.image")}
           </TabsTrigger>
           <TabsTrigger value="video" className="flex items-center gap-2">
             <Video className="h-4 w-4" />
-            {t("studio.categories.video")}
+            {t("aiStudio.categories.video")}
           </TabsTrigger>
           <TabsTrigger value="audio" className="flex items-center gap-2">
             <Music className="h-4 w-4" />
-            {t("studio.categories.audio")}
+            {t("aiStudio.categories.audio")}
           </TabsTrigger>
         </TabsList>
 
@@ -280,26 +210,26 @@ export default function AIStudio({
             <>
               {mode === 'simple' ? (
                 <div className="space-y-4">
-                   <h3 className="text-lg font-semibold text-center mb-4">{t("studio.simple.title")}</h3>
+                   <h3 className="text-lg font-semibold text-center mb-4">{t("aiStudio.simple.title")}</h3>
                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <SimpleModeCard
                         icon="🎨"
-                        title={t("studio.simple.quality.title")}
-                        description={t("studio.simple.quality.desc")}
+                        title={t("aiStudio.simple.quality.title")}
+                        description={t("aiStudio.simple.quality.desc")}
                         model={recommendedModels.quality}
                         isSelected={currentModel?.id === recommendedModels.quality.id}
                       />
                       <SimpleModeCard
                         icon="🔤"
-                        title={t("studio.simple.text.title")}
-                        description={t("studio.simple.text.desc")}
+                        title={t("aiStudio.simple.text.title")}
+                        description={t("aiStudio.simple.text.desc")}
                         model={recommendedModels.text}
                         isSelected={currentModel?.id === recommendedModels.text.id}
                       />
                        <SimpleModeCard
                         icon="⚡️"
-                        title={t("studio.simple.fast.title")}
-                        description={t("studio.simple.fast.desc")}
+                        title={t("aiStudio.simple.fast.title")}
+                        description={t("aiStudio.simple.fast.desc")}
                         model={recommendedModels.fast}
                         isSelected={currentModel?.id === recommendedModels.fast.id}
                       />
@@ -320,14 +250,14 @@ export default function AIStudio({
               <div className="mt-6 space-y-4">
                 <div>
                   <Label htmlFor="image-prompt" className="text-sm font-medium">
-                    {t("studio.prompt.label")}
+                    {t("aiStudio.prompt.label")}
                   </Label>
                   <div className="mt-2 flex gap-2">
                     <Input
                       id="image-prompt"
                       value={prompt}
                       onChange={(e) => setPrompt(e.target.value)}
-                      placeholder={t("studio.prompt.placeholder")}
+                      placeholder={t("aiStudio.prompt.placeholder")}
                       className="flex-1"
                       dir={isRTL ? "rtl" : "ltr"}
                       onKeyPress={(e) => {
@@ -344,12 +274,12 @@ export default function AIStudio({
                       {isGenerating ? (
                         <>
                           <RotateCw className="mr-2 h-4 w-4 animate-spin" />
-                          {t("studio.button.generating")}
+                          {t("aiStudio.button.generating")}
                         </>
                       ) : (
                         <>
                           <Sparkles className="mr-2 h-4 w-4" />
-                          {t("studio.button.generate")}
+                          {t("aiStudio.button.generate")}
                         </>
                       )}
                     </Button>
@@ -358,7 +288,7 @@ export default function AIStudio({
 
                 {!currentModel && (
                   <p className="text-sm text-amber-600 dark:text-amber-400">
-                    {t("studio.warning.noModel")}
+                    {t("aiStudio.warning.noModel")}
                   </p>
                 )}
               </div>
@@ -380,24 +310,24 @@ export default function AIStudio({
         <TabsContent value="audio" className="mt-6">
           <Tabs defaultValue="narration" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="narration">{t("studio.audio.narration")}</TabsTrigger>
-              <TabsTrigger value="music">{t("studio.audio.music")}</TabsTrigger>
+              <TabsTrigger value="narration">{t("aiStudio.audio.narration")}</TabsTrigger>
+              <TabsTrigger value="music">{t("aiStudio.audio.music")}</TabsTrigger>
             </TabsList>
             <TabsContent value="narration" className="mt-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t("studio.audio.selectVoice")}</CardTitle>
-                  <CardDescription>Powered by ElevenLabs</CardDescription>
+                  <CardTitle>{t("aiStudio.audio.selectVoice")}</CardTitle>
+                  <CardDescription>{t("aiStudio.audio.poweredBy")}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <Select value={selectedVoice} onValueChange={setSelectedVoice}>
                     <SelectTrigger>
-                      <SelectValue placeholder={t("studio.audio.selectVoice")} />
+                      <SelectValue placeholder={t("aiStudio.audio.selectVoice")} />
                     </SelectTrigger>
                     <SelectContent>
                       {voices.map(voice => (
                         <SelectItem key={voice.id} value={voice.id} disabled={!canAccessVoice(voice)}>
-                          {voice.name} {!canAccessVoice(voice) && `(${t(`model.${voice.tier}`)})`}
+                          {voice.name} {!canAccessVoice(voice) && `(${t(`aiStudio.model.${voice.tier}`)})`}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -405,13 +335,13 @@ export default function AIStudio({
 
                   <Card className="bg-gray-50 dark:bg-gray-800/50">
                     <CardHeader>
-                      <CardTitle className="text-base">{t("studio.audio.voiceCloning")}</CardTitle>
-                      <CardDescription>{t("studio.audio.voiceCloningDesc")}</CardDescription>
+                      <CardTitle className="text-base">{t("aiStudio.audio.voiceCloning")}</CardTitle>
+                      <CardDescription>{t("aiStudio.audio.voiceCloningDesc")}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <Button disabled={userTier !== 'pro' && userTier !== 'premium'}>
                         <Plus className="mr-2 h-4 w-4" />
-                        Upload Voice Sample
+                        {t("aiStudio.audio.uploadVoiceSample")}
                       </Button>
                     </CardContent>
                   </Card>

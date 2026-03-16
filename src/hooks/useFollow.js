@@ -93,11 +93,13 @@ export default function useFollow(targetEmail) {
           });
 
           // Notify the followed user (fire-and-forget)
+          // Store type + data JSON so the display layer can render translated text
+          const userName = user.full_name || 'Someone';
           Notification.create({
             user_email: targetEmail,
             type: 'new_follower',
-            title: 'You have a new follower!',
-            message: `${user.full_name || 'Someone'} started following you`,
+            title: 'new_follower',
+            message: JSON.stringify({ userName }),
             link: '/Profile',
             read: false,
           }).catch(() => {}); // never let notification failure block the follow action

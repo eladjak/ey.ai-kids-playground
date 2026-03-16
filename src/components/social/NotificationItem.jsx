@@ -6,8 +6,9 @@
  *   onRead        {function}  — called with notification.id when clicked/marked read
  *   onNavigate    {function}  — called with notification.link to navigate
  */
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { BookOpen, User, Heart, MessageCircle, Trophy } from 'lucide-react';
+import { useI18n } from '@/components/i18n/i18nProvider';
 
 // Map notification type → icon component
 const TYPE_ICONS = {
@@ -57,12 +58,59 @@ function relativeTime(dateStr, locale = 'en') {
   }
 }
 
+/**
+ * Try to parse notification message as JSON data for i18n rendering.
+ * Returns the parsed object or null if it's a plain string.
+ */
+function tryParseData(message) {
+  if (!message || typeof message !== 'string') return null;
+  if (!message.startsWith('{')) return null;
+  try {
+    return JSON.parse(message);
+  } catch {
+    return null;
+  }
+}
+
 export default function NotificationItem({ notification, onRead, onNavigate }) {
   if (!notification) return null;
 
   const { id, type, title, message, link, read, created_date } = notification;
+  const { t } = useI18n();
 
   const Icon = TYPE_ICONS[type] ?? BookOpen;
+
+  // Resolve translated title and message based on notification type + data
+  const { displayTitle, displayMessage } = useMemo(() => {
+    const data = tryParseData(message);
+
+    // If the title matches a known type key and we have data, render translated text
+    const translatedTitleKey = `social.notificationTitle.${type}`;
+    const translatedMsgKey = `social.notificationMessage.${type}`;
+    const tTitle = t(translatedTitleKey);
+    const tMsg = t(translatedMsgKey);
+
+    // Check if translation exists (t() returns the key path if missing)
+    const hasTitleTranslation = tTitle && tTitle !== translatedTitleKey;
+    const hasMsgTranslation = tMsg && tMsg !== translatedMsgKey;
+
+    let resolvedTitle = title;
+    let resolvedMessage = message;
+
+    if (data && hasTitleTranslation) {
+      // Replace placeholders like {{authorName}}, {{userName}}, {{bookTitle}}
+      resolvedTitle = tTitle.replace(/\{\{(\w+)\}\}/g, (_, key) => data[key] || '');
+    }
+
+    if (data && hasMsgTranslation) {
+      resolvedMessage = tMsg.replace(/\{\{(\w+)\}\}/g, (_, key) => data[key] || '');
+    } else if (data) {
+      // Fallback: show a meaningful field from data
+      resolvedMessage = data.bookTitle || data.userName || message;
+    }
+
+    return { displayTitle: resolvedTitle, displayMessage: resolvedMessage };
+  }, [type, title, message, t]);
 
   const handleClick = useCallback(() => {
     if (!read && onRead) onRead(id);
@@ -90,7 +138,7 @@ export default function NotificationItem({ notification, onRead, onNavigate }) {
     <div
       role="button"
       tabIndex={0}
-      aria-label={`${title}. ${read ? '' : 'Unread. '}${relativeTime(created_date)}`}
+      aria-label={`${displayTitle}. ${read ? '' : 'Unread. '}${relativeTime(created_date)}`}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       className={`
@@ -108,11 +156,11 @@ export default function NotificationItem({ notification, onRead, onNavigate }) {
       {/* Content */}
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-foreground leading-tight truncate">
-          {title}
+          {displayTitle}
         </p>
-        {message && (
+        {displayMessage && (
           <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
-            {message}
+            {displayMessage}
           </p>
         )}
         <p className="text-xs text-muted-foreground mt-1">

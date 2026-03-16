@@ -720,8 +720,8 @@ Return as JSON with:
                   Notification.create({
                     user_email: follower.follower_email,
                     type: 'new_book',
-                    title: `${authorName} created a new book!`,
-                    message: finalBookData.title,
+                    title: 'new_book',
+                    message: JSON.stringify({ authorName, bookTitle: finalBookData.title }),
                     link: `/BookView?id=${createdBook.id}`,
                     read: false,
                   })
