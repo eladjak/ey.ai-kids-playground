@@ -56,6 +56,8 @@ import {
   DialogDescription
 } from "@/components/ui/dialog";
 
+import { motion } from "framer-motion";
+
 import BadgeDisplay from "../components/gamification/BadgeDisplay";
 import AvatarSelector from "../components/profile/AvatarSelector";
 import UserStats from "../components/profile/UserStats";
@@ -327,79 +329,94 @@ export default function Profile() {
 
   return (
     <div className="max-w-6xl mx-auto pb-16" dir={dir}>
-      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6">
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-          <div
-            className="relative group cursor-pointer"
-            onClick={() => setAvatarEditorOpen(true)}
-          >
-            <div className="h-24 w-24 relative overflow-hidden">
-              <Avatar className="h-24 w-24 border-4 border-purple-100 dark:border-purple-900/50 
-                                group-hover:border-purple-200 dark:group-hover:border-purple-800 transition-all">
-                {userData.avatar_url ? (
-                  <AvatarImage src={userData.avatar_url} alt={userData.display_name} />
-                ) : (
-                  <AvatarFallback className="bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-200 text-2xl">
-                    {userData.display_name?.charAt(0) || userData.full_name?.charAt(0) || "U"}
-                  </AvatarFallback>
-                )}
-              </Avatar>
-              
-              <div className="absolute inset-0 flex items-center justify-center rounded-full opacity-0 
-                              bg-black/40 group-hover:opacity-100 transition-opacity">
-                <Camera className="h-8 w-8 text-white" />
+      {/* Gradient Header Banner */}
+      <motion.div
+        className="relative overflow-hidden rounded-2xl mb-6 shadow-lg"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="bg-gradient-to-r from-purple-600 via-indigo-600 to-violet-600 p-8 pb-20">
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_30%_50%,white_0%,transparent_60%)]" />
+        </div>
+
+        {/* Profile Card overlapping the banner */}
+        <div className="relative -mt-14 mx-4 md:mx-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
+            <motion.div
+              className="relative group cursor-pointer -mt-16"
+              onClick={() => setAvatarEditorOpen(true)}
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <div className="h-28 w-28 relative overflow-hidden">
+                <Avatar className="h-28 w-28 border-4 border-white dark:border-gray-700 shadow-xl
+                                  group-hover:border-purple-200 dark:group-hover:border-purple-800 transition-all ring-4 ring-purple-200/50 dark:ring-purple-900/30">
+                  {userData.avatar_url ? (
+                    <AvatarImage src={userData.avatar_url} alt={userData.display_name} />
+                  ) : (
+                    <AvatarFallback className="bg-gradient-to-br from-purple-500 to-indigo-500 text-white text-3xl font-bold">
+                      {userData.display_name?.charAt(0) || userData.full_name?.charAt(0) || "U"}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+
+                <div className="absolute inset-0 flex items-center justify-center rounded-full opacity-0
+                                bg-black/40 group-hover:opacity-100 transition-opacity">
+                  <Camera className="h-8 w-8 text-white" />
+                </div>
+
+                <div className="absolute bottom-0 right-0 bg-purple-600 rounded-full p-1.5 border-2 border-white
+                                dark:border-gray-800 shadow-md transform transition-transform
+                                group-hover:scale-110">
+                  <Camera className="h-4 w-4 text-white" />
+                </div>
               </div>
-              
-              <div className="absolute bottom-0 right-0 bg-purple-600 rounded-full p-1.5 border-2 border-white 
-                              dark:border-gray-800 shadow-md transform transition-transform 
-                              group-hover:scale-110">
-                <Camera className="h-4 w-4 text-white" />
+            </motion.div>
+
+            <div className="flex-1">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{userData.display_name}</h1>
+              <p className="text-gray-500 dark:text-gray-400">{userData.email}</p>
+
+              <div className="mt-4 flex flex-wrap gap-3">
+                <div className="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/30 dark:to-purple-900/20 px-4 py-1.5 rounded-full flex items-center shadow-sm border border-purple-100 dark:border-purple-800/30">
+                  <Trophy className="h-4 w-4 text-purple-600 dark:text-purple-400 me-1.5" />
+                  <span className="text-sm font-semibold text-purple-700 dark:text-purple-300">
+                    {t("profile.level")} {userData.level}
+                  </span>
+                </div>
+
+                <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-900/20 px-4 py-1.5 rounded-full flex items-center shadow-sm border border-blue-100 dark:border-blue-800/30">
+                  <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400 me-1.5" />
+                  <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">
+                    {userData.total_books} {t("profile.booksCreated")}
+                  </span>
+                </div>
+
+                <div className="bg-gradient-to-r from-amber-50 to-amber-100 dark:from-amber-900/30 dark:to-amber-900/20 px-4 py-1.5 rounded-full flex items-center shadow-sm border border-amber-100 dark:border-amber-800/30">
+                  <Calendar className="h-4 w-4 text-amber-600 dark:text-amber-400 me-1.5" />
+                  <span className="text-sm font-semibold text-amber-700 dark:text-amber-300">
+                    {t("profile.joined")} {formatDate(userData.created_date)}
+                  </span>
+                </div>
               </div>
             </div>
+
+            {/* Show follow button when viewing other profiles - ready for public profiles */}
+            {userData.email && hookUser?.email && userData.email !== hookUser.email && (
+              <FollowButton targetEmail={userData.email} />
+            )}
+            <Button onClick={() => setEditMode(true)} variant="outline" className="mt-4 md:mt-0 border-purple-200 hover:bg-purple-50 dark:border-purple-800 dark:hover:bg-purple-900/20">
+              <Edit className="h-4 w-4 me-2" />
+              {t("profile.editProfile")}
+            </Button>
           </div>
-          
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold">{userData.display_name}</h1>
-            <p className="text-gray-500 dark:text-gray-400">{userData.email}</p>
-            
-            <div className="mt-4 flex flex-wrap gap-4">
-              <div className="bg-purple-50 dark:bg-purple-900/20 px-3 py-1 rounded-full flex items-center">
-                <Trophy className="h-4 w-4 text-purple-600 dark:text-purple-400 me-1" />
-                <span className="text-sm font-medium">
-                  {t("profile.level")} {userData.level}
-                </span>
-              </div>
-              
-              <div className="bg-blue-50 dark:bg-blue-900/20 px-3 py-1 rounded-full flex items-center">
-                <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400 me-1" />
-                <span className="text-sm font-medium">
-                  {userData.total_books} {t("profile.booksCreated")}
-                </span>
-              </div>
-              
-              <div className="bg-amber-50 dark:bg-amber-900/20 px-3 py-1 rounded-full flex items-center">
-                <Calendar className="h-4 w-4 text-amber-600 dark:text-amber-400 me-1" />
-                <span className="text-sm font-medium">
-                  {t("profile.joined")} {formatDate(userData.created_date)}
-                </span>
-              </div>
-            </div>
+
+          <div className="mt-6">
+            <UserStats userData={userData} currentLanguage={currentLanguage} />
           </div>
-          
-          {/* Show follow button when viewing other profiles - ready for public profiles */}
-          {userData.email && hookUser?.email && userData.email !== hookUser.email && (
-            <FollowButton targetEmail={userData.email} />
-          )}
-          <Button onClick={() => setEditMode(true)} variant="outline" className="mt-4 md:mt-0">
-            <Edit className="h-4 w-4 me-2" />
-            {t("profile.editProfile")}
-          </Button>
         </div>
-        
-        <div className="mt-6">
-          <UserStats userData={userData} currentLanguage={currentLanguage} />
-        </div>
-      </div>
+      </motion.div>
 
       <Tabs defaultValue="overview" className="space-y-6">
         <TabsList className="bg-white dark:bg-gray-800 p-1 rounded-lg">
@@ -416,11 +433,20 @@ export default function Profile() {
               currentLanguage={currentLanguage} 
             />
 
-            <Card>
-              <CardHeader>
-                <CardTitle>{t("profile.recentAchievements")}</CardTitle>
+            <Card className="relative overflow-hidden border-0 shadow-lg">
+              <div
+                className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] bg-cover bg-center pointer-events-none"
+                style={{ backgroundImage: "url('/images/achievements.jpg')" }}
+              />
+              <CardHeader className="relative">
+                <CardTitle className="flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/30">
+                    <Trophy className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                  </div>
+                  {t("profile.recentAchievements")}
+                </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="relative">
                 <div className="space-y-6">
                   {achievements.length > 0 ? (
                     <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
@@ -492,41 +518,40 @@ export default function Profile() {
             </Card>
 
             {/* Reading Stats Card */}
-            <Card className="md:col-span-2">
+            <Card className="md:col-span-2 border-0 shadow-lg">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                  <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
+                    <BarChart3 className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                  </div>
                   {t("profile.readingStats.title")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4 text-center">
-                    <BookOpen className="h-8 w-8 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{readingStats.totalBooks}</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{t("profile.readingStats.booksCreated")}</p>
-                  </div>
-                  <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 text-center">
-                    <FileText className="h-8 w-8 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{readingStats.totalPages}</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{t("profile.readingStats.totalPages")}</p>
-                  </div>
-                  <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4 text-center">
-                    <Star className="h-8 w-8 text-amber-600 dark:text-amber-400 mx-auto mb-2" />
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white capitalize">
-                      {readingStats.favoriteGenre
-                        ? readingStats.favoriteGenre.replace(/_/g, " ")
-                        : t("profile.readingStats.noGenre")}
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{t("profile.readingStats.favoriteGenre")}</p>
-                  </div>
-                  <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-4 text-center">
-                    <Calendar className="h-8 w-8 text-green-600 dark:text-green-400 mx-auto mb-2" />
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {readingStats.memberSince ? formatDate(readingStats.memberSince) : "-"}
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{t("profile.readingStats.memberSince")}</p>
-                  </div>
+                  {[
+                    { icon: BookOpen, color: "purple", value: readingStats.totalBooks, label: t("profile.readingStats.booksCreated"), delay: 0 },
+                    { icon: FileText, color: "blue", value: readingStats.totalPages, label: t("profile.readingStats.totalPages"), delay: 0.1 },
+                    { icon: Star, color: "amber", value: readingStats.favoriteGenre ? readingStats.favoriteGenre.replace(/_/g, " ") : t("profile.readingStats.noGenre"), label: t("profile.readingStats.favoriteGenre"), delay: 0.2, capitalize: true },
+                    { icon: Calendar, color: "green", value: readingStats.memberSince ? formatDate(readingStats.memberSince) : "-", label: t("profile.readingStats.memberSince"), delay: 0.3 }
+                  ].map((stat, idx) => {
+                    const IconComp = stat.icon;
+                    return (
+                      <motion.div
+                        key={idx}
+                        className={`bg-gradient-to-br from-${stat.color}-50 to-${stat.color}-100/50 dark:from-${stat.color}-900/20 dark:to-${stat.color}-900/10 rounded-xl p-4 text-center border border-${stat.color}-100/50 dark:border-${stat.color}-800/20 shadow-sm hover:shadow-md transition-shadow`}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: stat.delay, duration: 0.4 }}
+                      >
+                        <div className={`mx-auto mb-3 w-12 h-12 rounded-full bg-${stat.color}-100 dark:bg-${stat.color}-900/30 flex items-center justify-center`}>
+                          <IconComp className={`h-6 w-6 text-${stat.color}-600 dark:text-${stat.color}-400`} />
+                        </div>
+                        <p className={`text-2xl font-bold text-gray-900 dark:text-white ${stat.capitalize ? 'capitalize' : ''}`}>{stat.value}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{stat.label}</p>
+                      </motion.div>
+                    );
+                  })}
                 </div>
               </CardContent>
             </Card>

@@ -24,7 +24,7 @@ const FloatingShape = ({ className, delay = 0, duration = 6, children }) => (
   </motion.div>
 );
 
-const BookMockup = ({ isRTL }) => (
+const BookMockup = ({ isRTL, t }) => (
   <motion.div
     initial={{ opacity: 0, scale: 0.8, rotateY: isRTL ? 15 : -15 }}
     animate={{ opacity: 1, scale: 1, rotateY: 0 }}
@@ -41,11 +41,11 @@ const BookMockup = ({ isRTL }) => (
       <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-white text-center">
         <Sparkles className="h-12 w-12 mb-4 text-yellow-300" />
         <h3 className="text-xl font-bold mb-2 leading-tight">
-          {isRTL ? 'הרפתקה קסומה' : 'A Magical Adventure'}
+          {t('landing.hero.bookMockupTitle')}
         </h3>
         <div className="w-12 h-0.5 bg-yellow-300/60 mb-3" />
         <p className="text-sm text-purple-100 mb-4">
-          {isRTL ? 'מאת: הילד/ה שלך' : 'By: Your Child'}
+          {t('landing.hero.bookMockupAuthor')}
         </p>
         {/* Mini illustration placeholder */}
         <div className="w-32 h-24 rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center">
@@ -183,7 +183,7 @@ const HeroSection = () => {
 
           {/* Book Mockup */}
           <div className={`flex justify-center ${isRTL ? 'lg:order-0' : ''}`}>
-            <BookMockup isRTL={isRTL} />
+            <BookMockup isRTL={isRTL} t={t} />
           </div>
         </div>
       </div>

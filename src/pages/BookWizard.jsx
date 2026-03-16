@@ -1006,24 +1006,36 @@ Return as JSON with:
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
     >
-      {/* Header */}
-      <div className="text-center mb-6">
-        <motion.h1
-          className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent mb-2"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          {t("wizard.title")}
-        </motion.h1>
-        <motion.p
-          className="text-gray-600 dark:text-gray-300 text-lg"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          {t("wizard.subtitle")}
-        </motion.p>
-      </div>
+      {/* Gradient Header with Background */}
+      <motion.div
+        className="relative overflow-hidden rounded-2xl mb-8 shadow-md"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <div className="bg-gradient-to-r from-purple-600 via-indigo-500 to-blue-500 px-6 py-8 text-center">
+          <div
+            className="absolute inset-0 opacity-[0.06] bg-cover bg-center pointer-events-none"
+            style={{ backgroundImage: "url('/images/book-wizard.jpg')" }}
+          />
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_50%_0%,white_0%,transparent_70%)]" />
+          <motion.div className="relative flex items-center justify-center gap-3 mb-2">
+            <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
+              <Sparkles className="h-6 w-6 text-white" />
+            </div>
+            <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-sm">
+              {t("wizard.title")}
+            </h1>
+          </motion.div>
+          <motion.p
+            className="text-white/80 text-lg relative"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            {t("wizard.subtitle")}
+          </motion.p>
+        </div>
+      </motion.div>
 
       {/* Progress Indicator */}
       <WizardProgress
@@ -1041,7 +1053,7 @@ Return as JSON with:
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: isRTL ? 30 : -30 }}
           transition={{ duration: 0.3 }}
-          className="mb-8 min-h-[400px] relative"
+          className="mb-8 min-h-[400px] relative bg-white dark:bg-gray-800/50 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700/50 p-6"
         >
           {renderStep()}
 

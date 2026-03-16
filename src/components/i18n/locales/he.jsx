@@ -1270,6 +1270,10 @@ export default {
     savedDesc: "הגדרות בקרת ההורים עודכנו בהצלחה"
   },
   landing: {
+    meta: {
+      title: "Sipurai — יצירת ספרי ילדים עם AI",
+      description: "פלטפורמה ליצירת ספרי ילדים מותאמים אישית עם בינה מלאכותית"
+    },
     nav: {
       features: "תכונות",
       howItWorks: "איך זה עובד",
@@ -1282,7 +1286,9 @@ export default {
       subtitle: "בחרו דמויות, סגנון וז'אנר — וה-AI יוצר ספר ילדים שלם עם סיפור ואיורים מותאמים אישית",
       primaryCta: "צרו ספר עכשיו — בחינם!",
       secondaryCta: "צפו בספרים של הקהילה",
-      socialProof: "מאות משפחות כבר יוצרות סיפורים"
+      socialProof: "מאות משפחות כבר יוצרות סיפורים",
+      bookMockupTitle: "הרפתקה קסומה",
+      bookMockupAuthor: "מאת: הילד/ה שלך"
     },
     features: {
       sectionTitle: "הכל כלול בחוויה אחת",

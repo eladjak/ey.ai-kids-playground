@@ -197,22 +197,26 @@ export default function Leaderboard() {
       case 1:
         return {
           icon: <Trophy className="h-5 w-5 text-amber-500" />,
-          className: "bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-300"
+          className: "bg-gradient-to-br from-amber-200 to-yellow-300 text-amber-900 dark:from-amber-700/40 dark:to-yellow-600/30 dark:text-amber-200 shadow-sm ring-2 ring-amber-300/50 dark:ring-amber-600/30",
+          rowClassName: "bg-gradient-to-r from-amber-50/80 to-yellow-50/50 dark:from-amber-900/15 dark:to-yellow-900/10 border-l-4 border-amber-400"
         };
       case 2:
         return {
-          icon: <Medal className="h-5 w-5 text-gray-500" />,
-          className: "bg-gray-100 text-gray-800 dark:bg-gray-900/40 dark:text-gray-300"
+          icon: <Medal className="h-5 w-5 text-gray-400" />,
+          className: "bg-gradient-to-br from-gray-200 to-slate-300 text-gray-800 dark:from-gray-600/40 dark:to-slate-500/30 dark:text-gray-200 shadow-sm ring-2 ring-gray-300/50 dark:ring-gray-600/30",
+          rowClassName: "bg-gradient-to-r from-gray-50/80 to-slate-50/50 dark:from-gray-800/30 dark:to-slate-800/20 border-l-4 border-gray-300"
         };
       case 3:
         return {
-          icon: <Award className="h-5 w-5 text-amber-800" />,
-          className: "bg-amber-100/50 text-amber-800 dark:bg-amber-900/10 dark:text-amber-400"
+          icon: <Award className="h-5 w-5 text-orange-700" />,
+          className: "bg-gradient-to-br from-orange-200 to-amber-300 text-orange-900 dark:from-orange-700/30 dark:to-amber-600/20 dark:text-orange-200 shadow-sm ring-2 ring-orange-300/50 dark:ring-orange-600/30",
+          rowClassName: "bg-gradient-to-r from-orange-50/60 to-amber-50/40 dark:from-orange-900/10 dark:to-amber-900/5 border-l-4 border-orange-300"
         };
       default:
         return {
           icon: null,
-          className: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+          className: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
+          rowClassName: ""
         };
     }
   };
@@ -288,24 +292,40 @@ export default function Leaderboard() {
 
   return (
     <div className="max-w-6xl mx-auto pb-12" dir={isRTL ? "rtl" : "ltr"}>
-      <div className="p-4 md:p-6">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold">{t("leaderboard.title")}</h1>
-            <p className="text-gray-500 dark:text-gray-400">{t("leaderboard.subtitle")}</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400`} />
-              <Input
-                placeholder={t("leaderboard.search")}
-                value={searchQuery}
-                onChange={handleSearch}
-                className={`w-full md:w-64 ${isRTL ? 'pr-9' : 'pl-9'}`}
-              />
+      {/* Gradient Banner Header */}
+      <div className="relative overflow-hidden rounded-2xl mx-4 md:mx-6 mt-4 mb-6 shadow-lg">
+        <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 p-8 md:p-10">
+          <div
+            className="absolute inset-0 opacity-[0.08] bg-cover bg-center pointer-events-none"
+            style={{ backgroundImage: "url('/images/leaderboard.jpg')" }}
+          />
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_70%_30%,white_0%,transparent_60%)]" />
+          <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
+                <Trophy className="h-8 w-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-sm">{t("leaderboard.title")}</h1>
+                <p className="text-white/80">{t("leaderboard.subtitle")}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <Search className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 h-4 w-4 text-white/60`} />
+                <Input
+                  placeholder={t("leaderboard.search")}
+                  value={searchQuery}
+                  onChange={handleSearch}
+                  className={`w-full md:w-64 ${isRTL ? 'pr-9' : 'pl-9'} bg-white/20 backdrop-blur-sm border-white/30 text-white placeholder:text-white/50 focus:bg-white/30`}
+                />
+              </div>
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="p-4 md:p-6 pt-0">
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <Card className="md:col-span-2 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 border-purple-200 dark:border-purple-900/30">
@@ -445,7 +465,7 @@ export default function Leaderboard() {
                     return (
                       <tr
                         key={entry.email}
-                        className={entry.isCurrentUser ? 'bg-purple-50 dark:bg-purple-900/10' : 'hover:bg-gray-50 dark:hover:bg-gray-800/60'}
+                        className={`transition-all duration-150 ${entry.isCurrentUser ? 'bg-purple-50 dark:bg-purple-900/10 ring-1 ring-inset ring-purple-200 dark:ring-purple-800/30' : rankDecoration.rowClassName || 'hover:bg-gray-50/80 dark:hover:bg-gray-800/60'} hover:shadow-sm`}
                       >
                         <td className="px-4 py-4 whitespace-nowrap">
                           <div className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${rankDecoration.className}`}

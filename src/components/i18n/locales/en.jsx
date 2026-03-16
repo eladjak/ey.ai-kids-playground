@@ -1282,6 +1282,10 @@ export default {
     savedDesc: "Parental controls have been updated"
   },
   landing: {
+    meta: {
+      title: "Sipurai \u2014 Create Children's Books with AI",
+      description: "A platform for creating personalized children's books with artificial intelligence"
+    },
     nav: {
       features: "Features",
       howItWorks: "How It Works",
@@ -1294,7 +1298,9 @@ export default {
       subtitle: "Choose characters, style and genre \u2014 and AI creates a complete children's book with a personalized story and illustrations",
       primaryCta: "Create a Book \u2014 It's Free!",
       secondaryCta: "Browse Community Books",
-      socialProof: "Hundreds of families already creating stories"
+      socialProof: "Hundreds of families already creating stories",
+      bookMockupTitle: "A Magical Adventure",
+      bookMockupAuthor: "By: Your Child"
     },
     features: {
       sectionTitle: "Everything in One Experience",

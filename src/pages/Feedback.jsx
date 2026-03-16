@@ -307,71 +307,79 @@ export default function FeedbackPage() {
   
   return (
     <div className="max-w-6xl mx-auto py-4" dir={isRTL ? "rtl" : "ltr"}>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate(createPageUrl("Library"))}
-          >
-            {isRTL ? (
-              <ArrowRight className="h-5 w-5" />
-            ) : (
-              <ArrowLeft className="h-5 w-5" />
-            )}
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              Feedback for "{book?.title}"
-              <Badge variant="outline" className="ml-2 text-xs">
-                {allFeedback.length} total
-              </Badge>
-            </h1>
-            <div className="flex items-center text-gray-500 dark:text-gray-400">
-              <div className="flex items-center mr-4">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star 
-                    key={i}
-                    className={`h-4 w-4 ${i < Math.floor(avgRating) ? 'text-amber-500 fill-amber-500' : 'text-gray-300'}`}
-                  />
-                ))}
-                <span className="ml-1 text-sm">{avgRating.toFixed(1)}</span>
+      {/* Gradient Header */}
+      <div className="relative overflow-hidden rounded-2xl mb-6 shadow-md">
+        <div className="bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 px-6 py-6">
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_80%_20%,white_0%,transparent_60%)]" />
+          <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-white/80 hover:text-white hover:bg-white/10"
+                onClick={() => navigate(createPageUrl("Library"))}
+              >
+                {isRTL ? (
+                  <ArrowRight className="h-5 w-5" />
+                ) : (
+                  <ArrowLeft className="h-5 w-5" />
+                )}
+              </Button>
+              <div>
+                <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+                  <MessageSquare className="h-6 w-6" />
+                  Feedback for "{book?.title}"
+                  <Badge variant="outline" className="ml-2 text-xs border-white/30 text-white/90 bg-white/10">
+                    {allFeedback.length} total
+                  </Badge>
+                </h1>
+                <div className="flex items-center text-white/70 mt-1">
+                  <div className="flex items-center mr-4">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`h-4 w-4 ${i < Math.floor(avgRating) ? 'text-amber-300 fill-amber-300' : 'text-white/30'}`}
+                      />
+                    ))}
+                    <span className="ml-1 text-sm text-white/80">{avgRating.toFixed(1)}</span>
+                  </div>
+                  <Badge variant="outline" className="text-xs border-white/30 text-white/80 bg-white/10">
+                    <Lightbulb className="h-3 w-3 mr-1" />
+                    {suggestionCount} suggestions
+                  </Badge>
+                  <Badge variant="outline" className="text-xs border-white/30 text-white/80 bg-white/10 ml-2">
+                    <CheckCircle className="h-3 w-3 mr-1" />
+                    {implementedCount} implemented
+                  </Badge>
+                </div>
               </div>
-              <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 dark:bg-purple-900/10 dark:text-purple-300">
-                <Lightbulb className="h-3 w-3 mr-1" />
-                {suggestionCount} suggestions
-              </Badge>
-              <Badge variant="outline" className="text-xs bg-green-50 text-green-700 ml-2 dark:bg-green-900/10 dark:text-green-300">
-                <CheckCircle className="h-3 w-3 mr-1" />
-                {implementedCount} implemented
-              </Badge>
+            </div>
+
+            <div className="flex gap-2">
+              <Link to={`${createPageUrl("BookView")}?id=${bookId}`}>
+                <Button variant="outline" className="flex items-center gap-2 border-white/30 text-white bg-white/10 hover:bg-white/20">
+                  <BookOpen className="h-4 w-4" />
+                  <span className="hidden sm:inline">View Book</span>
+                </Button>
+              </Link>
+              <Button
+                onClick={() => setShowFeedbackForm(!showFeedbackForm)}
+                className={showFeedbackForm ? "bg-white/20 hover:bg-white/30 text-white" : "bg-white text-purple-700 hover:bg-purple-50"}
+              >
+                {showFeedbackForm ? (
+                  <>
+                    <X className="h-4 w-4 mr-2" />
+                    <span className="hidden sm:inline">Cancel</span>
+                  </>
+                ) : (
+                  <>
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    <span className="hidden sm:inline">Give Feedback</span>
+                  </>
+                )}
+              </Button>
             </div>
           </div>
-        </div>
-        
-        <div className="flex gap-2">
-          <Link to={`${createPageUrl("BookView")}?id=${bookId}`}>
-            <Button variant="outline" className="flex items-center gap-2">
-              <BookOpen className="h-4 w-4" />
-              <span className="hidden sm:inline">View Book</span>
-            </Button>
-          </Link>
-          <Button
-            onClick={() => setShowFeedbackForm(!showFeedbackForm)}
-            className={showFeedbackForm ? "bg-gray-200 hover:bg-gray-300 text-gray-800" : "bg-purple-600 hover:bg-purple-700"}
-          >
-            {showFeedbackForm ? (
-              <>
-                <X className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">Cancel</span>
-              </>
-            ) : (
-              <>
-                <MessageSquare className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">Give Feedback</span>
-              </>
-            )}
-          </Button>
         </div>
       </div>
       
@@ -450,9 +458,14 @@ export default function FeedbackPage() {
           
           {/* Feedback form */}
           {showFeedbackForm && (
-            <Card>
+            <Card className="border-purple-200 dark:border-purple-800/30 shadow-md bg-gradient-to-br from-white to-purple-50/30 dark:from-gray-800 dark:to-purple-900/10">
               <CardHeader>
-                <CardTitle>Give Feedback</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-lg bg-purple-100 dark:bg-purple-900/30">
+                    <MessageSquare className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  Give Feedback
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <FeedbackForm 
