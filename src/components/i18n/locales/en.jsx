@@ -902,7 +902,18 @@ export default {
       watercolor: "Watercolor",
       sketch: "Sketch",
       realistic: "Realistic",
-      anime: "Anime"
+      anime: "Anime",
+      comic: "Comic Book",
+      storybook: "Classic Storybook",
+      impressionist: "Impressionist",
+      fantasy: "Fantasy Art",
+      popArt: "Pop Art",
+      crayon: "Crayon & Pastel",
+      collage: "Paper Collage",
+      gouache: "Gouache",
+      chibi: "Chibi",
+      minimalist: "Minimalist",
+      vintage: "Vintage"
     },
     loadingAria: "Loading characters...",
     viewGrid: "Grid View",
@@ -1366,7 +1377,7 @@ export default {
       sectionSubtitle: "All the tools you need to create perfect children's books \u2014 from idea to print",
       artStyles: {
         title: "Art Style Selection",
-        description: "12 professional illustration styles \u2014 watercolor, comic, fantasy, anime, Disney and more"
+        description: "18 professional illustration styles \u2014 watercolor, comic, fantasy, anime, Disney and more"
       },
       trilingual: {
         title: "Trilingual",
@@ -1471,7 +1482,7 @@ export default {
         name: "Lite",
         price: "\u20AA14.90",
         f1: "15 books per month",
-        f2: "All 12 illustration styles",
+        f2: "All 18 illustration styles",
         f3: "Unlimited PDF export",
         f4: "No ads",
         cta: "Choose Lite"
@@ -1481,7 +1492,7 @@ export default {
         price: "\u20AA29",
         badge: "Most Popular",
         f1: "Unlimited books",
-        f2: "All 12 illustration styles",
+        f2: "All 18 illustration styles",
         f3: "Print & PDF export",
         f4: "Priority support",
         cta: "Upgrade to Premium"
@@ -1532,7 +1543,7 @@ export default {
         description: "The only children's book platform with native Hebrew and Yiddish support, full RTL layout, and culturally relevant content. Perfect for Israeli and Jewish families worldwide."
       },
       artStyles: {
-        title: "12 Professional Art Styles",
+        title: "18 Professional Art Styles",
         description: "From watercolor to anime, Disney to comic book \u2014 each book gets unique, high-quality illustrations that match your chosen style. No generic clip-art, only beautiful AI art."
       },
       gamification: {
@@ -1561,7 +1572,7 @@ export default {
       q5: "Can I print the books?",
       a5: "Yes! You can export any book as a PDF for home printing, and we're adding professional print-on-demand shipping soon so you can receive a real hardcover book at your door.",
       q6: "Is Sipurai free to use?",
-      a6: "Yes! Sipurai offers a free plan with 2 books per month and basic art styles. Premium plans unlock unlimited books, all 12 art styles, PDF export, and more."
+      a6: "Yes! Sipurai offers a free plan with 2 books per month and basic art styles. Premium plans unlock unlimited books, all 18 art styles, PDF export, and more."
     },
     cta: {
       headline: "Start Creating Your Child's Story Today",

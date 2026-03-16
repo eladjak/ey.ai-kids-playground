@@ -140,6 +140,72 @@ const ART_STYLE_VISUAL = [
     he: "וינטג'",
     yi: "וינטאַזש",
     desc: { en: "Nostalgic charm", he: "קסם נוסטלגי", yi: "נאָסטאַלגיש" }
+  },
+  {
+    value: "fantasy",
+    emoji: "🧚",
+    color: "#a855f7",
+    bg: "bg-purple-50 dark:bg-purple-950/30",
+    border: "border-purple-200 dark:border-purple-700",
+    en: "Fantasy Art",
+    he: "פנטזיה קסומה",
+    yi: "פֿאַנטאַזיע",
+    desc: { en: "Magical & enchanted", he: "קסום ומכושף", yi: "כּישופֿדיק" }
+  },
+  {
+    value: "pop_art",
+    emoji: "🎯",
+    color: "#e11d48",
+    bg: "bg-rose-50 dark:bg-rose-950/30",
+    border: "border-rose-200 dark:border-rose-700",
+    en: "Pop Art",
+    he: "פופ ארט",
+    yi: "פּאָפּ קונסט",
+    desc: { en: "Bold & colorful", he: "נועז וצבעוני", yi: "שטאַרק" }
+  },
+  {
+    value: "crayon",
+    emoji: "🖍️",
+    color: "#f97316",
+    bg: "bg-orange-50 dark:bg-orange-950/30",
+    border: "border-orange-200 dark:border-orange-700",
+    en: "Crayon & Pastel",
+    he: "צבעי פסטל",
+    yi: "פּאַסטעל",
+    desc: { en: "Soft & hand-drawn", he: "עדין ומצויר ביד", yi: "ווייך" }
+  },
+  {
+    value: "collage",
+    emoji: "✂️",
+    color: "#14b8a6",
+    bg: "bg-teal-50 dark:bg-teal-950/30",
+    border: "border-teal-200 dark:border-teal-700",
+    en: "Paper Collage",
+    he: "קולאז' נייר",
+    yi: "פּאַפּיר קאָלאַזש",
+    desc: { en: "Textured & layered", he: "מרקמי ושכבות", yi: "טעקסטורירט" }
+  },
+  {
+    value: "gouache",
+    emoji: "🖌️",
+    color: "#059669",
+    bg: "bg-emerald-50 dark:bg-emerald-950/30",
+    border: "border-emerald-200 dark:border-emerald-700",
+    en: "Gouache Painting",
+    he: "גואש",
+    yi: "גואַש",
+    desc: { en: "Rich & opaque", he: "עשיר ואטום", yi: "רייַך" }
+  },
+  {
+    value: "chibi",
+    emoji: "🌸",
+    color: "#f472b6",
+    bg: "bg-pink-50 dark:bg-pink-950/30",
+    border: "border-pink-200 dark:border-pink-700",
+    en: "Chibi",
+    he: "צ'יבי (מיני אנימה)",
+    yi: "טשיבי",
+    desc: { en: "Cute & tiny", he: "חמוד וזעיר", yi: "חמודיק" }
   }
 ];
 

@@ -104,7 +104,16 @@ export default function Characters() {
     { value: "watercolor", label: t("characters.artStyles.watercolor") },
     { value: "sketch", label: t("characters.artStyles.sketch") },
     { value: "realistic", label: t("characters.artStyles.realistic") },
-    { value: "anime", label: t("characters.artStyles.anime") }
+    { value: "anime", label: t("characters.artStyles.anime") },
+    { value: "comic", label: t("characters.artStyles.comic") },
+    { value: "storybook", label: t("characters.artStyles.storybook") },
+    { value: "impressionist", label: t("characters.artStyles.impressionist") },
+    { value: "fantasy", label: t("characters.artStyles.fantasy") },
+    { value: "pop_art", label: t("characters.artStyles.popArt") },
+    { value: "crayon", label: t("characters.artStyles.crayon") },
+    { value: "collage", label: t("characters.artStyles.collage") },
+    { value: "gouache", label: t("characters.artStyles.gouache") },
+    { value: "chibi", label: t("characters.artStyles.chibi") }
   ];
 
   if (isLoading) {

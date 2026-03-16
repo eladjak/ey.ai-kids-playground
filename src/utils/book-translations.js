@@ -212,5 +212,14 @@ export const ART_STYLE_OPTIONS = [
   { value: "realistic", he: "מציאותי למחצה", en: "Semi-Realistic" },
   { value: "anime", he: "אנימה/מנגה", en: "Anime/Manga" },
   { value: "minimalist", he: "מינימליסטי", en: "Minimalist" },
-  { value: "vintage", he: "וינטג'", en: "Vintage" }
+  { value: "vintage", he: "וינטג'", en: "Vintage" },
+  { value: "comic", he: "ספר קומיקס", en: "Comic Book" },
+  { value: "storybook", he: "ספר ילדים קלאסי", en: "Classic Storybook" },
+  { value: "impressionist", he: "אימפרסיוניסטי", en: "Impressionist" },
+  { value: "fantasy", he: "פנטזיה קסומה", en: "Fantasy Art" },
+  { value: "pop_art", he: "פופ ארט", en: "Pop Art" },
+  { value: "crayon", he: "ציור בצבעי פסטל", en: "Crayon & Pastel" },
+  { value: "collage", he: "קולאז' נייר", en: "Paper Collage" },
+  { value: "gouache", he: "גואש", en: "Gouache Painting" },
+  { value: "chibi", he: "צ'יבי (מיני אנימה)", en: "Chibi (Mini Anime)" }
 ];
