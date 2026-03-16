@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useI18n } from '@/components/i18n/i18nProvider';
 import { Character } from '@/entities/Character';
@@ -37,6 +37,7 @@ import { Loader2, Sparkles, Wand2, User, Save, ArrowLeft, Trash2, Camera, Eye } 
 
 export default function CharacterEditor() {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const { toast } = useToast();
     const { t, isRTL } = useI18n();
     const gamification = useGamification();
@@ -58,10 +59,9 @@ export default function CharacterEditor() {
     const [isGeneratingDetails, setIsGeneratingDetails] = useState(false); // New: state for details generation
 
     useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const id = urlParams.get('id');
-        const name = urlParams.get('name');
-        const data = urlParams.get('data');
+        const id = searchParams.get('id');
+        const name = searchParams.get('name');
+        const data = searchParams.get('data');
 
         const loadCharacter = async (characterId) => {
             try {
@@ -94,7 +94,7 @@ export default function CharacterEditor() {
         } else {
             setIsLoading(false);
         }
-    }, []);
+    }, [searchParams]);
 
     const handleInputChange = (field, value) => {
         setCharacter(prev => ({ ...prev, [field]: value }));
@@ -223,7 +223,7 @@ export default function CharacterEditor() {
 
     if (isLoading) {
         return (
-            <div className="flex justify-center items-center h-screen">
+            <div className="flex justify-center items-center h-dvh">
                 <Loader2 className="h-12 w-12 animate-spin" />
             </div>
         );

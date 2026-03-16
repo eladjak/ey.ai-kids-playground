@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useI18n } from "@/components/i18n/i18nProvider";
 import { Book } from "@/entities/Book";
@@ -51,6 +51,7 @@ import FeedbackContext from "../components/feedback/FeedbackContext";
 
 export default function FeedbackPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const { isRTL } = useI18n();
   const { user: hookUser } = useCurrentUser();
@@ -69,8 +70,7 @@ export default function FeedbackPage() {
   const [currentTab, setCurrentTab] = useState("feedback");
   
   // Get book ID from URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const bookId = urlParams.get("id");
+  const bookId = searchParams.get("id");
   
   useEffect(() => {
     if (!bookId) {

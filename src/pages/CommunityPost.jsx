@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useI18n } from "@/components/i18n/i18nProvider";
 import { Community } from "@/entities/Community";
@@ -40,6 +40,7 @@ import CommentItem from "../components/community/CommentItem";
 
 export default function CommunityPost() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const { t, isRTL } = useI18n();
   const { user: hookUser } = useCurrentUser();
@@ -53,8 +54,7 @@ export default function CommunityPost() {
   const [currentUser, setCurrentUser] = useState(null);
   
   // Get post ID from URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const postId = urlParams.get("id");
+  const postId = searchParams.get("id");
   
   useEffect(() => {
     if (!postId) {

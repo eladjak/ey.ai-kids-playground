@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Book } from "@/entities/Book";
 import { Page } from "@/entities/Page";
 import { createPageUrl } from "@/utils";
@@ -37,9 +37,10 @@ import { updateMeta, resetMeta } from "@/lib/seo";
 import { useAuth } from "@/lib/AuthContext";
 
 export default function BookView() {
-  const { language: i18nLanguage, isRTL: i18nIsRTL } = useI18n();
+  const { t, language: i18nLanguage, isRTL: i18nIsRTL } = useI18n();
   const { user } = useCurrentUser();
   const { navigateToLogin } = useAuth();
+  const [searchParams] = useSearchParams();
   const [book, setBook] = useState(null);
   const [pages, setPages] = useState([]);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
@@ -63,11 +64,10 @@ export default function BookView() {
   const gamification = useGamification();
 
   // Get book ID from URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const bookId = urlParams.get("id");
+  const bookId = searchParams.get("id");
 
   const isRTL = currentLanguage === "hebrew" || currentLanguage === "yiddish";
-  const isHebrew = currentLanguage === "hebrew";
+  const isHebrew = currentLanguage === "hebrew"; // kept for TTSControls prop
 
   // Whether the viewer is a guest (not logged in)
   const isGuest = !user;
@@ -127,7 +127,7 @@ export default function BookView() {
       } catch {
         toast({
           variant: "destructive",
-          description: "Failed to load book. Please try again.",
+          description: t('bookView.loadError'),
         });
       } finally {
         setLoading(false);
@@ -287,14 +287,14 @@ export default function BookView() {
         onProgress: (progress) => setPdfProgress(progress)
       });
       toast({
-        title: isHebrew ? "הורדה הושלמה!" : "Download complete!",
-        description: isHebrew ? "הספר הורד כ-PDF" : "The book was downloaded as PDF",
+        title: t('bookView.downloadComplete'),
+        description: t('bookView.downloadCompleteDesc'),
         className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100"
       });
     } catch {
       toast({
         variant: "destructive",
-        description: isHebrew ? "שגיאה ביצוא PDF" : "Failed to export PDF"
+        description: t('bookView.pdfExportError')
       });
     } finally {
       setIsExportingPDF(false);
@@ -370,7 +370,7 @@ export default function BookView() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-700 mx-auto" />
           <p className="mt-4 text-gray-600 dark:text-gray-300">
-            {isHebrew ? "טוען את הספר..." : "Loading book..."}
+            {t('bookView.loading')}
           </p>
         </div>
       </div>
@@ -389,16 +389,14 @@ export default function BookView() {
       {isGuest && book && (
         <div className="bg-purple-600 text-white px-4 py-2 flex items-center justify-between gap-3 text-sm">
           <span className={isRTL ? "text-right" : ""}>
-            {isHebrew
-              ? "קורא כאורח — התחבר כדי ליצור ספרים, לשמור קריאה ולקבל XP"
-              : "Reading as guest — sign in to create books, save progress, and earn XP"}
+            {t('bookView.guestBanner')}
           </span>
           <button
             onClick={() => navigateToLogin()}
             className="shrink-0 flex items-center gap-1.5 bg-white text-purple-700 hover:bg-purple-50 transition-colors px-3 py-1 rounded-full font-medium"
           >
             <LogIn className="h-3.5 w-3.5" aria-hidden="true" />
-            {isHebrew ? "התחברות" : "Sign in"}
+            {t('bookView.signIn')}
           </button>
         </div>
       )}
@@ -408,12 +406,12 @@ export default function BookView() {
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
             <Link to={createPageUrl("Library")}>
-              <Button variant="ghost" size="icon" aria-label={isHebrew ? "חזרה לספרייה" : "Back to Library"}>
+              <Button variant="ghost" size="icon" aria-label={t('bookView.backToLibrary')}>
                 {isRTL ? <ArrowRight className="h-5 w-5" /> : <ArrowLeft className="h-5 w-5" />}
               </Button>
             </Link>
             <h1 className={`text-lg font-semibold truncate max-w-[200px] md:max-w-none ${nightMode ? "text-amber-50" : "text-gray-900 dark:text-white"}`}>
-              {book?.title || (isHebrew ? "צפייה בספר" : "Book Viewer")}
+              {book?.title || t('bookView.bookViewer')}
             </h1>
           </div>
 
@@ -443,12 +441,12 @@ export default function BookView() {
             </Button>
 
             {/* Night mode */}
-            <Button variant="ghost" size="icon" onClick={() => setNightMode(!nightMode)} aria-label={isHebrew ? "מצב לילה" : "Night mode"}>
+            <Button variant="ghost" size="icon" onClick={() => setNightMode(!nightMode)} aria-label={t('bookView.nightMode')}>
               {nightMode ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4" />}
             </Button>
 
             {/* Fullscreen */}
-            <Button variant="ghost" size="icon" onClick={toggleFullscreen} aria-label={isHebrew ? "מסך מלא" : "Fullscreen"}>
+            <Button variant="ghost" size="icon" onClick={toggleFullscreen} aria-label={t('bookView.fullscreen')}>
               {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
             </Button>
 
@@ -458,7 +456,7 @@ export default function BookView() {
               size="icon"
               onClick={handleExportPDF}
               disabled={isExportingPDF}
-              aria-label={isHebrew ? "הורד PDF" : "Download PDF"}
+              aria-label={t('bookView.downloadPdf')}
             >
               {isExportingPDF ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -472,7 +470,7 @@ export default function BookView() {
               <Link to={`${createPageUrl("BookCreation")}?id=${book.id}`}>
                 <Button variant="outline" size="sm" className="flex items-center gap-2">
                   <PenTool className="h-4 w-4" />
-                  {isHebrew ? "ערוך בעורך מתקדם" : "Edit in Advanced Editor"}
+                  {t('bookView.editAdvanced')}
                 </Button>
               </Link>
             )}
@@ -531,7 +529,7 @@ export default function BookView() {
                               <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{book.title}</h2>
                               {book.child_name && (
                                 <p className="text-xl text-white opacity-80">
-                                  {isHebrew ? `סיפור עבור ${book.child_name}` : `A story for ${book.child_name}`}
+                                  {t('bookView.storyFor', { name: book.child_name })}
                                 </p>
                               )}
                             </div>
@@ -553,14 +551,14 @@ export default function BookView() {
                           {currentPage?.image_url ? (
                             <img
                               src={currentPage.image_url}
-                              alt={isHebrew ? `עמוד ${currentPageIndex}` : `Page ${currentPageIndex}`}
+                              alt={t('bookView.pageAlt', { number: currentPageIndex })}
                               className="w-full h-full object-cover cursor-zoom-in"
                               onClick={zoomIn}
                             />
                           ) : (
                             <div className="w-full h-full min-h-[200px] flex items-center justify-center">
                               <p className="text-gray-400">
-                                {isHebrew ? "אין איור" : "No illustration"}
+                                {t('bookView.noIllustration')}
                               </p>
                             </div>
                           )}
@@ -578,18 +576,12 @@ export default function BookView() {
                 <div className={`max-w-2xl mx-auto rounded-2xl p-6 shadow-inner ${nightMode ? "bg-gray-900" : "bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20"}`}>
                   <div className="text-4xl mb-2">🎉</div>
                   <h3 className={`text-2xl font-bold mb-1 ${nightMode ? "text-amber-100" : "text-purple-700 dark:text-purple-300"}`}>
-                    {currentLanguage === "hebrew" || currentLanguage === "yiddish"
-                      ? "סיימת את הספר!"
-                      : "You finished the book!"}
+                    {t('bookView.finishedBook')}
                   </h3>
                   <p className={`text-sm mb-5 ${nightMode ? "text-gray-400" : "text-gray-500 dark:text-gray-400"}`}>
                     {isGuest
-                      ? (currentLanguage === "hebrew" || currentLanguage === "yiddish"
-                        ? "התחבר כדי לצבור XP ולשמור את ההתקדמות שלך"
-                        : "Sign in to earn XP and save your progress")
-                      : (currentLanguage === "hebrew" || currentLanguage === "yiddish"
-                        ? "כל הכבוד! קיבלת +25 XP על הקריאה"
-                        : "Great job! You earned +25 XP for reading")
+                      ? t('bookView.finishedGuestPrompt')
+                      : t('bookView.finishedXpEarned')
                     }
                   </p>
                   <div className={`flex flex-wrap justify-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}>
@@ -604,9 +596,7 @@ export default function BookView() {
                       className="flex items-center gap-2"
                     >
                       <BookOpen className="h-4 w-4" />
-                      {currentLanguage === "hebrew" || currentLanguage === "yiddish"
-                        ? "קרא שוב"
-                        : "Read Again"}
+                      {t('bookView.readAgain')}
                     </Button>
 
                     {/* Sign In prompt for guests, Share for logged-in */}
@@ -616,9 +606,7 @@ export default function BookView() {
                         className="bg-purple-600 hover:bg-purple-700 flex items-center gap-2"
                       >
                         <LogIn className="h-4 w-4" />
-                        {currentLanguage === "hebrew" || currentLanguage === "yiddish"
-                          ? "התחבר כדי ליצור ספרים"
-                          : "Sign in to create books"}
+                        {t('bookView.signInToCreate')}
                       </Button>
                     ) : (
                       <>
@@ -626,9 +614,7 @@ export default function BookView() {
                         <Link to={createPageUrl("Community")}>
                           <Button variant="outline" className="flex items-center gap-2">
                             <Share2 className="h-4 w-4" />
-                            {currentLanguage === "hebrew" || currentLanguage === "yiddish"
-                              ? "שתף"
-                              : "Share"}
+                            {t('bookView.share')}
                           </Button>
                         </Link>
 
@@ -636,9 +622,7 @@ export default function BookView() {
                         <Link to={createPageUrl("BookWizard")}>
                           <Button className="bg-purple-600 hover:bg-purple-700 flex items-center gap-2">
                             <Plus className="h-4 w-4" />
-                            {currentLanguage === "hebrew" || currentLanguage === "yiddish"
-                              ? "צור ספר חדש"
-                              : "Create New Book"}
+                            {t('bookView.createNewBook')}
                           </Button>
                         </Link>
                       </>
@@ -656,42 +640,39 @@ export default function BookView() {
                   onClick={goToPreviousPage}
                   disabled={currentPageIndex === 0}
                   className="flex items-center gap-2"
-                  aria-label={isHebrew ? "הקודם" : "Previous"}
+                  aria-label={t('bookView.previous')}
                 >
                   {isRTL ? (
                     <>
-                      {isHebrew ? "הקודם" : "Previous"}
+                      {t('bookView.previous')}
                       <ChevronRight className="h-4 w-4" aria-hidden="true" />
                     </>
                   ) : (
                     <>
                       <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-                      Previous
+                      {t('bookView.previous')}
                     </>
                   )}
                 </Button>
 
                 <div className={`text-sm ${nightMode ? "text-gray-400" : "text-gray-500 dark:text-gray-400"}`}>
-                  {isHebrew
-                    ? `עמוד ${currentPageIndex} מתוך ${pages.length - 1}`
-                    : `Page ${currentPageIndex} of ${pages.length - 1}`
-                  }
+                  {t('bookView.pageOf', { current: currentPageIndex, total: pages.length - 1 })}
                 </div>
 
                 <Button
                   onClick={goToNextPage}
                   disabled={currentPageIndex === pages.length - 1}
                   className="bg-purple-600 hover:bg-purple-700 flex items-center gap-2"
-                  aria-label={isHebrew ? "הבא" : "Next"}
+                  aria-label={t('bookView.next')}
                 >
                   {isRTL ? (
                     <>
                       <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-                      {isHebrew ? "הבא" : "Next"}
+                      {t('bookView.next')}
                     </>
                   ) : (
                     <>
-                      Next
+                      {t('bookView.next')}
                       <ChevronRight className="h-4 w-4" aria-hidden="true" />
                     </>
                   )}
@@ -703,18 +684,15 @@ export default function BookView() {
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center p-8">
               <h2 className={`text-2xl font-bold mb-4 ${nightMode ? "text-amber-50" : "text-gray-900 dark:text-white"}`}>
-                {isHebrew ? "הספר לא נמצא" : "Book not found"}
+                {t('bookView.noBook.title')}
               </h2>
               <p className={`mb-6 ${nightMode ? "text-gray-400" : "text-gray-600 dark:text-gray-300"}`}>
-                {isHebrew
-                  ? "הספר שחיפשת לא נמצא או הוסר."
-                  : "The book you're looking for might have been removed or doesn't exist."
-                }
+                {t('bookView.noBook.description')}
               </p>
               <Link to={createPageUrl("Library")}>
                 <Button className="bg-purple-600 hover:bg-purple-700">
                   <Home className={`h-4 w-4 ${isRTL ? "ml-2" : "mr-2"}`} />
-                  {isHebrew ? "לספרייה" : "Go to Library"}
+                  {t('bookView.noBook.goToLibrary')}
                 </Button>
               </Link>
             </div>

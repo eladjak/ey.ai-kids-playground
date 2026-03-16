@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useI18n } from "@/components/i18n/i18nProvider";
 import useGamification from "@/hooks/useGamification";
 import { Book } from "@/entities/Book";
@@ -36,6 +36,7 @@ import { getBookTranslation } from "@/utils/book-translations";
 
 export default function BookCreation() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const { isRTL: uiIsRTL } = useI18n();
   const gamification = useGamification();
@@ -88,8 +89,7 @@ export default function BookCreation() {
   const [currentPageLayout, setCurrentPageLayout] = useState("text_top");
 
   // Get book ID from URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const bookId = urlParams.get("id");
+  const bookId = searchParams.get("id");
 
   // Language / RTL
   // currentLanguage is the BOOK CONTENT language (for AI-generated content translations)

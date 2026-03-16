@@ -119,7 +119,11 @@ export default function Settings() {
       setUserData(settings);
       setTempSettings(settings);
     } catch (error) {
-      // silently handled
+      toast({
+        variant: "destructive",
+        title: isRTL ? "שגיאה בטעינת הגדרות" : "Failed to load settings",
+        description: isRTL ? "לא ניתן לטעון את ההגדרות שלך. נסה לרענן את הדף." : "Could not load your settings. Please try refreshing the page.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -149,8 +153,17 @@ export default function Settings() {
         }
       }
       
+      toast({
+        title: isRTL ? "ההגדרות נשמרו" : "Settings saved",
+        description: isRTL ? "ההגדרות שלך עודכנו בהצלחה." : "Your settings have been updated successfully.",
+        className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100",
+      });
     } catch (error) {
-      // silently handled
+      toast({
+        variant: "destructive",
+        title: isRTL ? "שגיאה בשמירת הגדרות" : "Failed to save settings",
+        description: isRTL ? "לא ניתן לשמור את ההגדרות. נסה שוב." : "Could not save your settings. Please try again.",
+      });
     } finally {
       setIsSaving(false);
     }

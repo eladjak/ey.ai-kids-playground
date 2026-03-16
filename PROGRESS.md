@@ -1,7 +1,98 @@
 # Sipurai - Progress & Analysis Report
 
-## Status: Active - Auth Independence Phase 4 Complete (Base44 SDK REMOVED)
-## Last Updated: 2026-03-15
+## Status: Active - UI Facelift + Landing Page + Gap Analysis
+## Last Updated: 2026-03-16
+
+---
+
+## Session 33: UI Facelift + Payments + Gap Analysis (Mar 16, 2026)
+
+### Payments — Polar Rejected, Plan B
+- Polar rejected Sipurai (AUP: "services intended for minors")
+- Researched 6 MoR alternatives: Lemon Squeezy, Creem, Paddle, Dodo, FastSpring
+- **Creem responded positively** — "aligns well with our requirements", awaiting compliance
+- Lemon Squeezy email sent (hello@lemonsqueezy.com), awaiting response
+- Created PAYMENT-PLAN-B.html with full research + step-by-step guide
+
+### UI Facelift — 10 Gemini Images + Page Redesigns
+- Round 1: 5 images (hero, library, characters, ideas, community) + gradient banners on 5 pages
+- Round 2: 5 more images (achievements, wizard, leaderboard, welcome, reading) + Profile/Leaderboard/BookWizard/Feedback polish
+- BookCard: hover scale + shadow lift + gradient overlay
+- Layout: sidebar gradient, frosted glass mobile bar, active nav indicator
+
+### Landing Page Major Upgrade
+- 4 NEW sections: StatsSection, ShowcaseSection, FAQSection, CTASection
+- Hero upgraded: real background image, gradient text, stats bar, pulse CTA
+- Features upgraded: card images, hover zoom, gradient underline
+- Testimonials: 6 reviews (was 3) + trust badges (COPPA, Child-Safe, No Ads)
+- All translated to EN/HE/YI
+
+### Security + Infrastructure Fixes
+- CORS restricted to sipurai.ai + localhost (was wildcard *)
+- VisualEditAgent lazy-loaded (dev only, not in production bundle)
+- Supabase client fallback for CI/test (no more "supabaseUrl required" crashes)
+- LandingPage wired to i18n → 17/17 pages translated
+
+### Gap Analysis (28 findings)
+- 3 CRITICAL: CORS (fixed), silent save failure, VisualEditAgent (fixed)
+- 7 HIGH: BookView i18n, subscriptions table missing, stale useSearchParams, AIStudio i18n
+- 10 MEDIUM: PWA, SEO, performance, feature gaps
+- 8 LOW: technical debt, quality
+
+### Commits
+- 320572e: UI facelift round 1 (5 images + 7 pages)
+- ec4d00e: Visual polish round 2 (5 images + 4 pages + LandingPage i18n)
+- 83b2c2c: Supabase client CI fallback
+- 122f7cc: CORS fix + VisualEditAgent lazy + stale comments
+- d8c409b: Landing page major upgrade (4 new sections + 882 lines)
+
+---
+
+## Session 32: Comprehensive 6-Phase Audit Fix (Mar 15, 2026)
+
+### 4-Agent Audit → 6-Phase Execution
+- Ran 4 parallel audit agents: UI/UX, Code, Feature, Test
+- 67 issues found, then executed 6 phases with parallel agents
+
+### Phase 1: Critical Bug Fixes (direct)
+- C-4: JSON.parse try/catch in aiProvider.js
+- C-2: Polar webhook env vars (VITE_ fallback)
+- H-1: Settings billing self-reference crash
+- Characters privacy, like dedup, Feedback import, manifest URLs
+
+### Phase 2: Billing & Cleanup (agent)
+- Checkout success handling in Settings
+- Dead code deleted: SwitchButton, use-mobile, Core.js stubs
+
+### Phase 3: UI Accessibility (agent)
+- Skip-to-main, aria-labels, loading skeletons, empty states
+- Focus rings, 44px touch targets on mobile
+
+### Phase 4: Code Quality (agent)
+- Base44 remnants cleaned, secureEntity comments updated
+- QueryClient anti-pattern fixed in 4 hooks
+- CharacterEditor i18n (21 keys EN/HE/YI), captureError in 9 catch blocks
+
+### Phase 5: Infrastructure (agent)
+- **CRITICAL: Gemini API serverless proxy** (api/ai/generate.js) — API key no longer in client
+- PWA service worker + offline.html
+- JSON-LD structured data (Organization + WebApplication)
+
+### Phase 6: New Features (agent)
+- Draft auto-save in BookWizard (localStorage, debounced, max 3)
+- Book duplication (copy button, duplicates book + pages)
+- Reading stats widget on Profile
+- Vitest config fix (single worker for Windows/Node 22)
+
+### Results
+- 43 files changed, +1471/-333 lines
+- Build: clean. Tests: 233/262 (12/13 files)
+- Commit: 0d9f163, pushed to main
+
+### Remaining Action Items
+- Add GEMINI_API_KEY (non-VITE) to Vercel env vars
+- Add SUPABASE_URL (non-VITE) to Vercel for webhook
+- Supabase RLS still uses USING(true) — needs Clerk↔Supabase JWT integration
 
 ---
 
