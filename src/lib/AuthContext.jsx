@@ -6,12 +6,20 @@ import { identifyUser } from '@/lib/analytics';
 
 const AuthContext = createContext();
 
+const HAS_CLERK = !!import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
 /**
  * Clerk-backed AuthProvider.
  * Must be rendered inside <ClerkProvider>.
  * Keeps the same context shape that the rest of the app expects.
+ * Falls back to FallbackAuthProvider when Clerk key is not set.
  */
 export const AuthProvider = ({ children }) => {
+  if (!HAS_CLERK) return <FallbackAuthProvider>{children}</FallbackAuthProvider>;
+  return <ClerkAuthProvider>{children}</ClerkAuthProvider>;
+};
+
+const ClerkAuthProvider = ({ children }) => {
   const { user: clerkUser, isLoaded: isUserLoaded } = useUser();
   const { isSignedIn, isLoaded: isAuthLoaded } = useClerkAuth();
   const clerk = useClerk();

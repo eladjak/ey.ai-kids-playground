@@ -12,8 +12,8 @@ import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
-import { ClerkProvider } from '@clerk/clerk-react';
 import { AuthProvider, FallbackAuthProvider, useAuth } from '@/lib/AuthContext';
+import ClerkLocaleProvider from '@/components/ClerkLocaleProvider';
 const SignIn = lazy(() => import('@/pages/SignIn'));
 const SignUp = lazy(() => import('@/pages/SignUp'));
 import { I18nProvider } from '@/components/i18n/i18nProvider';
@@ -22,8 +22,6 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import { AnimatePresence, motion } from 'framer-motion';
 import { trackPageView } from '@/lib/analytics';
 import { initErrorTracking } from '@/lib/errorTracking';
-
-const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -161,31 +159,22 @@ function App() {
     initErrorTracking();
   }, []);
 
-  const inner = (
-    <I18nProvider>
-      <QueryClientProvider client={queryClientInstance}>
-        <Router>
-          <NavigationTracker />
-          <AuthenticatedApp />
-        </Router>
-        <Toaster />
-        {import.meta.env.DEV && <VisualEditAgent />}
-      </QueryClientProvider>
-    </I18nProvider>
-  );
-
   return (
     <ErrorBoundary>
-      {CLERK_PUBLISHABLE_KEY ? (
-        <ClerkProvider
-          publishableKey={CLERK_PUBLISHABLE_KEY}
-          clerkJSUrl="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
-        >
-          <AuthProvider>{inner}</AuthProvider>
-        </ClerkProvider>
-      ) : (
-        <FallbackAuthProvider>{inner}</FallbackAuthProvider>
-      )}
+      <I18nProvider>
+        <ClerkLocaleProvider>
+          <AuthProvider>
+            <QueryClientProvider client={queryClientInstance}>
+              <Router>
+                <NavigationTracker />
+                <AuthenticatedApp />
+              </Router>
+              <Toaster />
+              {import.meta.env.DEV && <VisualEditAgent />}
+            </QueryClientProvider>
+          </AuthProvider>
+        </ClerkLocaleProvider>
+      </I18nProvider>
     </ErrorBoundary>
   )
 }
