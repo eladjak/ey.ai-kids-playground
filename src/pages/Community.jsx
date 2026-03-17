@@ -23,7 +23,8 @@ import {
   ChevronDown,
   X,
   Sparkles,
-  Lock
+  Lock,
+  Globe
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,6 +46,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
+import { motion, AnimatePresence } from "framer-motion";
 import CommunityPost from "../components/community/CommunityPost";
 import FeaturedStory from "../components/community/FeaturedStory";
 import ShareBookModal from "../components/community/ShareBookModal";
@@ -63,7 +65,6 @@ export default function CommunityPage() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [showShareModal, setShowShareModal] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  // Per-user liked-posts set; populated once the current user is loaded
   const [likedPostsKey, setLikedPostsKey] = useState("likedPosts_anonymous");
   const [likedPosts, setLikedPosts] = useState([]);
   const { t, isRTL } = useI18n();
@@ -82,18 +83,15 @@ export default function CommunityPage() {
   const batchEnhancePosts = async (posts) => {
     if (posts.length === 0) return [];
 
-    // Collect unique IDs
     const bookIds = [...new Set(posts.map(p => p.book_id).filter(Boolean))];
     const userIds = [...new Set(posts.map(p => p.user_id).filter(Boolean))];
 
-    // Fetch all books/users/comments in parallel batches
     const [books, users, allComments] = await Promise.all([
       Promise.all(bookIds.map(id => Book.get(id).catch(() => null))),
       Promise.all(userIds.map(id => User.get(id).catch(() => null))),
       Promise.all(posts.map(p => Comment.filter({ community_id: p.id }).catch(() => [])))
     ]);
 
-    // Build lookup maps
     const bookMap = {};
     books.forEach(b => { if (b) bookMap[b.id] = b; });
     const userMap = {};
@@ -106,7 +104,7 @@ export default function CommunityPage() {
       commentCount: allComments[i]?.length || 0
     }));
   };
-  
+
   useEffect(() => {
     loadInitialData();
   }, []);
@@ -119,9 +117,6 @@ export default function CommunityPage() {
     try {
       setIsLoading(true);
 
-      // Set up current user and per-user like tracking from hook.
-      // Key by user ID (stable) rather than email to avoid collisions on
-      // email changes and to work even when email is not set.
       if (hookUser) {
         setCurrentUser(hookUser);
         const userId = hookUser?.id || hookUser?.email;
@@ -135,16 +130,11 @@ export default function CommunityPage() {
           }
         }
       }
-      
-      // Load featured posts
+
       const featured = await Community.filter({ is_featured: true }, "-featured_date", 3);
-
-      // Batch enhance posts (avoid N+1)
       const enhancedFeatured = await batchEnhancePosts(featured);
-
       setFeaturedPosts(enhancedFeatured);
-      
-      // Load initial posts
+
       await loadFilteredPosts();
     } catch (error) {
       captureError(error, { context: 'Community.loadInitialData' });
@@ -160,45 +150,38 @@ export default function CommunityPage() {
   const loadFilteredPosts = async () => {
     try {
       setIsLoading(true);
-      
-      // Create filter object
+
       let filter = { visibility: "public" };
-      
-      // Filter by tab
+
       if (currentTab === "my-posts" && currentUser) {
         filter.user_id = currentUser.id;
       }
-      
-      // Get posts
-      let sortOrder = "-created_date"; // Default to newest first
+
+      let sortOrder = "-created_date";
       if (currentFilter === "popular") {
         sortOrder = "-likes";
       }
-      
-      const filteredPosts = await Community.filter(filter, sortOrder, postsPerPage, (page - 1) * postsPerPage);
 
-      // Batch enhance posts (avoid N+1)
+      const filteredPosts = await Community.filter(filter, sortOrder, postsPerPage, (page - 1) * postsPerPage);
       const enhancedPosts = await batchEnhancePosts(filteredPosts);
-      
-      // Filter by search query if present
+
       let searchResults = enhancedPosts;
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
-        searchResults = enhancedPosts.filter(post => 
-          post.title.toLowerCase().includes(query) || 
+        searchResults = enhancedPosts.filter(post =>
+          post.title.toLowerCase().includes(query) ||
           post.description.toLowerCase().includes(query) ||
           post.book?.title.toLowerCase().includes(query) ||
           post.user?.full_name.toLowerCase().includes(query)
         );
       }
-      
-      // Filter by tags if selected
+
       if (selectedTags.length > 0) {
-        searchResults = searchResults.filter(post => 
+        searchResults = searchResults.filter(post =>
           post.tags && post.tags.some(tag => selectedTags.includes(tag))
         );
       }
-      
+
       setPosts(searchResults);
     } catch (error) {
       captureError(error, { context: 'Community.loadFilteredPosts' });
@@ -217,8 +200,6 @@ export default function CommunityPage() {
     } else {
       setSelectedTags([...selectedTags, tag]);
     }
-    
-    // Reset page when changing filters
     setPage(1);
   };
 
@@ -236,9 +217,6 @@ export default function CommunityPage() {
 
       const alreadyLiked = likedPosts.includes(postId);
 
-      // Re-fetch the current like count from the server before writing to
-      // avoid stale-state manipulation (e.g. a user opening two tabs and
-      // clicking like in both).  We only ever add or subtract exactly 1.
       const freshPost = await Community.get(postId);
       const currentLikes = (freshPost?.likes ?? posts[postIndex].likes) || 0;
 
@@ -248,14 +226,12 @@ export default function CommunityPage() {
 
       await Community.update(postId, { likes: newLikeCount });
 
-      // Update per-user liked posts tracking (keyed by userId)
       const newLikedPosts = alreadyLiked
         ? likedPosts.filter(id => id !== postId)
         : [...likedPosts, postId];
       setLikedPosts(newLikedPosts);
       localStorage.setItem(likedPostsKey, JSON.stringify(newLikedPosts));
 
-      // Update both posts list and featured posts list in local state
       const applyUpdate = (list) =>
         list.map(p => p.id === postId ? { ...p, likes: newLikeCount } : p);
       setPosts(applyUpdate);
@@ -275,7 +251,6 @@ export default function CommunityPage() {
 
   const doShareBook = async (bookData) => {
     try {
-      // Create community post
       const postData = {
         book_id: bookData.bookId,
         user_id: currentUser.id,
@@ -288,11 +263,9 @@ export default function CommunityPage() {
 
       await Community.create(postData);
 
-      // Award XP for community share
       gamification.awardXP("community_share");
       gamification.incrementStat("totalShares");
 
-      // Refresh posts
       await loadFilteredPosts();
 
       setShowShareModal(false);
@@ -310,7 +283,6 @@ export default function CommunityPage() {
   };
 
   const handleShareBook = async (bookData) => {
-    // Check if parental approval is required before publishing
     let controls = {};
     try {
       controls = JSON.parse(localStorage.getItem("parentalControls") || "{}");
@@ -321,7 +293,6 @@ export default function CommunityPage() {
     const requireApproval = controls.requireApprovalBeforePublish ?? true;
 
     if (requireApproval && isPinSet()) {
-      // Store the share data and show PIN dialog
       setPendingShareData(bookData);
       setPinInput("");
       setPinError("");
@@ -346,11 +317,10 @@ export default function CommunityPage() {
   };
 
   const popularTags = [
-    "adventure", "fantasy", "education", "animals", "family", 
+    "adventure", "fantasy", "education", "animals", "family",
     "friendship", "science", "magic", "nature", "values"
   ];
-  
-  // Hebrew translations for tags when in Hebrew
+
   const hebrewTags = {
     "adventure": "הרפתקאות",
     "fantasy": "פנטזיה",
@@ -363,8 +333,7 @@ export default function CommunityPage() {
     "nature": "טבע",
     "values": "ערכים"
   };
-  
-  // Function to get tag display based on language
+
   const getTagDisplay = (tag) => {
     if (isRTL && hebrewTags[tag]) {
       return hebrewTags[tag];
@@ -372,41 +341,93 @@ export default function CommunityPage() {
     return tag;
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.08 } }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
+  };
+
   return (
     <div className="max-w-6xl mx-auto" dir={isRTL ? "rtl" : "ltr"}>
-      {/* Header banner with image */}
-      <div className="relative mb-8 rounded-2xl overflow-hidden bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 p-6 md:p-8 shadow-lg">
-        <div className="absolute inset-0 bg-[url('/images/community-sharing.jpg')] bg-cover bg-center opacity-15" />
-        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-white drop-shadow-sm">{t("community.title")}</h1>
-            <p className="text-purple-100 mt-1">
-              {t("community.subtitle")}
-            </p>
+      {/* Hero gradient banner */}
+      <motion.div
+        className="relative mb-8 rounded-2xl overflow-hidden shadow-xl"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 p-7 md:p-10">
+          <div className="absolute inset-0 bg-[url('/images/community-sharing.jpg')] bg-cover bg-center opacity-15" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_50%,rgba(255,255,255,0.12)_0%,transparent_70%)]" />
+
+          {/* Community stats row */}
+          <div className="relative flex flex-wrap gap-3 mb-5">
+            {[
+              { icon: Globe, label: isRTL ? "ספרים משותפים" : "Shared Books", value: posts.length + "+" },
+              { icon: Heart, label: isRTL ? "לייקים" : "Likes", value: "1K+" },
+              { icon: Users, label: isRTL ? "סופרים" : "Authors", value: "50+" },
+            ].map((stat, i) => (
+              <motion.div
+                key={i}
+                className="flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1.5 border border-white/20"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2 + i * 0.1 }}
+              >
+                <stat.icon className="h-4 w-4 text-white/80" />
+                <span className="text-white/90 text-sm font-medium">{stat.value} {stat.label}</span>
+              </motion.div>
+            ))}
           </div>
-          <Button
-            onClick={() => setShowShareModal(true)}
-            className="bg-white text-purple-700 hover:bg-purple-50 shadow-md"
-          >
-            <BookOpen className={`${isRTL ? "ml-2" : "mr-2"} h-4 w-4`} />
-            {t("community.shareYourBook")}
-          </Button>
+
+          <div className="relative flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-sm">
+                {t("community.title")}
+              </h1>
+              <p className="text-purple-100 mt-2 text-lg max-w-xl">
+                {t("community.subtitle")}
+              </p>
+            </div>
+            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+              <Button
+                onClick={() => setShowShareModal(true)}
+                className="bg-white text-purple-700 hover:bg-purple-50 shadow-lg font-semibold px-6 py-2.5 rounded-2xl gap-2"
+              >
+                <Sparkles className="h-4 w-4" />
+                {t("community.shareYourBook")}
+              </Button>
+            </motion.div>
+          </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Featured Stories Section */}
       {featuredPosts.length > 0 && (
-        <div className="mb-8">
+        <motion.div
+          className="mb-8"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+        >
           <div className="flex items-center mb-4 gap-2">
-            <Sparkles className="h-5 w-5 text-amber-500" />
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t("community.featuredStories")}</h2>
+            <div className="p-1.5 rounded-lg bg-amber-100 dark:bg-amber-900/30">
+              <Sparkles className="h-5 w-5 text-amber-500" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+              {t("community.featuredStories")}
+            </h2>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {isLoading ? (
               Array(3).fill(0).map((_, i) => (
                 <div key={i} className="flex-1">
-                  <Skeleton className="w-full aspect-[3/2] rounded-lg" />
+                  <Skeleton className="w-full aspect-[3/2] rounded-2xl" />
                   <div className="mt-3 space-y-2">
                     <Skeleton className="h-5 w-3/4" />
                     <Skeleton className="h-4 w-1/2" />
@@ -414,33 +435,54 @@ export default function CommunityPage() {
                 </div>
               ))
             ) : (
-              featuredPosts.map(post => (
-                <FeaturedStory
+              featuredPosts.map((post, i) => (
+                <motion.div
                   key={post.id}
-                  post={post}
-                  onLike={() => handleLikePost(post.id)}
-                  isLiked={likedPosts.includes(post.id)}
-                />
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  className="relative rounded-2xl overflow-hidden border-2 border-transparent
+                    hover:border-purple-300 dark:hover:border-purple-700
+                    shadow-md hover:shadow-xl transition-all duration-200
+                    bg-gradient-to-br from-white to-purple-50/40 dark:from-gray-800 dark:to-purple-900/10"
+                  style={{
+                    backgroundImage: "linear-gradient(white, white), linear-gradient(135deg, #a78bfa, #818cf8)",
+                    backgroundOrigin: "border-box",
+                    backgroundClip: "padding-box, border-box"
+                  }}
+                >
+                  <FeaturedStory
+                    post={post}
+                    onLike={() => handleLikePost(post.id)}
+                    isLiked={likedPosts.includes(post.id)}
+                  />
+                </motion.div>
               ))
             )}
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* Main Content */}
-      <div className="space-y-6">
-        {/* Search and Filters */}
-        <div className="flex flex-col md:flex-row gap-4">
+      <motion.div
+        className="space-y-5"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        {/* Search and Sort */}
+        <motion.div variants={itemVariants} className="flex flex-col md:flex-row gap-3">
           <div className="relative flex-1">
-            <Search className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4`} />
+            <Search className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4 pointer-events-none`} />
             <Input
               placeholder={t("community.search")}
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
-                setPage(1); // Reset to first page on search
+                setPage(1);
               }}
-              className={isRTL ? 'pr-9' : 'pl-9'}
+              className={`${isRTL ? 'pr-9' : 'pl-9'} rounded-2xl border-purple-100 dark:border-purple-900/30
+                focus:ring-2 focus:ring-purple-400/40 focus:border-purple-400 dark:focus:border-purple-500 h-11`}
             />
             {searchQuery && (
               <Button
@@ -453,16 +495,16 @@ export default function CommunityPage() {
               </Button>
             )}
           </div>
-          
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="flex gap-2">
-                <Filter className="h-4 w-4" />
+              <Button variant="outline" className="flex gap-2 rounded-2xl border-purple-100 dark:border-purple-900/30 h-11">
+                <Filter className="h-4 w-4 text-purple-500" />
                 {currentFilter === "recent" ? t("community.mostRecent") : t("community.mostPopular")}
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align={isRTL ? "start" : "end"}>
+            <DropdownMenuContent align={isRTL ? "start" : "end"} className="rounded-xl">
               <DropdownMenuItem onClick={() => setCurrentFilter("recent")}>
                 {t("community.mostRecent")}
               </DropdownMenuItem>
@@ -471,97 +513,145 @@ export default function CommunityPage() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
-        
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2">
+        </motion.div>
+
+        {/* Tag Pills */}
+        <motion.div variants={itemVariants} className="flex flex-wrap gap-2">
           {popularTags.map(tag => (
-            <Badge 
+            <motion.button
               key={tag}
-              variant={selectedTags.includes(tag) ? "default" : "outline"}
-              className={`cursor-pointer ${
-                selectedTags.includes(tag) 
-                  ? "bg-purple-100 text-purple-800 hover:bg-purple-200 dark:bg-purple-900 dark:text-purple-100" 
-                  : "hover:bg-gray-100 dark:hover:bg-gray-700"
-              }`}
               onClick={() => handleTagSelect(tag)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium
+                transition-all duration-150 cursor-pointer border
+                ${selectedTags.includes(tag)
+                  ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white border-transparent shadow-md shadow-purple-200 dark:shadow-purple-900/30"
+                  : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-purple-100 dark:border-purple-900/30 hover:border-purple-300 dark:hover:border-purple-700"
+                }`}
             >
-              <Tag className="h-3 w-3 mr-1" />
+              <Tag className="h-3 w-3" />
               {getTagDisplay(tag)}
-            </Badge>
+            </motion.button>
           ))}
-          
+
           {(selectedTags.length > 0 || searchQuery || currentFilter !== "recent") && (
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <button
               onClick={clearFilters}
-              className="text-gray-500 dark:text-gray-400"
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm
+                text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
             >
+              <X className="h-3 w-3" />
               {t("community.clearFilters")}
-            </Button>
+            </button>
           )}
-        </div>
-        
-        {/* Tabs and Content */}
-        <Tabs defaultValue="all" value={currentTab} onValueChange={(value) => {
-          setCurrentTab(value);
-          setPage(1); // Reset page on tab change
-        }}>
-          <TabsList className="mb-6">
-            <TabsTrigger value="all" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              {t("community.allStories")}
-            </TabsTrigger>
-            <TabsTrigger value="my-posts" className="flex items-center gap-2">
-              <Star className="h-4 w-4" />
-              {t("community.mySharedStories")}
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="all" className="space-y-6">
-            {isLoading ? (
-              <div className="space-y-4">
-                {Array(5).fill(0).map((_, i) => (
-                  <div key={i} className="p-4 border rounded-lg">
-                    <div className="flex gap-4">
-                      <Skeleton className="h-24 w-24 rounded" />
-                      <div className="flex-1 space-y-2">
-                        <Skeleton className="h-6 w-3/4" />
-                        <Skeleton className="h-4 w-1/2" />
-                        <div className="flex gap-2">
-                          <Skeleton className="h-5 w-16 rounded-full" />
-                          <Skeleton className="h-5 w-16 rounded-full" />
+        </motion.div>
+
+        {/* Tabs */}
+        <motion.div variants={itemVariants}>
+          <Tabs defaultValue="all" value={currentTab} onValueChange={(value) => {
+            setCurrentTab(value);
+            setPage(1);
+          }}>
+            <TabsList className="mb-5 rounded-2xl p-1 bg-purple-50 dark:bg-purple-900/20">
+              <TabsTrigger
+                value="all"
+                className="flex items-center gap-2 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-indigo-500 data-[state=active]:text-white"
+              >
+                <Users className="h-4 w-4" />
+                {t("community.allStories")}
+              </TabsTrigger>
+              <TabsTrigger
+                value="my-posts"
+                className="flex items-center gap-2 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-indigo-500 data-[state=active]:text-white"
+              >
+                <Star className="h-4 w-4" />
+                {t("community.mySharedStories")}
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="all" className="space-y-4">
+              {isLoading ? (
+                <div className="space-y-3">
+                  {Array(4).fill(0).map((_, i) => (
+                    <div key={i} className="p-4 border border-purple-100 dark:border-purple-900/20 rounded-2xl">
+                      <div className="flex gap-4">
+                        <Skeleton className="h-24 w-24 rounded-xl" />
+                        <div className="flex-1 space-y-2">
+                          <Skeleton className="h-6 w-3/4" />
+                          <Skeleton className="h-4 w-1/2" />
+                          <div className="flex gap-2">
+                            <Skeleton className="h-5 w-16 rounded-full" />
+                            <Skeleton className="h-5 w-16 rounded-full" />
+                          </div>
                         </div>
                       </div>
                     </div>
+                  ))}
+                </div>
+              ) : posts.length > 0 ? (
+                <AnimatePresence>
+                  <motion.div className="space-y-3" variants={containerVariants} initial="hidden" animate="visible">
+                    {posts.map((post, i) => (
+                      <motion.div
+                        key={post.id}
+                        variants={itemVariants}
+                        className="rounded-2xl overflow-hidden border border-purple-100/60 dark:border-purple-900/20
+                          shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                      >
+                        <CommunityPost
+                          post={post}
+                          onLike={() => handleLikePost(post.id)}
+                          isLiked={likedPosts.includes(post.id)}
+                          onReport={(postId) => {
+                            const reported = JSON.parse(localStorage.getItem("reportedPosts") || "[]");
+                            if (!reported.includes(postId)) {
+                              localStorage.setItem("reportedPosts", JSON.stringify([...reported, postId]));
+                            }
+                            toast({ description: isRTL ? "הדיווח נשלח. תודה!" : "Report submitted. Thank you!" });
+                          }}
+                        />
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                </AnimatePresence>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.97 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="text-center py-14 px-4 border border-dashed border-purple-200 dark:border-purple-800/40
+                    rounded-2xl bg-gradient-to-br from-purple-50/60 to-indigo-50/40 dark:from-purple-900/20 dark:to-indigo-900/10"
+                >
+                  <div className="rounded-full bg-gradient-to-br from-purple-100 to-indigo-100 dark:from-purple-900/40 dark:to-indigo-900/30 p-4 inline-flex mb-4 shadow-sm">
+                    <Users className="h-10 w-10 text-purple-400" />
                   </div>
-                ))}
-              </div>
-            ) : posts.length > 0 ? (
-              <div className="space-y-4">
-                {posts.map(post => (
-                  <CommunityPost
-                    key={post.id}
-                    post={post}
-                    onLike={() => handleLikePost(post.id)}
-                    isLiked={likedPosts.includes(post.id)}
-                    onReport={(postId) => {
-                      const reported = JSON.parse(localStorage.getItem("reportedPosts") || "[]");
-                      if (!reported.includes(postId)) {
-                        localStorage.setItem("reportedPosts", JSON.stringify([...reported, postId]));
-                      }
-                      toast({ description: isRTL ? "הדיווח נשלח. תודה!" : "Report submitted. Thank you!" });
-                    }}
-                  />
-                ))}
+                  <h3 className="mt-2 text-lg font-semibold text-gray-900 dark:text-white">
+                    {t("community.noStories")}
+                  </h3>
+                  <p className="mt-2 text-gray-500 dark:text-gray-400">
+                    {searchQuery || selectedTags.length > 0
+                      ? t("community.adjustFilters")
+                      : t("community.beFirst")}
+                  </p>
+                  <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="inline-block mt-5">
+                    <Button
+                      className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white shadow-md rounded-2xl px-6"
+                      onClick={() => setShowShareModal(true)}
+                    >
+                      <Sparkles className="h-4 w-4 me-2" />
+                      {t("community.shareYourStory")}
+                    </Button>
+                  </motion.div>
+                </motion.div>
+              )}
 
-                {/* Pagination */}
-                <div className="flex justify-center mt-8 gap-2">
+              {posts.length > 0 && (
+                <div className="flex justify-center mt-6 gap-2">
                   <Button
                     variant="outline"
                     onClick={() => setPage(p => Math.max(1, p - 1))}
                     disabled={page === 1}
+                    className="rounded-2xl border-purple-100 dark:border-purple-900/30"
                   >
                     {t("community.previous")}
                   </Button>
@@ -569,82 +659,79 @@ export default function CommunityPage() {
                     variant="outline"
                     onClick={() => setPage(p => p + 1)}
                     disabled={posts.length < postsPerPage}
+                    className="rounded-2xl border-purple-100 dark:border-purple-900/30"
                   >
                     {t("community.next")}
                   </Button>
                 </div>
-              </div>
-            ) : (
-              <div className="text-center py-12 px-4 border border-dashed border-purple-200 dark:border-gray-700 rounded-2xl bg-gradient-to-br from-purple-50/50 to-indigo-50/50 dark:from-gray-800/50 dark:to-gray-800/30">
-                <div className="rounded-full bg-purple-100 dark:bg-purple-900/30 p-4 inline-flex mb-4">
-                  <Users className="h-12 w-12 text-purple-400" />
-                </div>
-                <h3 className="mt-2 text-lg font-medium text-gray-900 dark:text-white">{t("community.noStories")}</h3>
-                <p className="mt-2 text-gray-500 dark:text-gray-400">
-                  {searchQuery || selectedTags.length > 0
-                    ? t("community.adjustFilters")
-                    : t("community.beFirst")}
-                </p>
-                <Button
-                  className="mt-4 bg-purple-600 hover:bg-purple-700 shadow-sm"
-                  onClick={() => setShowShareModal(true)}
-                >
-                  {t("community.shareYourStory")}
-                </Button>
-              </div>
-            )}
-          </TabsContent>
-          
-          <TabsContent value="my-posts" className="space-y-6">
-            {isLoading ? (
-              <div className="space-y-4">
-                {Array(3).fill(0).map((_, i) => (
-                  <div key={i} className="p-4 border rounded-lg">
-                    <div className="flex gap-4">
-                      <Skeleton className="h-24 w-24 rounded" />
-                      <div className="flex-1 space-y-2">
-                        <Skeleton className="h-6 w-3/4" />
-                        <Skeleton className="h-4 w-1/2" />
-                        <div className="flex gap-2">
-                          <Skeleton className="h-5 w-16 rounded-full" />
-                          <Skeleton className="h-5 w-16 rounded-full" />
+              )}
+            </TabsContent>
+
+            <TabsContent value="my-posts" className="space-y-4">
+              {isLoading ? (
+                <div className="space-y-3">
+                  {Array(3).fill(0).map((_, i) => (
+                    <div key={i} className="p-4 border border-purple-100 dark:border-purple-900/20 rounded-2xl">
+                      <div className="flex gap-4">
+                        <Skeleton className="h-24 w-24 rounded-xl" />
+                        <div className="flex-1 space-y-2">
+                          <Skeleton className="h-6 w-3/4" />
+                          <Skeleton className="h-4 w-1/2" />
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : posts.length > 0 ? (
-              <div className="space-y-4">
-                {posts.map(post => (
-                  <CommunityPost
-                    key={post.id}
-                    post={post}
-                    onLike={() => handleLikePost(post.id)}
-                    isLiked={likedPosts.includes(post.id)}
-                    isOwner={true}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12 px-4 border border-dashed border-gray-300 dark:border-gray-700 rounded-lg">
-                <BookOpen className="h-12 w-12 mx-auto text-gray-400" />
-                <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-white">{t("community.noSharedYet")}</h3>
-                <p className="mt-2 text-gray-500 dark:text-gray-400">
-                  {t("community.notSharedYet")}
-                </p>
-                <Button 
-                  className="mt-4 bg-purple-600 hover:bg-purple-700"
-                  onClick={() => setShowShareModal(true)}
+                  ))}
+                </div>
+              ) : posts.length > 0 ? (
+                <motion.div className="space-y-3" variants={containerVariants} initial="hidden" animate="visible">
+                  {posts.map((post) => (
+                    <motion.div
+                      key={post.id}
+                      variants={itemVariants}
+                      className="rounded-2xl overflow-hidden border border-purple-100/60 dark:border-purple-900/20
+                        shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                    >
+                      <CommunityPost
+                        post={post}
+                        onLike={() => handleLikePost(post.id)}
+                        isLiked={likedPosts.includes(post.id)}
+                        isOwner={true}
+                      />
+                    </motion.div>
+                  ))}
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.97 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="text-center py-14 px-4 border border-dashed border-purple-200 dark:border-purple-800/40 rounded-2xl
+                    bg-gradient-to-br from-purple-50/60 to-indigo-50/40 dark:from-purple-900/20 dark:to-indigo-900/10"
                 >
-                  {t("community.shareFirstStory")}
-                </Button>
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
-      </div>
-      
+                  <div className="rounded-full bg-gradient-to-br from-purple-100 to-indigo-100 dark:from-purple-900/40 dark:to-indigo-900/30 p-4 inline-flex mb-4 shadow-sm">
+                    <BookOpen className="h-10 w-10 text-purple-400" />
+                  </div>
+                  <h3 className="mt-2 text-lg font-semibold text-gray-900 dark:text-white">
+                    {t("community.noSharedYet")}
+                  </h3>
+                  <p className="mt-2 text-gray-500 dark:text-gray-400">
+                    {t("community.notSharedYet")}
+                  </p>
+                  <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="inline-block mt-5">
+                    <Button
+                      className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white shadow-md rounded-2xl px-6"
+                      onClick={() => setShowShareModal(true)}
+                    >
+                      <Sparkles className="h-4 w-4 me-2" />
+                      {t("community.shareFirstStory")}
+                    </Button>
+                  </motion.div>
+                </motion.div>
+              )}
+            </TabsContent>
+          </Tabs>
+        </motion.div>
+      </motion.div>
+
       {/* Share Book Modal */}
       <ShareBookModal
         isOpen={showShareModal}
@@ -652,7 +739,7 @@ export default function CommunityPage() {
         onShare={handleShareBook}
       />
 
-      {/* Parental PIN Approval Dialog */}
+      {/* Parental PIN Dialog */}
       <Dialog open={showPinDialog} onOpenChange={(open) => {
         if (!open) {
           setShowPinDialog(false);
@@ -661,10 +748,12 @@ export default function CommunityPage() {
           setPinError("");
         }
       }}>
-        <DialogContent dir={isRTL ? "rtl" : "ltr"} className="sm:max-w-md">
+        <DialogContent dir={isRTL ? "rtl" : "ltr"} className="sm:max-w-md rounded-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Lock className="h-5 w-5 text-purple-600" />
+              <div className="p-1.5 rounded-lg bg-purple-100 dark:bg-purple-900/30">
+                <Lock className="h-5 w-5 text-purple-600" />
+              </div>
               {isRTL ? "אישור הורה נדרש" : "Parental Approval Required"}
             </DialogTitle>
             <DialogDescription>
@@ -687,7 +776,7 @@ export default function CommunityPage() {
               }}
               onKeyDown={(e) => { if (e.key === "Enter") handlePinSubmit(); }}
               autoFocus
-              className={isRTL ? "text-right" : "text-left"}
+              className={`${isRTL ? "text-right" : "text-left"} rounded-xl`}
             />
             {pinError && (
               <p className="text-sm text-red-500">{pinError}</p>
@@ -695,7 +784,7 @@ export default function CommunityPage() {
           </div>
 
           <DialogFooter className={isRTL ? "flex-row-reverse" : ""}>
-            <Button variant="outline" onClick={() => {
+            <Button variant="outline" className="rounded-xl" onClick={() => {
               setShowPinDialog(false);
               setPendingShareData(null);
               setPinInput("");
@@ -703,7 +792,7 @@ export default function CommunityPage() {
             }}>
               {isRTL ? "ביטול" : "Cancel"}
             </Button>
-            <Button onClick={handlePinSubmit} className="bg-purple-600 hover:bg-purple-700">
+            <Button onClick={handlePinSubmit} className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 rounded-xl">
               {isRTL ? "אשר" : "Confirm"}
             </Button>
           </DialogFooter>

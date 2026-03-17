@@ -11,12 +11,7 @@ import {
   Trophy,
   Medal,
   Award,
-  ArrowUp,
-  ArrowDown,
-  Minus,
   Search,
-  ChevronLeft,
-  ChevronRight,
   CalendarRange,
   Clock,
   Star,
@@ -24,7 +19,10 @@ import {
   Users,
   Shield,
   Calendar,
-  Loader2
+  Loader2,
+  Sparkles,
+  Zap,
+  Flame
 } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -33,9 +31,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Leaderboard() {
   const { t, language, isRTL } = useI18n();
@@ -44,7 +42,6 @@ export default function Leaderboard() {
   const [currentUser, setCurrentUser] = useState(null);
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState("weekly");
   const [timePeriod, setTimePeriod] = useState("weekly");
   const [category, setCategory] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
@@ -54,7 +51,6 @@ export default function Leaderboard() {
     loadData();
   }, []);
 
-  // Reload when filters change
   useEffect(() => {
     if (currentUser) {
       buildLeaderboard();
@@ -82,10 +78,8 @@ export default function Leaderboard() {
       const user = userOverride || currentUser;
       if (!user) return;
 
-      // Load all books to aggregate per-user stats
       const allBooks = await Book.list("-created_date", 200);
 
-      // Build date filter based on time period
       const now = new Date();
       let dateThreshold = null;
       if (timePeriod === "weekly") {
@@ -93,14 +87,11 @@ export default function Leaderboard() {
       } else if (timePeriod === "monthly") {
         dateThreshold = new Date(now.getTime() - 30 * 86400000);
       }
-      // allTime = no filter
 
-      // Filter books by date
       const filteredBooks = dateThreshold
         ? allBooks.filter(b => new Date(b.created_date) >= dateThreshold)
         : allBooks;
 
-      // Aggregate by created_by (email)
       const userMap = {};
       for (const book of filteredBooks) {
         const email = book.created_by;
@@ -119,10 +110,9 @@ export default function Leaderboard() {
           };
         }
         userMap[email].books += 1;
-        userMap[email].xp += 100; // XP_EVENTS.book_created = 100
+        userMap[email].xp += 100;
       }
 
-      // Enrich current user with real data
       if (userMap[user.email]) {
         userMap[user.email].name = user.display_name || user.full_name || user.email.split("@")[0];
         userMap[user.email].avatar = user.avatar_url || "";
@@ -130,7 +120,6 @@ export default function Leaderboard() {
         userMap[user.email].level = user.level || getLevelFromXP(userMap[user.email].xp);
         userMap[user.email].streak = user.streak_days || 0;
       } else {
-        // Current user has no books in this period — still show them
         userMap[user.email] = {
           email: user.email,
           name: user.display_name || user.full_name || user.email.split("@")[0],
@@ -143,16 +132,13 @@ export default function Leaderboard() {
         };
       }
 
-      // Convert to array
       let entries = Object.values(userMap);
 
-      // Compute levels for all entries
       entries = entries.map(e => ({
         ...e,
         level: e.level || getLevelFromXP(e.xp)
       }));
 
-      // Sort by selected category
       if (category === "books") {
         entries.sort((a, b) => b.books - a.books);
       } else if (category === "streak") {
@@ -170,11 +156,11 @@ export default function Leaderboard() {
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
+    setCurrentPage(1);
   };
 
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    setTimePeriod(tab);
+  const handleTimePeriodChange = (period) => {
+    setTimePeriod(period);
     setCurrentPage(1);
   };
 
@@ -187,36 +173,43 @@ export default function Leaderboard() {
     setCurrentPage(page);
   };
 
-  const RankTrend = ({ rank }) => {
-    // For real data we show the rank number, no fake trends
-    return null;
-  };
-
   const getRankDecoration = (rank) => {
     switch (rank) {
       case 1:
         return {
           icon: <Trophy className="h-5 w-5 text-amber-500" />,
-          className: "bg-gradient-to-br from-amber-200 to-yellow-300 text-amber-900 dark:from-amber-700/40 dark:to-yellow-600/30 dark:text-amber-200 shadow-sm ring-2 ring-amber-300/50 dark:ring-amber-600/30",
-          rowClassName: "bg-gradient-to-r from-amber-50/80 to-yellow-50/50 dark:from-amber-900/15 dark:to-yellow-900/10 border-l-4 border-amber-400"
+          badgeClass: "bg-gradient-to-br from-amber-300 to-yellow-400 text-amber-900 shadow ring-2 ring-amber-300/60",
+          rowClass: "bg-gradient-to-r from-amber-50/90 to-yellow-50/60 dark:from-amber-900/20 dark:to-yellow-900/10 border-s-4 border-amber-400",
+          podiumClass: "bg-gradient-to-b from-amber-400 to-yellow-500",
+          podiumHeight: "h-32",
+          medal: "🥇"
         };
       case 2:
         return {
           icon: <Medal className="h-5 w-5 text-gray-400" />,
-          className: "bg-gradient-to-br from-gray-200 to-slate-300 text-gray-800 dark:from-gray-600/40 dark:to-slate-500/30 dark:text-gray-200 shadow-sm ring-2 ring-gray-300/50 dark:ring-gray-600/30",
-          rowClassName: "bg-gradient-to-r from-gray-50/80 to-slate-50/50 dark:from-gray-800/30 dark:to-slate-800/20 border-l-4 border-gray-300"
+          badgeClass: "bg-gradient-to-br from-gray-300 to-slate-400 text-gray-800 shadow ring-2 ring-gray-300/60",
+          rowClass: "bg-gradient-to-r from-gray-50/80 to-slate-50/50 dark:from-gray-800/30 dark:to-slate-800/20 border-s-4 border-gray-300",
+          podiumClass: "bg-gradient-to-b from-gray-300 to-slate-400",
+          podiumHeight: "h-24",
+          medal: "🥈"
         };
       case 3:
         return {
-          icon: <Award className="h-5 w-5 text-orange-700" />,
-          className: "bg-gradient-to-br from-orange-200 to-amber-300 text-orange-900 dark:from-orange-700/30 dark:to-amber-600/20 dark:text-orange-200 shadow-sm ring-2 ring-orange-300/50 dark:ring-orange-600/30",
-          rowClassName: "bg-gradient-to-r from-orange-50/60 to-amber-50/40 dark:from-orange-900/10 dark:to-amber-900/5 border-l-4 border-orange-300"
+          icon: <Award className="h-5 w-5 text-orange-600" />,
+          badgeClass: "bg-gradient-to-br from-orange-300 to-amber-400 text-orange-900 shadow ring-2 ring-orange-300/60",
+          rowClass: "bg-gradient-to-r from-orange-50/70 to-amber-50/40 dark:from-orange-900/15 dark:to-amber-900/8 border-s-4 border-orange-300",
+          podiumClass: "bg-gradient-to-b from-orange-400 to-amber-500",
+          podiumHeight: "h-20",
+          medal: "🥉"
         };
       default:
         return {
           icon: null,
-          className: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
-          rowClassName: ""
+          badgeClass: "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300",
+          rowClass: "",
+          podiumClass: "",
+          podiumHeight: "",
+          medal: null
         };
     }
   };
@@ -231,57 +224,50 @@ export default function Leaderboard() {
   const totalPages = Math.max(1, Math.ceil(filteredLeaderboard.length / 10));
   const paginatedData = filteredLeaderboard.slice((currentPage - 1) * 10, currentPage * 10);
 
+  // Top 3 for podium
+  const top3 = filteredLeaderboard.slice(0, 3);
+
+  const periodButtons = [
+    { value: "weekly", label: t("leaderboard.tabs.weekly"), icon: CalendarRange },
+    { value: "monthly", label: t("leaderboard.tabs.monthly"), icon: Calendar },
+    { value: "allTime", label: t("leaderboard.tabs.allTime"), icon: Clock },
+  ];
+
   if (isLoading) {
     return (
       <div className="max-w-6xl mx-auto pb-12 p-4 md:p-6">
-        {/* Header skeleton */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
           <div className="space-y-2">
-            <Skeleton className="h-8 w-48" />
-            <Skeleton className="h-4 w-64" />
+            <Skeleton className="h-8 w-48 rounded-xl" />
+            <Skeleton className="h-4 w-64 rounded-lg" />
           </div>
-          <Skeleton className="h-10 w-64" />
+          <Skeleton className="h-10 w-64 rounded-2xl" />
         </div>
 
-        {/* Stats cards skeleton */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <Skeleton className="md:col-span-2 h-24 rounded-lg" />
-          <Skeleton className="h-24 rounded-lg" />
-          <Skeleton className="h-24 rounded-lg" />
+          <Skeleton className="md:col-span-2 h-24 rounded-2xl" />
+          <Skeleton className="h-24 rounded-2xl" />
+          <Skeleton className="h-24 rounded-2xl" />
         </div>
 
-        {/* Table skeleton */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
-          {/* Tabs skeleton */}
-          <div className="p-4 border-b border-gray-100 dark:border-gray-700">
-            <div className="flex gap-2">
-              <Skeleton className="h-9 w-28 rounded-md" />
-              <Skeleton className="h-9 w-28 rounded-md" />
-              <Skeleton className="h-9 w-28 rounded-md" />
-            </div>
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm overflow-hidden">
+          <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex gap-2">
+            <Skeleton className="h-9 w-28 rounded-2xl" />
+            <Skeleton className="h-9 w-28 rounded-2xl" />
+            <Skeleton className="h-9 w-28 rounded-2xl" />
           </div>
-
-          {/* Row skeletons — match actual leaderboard row layout */}
-          <div className="divide-y divide-gray-200 dark:divide-gray-700">
+          <div className="divide-y divide-gray-100 dark:divide-gray-700">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="flex items-center gap-4 px-4 py-4 animate-pulse">
-                {/* Rank */}
+              <div key={i} className="flex items-center gap-4 px-4 py-4">
                 <Skeleton className="h-8 w-8 rounded-full flex-shrink-0" />
-                {/* Avatar + name */}
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <Skeleton className="h-8 w-8 rounded-full flex-shrink-0" />
-                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-4 w-32 rounded" />
                 </div>
-                {/* Level */}
-                <Skeleton className="h-4 w-12 hidden sm:block" />
-                {/* XP */}
-                <Skeleton className="h-4 w-16 hidden sm:block" />
-                {/* Books */}
-                <Skeleton className="h-4 w-10 hidden md:block" />
-                {/* Streak */}
-                <Skeleton className="h-4 w-14 hidden md:block" />
-                {/* Button */}
-                <Skeleton className="h-8 w-20 rounded-md flex-shrink-0" />
+                <Skeleton className="h-4 w-12 rounded hidden sm:block" />
+                <Skeleton className="h-4 w-16 rounded hidden sm:block" />
+                <Skeleton className="h-4 w-10 rounded hidden md:block" />
+                <Skeleton className="h-8 w-20 rounded-xl flex-shrink-0" />
               </div>
             ))}
           </div>
@@ -293,238 +279,348 @@ export default function Leaderboard() {
   return (
     <div className="max-w-6xl mx-auto pb-12" dir={isRTL ? "rtl" : "ltr"}>
       {/* Gradient Banner Header */}
-      <div className="relative overflow-hidden rounded-2xl mx-4 md:mx-6 mt-4 mb-6 shadow-lg">
+      <motion.div
+        className="relative overflow-hidden rounded-2xl mx-4 md:mx-6 mt-4 mb-6 shadow-xl"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 p-8 md:p-10">
           <div
             className="absolute inset-0 opacity-[0.08] bg-cover bg-center pointer-events-none"
             style={{ backgroundImage: "url('/images/leaderboard.jpg')" }}
           />
           <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_70%_30%,white_0%,transparent_60%)]" />
-          <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+          <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-5">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
-                <Trophy className="h-8 w-8 text-white" />
+              <div className="p-3 bg-white/20 backdrop-blur-sm rounded-2xl shadow-sm">
+                <Trophy className="h-9 w-9 text-white drop-shadow" />
               </div>
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-sm">{t("leaderboard.title")}</h1>
-                <p className="text-white/80">{t("leaderboard.subtitle")}</p>
+                <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-sm">
+                  {t("leaderboard.title")}
+                </h1>
+                <p className="text-white/80 mt-0.5">{t("leaderboard.subtitle")}</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="relative">
-                <Search className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 h-4 w-4 text-white/60`} />
-                <Input
-                  placeholder={t("leaderboard.search")}
-                  value={searchQuery}
-                  onChange={handleSearch}
-                  className={`w-full md:w-64 ${isRTL ? 'pr-9' : 'pl-9'} bg-white/20 backdrop-blur-sm border-white/30 text-white placeholder:text-white/50 focus:bg-white/30`}
-                />
-              </div>
+
+            {/* Search in banner */}
+            <div className="relative">
+              <Search className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 h-4 w-4 text-white/60 pointer-events-none`} />
+              <Input
+                placeholder={t("leaderboard.search")}
+                value={searchQuery}
+                onChange={handleSearch}
+                className={`w-full md:w-64 ${isRTL ? 'pr-9' : 'pl-9'} rounded-2xl
+                  bg-white/20 backdrop-blur-sm border-white/30 text-white placeholder:text-white/50
+                  focus:bg-white/30 focus:border-white/60 focus:ring-white/30`}
+              />
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="p-4 md:p-6 pt-0">
+      <div className="p-4 md:p-6 pt-0 space-y-5">
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <Card className="md:col-span-2 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 border-purple-200 dark:border-purple-900/30">
-            <CardContent className="p-6">
+        {/* Stats cards row */}
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-4 gap-4"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15, duration: 0.5 }}
+        >
+          {/* Your rank card */}
+          <Card className="md:col-span-2 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 border-purple-200 dark:border-purple-900/30 rounded-2xl shadow-sm overflow-hidden">
+            <CardContent className="p-5">
               {currentUserEntry ? (
                 <div className="flex items-center gap-4">
-                  <div className={`flex items-center justify-center w-14 h-14 rounded-full ${getRankDecoration(currentUserRank).className}`}>
+                  <div className={`flex items-center justify-center w-14 h-14 rounded-full flex-shrink-0 ${getRankDecoration(currentUserRank).badgeClass}`}>
                     {getRankDecoration(currentUserRank).icon || (
                       <span className="text-xl font-bold">#{currentUserRank}</span>
                     )}
                   </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold">{t("leaderboard.your.rank")}</h3>
-                    <div className="flex items-center gap-3 mt-1">
-                      <Badge variant="outline" className="gap-1 font-normal bg-white/70 dark:bg-gray-800/50">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base font-semibold text-gray-900 dark:text-white">{t("leaderboard.your.rank")}</h3>
+                    <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                      <Badge variant="outline" className="gap-1 font-normal bg-white/70 dark:bg-gray-800/50 text-xs rounded-full">
                         <Trophy className="h-3 w-3 text-amber-500" />
-                        <span>#{currentUserRank}</span>
+                        #{currentUserRank}
                       </Badge>
-                      <Badge variant="outline" className="gap-1 font-normal bg-white/70 dark:bg-gray-800/50">
-                        <Star className="h-3 w-3 text-purple-500" />
-                        <span>{currentUserEntry.xp} XP</span>
+                      <Badge variant="outline" className="gap-1 font-normal bg-white/70 dark:bg-gray-800/50 text-xs rounded-full">
+                        <Zap className="h-3 w-3 text-purple-500" />
+                        {currentUserEntry.xp} XP
                       </Badge>
-                      <Badge variant="outline" className="gap-1 font-normal bg-white/70 dark:bg-gray-800/50">
+                      <Badge variant="outline" className="gap-1 font-normal bg-white/70 dark:bg-gray-800/50 text-xs rounded-full">
                         <BookOpen className="h-3 w-3 text-blue-500" />
-                        <span>{currentUserEntry.books}</span>
+                        {currentUserEntry.books} {language === "hebrew" ? "ספרים" : "books"}
                       </Badge>
                     </div>
                   </div>
                 </div>
               ) : (
                 <div className="text-center py-2">
-                  <p>{language === "hebrew" ? "התחבר כדי לראות את הדירוג שלך" : "Login to see your rank"}</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">
+                    {language === "hebrew" ? "התחבר כדי לראות את הדירוג שלך" : "Login to see your rank"}
+                  </p>
                 </div>
               )}
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border-amber-200 dark:border-amber-900/30">
+          <Card className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border-amber-200 dark:border-amber-900/30 rounded-2xl shadow-sm overflow-hidden">
             <CardContent className="p-4 text-center">
-              <Trophy className="h-8 w-8 text-amber-500 mx-auto mb-2" />
-              <h3 className="font-semibold text-lg">{t("leaderboard.top.storytellers")}</h3>
-              <p className="text-2xl font-bold mt-1">{totalStoryTellers}</p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-900/30">
-            <CardContent className="p-4 text-center">
-              <Users className="h-8 w-8 text-green-500 mx-auto mb-2" />
-              <h3 className="font-semibold text-lg">{t("leaderboard.rising.stars")}</h3>
-              <p className="text-2xl font-bold mt-1">{leaderboardData.filter(u => u.books > 0).length}</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden mb-6">
-          <div className="p-4 border-b border-gray-100 dark:border-gray-700">
-            <Tabs
-              defaultValue={activeTab}
-              onValueChange={handleTabChange}
-              className="w-full"
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <TabsList>
-                  <TabsTrigger value="weekly">
-                    <CalendarRange className="h-4 w-4 mr-2" />
-                    {t("leaderboard.tabs.weekly")}
-                  </TabsTrigger>
-                  <TabsTrigger value="monthly">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    {t("leaderboard.tabs.monthly")}
-                  </TabsTrigger>
-                  <TabsTrigger value="allTime">
-                    <Clock className="h-4 w-4 mr-2" />
-                    {t("leaderboard.tabs.allTime")}
-                  </TabsTrigger>
-                </TabsList>
-
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">{t("leaderboard.filter.title")}:</span>
-                  <Select value={category} onValueChange={handleCategoryChange}>
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder={t("leaderboard.filter.all")} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">{t("leaderboard.filter.all")}</SelectItem>
-                      <SelectItem value="books">{t("leaderboard.filter.books")}</SelectItem>
-                      <SelectItem value="streak">{t("leaderboard.filter.streak")}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                <Trophy className="h-6 w-6 text-amber-500" />
               </div>
+              <h3 className="font-semibold text-base">{t("leaderboard.top.storytellers")}</h3>
+              <p className="text-2xl font-bold text-amber-600 dark:text-amber-400 mt-0.5">{totalStoryTellers}</p>
+            </CardContent>
+          </Card>
 
-              <TabsContent value="weekly" className="mt-0" />
-              <TabsContent value="monthly" className="mt-0" />
-              <TabsContent value="allTime" className="mt-0" />
-            </Tabs>
+          <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-900/30 rounded-2xl shadow-sm overflow-hidden">
+            <CardContent className="p-4 text-center">
+              <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                <Users className="h-6 w-6 text-green-500" />
+              </div>
+              <h3 className="font-semibold text-base">{t("leaderboard.rising.stars")}</h3>
+              <p className="text-2xl font-bold text-green-600 dark:text-green-400 mt-0.5">
+                {leaderboardData.filter(u => u.books > 0).length}
+              </p>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Top 3 Podium */}
+        {top3.length >= 3 && (
+          <motion.div
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-purple-100/50 dark:border-purple-900/20 p-6 overflow-hidden"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25, duration: 0.5 }}
+          >
+            <div className="flex items-center gap-2 mb-5">
+              <Sparkles className="h-5 w-5 text-amber-500" />
+              <h3 className="font-bold text-gray-900 dark:text-white">
+                {language === "hebrew" ? "שלישיית הצמרת" : "Top 3 Champions"}
+              </h3>
+            </div>
+
+            {/* Podium layout: 2nd, 1st, 3rd */}
+            <div className="flex items-end justify-center gap-3 md:gap-6">
+              {[top3[1], top3[0], top3[2]].map((entry, podiumIndex) => {
+                if (!entry) return null;
+                const rank = podiumIndex === 1 ? 1 : podiumIndex === 0 ? 2 : 3;
+                const dec = getRankDecoration(rank);
+                const heightClass = rank === 1 ? "h-32" : rank === 2 ? "h-24" : "h-20";
+
+                return (
+                  <motion.div
+                    key={entry.email}
+                    className="flex flex-col items-center gap-2 flex-1 max-w-[120px]"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 + podiumIndex * 0.1, duration: 0.5 }}
+                  >
+                    <span className="text-2xl">{dec.medal}</span>
+                    <Avatar className={`${rank === 1 ? 'h-14 w-14' : 'h-11 w-11'} border-3 border-white shadow-lg ring-2 ${rank === 1 ? 'ring-amber-300' : rank === 2 ? 'ring-gray-300' : 'ring-orange-300'}`}>
+                      {entry.avatar ? (
+                        <AvatarImage src={entry.avatar} alt={entry.name} />
+                      ) : (
+                        <AvatarFallback className="bg-gradient-to-br from-purple-500 to-indigo-500 text-white font-bold">
+                          {entry.name.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      )}
+                    </Avatar>
+                    <div className="text-center">
+                      <p className="font-semibold text-sm text-gray-900 dark:text-white truncate max-w-[100px]">
+                        {entry.name}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{entry.xp} XP</p>
+                    </div>
+                    {/* Podium block */}
+                    <div className={`w-full ${heightClass} ${dec.podiumClass} rounded-t-xl flex items-start justify-center pt-2 shadow-md`}>
+                      <span className="text-white font-bold text-lg">#{rank}</span>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Period selector + Category filter */}
+        <motion.div
+          className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-purple-100/50 dark:border-purple-900/20 overflow-hidden"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35, duration: 0.5 }}
+        >
+          <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            {/* Period pill buttons */}
+            <div className="flex gap-2 p-1 bg-gray-100 dark:bg-gray-700/50 rounded-2xl w-fit">
+              {periodButtons.map(btn => (
+                <button
+                  key={btn.value}
+                  onClick={() => handleTimePeriodChange(btn.value)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium transition-all duration-150
+                    ${timePeriod === btn.value
+                      ? "bg-gradient-to-r from-amber-400 to-orange-400 text-white shadow-md"
+                      : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                    }`}
+                >
+                  <btn.icon className="h-4 w-4" />
+                  {btn.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Category filter */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                {t("leaderboard.filter.title")}:
+              </span>
+              <Select value={category} onValueChange={handleCategoryChange}>
+                <SelectTrigger className="w-[160px] rounded-xl border-purple-100 dark:border-purple-900/30">
+                  <SelectValue placeholder={t("leaderboard.filter.all")} />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl">
+                  <SelectItem value="all">{t("leaderboard.filter.all")}</SelectItem>
+                  <SelectItem value="books">{t("leaderboard.filter.books")}</SelectItem>
+                  <SelectItem value="streak">{t("leaderboard.filter.streak")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
+          {/* Rankings Table */}
           {paginatedData.length === 0 ? (
             <div className="p-12 text-center">
-              <Trophy className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">{t("leaderboard.empty")}</p>
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center">
+                <Trophy className="h-8 w-8 text-amber-300" />
+              </div>
+              <p className="text-gray-500 dark:text-gray-400">{t("leaderboard.empty")}</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full table-auto">
-                <thead className="bg-gray-50 dark:bg-gray-800/50">
-                  <tr>
-                    <th className="px-4 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <thead>
+                  <tr className="bg-gray-50/80 dark:bg-gray-800/50">
+                    <th className="px-4 py-3 text-start text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       {t("leaderboard.rank")}
                     </th>
-                    <th className="px-4 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-start text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       {t("leaderboard.user")}
                     </th>
-                    <th className="px-4 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-start text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       {t("leaderboard.level")}
                     </th>
-                    <th className="px-4 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-start text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       {t("leaderboard.xp")}
                     </th>
-                    <th className="px-4 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-start text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       {t("leaderboard.books")}
                     </th>
-                    <th className="px-4 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-start text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       {t("leaderboard.streak")}
                     </th>
-                    <th className="px-4 py-3 text-start text-xs font-medium text-gray-500 uppercase tracking-wider">
-
-                    </th>
+                    <th className="px-4 py-3" />
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {paginatedData.map((entry, index) => {
-                    const actualRank = (currentPage - 1) * 10 + index + 1;
-                    const rankDecoration = getRankDecoration(actualRank);
+                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700/50">
+                  <AnimatePresence>
+                    {paginatedData.map((entry, index) => {
+                      const actualRank = (currentPage - 1) * 10 + index + 1;
+                      const dec = getRankDecoration(actualRank);
+                      const isCurrentUser = entry.isCurrentUser;
 
-                    return (
-                      <tr
-                        key={entry.email}
-                        className={`transition-all duration-150 ${entry.isCurrentUser ? 'bg-purple-50 dark:bg-purple-900/10 ring-1 ring-inset ring-purple-200 dark:ring-purple-800/30' : rankDecoration.rowClassName || 'hover:bg-gray-50/80 dark:hover:bg-gray-800/60'} hover:shadow-sm`}
-                      >
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <div className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${rankDecoration.className}`}
-                            style={{ float: isRTL ? 'right' : 'left' }}>
-                            {rankDecoration.icon || actualRank}
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-3">
-                            <Avatar className="h-8 w-8 shrink-0">
-                              {entry.avatar ? (
-                                <AvatarImage src={entry.avatar} alt={entry.name} />
-                              ) : (
-                                <AvatarFallback className="bg-gradient-to-br from-purple-500 to-indigo-500 text-white">
-                                  {entry.name.charAt(0).toUpperCase()}
-                                </AvatarFallback>
-                              )}
-                            </Avatar>
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium">{entry.name}</span>
-                              {entry.isCurrentUser && (
-                                <Badge className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
-                                  {t("leaderboard.you")}
-                                </Badge>
-                              )}
+                      return (
+                        <motion.tr
+                          key={entry.email}
+                          initial={{ opacity: 0, x: isRTL ? 16 : -16 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.04, duration: 0.3 }}
+                          className={`transition-all duration-150
+                            ${isCurrentUser
+                              ? "bg-gradient-to-r from-purple-50 to-indigo-50/60 dark:from-purple-900/15 dark:to-indigo-900/10 ring-1 ring-inset ring-purple-200 dark:ring-purple-800/40"
+                              : dec.rowClass || "hover:bg-gray-50/70 dark:hover:bg-gray-800/50"
+                            }`}
+                        >
+                          <td className="px-4 py-4 whitespace-nowrap">
+                            <div
+                              className={`inline-flex items-center justify-center w-9 h-9 rounded-full text-sm font-bold ${dec.badgeClass}`}
+                            >
+                              {dec.icon || <span>#{actualRank}</span>}
                             </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-1">
-                            <Shield className="h-4 w-4 text-purple-500" />
-                            <span className="font-medium">{entry.level || 1}</span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap font-medium">
-                          {(entry.xp || 0).toLocaleString()} XP
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-1">
-                            <BookOpen className="h-4 w-4 text-blue-500" />
-                            <span>{entry.books}</span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-1">
-                            <CalendarRange className="h-4 w-4 text-green-500" />
-                            <span>{entry.streak} {timePeriod !== "allTime" ? (language === "hebrew" ? "ימים" : "days") : ""}</span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 text-end whitespace-nowrap">
-                          <Link to={createPageUrl("Profile")}>
-                            <Button variant="ghost" size="sm" className="h-8 text-xs text-purple-600 dark:text-purple-400">
-                              {t("leaderboard.view.profile")}
-                            </Button>
-                          </Link>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap">
+                            <div className="flex items-center gap-3">
+                              <Avatar className="h-9 w-9 shrink-0 shadow-sm">
+                                {entry.avatar ? (
+                                  <AvatarImage src={entry.avatar} alt={entry.name} />
+                                ) : (
+                                  <AvatarFallback className="bg-gradient-to-br from-purple-500 to-indigo-500 text-white text-sm font-semibold">
+                                    {entry.name.charAt(0).toUpperCase()}
+                                  </AvatarFallback>
+                                )}
+                              </Avatar>
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium text-gray-900 dark:text-white">{entry.name}</span>
+                                {isCurrentUser && (
+                                  <Badge className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 rounded-full px-2">
+                                    {t("leaderboard.you")}
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap">
+                            <div className="flex items-center gap-1.5">
+                              <div className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                                <Shield className="h-3.5 w-3.5 text-purple-500" />
+                              </div>
+                              <span className="font-medium text-sm">{entry.level || 1}</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap">
+                            <div className="flex items-center gap-1">
+                              <Zap className="h-3.5 w-3.5 text-amber-500" />
+                              <span className="font-semibold text-sm">{(entry.xp || 0).toLocaleString()}</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap">
+                            <div className="flex items-center gap-1.5">
+                              <BookOpen className="h-3.5 w-3.5 text-blue-500" />
+                              <span className="text-sm">{entry.books}</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap">
+                            <div className="flex items-center gap-1.5">
+                              <Flame className="h-3.5 w-3.5 text-orange-500" />
+                              <span className="text-sm">{entry.streak}
+                                {timePeriod !== "allTime" ? (
+                                  <span className="text-xs text-gray-400 ms-1">
+                                    {language === "hebrew" ? "ימים" : "d"}
+                                  </span>
+                                ) : null}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 text-end whitespace-nowrap">
+                            <Link to={createPageUrl("Profile")}>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 text-xs text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-xl"
+                              >
+                                {t("leaderboard.view.profile")}
+                              </Button>
+                            </Link>
+                          </td>
+                        </motion.tr>
+                      );
+                    })}
+                  </AnimatePresence>
                 </tbody>
               </table>
             </div>
@@ -558,6 +654,7 @@ export default function Leaderboard() {
                         <PaginationLink
                           isActive={pageNumber === currentPage}
                           onClick={() => handlePageChange(pageNumber)}
+                          className={pageNumber === currentPage ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white border-transparent" : ""}
                         >
                           {pageNumber}
                         </PaginationLink>
@@ -588,7 +685,7 @@ export default function Leaderboard() {
               </Pagination>
             </div>
           )}
-        </div>
+        </motion.div>
       </div>
     </div>
   );
