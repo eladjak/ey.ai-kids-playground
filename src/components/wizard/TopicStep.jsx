@@ -15,7 +15,8 @@ import {
   Globe,
   PenLine,
   Lightbulb,
-  Shuffle
+  Shuffle,
+  Wand2
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -28,9 +29,10 @@ const TOPIC_CARDS = [
   {
     id: "animals",
     icon: Cat,
-    gradient: "from-amber-400 to-orange-500",
-    bg: "bg-amber-50 dark:bg-amber-950/30",
+    gradient: "from-amber-400 via-orange-400 to-red-400",
+    bgCard: "from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40",
     ring: "ring-amber-400",
+    shadowColor: "shadow-amber-200/60",
     en: "Animals",
     he: "חיות",
     yi: "חיות"
@@ -38,9 +40,10 @@ const TOPIC_CARDS = [
   {
     id: "space",
     icon: Rocket,
-    gradient: "from-indigo-400 to-purple-600",
-    bg: "bg-indigo-50 dark:bg-indigo-950/30",
+    gradient: "from-indigo-500 via-purple-500 to-violet-600",
+    bgCard: "from-indigo-50 to-purple-50 dark:from-indigo-950/40 dark:to-purple-950/40",
     ring: "ring-indigo-400",
+    shadowColor: "shadow-indigo-200/60",
     en: "Space",
     he: "חלל",
     yi: "חלל"
@@ -48,9 +51,10 @@ const TOPIC_CARDS = [
   {
     id: "family",
     icon: Users,
-    gradient: "from-pink-400 to-rose-500",
-    bg: "bg-pink-50 dark:bg-pink-950/30",
+    gradient: "from-pink-400 via-rose-400 to-red-400",
+    bgCard: "from-pink-50 to-rose-50 dark:from-pink-950/40 dark:to-rose-950/40",
     ring: "ring-pink-400",
+    shadowColor: "shadow-pink-200/60",
     en: "Family",
     he: "משפחה",
     yi: "משפּחה"
@@ -58,9 +62,10 @@ const TOPIC_CARDS = [
   {
     id: "fairy_tale",
     icon: Crown,
-    gradient: "from-yellow-400 to-amber-500",
-    bg: "bg-yellow-50 dark:bg-yellow-950/30",
+    gradient: "from-yellow-400 via-amber-400 to-orange-400",
+    bgCard: "from-yellow-50 to-amber-50 dark:from-yellow-950/40 dark:to-amber-950/40",
     ring: "ring-yellow-400",
+    shadowColor: "shadow-yellow-200/60",
     en: "Fairy Tales",
     he: "אגדות",
     yi: "מעשׂיות"
@@ -68,9 +73,10 @@ const TOPIC_CARDS = [
   {
     id: "adventure",
     icon: Compass,
-    gradient: "from-emerald-400 to-green-600",
-    bg: "bg-emerald-50 dark:bg-emerald-950/30",
+    gradient: "from-emerald-400 via-green-400 to-teal-500",
+    bgCard: "from-emerald-50 to-green-50 dark:from-emerald-950/40 dark:to-green-950/40",
     ring: "ring-emerald-400",
+    shadowColor: "shadow-emerald-200/60",
     en: "Adventure",
     he: "הרפתקאות",
     yi: "אַוואַנטורעס"
@@ -78,9 +84,10 @@ const TOPIC_CARDS = [
   {
     id: "nature",
     icon: TreePine,
-    gradient: "from-green-400 to-teal-500",
-    bg: "bg-green-50 dark:bg-green-950/30",
+    gradient: "from-green-400 via-teal-400 to-cyan-500",
+    bgCard: "from-green-50 to-teal-50 dark:from-green-950/40 dark:to-teal-950/40",
     ring: "ring-green-400",
+    shadowColor: "shadow-green-200/60",
     en: "Nature",
     he: "טבע",
     yi: "נאַטור"
@@ -88,9 +95,10 @@ const TOPIC_CARDS = [
   {
     id: "science",
     icon: GraduationCap,
-    gradient: "from-cyan-400 to-blue-500",
-    bg: "bg-cyan-50 dark:bg-cyan-950/30",
+    gradient: "from-cyan-400 via-blue-400 to-indigo-500",
+    bgCard: "from-cyan-50 to-blue-50 dark:from-cyan-950/40 dark:to-blue-950/40",
     ring: "ring-cyan-400",
+    shadowColor: "shadow-cyan-200/60",
     en: "Science",
     he: "מדע",
     yi: "וויסנשאַפֿט"
@@ -98,9 +106,10 @@ const TOPIC_CARDS = [
   {
     id: "magic",
     icon: Sparkles,
-    gradient: "from-violet-400 to-fuchsia-500",
-    bg: "bg-violet-50 dark:bg-violet-950/30",
+    gradient: "from-violet-500 via-purple-500 to-fuchsia-500",
+    bgCard: "from-violet-50 to-fuchsia-50 dark:from-violet-950/40 dark:to-fuchsia-950/40",
     ring: "ring-violet-400",
+    shadowColor: "shadow-violet-200/60",
     en: "Magic",
     he: "קסמים",
     yi: "כּישוף"
@@ -108,9 +117,10 @@ const TOPIC_CARDS = [
   {
     id: "friendship",
     icon: Heart,
-    gradient: "from-rose-400 to-pink-500",
-    bg: "bg-rose-50 dark:bg-rose-950/30",
+    gradient: "from-rose-400 via-pink-400 to-fuchsia-400",
+    bgCard: "from-rose-50 to-pink-50 dark:from-rose-950/40 dark:to-pink-950/40",
     ring: "ring-rose-400",
+    shadowColor: "shadow-rose-200/60",
     en: "Friendship",
     he: "חברות",
     yi: "פֿרײַנדשאַפֿט"
@@ -118,9 +128,10 @@ const TOPIC_CARDS = [
   {
     id: "music",
     icon: Music,
-    gradient: "from-fuchsia-400 to-purple-500",
-    bg: "bg-fuchsia-50 dark:bg-fuchsia-950/30",
+    gradient: "from-fuchsia-400 via-purple-400 to-violet-500",
+    bgCard: "from-fuchsia-50 to-purple-50 dark:from-fuchsia-950/40 dark:to-purple-950/40",
     ring: "ring-fuchsia-400",
+    shadowColor: "shadow-fuchsia-200/60",
     en: "Music",
     he: "מוזיקה",
     yi: "מוזיק"
@@ -128,9 +139,10 @@ const TOPIC_CARDS = [
   {
     id: "art",
     icon: Palette,
-    gradient: "from-orange-400 to-red-500",
-    bg: "bg-orange-50 dark:bg-orange-950/30",
+    gradient: "from-orange-400 via-red-400 to-rose-500",
+    bgCard: "from-orange-50 to-red-50 dark:from-orange-950/40 dark:to-red-950/40",
     ring: "ring-orange-400",
+    shadowColor: "shadow-orange-200/60",
     en: "Art",
     he: "אמנות",
     yi: "קונסט"
@@ -138,9 +150,10 @@ const TOPIC_CARDS = [
   {
     id: "travel",
     icon: Globe,
-    gradient: "from-sky-400 to-blue-500",
-    bg: "bg-sky-50 dark:bg-sky-950/30",
+    gradient: "from-sky-400 via-blue-400 to-indigo-500",
+    bgCard: "from-sky-50 to-blue-50 dark:from-sky-950/40 dark:to-blue-950/40",
     ring: "ring-sky-400",
+    shadowColor: "shadow-sky-200/60",
     en: "Travel",
     he: "טיולים",
     yi: "רײַזן"
@@ -149,7 +162,6 @@ const TOPIC_CARDS = [
 
 /**
  * Fun "Surprise Me!" twist phrases per topic.
- * Combined with the topic name to create a creative custom idea.
  */
 const SURPRISE_TWISTS = {
   en: [
@@ -185,11 +197,12 @@ const SURPRISE_TWISTS = {
 };
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 24, scale: 0.92 },
   visible: (i) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.05, duration: 0.3 }
+    scale: 1,
+    transition: { delay: i * 0.04, duration: 0.35, ease: "easeOut" }
   })
 };
 
@@ -218,8 +231,7 @@ function getSurpriseButtonLabel(language) {
 
 /**
  * TopicStep - Step 1 of the wizard: Choose a story topic.
- * Displays visual topic cards, "I have my own idea" text input,
- * "Use Saved Idea" toggle, and a "Surprise Me!" button.
+ * Visual topic cards with gradients, "Surprise Me!" button, and custom idea input.
  */
 export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, onCustomIdeaChange, isRTL, language }) {
   const isHebrew = language === "hebrew";
@@ -264,18 +276,11 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
   };
 
   const handleSurpriseMe = () => {
-    // Pick a random topic from TOPIC_CARDS
     const randomTopic = TOPIC_CARDS[Math.floor(Math.random() * TOPIC_CARDS.length)];
-    // Pick a random twist
-    const twistList = isYiddish
-      ? SURPRISE_TWISTS.yi
-      : isHebrew
-      ? SURPRISE_TWISTS.he
-      : SURPRISE_TWISTS.en;
+    const twistList = isYiddish ? SURPRISE_TWISTS.yi : isHebrew ? SURPRISE_TWISTS.he : SURPRISE_TWISTS.en;
     const randomTwist = twistList[Math.floor(Math.random() * twistList.length)];
     const topicLabel = getTopicLabel(randomTopic, language);
 
-    // Build the creative idea text
     let ideaText;
     if (isHebrew) {
       ideaText = `סיפור על ${topicLabel} ${randomTwist}`;
@@ -285,11 +290,9 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
       ideaText = `A story about ${topicLabel.toLowerCase()} ${randomTwist}`;
     }
 
-    // Animate: briefly mark the surprised topic
     setSurprisedTopicId(randomTopic.id);
-    setTimeout(() => setSurprisedTopicId(null), 800);
+    setTimeout(() => setSurprisedTopicId(null), 900);
 
-    // Auto-fill topic + custom idea
     onSelectTopic("custom");
     if (onCustomIdeaChange) onCustomIdeaChange(ideaText);
     setShowCustomIdea(true);
@@ -298,37 +301,62 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
 
   return (
     <div className="space-y-6" dir={isRTL ? "rtl" : "ltr"}>
-      <div className="text-center mb-4">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          {isHebrew ? "על מה יהיה הסיפור?" : isYiddish ? "וועגן וואָס וועט די מעשׂה זײַן?" : "What's the story about?"}
-        </h2>
-        <p className="text-gray-500 dark:text-gray-400 text-lg">
-          {isHebrew ? "בחר נושא שמעניין אותך" : isYiddish ? "קלײַב אַ טעמע וואָס אינטערעסירט דיך" : "Pick a topic you love"}
-        </p>
+      {/* Header */}
+      <div className="text-center mb-2">
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            {isHebrew ? "על מה יהיה הסיפור?" : isYiddish ? "וועגן וואָס וועט די מעשׂה זײַן?" : "What's the story about?"}
+          </h2>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.15, duration: 0.4 }}
+        >
+          <p className="text-gray-500 dark:text-gray-400 text-base">
+            {isHebrew ? "בחר נושא שמעניין אותך" : isYiddish ? "קלײַב אַ טעמע וואָס אינטערעסירט דיך" : "Pick a topic you love"}
+          </p>
+        </motion.div>
       </div>
 
-      {/* Surprise Me! Button — prominent, placed before the grid */}
+      {/* Surprise Me! Button */}
       <div className="flex justify-center">
         <motion.button
           onClick={handleSurpriseMe}
-          whileHover={{ scale: 1.05 }}
+          whileHover={{ scale: 1.06, y: -2 }}
           whileTap={{ scale: 0.95 }}
           aria-label={getSurpriseButtonLabel(language)}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.4 }}
           className="
-            flex items-center gap-3 px-6 py-3 rounded-2xl font-bold text-base
+            relative flex items-center gap-3 px-8 py-3.5 rounded-2xl font-bold text-base
             bg-gradient-to-r from-fuchsia-500 via-purple-500 to-indigo-500
-            text-white shadow-lg hover:shadow-xl
-            transition-all duration-200
+            text-white shadow-lg shadow-purple-300/50
+            hover:shadow-xl hover:shadow-purple-400/50
+            transition-shadow duration-200 overflow-hidden
           "
         >
-          <Shuffle className="h-5 w-5" aria-hidden="true" />
-          {getSurpriseButtonLabel(language)}
-          <Sparkles className="h-5 w-5" aria-hidden="true" />
+          {/* Shimmer effect */}
+          <motion.div
+            className="absolute inset-0 bg-white/20 skew-x-12"
+            animate={{ x: ["-200%", "300%"] }}
+            transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 1.5, ease: "easeInOut" }}
+            aria-hidden="true"
+          />
+          <Shuffle className="h-5 w-5 relative z-10" aria-hidden="true" />
+          <span className="relative z-10">{getSurpriseButtonLabel(language)}</span>
+          <Wand2 className="h-5 w-5 relative z-10" aria-hidden="true" />
         </motion.button>
       </div>
 
+      {/* Topic Cards Grid */}
       <div
-        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
+        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4"
         role="radiogroup"
         aria-label={isHebrew ? "בחר נושא" : "Choose topic"}
       >
@@ -344,7 +372,7 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
               variants={cardVariants}
               initial="hidden"
               animate="visible"
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.05, y: -3 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => {
                 setShowCustomIdea(false);
@@ -355,15 +383,25 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
               aria-checked={selectedTopic === topic.id}
               aria-label={getTopicLabel(topic, language)}
               className={`
-                flex flex-col items-center justify-center p-4 md:p-6 rounded-2xl
-                transition-all duration-200 cursor-pointer min-h-[120px] md:min-h-[140px]
-                ${topic.bg}
+                relative flex flex-col items-center justify-center p-4 md:p-5 rounded-2xl
+                transition-all duration-200 cursor-pointer min-h-[130px] md:min-h-[150px]
+                bg-gradient-to-br ${topic.bgCard}
                 ${isSelected
-                  ? `ring-2 ${topic.ring} shadow-lg`
-                  : "hover:shadow-md border border-transparent hover:border-gray-200 dark:hover:border-gray-600"
+                  ? `ring-2 ${topic.ring} shadow-lg ${topic.shadowColor}`
+                  : "hover:shadow-md hover:ring-1 hover:ring-gray-200 dark:hover:ring-gray-600 shadow-sm"
                 }
+                overflow-hidden
               `}
             >
+              {/* Selected glow overlay */}
+              {isSelected && (
+                <motion.div
+                  className={`absolute inset-0 bg-gradient-to-br ${topic.gradient} opacity-10 rounded-2xl`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 0.1 }}
+                />
+              )}
+
               <AnimatePresence mode="wait">
                 {isSurprised ? (
                   <motion.div
@@ -372,28 +410,31 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
                     initial="initial"
                     animate="animate"
                     exit="exit"
-                    className={`w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br ${topic.gradient} flex items-center justify-center mb-3`}
+                    className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br ${topic.gradient} flex items-center justify-center mb-3 shadow-md`}
                   >
-                    <Icon className="h-6 w-6 md:h-7 md:w-7 text-white" aria-hidden="true" />
+                    <Icon className="h-7 w-7 md:h-8 md:w-8 text-white drop-shadow" aria-hidden="true" />
                   </motion.div>
                 ) : (
                   <motion.div
                     key="normal"
-                    className={`w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br ${topic.gradient} flex items-center justify-center mb-3`}
+                    className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br ${topic.gradient} flex items-center justify-center mb-3 shadow-md`}
+                    animate={isSelected ? { scale: [1, 1.08, 1] } : {}}
+                    transition={{ duration: 0.4 }}
                   >
-                    <Icon className="h-6 w-6 md:h-7 md:w-7 text-white" aria-hidden="true" />
+                    <Icon className="h-7 w-7 md:h-8 md:w-8 text-white drop-shadow" aria-hidden="true" />
                   </motion.div>
                 )}
               </AnimatePresence>
-              <span className="text-sm md:text-base font-semibold text-gray-800 dark:text-gray-200">
+
+              <span className={`text-sm md:text-base font-bold text-center relative z-10 ${isSelected ? "text-gray-900 dark:text-white" : "text-gray-700 dark:text-gray-200"}`}>
                 {getTopicLabel(topic, language)}
               </span>
 
-              {selectedTopic === topic.id && !surprisedTopicId && (
+              {isSelected && !surprisedTopicId && (
                 <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="mt-1 w-2 h-2 rounded-full bg-purple-600"
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className={`mt-1.5 w-2 h-2 rounded-full bg-gradient-to-r ${topic.gradient}`}
                   aria-hidden="true"
                 />
               )}
@@ -407,33 +448,34 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
           variants={cardVariants}
           initial="hidden"
           animate="visible"
-          whileHover={{ scale: 1.05 }}
+          whileHover={{ scale: 1.05, y: -3 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleSelectCustomIdea}
           role="radio"
           aria-checked={selectedTopic === "custom"}
           aria-label={isHebrew ? "יש לי רעיון משלי" : isYiddish ? "איך האָב מײַן אייגענעם רעיון" : "I have my own idea"}
           className={`
-            flex flex-col items-center justify-center p-4 md:p-6 rounded-2xl
-            transition-all duration-200 cursor-pointer min-h-[120px] md:min-h-[140px]
-            bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-800 dark:to-slate-800
+            relative flex flex-col items-center justify-center p-4 md:p-5 rounded-2xl
+            transition-all duration-200 cursor-pointer min-h-[130px] md:min-h-[150px]
+            bg-gradient-to-br from-slate-50 to-gray-100 dark:from-gray-800 dark:to-slate-800
+            shadow-sm overflow-hidden
             ${selectedTopic === "custom"
-              ? "ring-2 ring-purple-500 shadow-lg"
-              : "hover:shadow-md border border-dashed border-gray-300 dark:border-gray-600 hover:border-purple-400"
+              ? "ring-2 ring-purple-500 shadow-lg shadow-purple-200/50"
+              : "hover:shadow-md border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-purple-400 dark:hover:border-purple-500"
             }
           `}
         >
-          <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center mb-3">
-            <PenLine className="h-6 w-6 md:h-7 md:w-7 text-white" aria-hidden="true" />
+          <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-purple-400 via-violet-500 to-pink-500 flex items-center justify-center mb-3 shadow-md">
+            <PenLine className="h-7 w-7 md:h-8 md:w-8 text-white" aria-hidden="true" />
           </div>
-          <span className="text-sm md:text-base font-semibold text-gray-800 dark:text-gray-200">
+          <span className={`text-sm md:text-base font-bold text-center ${selectedTopic === "custom" ? "text-purple-700 dark:text-purple-300" : "text-gray-700 dark:text-gray-200"}`}>
             {isHebrew ? "רעיון משלי" : isYiddish ? "מײַן רעיון" : "My Own Idea"}
           </span>
           {selectedTopic === "custom" && !surprisedTopicId && (
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="mt-1 w-2 h-2 rounded-full bg-purple-600"
+              className="mt-1.5 w-2 h-2 rounded-full bg-purple-500"
               aria-hidden="true"
             />
           )}
@@ -449,8 +491,8 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden"
           >
-            <div className="bg-purple-50 dark:bg-purple-950/30 rounded-xl p-4 space-y-3">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300 block">
+            <div className="bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-950/30 dark:to-indigo-950/30 rounded-2xl p-4 space-y-3 border border-purple-100 dark:border-purple-900/50 shadow-sm">
+              <label className="text-sm font-semibold text-purple-800 dark:text-purple-300 block">
                 {isHebrew ? "ספר לנו על הרעיון שלך:" : isYiddish ? "דערציי אונדז וועגן דײַן רעיון:" : "Tell us about your idea:"}
               </label>
               <Textarea
@@ -465,7 +507,7 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
                 dir={isRTL ? "rtl" : "ltr"}
                 rows={3}
                 maxLength={500}
-                className="resize-none bg-white dark:bg-gray-900"
+                className="resize-none bg-white dark:bg-gray-900 border-purple-200 dark:border-purple-800 focus:border-purple-400 rounded-xl"
                 aria-label={isHebrew ? "תיאור הרעיון שלך" : "Describe your idea"}
               />
             </div>
@@ -478,7 +520,7 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
         <Button
           variant="ghost"
           onClick={() => setShowSavedIdeas(!showSavedIdeas)}
-          className="text-purple-600 dark:text-purple-400 hover:text-purple-700 gap-2"
+          className="text-purple-600 dark:text-purple-400 hover:text-purple-700 hover:bg-purple-50 dark:hover:bg-purple-950/30 gap-2 rounded-xl"
           aria-expanded={showSavedIdeas}
         >
           <Lightbulb className="h-4 w-4" aria-hidden="true" />
@@ -495,13 +537,13 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden"
           >
-            <div className="bg-blue-50 dark:bg-blue-950/30 rounded-xl p-4 space-y-3">
-              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+            <div className="bg-gradient-to-br from-blue-50 to-sky-50 dark:from-blue-950/30 dark:to-sky-950/30 rounded-2xl p-4 space-y-3 border border-blue-100 dark:border-blue-900/50">
+              <h3 className="text-sm font-semibold text-blue-800 dark:text-blue-300">
                 {isHebrew ? "הרעיונות השמורים שלך:" : "Your saved ideas:"}
               </h3>
               {isLoadingIdeas ? (
                 <div className="flex justify-center py-4">
-                  <div className="w-6 h-6 border-2 border-purple-300 border-t-purple-600 rounded-full animate-spin" />
+                  <div className="w-6 h-6 border-2 border-blue-300 border-t-blue-600 rounded-full animate-spin" />
                 </div>
               ) : savedIdeas.length === 0 ? (
                 <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-3">
@@ -512,12 +554,12 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
                   {savedIdeas.map((idea) => (
                     <motion.button
                       key={idea.id}
-                      whileHover={{ scale: 1.01 }}
+                      whileHover={{ scale: 1.01, x: isRTL ? -3 : 3 }}
                       whileTap={{ scale: 0.99 }}
                       onClick={() => handleSelectSavedIdea(idea)}
-                      className="w-full text-left p-3 bg-white dark:bg-gray-800 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors border border-gray-200 dark:border-gray-700"
+                      className="w-full text-left p-3 bg-white dark:bg-gray-800 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors border border-gray-200 dark:border-gray-700 shadow-sm"
                     >
-                      <p className="font-medium text-sm text-gray-900 dark:text-white truncate">
+                      <p className="font-semibold text-sm text-gray-900 dark:text-white truncate">
                         {idea.title}
                       </p>
                       {idea.description && (

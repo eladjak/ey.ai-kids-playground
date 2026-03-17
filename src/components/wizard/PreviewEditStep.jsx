@@ -273,6 +273,14 @@ export default function PreviewEditStep({
   const isYiddish = language === "yiddish";
   const [showAdvanced, setShowAdvanced] = useState(false);
 
+  const handleSurpriseMe = () => {
+    const styleValues = ART_STYLE_VISUAL.map((s) => s.value);
+    onBookDataChange("art_style", styleValues[Math.floor(Math.random() * styleValues.length)]);
+    onBookDataChange("length", RANDOM_LENGTHS[Math.floor(Math.random() * RANDOM_LENGTHS.length)]);
+    onBookDataChange("tone", RANDOM_TONES[Math.floor(Math.random() * RANDOM_TONES.length)]);
+    onBookDataChange("age_range", RANDOM_AGES[Math.floor(Math.random() * RANDOM_AGES.length)]);
+  };
+
   // Loading skeleton
   if (isGeneratingOutline) {
     return (
@@ -312,14 +320,57 @@ export default function PreviewEditStep({
   }
 
   return (
-    <div className="space-y-6" dir={isRTL ? "rtl" : "ltr"}>
-      <div className="text-center mb-6">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          {isHebrew ? "בדוק ועדכן את הסיפור" : isYiddish ? "קוק איבער דײַן מעשׂה" : "Review & edit your story"}
-        </h2>
-        <p className="text-gray-500 dark:text-gray-400 text-lg">
-          {isHebrew ? "אפשר לערוך לפני שממשיכים" : "You can make changes before continuing"}
-        </p>
+    <div className="space-y-5" dir={isRTL ? "rtl" : "ltr"}>
+      <div className="text-center mb-4">
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            {isHebrew ? "בדוק ועדכן את הסיפור" : isYiddish ? "קוק איבער דײַן מעשׂה" : "Review & edit your story"}
+          </h2>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.15 }}
+        >
+          <p className="text-gray-500 dark:text-gray-400 text-base">
+            {isHebrew ? "אפשר לערוך לפני שממשיכים" : "You can make changes before continuing"}
+          </p>
+        </motion.div>
+      </div>
+
+      {/* Surprise Me! — auto-fill art style, length, tone */}
+      <div className="flex justify-center">
+        <motion.button
+          onClick={handleSurpriseMe}
+          whileHover={{ scale: 1.05, y: -2 }}
+          whileTap={{ scale: 0.95 }}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="
+            relative flex items-center gap-3 px-6 py-3 rounded-2xl font-bold text-sm
+            bg-gradient-to-r from-amber-400 via-orange-400 to-pink-400
+            text-white shadow-md shadow-orange-200/50
+            hover:shadow-lg hover:shadow-orange-300/50
+            transition-shadow duration-200 overflow-hidden
+          "
+          aria-label={isHebrew ? "מלא אוטומטית" : "Auto-fill settings"}
+        >
+          <motion.div
+            className="absolute inset-0 bg-white/25 skew-x-12"
+            animate={{ x: ["-200%", "300%"] }}
+            transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 2.5, ease: "easeInOut" }}
+            aria-hidden="true"
+          />
+          <Shuffle className="h-4 w-4 relative z-10" aria-hidden="true" />
+          <span className="relative z-10">
+            {isHebrew ? "הפתע אותי — מלא אוטומטית!" : "Surprise Me — Auto-fill!"}
+          </span>
+          <Wand2 className="h-4 w-4 relative z-10" aria-hidden="true" />
+        </motion.button>
       </div>
 
       {/* Story Title */}
@@ -415,44 +466,53 @@ export default function PreviewEditStep({
         </CardHeader>
         <CardContent>
           <div
-            className="grid grid-cols-2 sm:grid-cols-3 gap-3"
+            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"
             role="radiogroup"
             aria-label={isHebrew ? "בחר סגנון אמנותי" : "Choose art style"}
           >
-            {ART_STYLE_VISUAL.map((style) => {
+            {ART_STYLE_VISUAL.map((style, index) => {
               const isSelected = bookData.art_style === style.value;
+              const grad = STYLE_GRADIENTS[style.value] || "from-gray-400 to-slate-500";
               return (
-                <button
+                <motion.button
                   key={style.value}
                   onClick={() => onBookDataChange("art_style", style.value)}
                   role="radio"
                   aria-checked={isSelected}
                   aria-label={getStyleLabel(style, language)}
+                  whileHover={{ scale: 1.04, y: -2 }}
+                  whileTap={{ scale: 0.96 }}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.02 }}
                   className={`
-                    relative p-3 rounded-xl text-left border-2 cursor-pointer
-                    transition-colors duration-150
+                    relative p-3 rounded-2xl text-left cursor-pointer overflow-hidden
+                    ${style.bg}
+                    transition-all duration-150
                     ${isSelected
-                      ? "border-purple-500 bg-purple-50 dark:bg-purple-900/30 shadow-md"
-                      : `${style.border} ${style.bg} hover:border-purple-300 dark:hover:border-purple-600`
+                      ? "ring-2 ring-purple-500 shadow-lg shadow-purple-200/50"
+                      : `border border-transparent hover:border-gray-200 dark:hover:border-gray-600 shadow-sm hover:shadow-md`
                     }
                   `}
                 >
-                  {/* Selected checkmark — no enter/exit animation to prevent flicker */}
+                  {/* Selected checkmark */}
                   <div
-                    className={`absolute top-2 right-2 w-5 h-5 bg-purple-600 rounded-full flex items-center justify-center transition-opacity duration-150 ${isSelected ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+                    className={`absolute top-2 right-2 w-5 h-5 bg-purple-600 rounded-full flex items-center justify-center transition-all duration-150 shadow-sm ${isSelected ? "opacity-100 scale-100" : "opacity-0 scale-50 pointer-events-none"}`}
                     aria-hidden="true"
                   >
                     <Check className="h-3 w-3 text-white" />
                   </div>
 
                   <div className="flex flex-col items-start gap-1">
-                    {/* Emoji */}
-                    <span className="text-2xl leading-none mb-1" aria-hidden="true">
-                      {style.emoji}
-                    </span>
+                    {/* Gradient swatch with emoji */}
+                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${grad} flex items-center justify-center mb-2 shadow-md`}>
+                      <span className="text-xl leading-none drop-shadow-sm" aria-hidden="true">
+                        {style.emoji}
+                      </span>
+                    </div>
 
                     {/* Style name */}
-                    <span className={`text-sm font-semibold leading-tight ${isSelected ? "text-purple-800 dark:text-purple-200" : "text-gray-800 dark:text-gray-200"}`}>
+                    <span className={`text-xs font-bold leading-tight ${isSelected ? "text-purple-800 dark:text-purple-200" : "text-gray-800 dark:text-gray-200"}`}>
                       {getStyleLabel(style, language)}
                     </span>
 
@@ -461,33 +521,41 @@ export default function PreviewEditStep({
                       {getStyleDesc(style, language)}
                     </span>
                   </div>
-                </button>
+                </motion.button>
               );
             })}
           </div>
         </CardContent>
       </Card>
 
-      {/* Story Length Selection */}
+      {/* Story Length Selection — visual pill buttons */}
       <Card>
         <CardContent className="p-4">
-          <div className={`flex items-center gap-4 ${isRTL ? "flex-row-reverse" : ""}`}>
-            <Label className="text-sm font-medium whitespace-nowrap">
+          <div className={`flex items-center gap-4 flex-wrap ${isRTL ? "flex-row-reverse" : ""}`}>
+            <Label className="text-sm font-semibold whitespace-nowrap">
               {isHebrew ? "אורך הסיפור:" : "Story length:"}
             </Label>
-            <Select
-              value={bookData.length || "medium"}
-              onValueChange={(value) => onBookDataChange("length", value)}
-            >
-              <SelectTrigger className="w-[160px]" aria-label={isHebrew ? "בחר אורך סיפור" : "Select story length"}>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="short">{isHebrew ? "קצר (6 עמודים)" : "Short (6 pages)"}</SelectItem>
-                <SelectItem value="medium">{isHebrew ? "בינוני (10 עמודים)" : "Medium (10 pages)"}</SelectItem>
-                <SelectItem value="long">{isHebrew ? "ארוך (15 עמודים)" : "Long (15 pages)"}</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className={`flex gap-2 flex-wrap ${isRTL ? "flex-row-reverse" : ""}`}>
+              {[
+                { value: "short", en: "Short (6p)", he: "קצר (6)" },
+                { value: "medium", en: "Medium (10p)", he: "בינוני (10)" },
+                { value: "long", en: "Long (15p)", he: "ארוך (15)" }
+              ].map((opt) => (
+                <motion.button
+                  key={opt.value}
+                  onClick={() => onBookDataChange("length", opt.value)}
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  className={`px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-150 ${
+                    (bookData.length || "medium") === opt.value
+                      ? "bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-md shadow-purple-200/50"
+                      : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                  }`}
+                >
+                  {isHebrew ? opt.he : opt.en}
+                </motion.button>
+              ))}
+            </div>
           </div>
         </CardContent>
       </Card>

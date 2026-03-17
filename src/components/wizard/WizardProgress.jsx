@@ -1,73 +1,97 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Check } from "lucide-react";
+import { Check, BookOpen, Users, Eye, Rocket } from "lucide-react";
+
+const STEP_ICONS = [BookOpen, Users, Eye, Rocket];
 
 /**
- * WizardProgress - Visual step indicator for the book creation wizard.
- * Shows numbered circles connected by lines, with active/completed states.
+ * WizardProgress - Animated visual step indicator for the book creation wizard.
+ * Features gradient active state, step icons, and animated progress fill.
  */
 export default function WizardProgress({ steps, currentStep, onStepClick, isRTL }) {
   return (
     <div
-      className="mb-8"
+      className="mb-8 px-2"
       dir={isRTL ? "rtl" : "ltr"}
       role="navigation"
       aria-label={isRTL ? "שלבי יצירת הספר" : "Book creation steps"}
     >
-      <div className={`flex items-center justify-between ${isRTL ? "flex-row-reverse" : "flex-row"}`}>
+      <div className={`flex items-start justify-between ${isRTL ? "flex-row-reverse" : "flex-row"}`}>
         {steps.map((step, index) => {
           const isCompleted = index < currentStep;
           const isActive = index === currentStep;
           const isClickable = index < currentStep;
+          const Icon = STEP_ICONS[index] || BookOpen;
 
           return (
             <React.Fragment key={step.id}>
-              {/* Step circle */}
-              <div className="flex flex-col items-center relative">
+              {/* Step node */}
+              <div className="flex flex-col items-center gap-2 relative">
                 <motion.button
                   onClick={() => isClickable && onStepClick(index)}
                   disabled={!isClickable}
                   className={`
-                    w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center
-                    text-sm md:text-base font-bold transition-colors duration-200
+                    relative w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center
+                    font-bold transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500
                     ${isCompleted
-                      ? "bg-green-500 text-white cursor-pointer hover:bg-green-600"
+                      ? "bg-gradient-to-br from-green-400 to-emerald-500 text-white shadow-lg shadow-green-200/60 cursor-pointer"
                       : isActive
-                        ? "bg-purple-600 text-white ring-4 ring-purple-200 dark:ring-purple-900"
-                        : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-default"
+                        ? "bg-gradient-to-br from-purple-500 via-indigo-500 to-violet-600 text-white shadow-xl shadow-purple-300/60 ring-4 ring-purple-200 dark:ring-purple-800"
+                        : "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-default"
                     }
                   `}
-                  whileHover={isClickable ? { scale: 1.1 } : {}}
+                  whileHover={isClickable ? { scale: 1.1, rotate: 3 } : {}}
                   whileTap={isClickable ? { scale: 0.95 } : {}}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.08 }}
                   aria-label={`${step.title} - ${isCompleted ? (isRTL ? "הושלם" : "completed") : isActive ? (isRTL ? "שלב נוכחי" : "current step") : (isRTL ? "טרם הושלם" : "not completed")}`}
                   aria-current={isActive ? "step" : undefined}
                 >
                   {isCompleted ? (
                     <Check className="h-5 w-5 md:h-6 md:w-6" aria-hidden="true" />
                   ) : (
-                    <span>{index + 1}</span>
+                    <Icon className="h-5 w-5 md:h-6 md:w-6" aria-hidden="true" />
+                  )}
+
+                  {/* Pulse ring for active step */}
+                  {isActive && (
+                    <motion.div
+                      className="absolute inset-0 rounded-2xl bg-purple-400/30"
+                      animate={{ scale: [1, 1.3, 1], opacity: [0.6, 0, 0.6] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                      aria-hidden="true"
+                    />
                   )}
                 </motion.button>
 
-                {/* Step label (below circle) */}
-                <span
+                {/* Step label */}
+                <motion.div
                   className={`
-                    mt-2 text-xs md:text-sm font-medium text-center max-w-[80px] md:max-w-[100px]
-                    ${isActive ? "text-purple-700 dark:text-purple-300" : "text-gray-500 dark:text-gray-400"}
+                    text-xs md:text-sm font-semibold text-center max-w-[72px] md:max-w-[90px] leading-tight
+                    ${isActive
+                      ? "text-purple-700 dark:text-purple-300"
+                      : isCompleted
+                        ? "text-green-600 dark:text-green-400"
+                        : "text-gray-400 dark:text-gray-500"
+                    }
                   `}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: index * 0.08 + 0.1 }}
                 >
                   {step.title}
-                </span>
+                </motion.div>
               </div>
 
-              {/* Connector line between steps */}
+              {/* Animated connector line */}
               {index < steps.length - 1 && (
-                <div className="flex-1 mx-2 md:mx-4 h-1 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 relative">
+                <div className="flex-1 mx-1 md:mx-2 mt-6 h-1.5 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-800 self-start">
                   <motion.div
-                    className="h-full bg-green-500 rounded-full"
+                    className="h-full rounded-full bg-gradient-to-r from-green-400 to-emerald-500"
                     initial={{ width: "0%" }}
                     animate={{ width: isCompleted ? "100%" : "0%" }}
-                    transition={{ duration: 0.4 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
                   />
                 </div>
               )}

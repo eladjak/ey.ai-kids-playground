@@ -1137,34 +1137,36 @@ ${isHebrewBook ? "2. text_with_nikud: The exact same page text with full nikud (
       </AnimatePresence>
 
       {/* Navigation Buttons */}
-      <div className={`flex ${isRTL ? "flex-row-reverse" : "flex-row"} justify-between items-center mt-8 pt-4 border-t border-gray-200 dark:border-gray-700`}>
+      <div className={`flex ${isRTL ? "flex-row-reverse" : "flex-row"} justify-between items-center mt-6 pt-4 border-t border-gray-100 dark:border-gray-700/50`}>
         <div className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
-          <Button
-            variant="outline"
-            onClick={prevStep}
-            disabled={currentStep === 0}
-            className="flex items-center gap-2"
-            aria-label={t("wizard.nav.back")}
-          >
-            {isRTL ? (
-              <>
-                {t("wizard.nav.back")}
-                <ChevronRight className="h-4 w-4" aria-hidden="true" />
-              </>
-            ) : (
-              <>
-                <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-                {t("wizard.nav.back")}
-              </>
-            )}
-          </Button>
+          <motion.div whileHover={currentStep > 0 ? { scale: 1.03 } : {}} whileTap={currentStep > 0 ? { scale: 0.97 } : {}}>
+            <Button
+              variant="outline"
+              onClick={prevStep}
+              disabled={currentStep === 0}
+              className="flex items-center gap-2 rounded-xl border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 h-11 px-5 font-semibold disabled:opacity-40"
+              aria-label={t("wizard.nav.back")}
+            >
+              {isRTL ? (
+                <>
+                  {t("wizard.nav.back")}
+                  <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                </>
+              ) : (
+                <>
+                  <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+                  {t("wizard.nav.back")}
+                </>
+              )}
+            </Button>
+          </motion.div>
 
           {activeDraftKey && (
             <Button
               variant="ghost"
               size="sm"
               onClick={handleClearDraft}
-              className="text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400"
+              className="text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400 rounded-xl h-9 w-9 p-0"
               aria-label={t("wizard.draft.clear")}
             >
               <Trash2 className="h-4 w-4" aria-hidden="true" />
@@ -1173,26 +1175,39 @@ ${isHebrewBook ? "2. text_with_nikud: The exact same page text with full nikud (
         </div>
 
         {currentStep < steps.length - 1 && (
-          <Button
-            onClick={nextStep}
-            disabled={!canGoNext() || isGeneratingOutline}
-            className="bg-purple-600 hover:bg-purple-700 flex items-center gap-2"
-            aria-label={t("wizard.nav.next")}
+          <motion.div
+            whileHover={canGoNext() && !isGeneratingOutline ? { scale: 1.04, y: -1 } : {}}
+            whileTap={canGoNext() && !isGeneratingOutline ? { scale: 0.97 } : {}}
           >
-            {isGeneratingOutline ? (
-              <span>{t("wizard.nav.generating")}</span>
-            ) : isRTL ? (
-              <>
-                <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-                {t("wizard.nav.next")}
-              </>
-            ) : (
-              <>
-                {t("wizard.nav.next")}
-                <ChevronRight className="h-4 w-4" aria-hidden="true" />
-              </>
-            )}
-          </Button>
+            <Button
+              onClick={nextStep}
+              disabled={!canGoNext() || isGeneratingOutline}
+              className="relative overflow-hidden bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 flex items-center gap-2 rounded-xl h-11 px-6 font-bold shadow-md shadow-purple-200/50 border-0 disabled:opacity-50"
+              aria-label={t("wizard.nav.next")}
+            >
+              {canGoNext() && !isGeneratingOutline && (
+                <motion.div
+                  className="absolute inset-0 bg-white/15 skew-x-12 pointer-events-none"
+                  animate={{ x: ["-200%", "300%"] }}
+                  transition={{ duration: 2, repeat: Infinity, repeatDelay: 2, ease: "easeInOut" }}
+                  aria-hidden="true"
+                />
+              )}
+              {isGeneratingOutline ? (
+                <span className="relative z-10">{t("wizard.nav.generating")}</span>
+              ) : isRTL ? (
+                <>
+                  <ChevronLeft className="h-4 w-4 relative z-10" aria-hidden="true" />
+                  <span className="relative z-10">{t("wizard.nav.next")}</span>
+                </>
+              ) : (
+                <>
+                  <span className="relative z-10">{t("wizard.nav.next")}</span>
+                  <ChevronRight className="h-4 w-4 relative z-10" aria-hidden="true" />
+                </>
+              )}
+            </Button>
+          </motion.div>
         )}
       </div>
 

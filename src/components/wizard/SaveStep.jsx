@@ -2,11 +2,10 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Sparkles, CheckCircle2, Loader2 } from "lucide-react";
+import { BookOpen, Sparkles, CheckCircle2, Loader2, Palette, Users, Tag, AlignLeft } from "lucide-react";
 
 /**
  * Magical, child-friendly progress labels for book creation.
- * Keyed by language, with `at` representing the % threshold at which the label activates.
  */
 const MAGIC_LABELS = {
   en: [
@@ -41,14 +40,9 @@ const MAGIC_LABELS = {
   ]
 };
 
-/**
- * Get the current magical label for a given progress percentage and language.
- * Returns the label for the highest `at` threshold that is <= percent.
- */
 function getMagicLabel(percent, language) {
   const langKey = language === "hebrew" ? "he" : language === "yiddish" ? "yi" : "en";
   const labels = MAGIC_LABELS[langKey];
-  // Find the last label whose `at` is <= current percent
   let activeLabel = labels[0].text;
   for (const entry of labels) {
     if (percent >= entry.at) {
@@ -58,10 +52,25 @@ function getMagicLabel(percent, language) {
   return activeLabel;
 }
 
+const SUMMARY_ICONS = {
+  topic: Tag,
+  title: BookOpen,
+  characters: Users,
+  style: Palette,
+  length: AlignLeft,
+};
+
+const SUMMARY_GRADIENTS = {
+  topic: "from-amber-400 to-orange-500",
+  title: "from-purple-500 to-indigo-600",
+  characters: "from-pink-400 to-rose-500",
+  style: "from-teal-400 to-cyan-500",
+  length: "from-blue-400 to-sky-500",
+};
+
 /**
- * SaveStep - Step 4 of the wizard: Save, Download, Share.
- * Action buttons to finalize the book creation.
- * Progress labels are magical and child-friendly.
+ * SaveStep - Step 4 of the wizard: Final summary and book creation.
+ * Visual summary cards + animated creation button + magical progress.
  */
 export default function SaveStep({
   bookData,
@@ -78,142 +87,181 @@ export default function SaveStep({
 
   const summaryItems = [
     {
+      key: "topic",
       label: isHebrew ? "נושא" : "Topic",
       value: selectedTopic || (isHebrew ? "לא נבחר" : "Not selected")
     },
     {
+      key: "title",
       label: isHebrew ? "שם הסיפור" : "Story Title",
       value: bookData.title || (isHebrew ? "ייוצר אוטומטית" : "Will be auto-generated")
     },
     {
+      key: "characters",
       label: isHebrew ? "דמויות" : "Characters",
       value: selectedCharacters.length > 0
         ? selectedCharacters.map((c) => c.name).join(", ")
         : (isHebrew ? "לא נבחרו" : "None selected")
     },
     {
+      key: "style",
       label: isHebrew ? "סגנון" : "Art Style",
       value: bookData.art_style || "disney"
     },
     {
+      key: "length",
       label: isHebrew ? "אורך" : "Length",
       value: bookData.length === "short"
-        ? (isHebrew ? "קצר" : "Short")
+        ? (isHebrew ? "קצר (6 עמ׳)" : "Short (6p)")
         : bookData.length === "long"
-          ? (isHebrew ? "ארוך" : "Long")
-          : (isHebrew ? "בינוני" : "Medium")
+          ? (isHebrew ? "ארוך (15 עמ׳)" : "Long (15p)")
+          : (isHebrew ? "בינוני (10 עמ׳)" : "Medium (10p)")
     }
   ];
 
-  // Determine the current magical label from the progress percent
   const magicLabel = creationProgress
     ? getMagicLabel(creationProgress.percent, language)
     : null;
 
   return (
     <div className="space-y-6" dir={isRTL ? "rtl" : "ltr"}>
-      <div className="text-center mb-6">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          {isHebrew ? "הכל מוכן!" : isYiddish ? "אַלץ גרייט!" : "All set!"}
-        </h2>
-        <p className="text-gray-500 dark:text-gray-400 text-lg">
-          {isHebrew ? "בדוק את הסיכום ולחץ ליצירת הספר" : "Review the summary and create your book"}
-        </p>
+      {/* Header */}
+      <div className="text-center mb-2">
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            {isHebrew ? "הכל מוכן!" : isYiddish ? "אַלץ גרייט!" : "All set!"}
+          </h2>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.15 }}
+        >
+          <p className="text-gray-500 dark:text-gray-400 text-base">
+            {isHebrew ? "בדוק את הסיכום ולחץ ליצירת הספר" : "Review the summary and create your book"}
+          </p>
+        </motion.div>
       </div>
 
-      {/* Summary Card */}
+      {/* Summary — visual cards grid */}
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: 0.4 }}
+        className="grid grid-cols-1 sm:grid-cols-2 gap-3"
       >
-        <Card className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-950/30 dark:to-blue-950/30 border-purple-200 dark:border-purple-800">
-          <CardContent className="p-6">
-            <h3 className={`text-lg font-bold mb-4 flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
-              <BookOpen className="h-5 w-5 text-purple-600" aria-hidden="true" />
-              {isHebrew ? "סיכום הספר" : "Book Summary"}
-            </h3>
-            <dl className="space-y-3">
-              {summaryItems.map((item, index) => (
-                <div
-                  key={index}
-                  className={`flex ${isRTL ? "flex-row-reverse" : "flex-row"} items-start gap-3`}
-                >
-                  <dt className="text-sm font-medium text-gray-600 dark:text-gray-400 min-w-[80px]">
-                    {item.label}:
-                  </dt>
-                  <dd className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-1">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-green-500 flex-shrink-0" aria-hidden="true" />
-                    {item.value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </CardContent>
-        </Card>
+        {summaryItems.map((item, index) => {
+          const Icon = SUMMARY_ICONS[item.key] || CheckCircle2;
+          const grad = SUMMARY_GRADIENTS[item.key] || "from-purple-400 to-indigo-500";
+          return (
+            <motion.div
+              key={item.key}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 + index * 0.06 }}
+              className="flex items-start gap-3 p-4 bg-white dark:bg-gray-800/60 rounded-2xl border border-gray-100 dark:border-gray-700/50 shadow-sm"
+            >
+              <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${grad} flex items-center justify-center flex-shrink-0 shadow-sm`}>
+                <Icon className="h-4 w-4 text-white" aria-hidden="true" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-0.5">
+                  {item.label}
+                </p>
+                <p className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                  {item.value}
+                </p>
+              </div>
+            </motion.div>
+          );
+        })}
       </motion.div>
 
       {/* Create Book CTA */}
       <motion.div
         whileHover={!isCreating ? { scale: 1.02 } : {}}
         whileTap={!isCreating ? { scale: 0.98 } : {}}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.35 }}
+        className="relative overflow-hidden rounded-2xl"
       >
         <Button
           onClick={onCreateBook}
           disabled={isCreating}
-          className="w-full h-14 text-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 gap-3 shadow-lg"
+          className="w-full h-16 text-lg font-bold bg-gradient-to-r from-purple-600 via-indigo-600 to-violet-600 hover:from-purple-700 hover:via-indigo-700 hover:to-violet-700 gap-3 shadow-xl shadow-purple-300/40 rounded-2xl border-0"
           aria-label={isHebrew ? "צור את הספר שלי" : "Create my book"}
         >
-          {isCreating ? (
-            <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
-          ) : (
-            <Sparkles className="h-5 w-5" aria-hidden="true" />
+          {/* Shimmer */}
+          {!isCreating && (
+            <motion.div
+              className="absolute inset-0 bg-white/15 skew-x-12 pointer-events-none"
+              animate={{ x: ["-200%", "300%"] }}
+              transition={{ duration: 2, repeat: Infinity, repeatDelay: 1.5, ease: "easeInOut" }}
+              aria-hidden="true"
+            />
           )}
-          {isCreating
-            ? (isHebrew ? "יוצר את הספר..." : "Creating your book...")
-            : (isHebrew ? "צור את הספר שלי!" : "Create My Book!")
-          }
+          {isCreating ? (
+            <Loader2 className="h-6 w-6 animate-spin relative z-10" aria-hidden="true" />
+          ) : (
+            <Sparkles className="h-6 w-6 relative z-10" aria-hidden="true" />
+          )}
+          <span className="relative z-10">
+            {isCreating
+              ? (isHebrew ? "יוצר את הספר..." : "Creating your book...")
+              : (isHebrew ? "צור את הספר שלי!" : "Create My Book!")
+            }
+          </span>
         </Button>
       </motion.div>
 
-      {/* Generation Progress — with magical labels */}
+      {/* Generation Progress */}
       {isCreating && creationProgress && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <Card className="border-purple-200 dark:border-purple-800">
+          <Card className="border-purple-200 dark:border-purple-800/50 shadow-sm overflow-hidden">
             <CardContent className="p-5 space-y-4">
-              {/* Magical label — large and fun */}
-              <motion.p
+              {/* Magical label */}
+              <motion.div
                 key={magicLabel}
-                initial={{ opacity: 0, y: 8 }}
+                initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
-                className="text-center text-base font-semibold text-purple-700 dark:text-purple-300"
                 aria-live="polite"
               >
-                {magicLabel}
-              </motion.p>
+                <p className="text-center text-base font-bold text-purple-700 dark:text-purple-300">
+                  {magicLabel}
+                </p>
+              </motion.div>
 
               {/* Progress bar */}
-              <div className="space-y-1">
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+              <div className="space-y-1.5">
+                <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-3 overflow-hidden">
                   <motion.div
                     className="bg-gradient-to-r from-purple-500 via-fuchsia-500 to-indigo-500 h-3 rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: `${creationProgress.percent}%` }}
-                    transition={{ duration: 0.4, ease: "easeOut" }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
                   />
                 </div>
                 <div className="flex justify-end">
-                  <span className="text-xs font-medium text-purple-600 dark:text-purple-400">
+                  <motion.div
+                    key={creationProgress.percent}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-xs font-bold text-purple-600 dark:text-purple-400"
+                  >
                     {creationProgress.percent}%
-                  </span>
+                  </motion.div>
                 </div>
               </div>
 
-              {/* Step indicator (smaller, secondary) */}
+              {/* Step indicator */}
               {creationProgress.step && (
                 <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
                   {creationProgress.step}
