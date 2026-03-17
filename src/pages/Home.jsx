@@ -288,7 +288,7 @@ export default function Home() {
         <div className="flex flex-col gap-4">
           <UserWelcomeCard userData={userData} />
 
-          <div className="flex items-center gap-2 w-full md:w-auto">
+          <div className={`flex items-center gap-2 w-full md:w-auto ${isRTL ? "flex-row-reverse" : ""}`}>
             <div className="relative flex-1 md:flex-none">
               <Button
                 variant="outline"
@@ -296,10 +296,10 @@ export default function Home() {
                   setShowSearch(s => !s);
                   if (!showSearch) setTimeout(() => searchInputRef.current?.focus(), 100);
                 }}
-                className={`w-full md:w-auto ${showSearch ? "hidden md:flex" : ""}`}
+                className={`w-full md:w-auto rounded-2xl border-purple-200 hover:border-purple-400 hover:bg-purple-50 dark:border-purple-800 dark:hover:bg-purple-900/20 ${showSearch ? "hidden md:flex" : ""}`}
               >
-                <Search className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                <span className="hidden md:inline">{t("home.search.placeholder")}</span>
+                <Search className={`h-4 w-4 text-purple-500 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                <span className="hidden md:inline text-gray-500">{t("home.search.placeholder")}</span>
               </Button>
 
               {showSearch && (
@@ -308,7 +308,7 @@ export default function Home() {
                     ref={searchInputRef}
                     type="search"
                     placeholder={t("home.search.placeholder")}
-                    className="w-full"
+                    className="w-full rounded-2xl border-purple-300 focus:border-purple-500 focus:ring-purple-500/20"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onBlur={() => !searchQuery && setShowSearch(false)}
@@ -318,9 +318,11 @@ export default function Home() {
             </div>
 
             <Link to={createPageUrl("BookWizard")} className="flex-shrink-0">
-              <Button className="w-full md:w-auto bg-gradient-to-r from-purple-600 to-indigo-600">
-                <Wand2 className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                {t("home.create.button")}
+              <Button className="relative w-full md:w-auto bg-gradient-to-r from-purple-600 via-indigo-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white shadow-lg shadow-purple-500/30 rounded-2xl px-5 overflow-hidden group">
+                {/* Shimmer effect */}
+                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                <Wand2 className={`relative h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                <span className="relative">{t("home.create.button")}</span>
               </Button>
             </Link>
           </div>

@@ -2,12 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useI18n } from "@/components/i18n/i18nProvider";
-import { Trophy, Star, Flame } from "lucide-react";
+import { Trophy, Star, Flame, Zap } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import BadgeDisplay from "@/components/gamification/BadgeDisplay";
+import { motion } from "framer-motion";
 
 function getTimeOfDayGreeting(language, isRTL, name) {
   const hour = new Date().getHours();
@@ -40,77 +40,111 @@ const UserWelcomeCard = React.memo(function UserWelcomeCard({ userData }) {
   const pulseStreak = streakDays >= 7;
 
   return (
-    <div className="flex flex-col md:flex-row gap-4 md:gap-6">
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="flex flex-col md:flex-row gap-4 md:gap-6"
+    >
       {/* User info card */}
-      <Card className="w-full md:w-auto flex-grow-0 flex-shrink-0 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-950/30 dark:to-indigo-950/30">
-        <CardContent className="p-4">
-          <div className="flex items-center gap-3 mb-3">
+      <Card className="w-full md:w-auto flex-grow-0 flex-shrink-0 border-0 shadow-lg overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-500 via-indigo-500 to-violet-600 opacity-100 rounded-xl" />
+        <CardContent className="relative p-5">
+          <div className={`flex items-center gap-3 mb-4 ${isRTL ? "flex-row-reverse" : ""}`}>
             <Link to={createPageUrl("Profile")} className="flex-shrink-0">
-              <Avatar className="h-12 w-12 border-2 border-white shadow hover:shadow-md transition-all">
-                {userData.avatar_url ? (
-                  <AvatarImage src={userData.avatar_url} alt={userData.full_name} />
-                ) : (
-                  <AvatarFallback className="bg-gradient-to-br from-purple-500 to-indigo-500 text-white">
-                    {userData.full_name?.charAt(0) || "G"}
-                  </AvatarFallback>
-                )}
-              </Avatar>
+              <div className="relative">
+                {/* Glow ring */}
+                <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-yellow-300 via-pink-300 to-purple-300 opacity-70 blur-sm animate-pulse" />
+                <Avatar className="relative h-14 w-14 border-3 border-white shadow-xl">
+                  {userData.avatar_url ? (
+                    <AvatarImage src={userData.avatar_url} alt={userData.full_name} />
+                  ) : (
+                    <AvatarFallback className="bg-gradient-to-br from-white/30 to-white/10 text-white text-xl font-bold">
+                      {userData.full_name?.charAt(0) || "G"}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+              </div>
             </Link>
 
-            <div className="flex-1 min-w-0">
-              <p className="text-sm text-gray-500 dark:text-gray-400">{greeting}</p>
-              <h2 className="font-bold text-lg truncate">{userData.full_name}</h2>
+            <div className={`flex-1 min-w-0 ${isRTL ? "text-right" : "text-left"}`}>
+              <p className="text-sm text-purple-100 font-medium">{greeting}</p>
+              <h2 className="font-bold text-xl text-white truncate drop-shadow">{userData.full_name}</h2>
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2 justify-center mb-3">
-            <Badge variant="outline" className="bg-amber-100 text-amber-800 gap-1">
-              <Trophy className="h-3 w-3" />
+          <div className={`flex flex-wrap gap-2 mb-4 ${isRTL ? "justify-end" : "justify-start"}`}>
+            <Badge className="bg-white/20 text-white border-white/30 gap-1 backdrop-blur-sm hover:bg-white/30">
+              <Trophy className="h-3 w-3 text-yellow-300" />
               <span>{t("home.level")} {userData.level}</span>
             </Badge>
 
             {showStreak ? (
               <Badge
-                variant="outline"
-                className={`bg-orange-100 text-orange-800 gap-1 ${pulseStreak ? "animate-pulse" : ""}`}
+                className={`bg-orange-400/80 text-white border-orange-300/30 gap-1 ${pulseStreak ? "animate-pulse" : ""}`}
               >
-                <Flame className="h-3 w-3 text-orange-500" />
+                <Flame className="h-3 w-3 text-yellow-100" />
                 <span>{streakDays} {t("home.streak")}</span>
               </Badge>
             ) : (
-              <Badge variant="outline" className="bg-blue-100 text-blue-800 gap-1">
-                <Star className="h-3 w-3" />
+              <Badge className="bg-white/20 text-white border-white/30 gap-1">
+                <Star className="h-3 w-3 text-blue-200" />
                 <span>{streakDays} {t("home.streak")}</span>
+              </Badge>
+            )}
+
+            {userData.completedBooks > 0 && (
+              <Badge className="bg-white/20 text-white border-white/30 gap-1">
+                <Zap className="h-3 w-3 text-green-300" />
+                <span>{userData.completedBooks}</span>
               </Badge>
             )}
           </div>
 
-          {/* XP progress bar */}
-          <div className="space-y-1 mt-2">
-            <div className="flex justify-between text-xs text-gray-500">
-              <span>{userData.xp} XP</span>
+          {/* XP progress bar — gradient */}
+          <div className="space-y-1.5">
+            <div className={`flex justify-between text-xs text-purple-100 ${isRTL ? "flex-row-reverse" : ""}`}>
+              <span className="font-semibold">{userData.xp} XP</span>
               <span>{userData.nextLevelXp - userData.xp} XP {t("home.progress.toNext")}</span>
             </div>
-            <Progress value={progressToNextLevel} className="h-1.5" />
+            <div className="h-2.5 rounded-full bg-white/20 overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${progressToNextLevel}%` }}
+                transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
+                className="h-full rounded-full bg-gradient-to-r from-yellow-300 via-green-300 to-emerald-400 shadow-sm"
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Badges row */}
       {userData.badges && userData.badges.length > 0 && (
-        <div className="flex items-center gap-2 flex-wrap">
+        <motion.div
+          initial={{ opacity: 0, x: isRTL ? -10 : 10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+          className="flex items-center gap-2 flex-wrap"
+        >
           {userData.badges.map((badge, index) => (
-            <div key={index} className="flex flex-col items-center p-2 bg-white rounded-lg shadow-sm">
+            <motion.div
+              key={index}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 0.3, delay: 0.3 + index * 0.05 }}
+              className="flex flex-col items-center p-2 bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-shadow border border-purple-100 dark:border-purple-900"
+            >
               <BadgeDisplay
                 badgeId={badge.id}
                 size="sm"
                 currentLanguage={currentLanguage}
               />
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 });
 
