@@ -27,6 +27,8 @@ import SaveStep from "@/components/wizard/SaveStep";
 import LoadingOverlay from "@/components/shared/LoadingOverlay";
 import FriendlyError from "@/components/shared/FriendlyError";
 
+const LAYOUT_TYPES = ["standard", "image_top", "image_full", "text_overlay", "two_column"];
+
 // --- Draft auto-save helpers ---
 const DRAFT_PREFIX = "sipurai_draft_";
 const MAX_DRAFTS = 3;
@@ -140,6 +142,14 @@ export default function BookWizard() {
 
   const [generatedOutline, setGeneratedOutline] = useState(null);
 
+  // Rhyming settings
+  const [useRhyming, setUseRhyming] = useState(false);
+  const [rhymeSettings, setRhymeSettings] = useState({
+    pattern: "aabb",
+    meter: "free",
+    complexity: "simple"
+  });
+
   // Draft auto-save
   const [activeDraftKey, setActiveDraftKey] = useState(null);
   const draftTimerRef = useRef(null);
@@ -156,6 +166,8 @@ export default function BookWizard() {
       selectedCharacters,
       bookData,
       generatedOutline,
+      useRhyming,
+      rhymeSettings,
       _savedAt: Date.now(),
     };
 
@@ -217,6 +229,8 @@ export default function BookWizard() {
                 if (draft.selectedCharacters) setSelectedCharacters(draft.selectedCharacters);
                 if (draft.bookData) setBookData((prev) => ({ ...prev, ...draft.bookData }));
                 if (draft.generatedOutline) setGeneratedOutline(draft.generatedOutline);
+                if (draft.useRhyming != null) setUseRhyming(draft.useRhyming);
+                if (draft.rhymeSettings) setRhymeSettings((prev) => ({ ...prev, ...draft.rhymeSettings }));
                 setActiveDraftKey(draft._draftKey);
                 toast({
                   title: t("wizard.draft.restored"),
@@ -542,7 +556,11 @@ The story should have a clear beginning, middle, and end.`;
             }
           }
         }),
-        GenerateImage({ prompt: coverPrompt }).catch(() => null)
+        GenerateImage({ prompt: coverPrompt }).catch((err) => {
+          console.error('[BookWizard] Cover image generation failed:', err?.message || err);
+          captureError(err instanceof Error ? err : new Error(String(err?.message || err)), { context: "BookWizard cover image" });
+          return null;
+        })
       ]);
 
       const coverImage = coverResult?.url || "";
@@ -573,6 +591,25 @@ The story should have a clear beginning, middle, and end.`;
         step: t("wizard.progress.step3of4")
       });
 
+      const isHebrewBook = bookData.language === "hebrew";
+      const nikudInstruction = isHebrewBook
+        ? "\nהוסף ניקוד מלא לכל הטקסט בעברית. כל מילה חייבת לכלול ניקוד."
+        : "";
+
+      const rhymingInstruction = useRhyming
+        ? (rhymeSettings.pattern === "aabb"
+          ? (isHebrewBook
+            ? "\nכתוב את הסיפור בחרוזים. כל שתי שורות צריכות להתחרז זו עם זו (תבנית AABB - כל זוג שורות מתחרז)."
+            : "\nWrite the story with rhyming couplets (every two lines rhyme: AABB pattern).")
+          : rhymeSettings.pattern === "abab"
+          ? (isHebrewBook
+            ? "\nכתוב את הסיפור בחרוזים. שורות 1 ו-3 מתחרזות, שורות 2 ו-4 מתחרזות (תבנית ABAB)."
+            : "\nWrite with alternating rhyme (lines 1&3 rhyme, 2&4 rhyme: ABAB pattern).")
+          : (isHebrewBook
+            ? `\nכתוב את הסיפור בחרוזים בתבנית ${rhymeSettings.pattern.toUpperCase()}, משקל: ${rhymeSettings.meter}, מורכבות: ${rhymeSettings.complexity}.`
+            : `\nWrite the story in rhyming format with pattern: ${rhymeSettings.pattern.toUpperCase()}, meter: ${rhymeSettings.meter}, complexity: ${rhymeSettings.complexity}.`))
+        : "";
+
       const outlinePages = outlineResult?.outline || [];
       const pageTextPromises = outlinePages.map((pageOutline, i) => {
         const prompt = `${safetyPrefix}${langInstruction}Write the text content for page ${i} of a children's story based on this description: "${pageOutline.description}"
@@ -583,12 +620,13 @@ Story details:
 - Art style: ${bookData.art_style}
 - Target age: ${ageRange}
 ${i === 0 ? "This is the title page/introduction. Keep it brief and engaging." : ""}
+${rhymingInstruction}${nikudInstruction}
 
 Also create a detailed image generation prompt for this page.
 
 Return as JSON with:
-1. text_content: The page text
-2. image_prompt: Detailed image generation prompt`;
+1. text_content: The page text${isHebrewBook ? " (plain text without nikud)" : ""}
+${isHebrewBook ? "2. text_with_nikud: The exact same page text with full nikud (vowel diacritics) on every word\n3. image_prompt: Detailed image generation prompt" : "2. image_prompt: Detailed image generation prompt"}`;
 
         return InvokeLLM({
           prompt,
@@ -596,6 +634,7 @@ Return as JSON with:
             type: "object",
             properties: {
               text_content: { type: "string" },
+              ...(isHebrewBook ? { text_with_nikud: { type: "string" } } : {}),
               image_prompt: { type: "string" }
             }
           }
@@ -605,11 +644,18 @@ Return as JSON with:
       const pageTexts = await Promise.all(pageTextPromises);
 
       // Sanitize all AI-generated text content
-      const sanitizedPageTexts = pageTexts.map((pt) => ({
-        ...pt,
-        text_content: sanitizeAIOutput(pt?.text_content || ""),
-        image_prompt: pt?.image_prompt || ""
-      }));
+      const sanitizedPageTexts = pageTexts.map((pt) => {
+        const plainText = sanitizeAIOutput(pt?.text_content || "");
+        const nikudText = pt?.text_with_nikud ? sanitizeAIOutput(pt.text_with_nikud) : "";
+        // For Hebrew books, prefer nikud version if available
+        const displayText = isHebrewBook && nikudText ? nikudText : plainText;
+        return {
+          ...pt,
+          text_content: displayText,
+          text_with_nikud: nikudText,
+          image_prompt: pt?.image_prompt || ""
+        };
+      });
 
       // Step 4: Generate ALL illustrations in parallel
       // Use Promise.allSettled so one failure doesn't cancel the rest
@@ -679,7 +725,7 @@ Return as JSON with:
           text_content: pageText.text_content,
           image_url: imageUrl,
           image_prompt: imagePromptFinal,
-          layout_type: i === 0 ? "cover" : "standard"
+          layout_type: i === 0 ? "cover" : LAYOUT_TYPES[(i - 1) % LAYOUT_TYPES.length]
         });
       });
 
@@ -865,6 +911,10 @@ Return as JSON with:
             onRegenerateOutline={generateOutline}
             isRTL={isRTL}
             language={currentLanguage}
+            useRhyming={useRhyming}
+            onUseRhymingChange={setUseRhyming}
+            rhymeSettings={rhymeSettings}
+            onRhymeSettingsChange={setRhymeSettings}
           />
         );
       case 3:

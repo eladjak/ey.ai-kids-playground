@@ -25,14 +25,32 @@ export async function InvokeLLM(params) {
 // Gemini generates base64 → upload to Supabase Storage → persistent URL
 
 export async function GenerateImage({ prompt, quality, size }) {
-  const { base64, mimeType } = await geminiGenerateImage({ prompt });
+  console.log('[Core.GenerateImage] Starting image generation, prompt length:', prompt?.length);
+
+  let base64, mimeType;
+  try {
+    const result = await geminiGenerateImage({ prompt });
+    base64 = result.base64;
+    mimeType = result.mimeType;
+    console.log('[Core.GenerateImage] Gemini returned base64:', !!base64, 'length:', base64?.length || 0, 'mimeType:', mimeType);
+  } catch (err) {
+    console.error('[Core.GenerateImage] Gemini image generation FAILED:', err?.message || err);
+    throw err;
+  }
+
+  if (!base64) {
+    console.error('[Core.GenerateImage] No base64 data received from Gemini');
+    throw new Error('Image generation returned no data');
+  }
 
   const file = base64ToFile(base64, mimeType, `sipurai-${Date.now()}.png`);
 
   try {
-    const result = await uploadFileToSupabase(file, 'generated');
-    return { url: result.file_url };
-  } catch {
+    const uploadResult = await uploadFileToSupabase(file, 'generated');
+    console.log('[Core.GenerateImage] Upload success, URL:', uploadResult.file_url?.substring(0, 80));
+    return { url: uploadResult.file_url };
+  } catch (uploadErr) {
+    console.warn('[Core.GenerateImage] Supabase upload failed, using data URI fallback:', uploadErr?.message);
     // Fallback to base64 data URI if upload fails
     return { url: `data:${mimeType};base64,${base64}` };
   }

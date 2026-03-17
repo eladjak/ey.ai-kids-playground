@@ -34,8 +34,17 @@ function checkRateLimit(ip) {
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 const GEMINI_TEXT_MODEL = 'gemini-2.5-flash';
-const GEMINI_IMAGE_MODEL = 'gemini-2.0-flash-preview-image-generation';
+// NOTE: The old preview model was retired by Google. Updated to the stable model.
+// Old: 'gemini-2.0-flash-preview-image-generation'
+const GEMINI_IMAGE_MODEL = 'gemini-2.0-flash-exp';
 const GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
+
+// ─── Diagnostic Logging ─────────────────────────────────────────────────────
+
+function log(label, data) {
+  const ts = new Date().toISOString();
+  console.log(`[generate.js][${ts}] ${label}`, JSON.stringify(data, null, 0));
+}
 
 const MAX_PROMPT_LENGTH = 12_000;
 const ALLOWED_TYPES = ['text', 'image'];
@@ -101,19 +110,30 @@ export default async function handler(req, res) {
   // Rate limit
   const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || 'unknown';
   if (!checkRateLimit(ip)) {
+    log('RATE_LIMITED', { ip });
     return res.status(429).json({ error: 'Too many requests. Please wait a moment.' });
   }
 
   // Validate API key is configured server-side
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
+    log('NO_API_KEY', { hasKey: false });
     return res.status(500).json({ error: 'AI service is not configured.' });
   }
 
   // Parse and validate request body
   const { prompt, type, options } = req.body || {};
 
+  log('REQUEST', {
+    type,
+    promptLength: prompt?.length || 0,
+    promptPreview: typeof prompt === 'string' ? prompt.substring(0, 120) : '(not a string)',
+    hasOptions: !!options,
+    ip: ip.substring(0, 8) + '...',
+  });
+
   if (!prompt || typeof prompt !== 'string') {
+    log('INVALID_PROMPT', { prompt: typeof prompt });
     return res.status(400).json({ error: 'Missing or invalid "prompt" field.' });
   }
 
@@ -128,16 +148,19 @@ export default async function handler(req, res) {
   try {
     if (type === 'text') {
       const result = await handleText(apiKey, prompt, options);
+      log('TEXT_SUCCESS', { hasResult: !!result?.result, resultLength: typeof result?.result === 'string' ? result.result.length : 'json' });
       return res.status(200).json(result);
     }
 
     if (type === 'image') {
       const result = await handleImage(apiKey, prompt, options);
+      log('IMAGE_SUCCESS', { hasBase64: !!result?.base64, base64Length: result?.base64?.length || 0, mimeType: result?.mimeType });
       return res.status(200).json(result);
     }
   } catch (err) {
     const message = err.message || 'AI generation failed.';
     const status = err.status || 500;
+    log('HANDLER_ERROR', { type, status, message, stack: err.stack?.substring(0, 300) });
     return res.status(status).json({ error: message });
   }
 }
@@ -218,26 +241,29 @@ async function handleImage(apiKey, prompt, options = {}) {
   // Append child-safety instruction
   const safePrompt = `${prompt}\n\nIMPORTANT: This image is for a children's book. It must be completely child-friendly, wholesome, and appropriate for young readers.`;
 
-  const response = await fetch(
-    `${GEMINI_BASE_URL}/${GEMINI_IMAGE_MODEL}:generateContent`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-goog-api-key': apiKey,
+  const url = `${GEMINI_BASE_URL}/${GEMINI_IMAGE_MODEL}:generateContent`;
+  log('IMAGE_API_CALL', { url, model: GEMINI_IMAGE_MODEL, aspectRatio, promptLength: safePrompt.length });
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': apiKey,
+    },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: safePrompt }] }],
+      generationConfig: {
+        responseModalities: ['TEXT', 'IMAGE'],
+        imageConfig: { aspectRatio },
       },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: safePrompt }] }],
-        generationConfig: {
-          responseModalities: ['TEXT', 'IMAGE'],
-          imageConfig: { aspectRatio },
-        },
-      }),
-    }
-  );
+    }),
+  });
+
+  log('IMAGE_API_RESPONSE', { status: response.status, ok: response.ok, statusText: response.statusText });
 
   if (!response.ok) {
     const err = await response.json().catch(() => ({ error: { message: response.statusText } }));
+    log('IMAGE_API_ERROR', { status: response.status, errorBody: JSON.stringify(err).substring(0, 500) });
     const error = new Error(`Image generation failed: ${err.error?.message || response.statusText}`);
     error.status = response.status >= 500 ? 502 : response.status;
     throw error;
@@ -245,7 +271,15 @@ async function handleImage(apiKey, prompt, options = {}) {
 
   const data = await response.json();
 
-  if (data.candidates?.[0]?.finishReason === 'SAFETY') {
+  const finishReason = data.candidates?.[0]?.finishReason;
+  const partCount = data.candidates?.[0]?.content?.parts?.length || 0;
+  const partTypes = data.candidates?.[0]?.content?.parts?.map((p) =>
+    p.inlineData ? `image(${p.inlineData.mimeType})` : p.text ? `text(${p.text.length}chars)` : 'unknown'
+  ) || [];
+  log('IMAGE_API_PARSED', { finishReason, partCount, partTypes, hasCandidates: !!data.candidates?.length });
+
+  if (finishReason === 'SAFETY') {
+    log('IMAGE_SAFETY_BLOCK', { promptPreview: prompt.substring(0, 100) });
     const error = new Error('Image was blocked by safety filters. Please try a different prompt.');
     error.status = 422;
     throw error;
@@ -253,11 +287,13 @@ async function handleImage(apiKey, prompt, options = {}) {
 
   const parts = data.candidates?.[0]?.content?.parts;
   if (!parts) {
+    log('IMAGE_NO_PARTS', { rawCandidates: JSON.stringify(data.candidates || null).substring(0, 500) });
     throw new Error('No image generated. The model returned an empty response.');
   }
 
   const imagePart = parts.find((p) => p.inlineData);
   if (!imagePart) {
+    log('IMAGE_NO_INLINE_DATA', { partTypes });
     throw new Error('No image in response. The model returned text only.');
   }
 
