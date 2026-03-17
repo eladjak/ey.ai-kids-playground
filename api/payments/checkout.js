@@ -52,7 +52,6 @@ export default async function handler(req, res) {
   const payload = {
     product_id: productId,
     success_url: successUrl,
-    cancel_url: cancelUrl,
   };
 
   if (customerEmail) {
