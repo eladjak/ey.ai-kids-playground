@@ -311,10 +311,17 @@ export default function BookView() {
   // Page layout helper
   const getPageLayoutStyle = (layoutType) => {
     switch (layoutType) {
+      // Legacy values
       case "text_top": return "flex-col";
       case "text_bottom": return "flex-col-reverse";
       case "text_left": return "flex-row";
       case "text_right": return "flex-row-reverse";
+      // New layout types
+      case "standard": return "flex-col";
+      case "image_top": return "flex-col-reverse";
+      case "image_full": return "relative";
+      case "text_overlay": return "relative";
+      case "two_column": return "flex-row";
       default: return "flex-col";
     }
   };
@@ -539,30 +546,67 @@ export default function BookView() {
                     ) : (
                       /* Regular page */
                       <div className={`min-h-[60vh] flex ${getPageLayoutStyle(currentPage?.layout_type)}`}>
-                        {/* Text content */}
-                        <div className="p-6 md:p-8 flex-1 flex items-center">
-                          <div>
-                            {renderHighlightedText(currentPage?.text_content)}
-                          </div>
-                        </div>
-
-                        {/* Image */}
-                        <div className={`flex-1 ${nightMode ? "bg-gray-800" : "bg-gray-50 dark:bg-gray-700"}`}>
-                          {currentPage?.image_url ? (
-                            <img
-                              src={currentPage.image_url}
-                              alt={t('bookView.pageAlt', { number: currentPageIndex })}
-                              className="w-full h-full object-cover cursor-zoom-in"
-                              onClick={zoomIn}
-                            />
-                          ) : (
-                            <div className="w-full h-full min-h-[200px] flex items-center justify-center">
-                              <p className="text-gray-400">
-                                {t('bookView.noIllustration')}
-                              </p>
+                        {/* image_full: full-bleed image, no text panel */}
+                        {currentPage?.layout_type === "image_full" ? (
+                          <>
+                            {currentPage?.image_url ? (
+                              <img
+                                src={currentPage.image_url}
+                                alt={t('bookView.pageAlt', { number: currentPageIndex })}
+                                className="absolute inset-0 w-full h-full object-cover cursor-zoom-in"
+                                onClick={zoomIn}
+                              />
+                            ) : null}
+                            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
+                              <div className="text-white">
+                                {renderHighlightedText(currentPage?.text_content)}
+                              </div>
                             </div>
-                          )}
-                        </div>
+                          </>
+                        ) : currentPage?.layout_type === "text_overlay" ? (
+                          /* text_overlay: image behind, semi-transparent text box on top */
+                          <>
+                            {currentPage?.image_url ? (
+                              <img
+                                src={currentPage.image_url}
+                                alt={t('bookView.pageAlt', { number: currentPageIndex })}
+                                className="absolute inset-0 w-full h-full object-cover cursor-zoom-in"
+                                onClick={zoomIn}
+                              />
+                            ) : null}
+                            <div className="absolute inset-x-4 bottom-4 top-auto p-4 rounded-xl bg-white/85 dark:bg-gray-900/85 backdrop-blur-sm shadow-lg">
+                              {renderHighlightedText(currentPage?.text_content)}
+                            </div>
+                          </>
+                        ) : (
+                          /* Standard, image_top, two_column — flexbox handles order */
+                          <>
+                            {/* Text content */}
+                            <div className="p-6 md:p-8 flex-1 flex items-center">
+                              <div>
+                                {renderHighlightedText(currentPage?.text_content)}
+                              </div>
+                            </div>
+
+                            {/* Image */}
+                            <div className={`flex-1 ${nightMode ? "bg-gray-800" : "bg-gray-50 dark:bg-gray-700"}`}>
+                              {currentPage?.image_url ? (
+                                <img
+                                  src={currentPage.image_url}
+                                  alt={t('bookView.pageAlt', { number: currentPageIndex })}
+                                  className="w-full h-full object-cover cursor-zoom-in"
+                                  onClick={zoomIn}
+                                />
+                              ) : (
+                                <div className="w-full h-full min-h-[200px] flex items-center justify-center">
+                                  <p className="text-gray-400">
+                                    {t('bookView.noIllustration')}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </>
+                        )}
                       </div>
                     )}
                   </div>

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+// PreviewEditStep — enhanced UI
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -12,7 +13,9 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { Sparkles, RefreshCw, Edit3, BookOpen, Globe, ChevronDown, Settings2, Check } from "lucide-react";
+import { Sparkles, RefreshCw, Edit3, BookOpen, Globe, ChevronDown, Settings2, Check, Music, Shuffle, Wand2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import RhymeOptions from "@/components/bookCreation/RhymeOptions";
 import { Skeleton } from "@/components/ui/skeleton";
 
 /**
@@ -24,6 +27,7 @@ const ART_STYLE_VISUAL = [
     value: "disney",
     emoji: "🏰",
     color: "#4f46e5",
+    gradient: "from-indigo-400 to-violet-500",
     bg: "bg-indigo-50 dark:bg-indigo-950/30",
     border: "border-indigo-200 dark:border-indigo-700",
     en: "Disney Animation",
@@ -209,6 +213,32 @@ const ART_STYLE_VISUAL = [
   }
 ];
 
+// Gradient swatches for each art style
+const STYLE_GRADIENTS = {
+  disney: "from-indigo-400 to-violet-500",
+  watercolor: "from-cyan-400 to-sky-500",
+  cartoon: "from-yellow-400 to-orange-500",
+  realistic: "from-slate-400 to-gray-500",
+  comic: "from-red-400 to-rose-500",
+  storybook: "from-violet-400 to-purple-500",
+  anime: "from-pink-400 to-fuchsia-500",
+  impressionist: "from-lime-400 to-green-500",
+  pixar: "from-sky-400 to-blue-500",
+  minimalist: "from-gray-300 to-slate-400",
+  vintage: "from-amber-500 to-orange-600",
+  fantasy: "from-purple-400 to-violet-600",
+  pop_art: "from-rose-500 to-red-600",
+  crayon: "from-orange-400 to-amber-500",
+  collage: "from-teal-400 to-cyan-500",
+  gouache: "from-emerald-400 to-green-600",
+  chibi: "from-pink-300 to-rose-400",
+};
+
+// Surprise Me auto-fill: picks random art style, length, tone, age range
+const RANDOM_TONES = ["exciting", "funny", "calm", "mysterious", "educational"];
+const RANDOM_LENGTHS = ["short", "medium", "long"];
+const RANDOM_AGES = ["3-5", "5-7", "7-10"];
+
 function getStyleLabel(style, language) {
   if (language === "hebrew") return style.he;
   if (language === "yiddish") return style.yi || style.en;
@@ -233,7 +263,11 @@ export default function PreviewEditStep({
   isGeneratingOutline,
   onRegenerateOutline,
   isRTL,
-  language
+  language,
+  useRhyming = false,
+  onUseRhymingChange,
+  rhymeSettings,
+  onRhymeSettingsChange
 }) {
   const isHebrew = language === "hebrew";
   const isYiddish = language === "yiddish";
@@ -455,6 +489,33 @@ export default function PreviewEditStep({
               </SelectContent>
             </Select>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Rhyming Options */}
+      <Card>
+        <CardContent className="p-4 space-y-3">
+          <div className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}>
+            <Music className="h-5 w-5 text-purple-500 flex-shrink-0" aria-hidden="true" />
+            <Label htmlFor="use-rhyming-wizard" className="text-sm font-medium flex-1">
+              {isHebrew ? "סיפור בחרוזים" : isYiddish ? "רײַמענדיק מעשׂה" : "Rhyming Story"}
+            </Label>
+            <Switch
+              id="use-rhyming-wizard"
+              checked={useRhyming}
+              onCheckedChange={onUseRhymingChange}
+              aria-label={isHebrew ? "הפעל חרוזים" : "Enable rhyming"}
+            />
+          </div>
+          {useRhyming && rhymeSettings && onRhymeSettingsChange && (
+            <div className="pt-1">
+              <RhymeOptions
+                rhymeSettings={rhymeSettings}
+                setRhymeSettings={onRhymeSettingsChange}
+                currentLanguage={language}
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
 
