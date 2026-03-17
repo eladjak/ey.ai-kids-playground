@@ -177,7 +177,10 @@ function App() {
   return (
     <ErrorBoundary>
       {CLERK_PUBLISHABLE_KEY ? (
-        <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
+        <ClerkProvider
+          publishableKey={CLERK_PUBLISHABLE_KEY}
+          clerkJSUrl="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+        >
           <AuthProvider>{inner}</AuthProvider>
         </ClerkProvider>
       ) : (
