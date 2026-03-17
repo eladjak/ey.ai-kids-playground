@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useLayoutEffect, useContext } from 'react';
 import { User } from "@/entities/User";
 
 // Import translations
@@ -31,10 +31,24 @@ export const LANGUAGES = {
   }
 };
 
+// Read language from localStorage synchronously so the very first render
+// already uses the correct language/direction, preventing a flash of LTR
+// content for Hebrew/Yiddish users.
+function getInitialLanguage() {
+  try {
+    const saved = localStorage.getItem('language');
+    if (saved && LANGUAGES[saved]) return saved;
+  } catch {
+    // localStorage not available (SSR / tests)
+  }
+  return 'english';
+}
+
 export const I18nProvider = ({ children }) => {
-  const [language, setLanguage] = useState('english');
-  const [translations, setTranslations] = useState(LANGUAGES.english.translations);
-  const [direction, setDirection] = useState('ltr');
+  const _initialLang = getInitialLanguage();
+  const [language, setLanguage] = useState(_initialLang);
+  const [translations, setTranslations] = useState(LANGUAGES[_initialLang].translations);
+  const [direction, setDirection] = useState(LANGUAGES[_initialLang].direction);
   const [loading, setLoading] = useState(true);
   const [isReady, setIsReady] = useState(false);
 
@@ -45,12 +59,19 @@ export const I18nProvider = ({ children }) => {
 
     document.documentElement.dir = langConfig.direction;
     document.documentElement.lang = langConfig.code;
-    
+
     // Force RTL/LTR on body as well for deeper styling control
     document.body.setAttribute('dir', langConfig.direction);
     document.body.classList.remove('rtl', 'ltr');
     document.body.classList.add(langConfig.direction);
   };
+
+  // Apply saved language to the document synchronously before first paint,
+  // so Hebrew/Yiddish users don't see a flash of LTR layout.
+  useLayoutEffect(() => {
+    applyLanguageSettings(_initialLang);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Detect browser language for first-time visitors (no saved preference)
   const detectBrowserLanguage = () => {
