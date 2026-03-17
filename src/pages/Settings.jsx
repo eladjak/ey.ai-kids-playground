@@ -48,12 +48,11 @@ import {
   Crown,
   Type,
   AlignJustify,
-  Zap
 } from 'lucide-react';
 import AIStudio from '../components/ai/AIStudio';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import ParentalControls from '../components/settings/ParentalControls';
-import { PLANS } from '@/lib/polar';
+import { PLANS, openCheckout } from '@/lib/creem';
 import useSubscription from '@/hooks/useSubscription';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
@@ -87,6 +86,120 @@ function SettingCard({ title, icon, children, isRTL, className = "" }) {
         {children}
       </CardContent>
     </Card>
+  );
+}
+
+function BillingTab({ currentPlan, userEmail, isRTL, toast }) {
+  const [upgrading, setUpgrading] = useState(null); // planId being upgraded
+  const lang = isRTL ? 'he' : 'en';
+
+  const handleUpgrade = async (planId) => {
+    setUpgrading(planId);
+    try {
+      await openCheckout(planId, userEmail);
+    } catch {
+      toast({
+        title: isRTL ? 'שגיאה' : 'Error',
+        description: isRTL
+          ? 'לא ניתן לפתוח את דף התשלום. נסו שוב.'
+          : 'Could not open checkout. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setUpgrading(null);
+    }
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="space-y-5">
+
+      {/* Current plan summary */}
+      <SettingCard
+        title={isRTL ? 'מנוי נוכחי' : 'Current Plan'}
+        icon={<CreditCard className="h-5 w-5 text-purple-500" />}
+        isRTL={isRTL}
+      >
+        <div className={`flex items-center gap-3 mt-2 ${isRTL ? "flex-row-reverse" : ""}`}>
+          <Badge className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-0 px-3 py-1 text-sm shadow-md">
+            {PLANS[currentPlan]?.name[lang] || (isRTL ? 'חינמי' : 'Free')}
+          </Badge>
+          {currentPlan !== 'free' && (
+            <span className="text-sm text-gray-500">
+              {PLANS[currentPlan]?.price[lang]}
+            </span>
+          )}
+        </div>
+      </SettingCard>
+
+      {/* Plan cards */}
+      <div className="grid md:grid-cols-4 gap-4">
+        {Object.values(PLANS).map((planDef) => {
+          const isCurrent = currentPlan === planDef.id;
+          const isPaid = planDef.id !== 'free';
+          const isLoadingThis = upgrading === planDef.id;
+
+          return (
+            <Card
+              key={planDef.id}
+              className={`relative overflow-hidden rounded-2xl border-0 shadow-md transition-all ${
+                isCurrent ? 'ring-2 ring-purple-500 ring-offset-2' : ''
+              } ${planDef.popular ? 'md:scale-105 shadow-lg shadow-purple-200/50 dark:shadow-purple-900/30' : ''}`}
+            >
+              {planDef.popular && (
+                <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-center text-xs py-1 font-semibold">
+                  {isRTL ? 'הכי פופולרי' : 'Most Popular'}
+                </div>
+              )}
+              <CardHeader className={`${planDef.popular ? 'pt-8' : 'pt-5'} px-5 pb-3`}>
+                <CardTitle className={`flex items-center gap-2 text-base ${isRTL ? "flex-row-reverse text-right" : "text-left"}`}>
+                  {isPaid && <Crown className="h-5 w-5 text-purple-500" />}
+                  {planDef.name[lang]}
+                  {isCurrent && (
+                    <Badge className="bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300 border-0 text-xs">
+                      {isRTL ? 'נוכחי' : 'Active'}
+                    </Badge>
+                  )}
+                </CardTitle>
+                <div className={`text-2xl font-bold bg-gradient-to-r from-purple-700 to-indigo-600 bg-clip-text text-transparent ${isRTL ? 'text-right' : 'text-left'}`}>
+                  {planDef.price[lang]}
+                </div>
+              </CardHeader>
+              <CardContent className="px-5 pb-5">
+                <ul className="space-y-1.5 mb-4">
+                  {planDef.features[lang].map((feature, j) => (
+                    <li key={j} className={`flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300 ${isRTL ? "flex-row-reverse" : ""}`}>
+                      <Check className="h-4 w-4 text-green-500 shrink-0" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                {isCurrent ? (
+                  <Button className="w-full rounded-xl" variant="outline" disabled>
+                    {isRTL ? 'המנוי הנוכחי' : 'Current Plan'}
+                  </Button>
+                ) : isPaid ? (
+                  <Button
+                    className="w-full rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-0 shadow-md"
+                    onClick={() => handleUpgrade(planDef.id)}
+                    disabled={!!upgrading}
+                  >
+                    {isLoadingThis ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      isRTL ? 'שדרג עכשיו' : 'Upgrade Now'
+                    )}
+                  </Button>
+                ) : (
+                  <Button className="w-full rounded-xl" variant="outline" disabled>
+                    {isRTL ? 'חינמי' : 'Free'}
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+    </motion.div>
   );
 }
 
@@ -597,112 +710,14 @@ export default function Settings() {
           </motion.div>
         </TabsContent>
 
-        {/* BILLING TAB — Coming Soon (Polar removed, new provider pending) */}
+        {/* BILLING TAB */}
         <TabsContent value="billing">
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="space-y-5">
-
-            {/* Current plan */}
-            <SettingCard
-              title={isRTL ? 'מנוי נוכחי' : 'Current Plan'}
-              icon={<CreditCard className="h-5 w-5 text-purple-500" />}
-              isRTL={isRTL}
-            >
-              <div className={`flex items-center gap-3 mt-2 ${isRTL ? "flex-row-reverse" : ""}`}>
-                <Badge className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-0 px-3 py-1 text-sm shadow-md">
-                  {PLANS[currentPlan]?.name[isRTL ? 'he' : 'en'] || (isRTL ? 'חינמי' : 'Free')}
-                </Badge>
-                {currentPlan !== 'free' && (
-                  <span className="text-sm text-gray-500">
-                    {PLANS[currentPlan]?.price[isRTL ? 'he' : 'en']}
-                  </span>
-                )}
-              </div>
-            </SettingCard>
-
-            {/* Coming Soon card */}
-            <Card className="rounded-2xl border-2 border-dashed border-purple-200 dark:border-purple-800 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/10 dark:to-indigo-900/10 shadow-none">
-              <CardContent className="p-8 md:p-10 text-center">
-                <div className="w-20 h-20 mx-auto mb-5 rounded-full bg-gradient-to-br from-purple-100 to-indigo-100 dark:from-purple-900/40 dark:to-indigo-900/40 flex items-center justify-center shadow-inner">
-                  <Zap className="h-10 w-10 text-purple-500" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
-                  {isRTL ? 'מנויים בקרוב!' : 'Subscriptions Coming Soon!'}
-                </h3>
-                <p className="text-gray-500 dark:text-gray-400 max-w-sm mx-auto mb-4 text-sm leading-relaxed">
-                  {isRTL
-                    ? 'אנחנו עובדים על שיפור מערכת התשלומים שלנו כדי לתת לכם את החוויה הטובה ביותר. קצת עוד סבלנות!'
-                    : 'We\'re upgrading our payment system to give you the best experience. Hang tight — premium plans are on the way!'
-                  }
-                </p>
-                <div className={`flex items-center justify-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
-                  <div className="flex gap-1.5">
-                    {Array(3).fill(0).map((_, i) => (
-                      <div
-                        key={i}
-                        className="w-2 h-2 rounded-full bg-purple-400 animate-bounce"
-                        style={{ animationDelay: `${i * 0.15}s` }}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-sm text-purple-500 font-medium">
-                    {isRTL ? 'בקרוב...' : 'Coming soon...'}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Plan features preview (read-only) */}
-            <div className="grid md:grid-cols-3 gap-4">
-              {Object.values(PLANS).map((planDef, i) => {
-                const isCurrent = currentPlan === planDef.id;
-                const lang = isRTL ? 'he' : 'en';
-                return (
-                  <Card
-                    key={planDef.id}
-                    className={`relative overflow-hidden rounded-2xl border-0 shadow-md transition-all ${
-                      isCurrent ? 'ring-2 ring-purple-500 ring-offset-2' : ''
-                    } ${planDef.popular ? 'md:scale-105 shadow-lg shadow-purple-200/50 dark:shadow-purple-900/30' : ''}`}
-                  >
-                    {planDef.popular && (
-                      <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-center text-xs py-1 font-semibold">
-                        {isRTL ? 'הכי פופולרי' : 'Most Popular'}
-                      </div>
-                    )}
-                    <CardHeader className={`${planDef.popular ? 'pt-8' : 'pt-5'} px-5 pb-3`}>
-                      <CardTitle className={`flex items-center gap-2 text-base ${isRTL ? "flex-row-reverse text-right" : "text-left"}`}>
-                        {planDef.id !== 'free' && <Crown className="h-5 w-5 text-purple-500" />}
-                        {planDef.name[lang]}
-                        {isCurrent && <Badge className="bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300 border-0 text-xs">{isRTL ? 'נוכחי' : 'Active'}</Badge>}
-                      </CardTitle>
-                      <div className={`text-2xl font-bold bg-gradient-to-r from-purple-700 to-indigo-600 bg-clip-text text-transparent ${isRTL ? 'text-right' : 'text-left'}`}>
-                        {planDef.price[lang]}
-                      </div>
-                    </CardHeader>
-                    <CardContent className="px-5 pb-5">
-                      <ul className="space-y-1.5">
-                        {planDef.features[lang].map((feature, j) => (
-                          <li key={j} className={`flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300 ${isRTL ? "flex-row-reverse" : ""}`}>
-                            <Check className="h-4 w-4 text-green-500 shrink-0" />
-                            {feature}
-                          </li>
-                        ))}
-                      </ul>
-                      <Button
-                        className="w-full mt-4 rounded-xl"
-                        variant="outline"
-                        disabled
-                      >
-                        {isCurrent
-                          ? (isRTL ? 'המנוי הנוכחי' : 'Current Plan')
-                          : (isRTL ? 'בקרוב' : 'Coming Soon')
-                        }
-                      </Button>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          </motion.div>
+          <BillingTab
+            currentPlan={currentPlan}
+            userEmail={hookUser?.email || user?.email}
+            isRTL={isRTL}
+            toast={toast}
+          />
         </TabsContent>
 
         {/* PARENTAL TAB */}

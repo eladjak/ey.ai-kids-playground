@@ -48,6 +48,7 @@ export default function useSubscription() {
   return {
     plan,
     isLoading,
+    isLite: plan === 'lite',
     isPremium: plan === 'premium' || plan === 'family',
     isFamily: plan === 'family',
     isFree: plan === 'free',
