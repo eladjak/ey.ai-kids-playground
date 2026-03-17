@@ -119,7 +119,7 @@ const OnboardingWizard = React.memo(function OnboardingWizard({ onComplete, user
   const handleFinish = async () => {
     setIsSaving(true);
     try {
-      await User.updateMyProfile({
+      await User.updateMyUserData({
         display_name: name.trim(),
         preferred_age_range: ageRange,
         preferred_language: language,

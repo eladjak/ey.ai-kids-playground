@@ -141,7 +141,7 @@ export default function Layout({ children, currentPageName }) {
       { href: "/Characters", label: t("common.characters"), icon: Users2, pageName: "Characters" },
     ],
     mySpace: [
-      { href: "/Library", label: t("common.myLibrary"), icon: Library, pageName: "Library" },
+      { href: "/Library", label: t("common.library"), icon: Library, pageName: "Library" },
       { href: "/Profile", label: t("common.myProfile"), icon: UserIcon, pageName: "Profile" },
     ],
     community: [
