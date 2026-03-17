@@ -62,6 +62,9 @@ self.addEventListener('fetch', (event) => {
   // Skip chrome-extension, browser-sync, etc.
   if (!url.protocol.startsWith('http')) return;
 
+  // Skip external services (Clerk, Sentry, analytics) — let browser handle directly
+  if (url.hostname.includes('clerk') || url.hostname.includes('sentry') || url.hostname.includes('accounts.sipurai.ai')) return;
+
   // API calls: network-first with cache fallback
   if (url.pathname.startsWith('/api/') || url.hostname.includes('supabase')) {
     event.respondWith(networkFirst(request, API_CACHE));
