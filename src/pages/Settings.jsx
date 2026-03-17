@@ -279,8 +279,9 @@ export default function Settings() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="english">English</SelectItem>
-                      <SelectItem value="hebrew">עברית</SelectItem>
+                      <SelectItem value="english">{t("bookWizard.languageEnglish")}</SelectItem>
+                      <SelectItem value="hebrew">{t("bookWizard.languageHebrew")}</SelectItem>
+                      <SelectItem value="yiddish">{t("bookWizard.languageYiddish")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -295,9 +296,9 @@ export default function Settings() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="english">English</SelectItem>
-                      <SelectItem value="hebrew">עברית</SelectItem>
-                      <SelectItem value="yiddish">ייִדיש</SelectItem>
+                      <SelectItem value="english">{t("bookWizard.languageEnglish")}</SelectItem>
+                      <SelectItem value="hebrew">{t("bookWizard.languageHebrew")}</SelectItem>
+                      <SelectItem value="yiddish">{t("bookWizard.languageYiddish")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -330,10 +331,10 @@ export default function Settings() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="0.75">0.75x</SelectItem>
-                      <SelectItem value="1">1x (Normal)</SelectItem>
-                      <SelectItem value="1.25">1.25x</SelectItem>
-                      <SelectItem value="1.5">1.5x</SelectItem>
+                      <SelectItem value="0.75">{t("settings.accessibility.audioSpeeds.slow")}</SelectItem>
+                      <SelectItem value="1">{t("settings.accessibility.audioSpeeds.normal")}</SelectItem>
+                      <SelectItem value="1.25">{t("settings.accessibility.audioSpeeds.fast")}</SelectItem>
+                      <SelectItem value="1.5">{t("settings.accessibility.audioSpeeds.veryFast")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

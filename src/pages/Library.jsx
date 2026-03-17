@@ -80,9 +80,9 @@ export default function Library() {
 
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      results = results.filter(book => 
-        book.title.toLowerCase().includes(query) || 
-        book.child_name.toLowerCase().includes(query)
+      results = results.filter(book =>
+        (book.title || '').toLowerCase().includes(query) ||
+        (book.child_name || '').toLowerCase().includes(query)
       );
     }
 

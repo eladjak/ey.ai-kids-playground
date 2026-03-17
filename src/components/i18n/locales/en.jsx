@@ -37,6 +37,8 @@ export default {
     characters: "My Characters",
     leaderboard: "Leaderboard",
     unknownUser: "Unknown User",
+    guest: "Guest",
+    skipToMainContent: "Skip to main content",
     status: {
       draft: "Draft",
       generating: "Generating",
@@ -1793,5 +1795,15 @@ export default {
       noModel: "Please select an image model to start creating"
     },
     plan: "Plan"
+  },
+  generationSteps: {
+    step1: "Generating Story",
+    step1Desc: "Creating a personalized story based on your inputs",
+    step2: "Creating Illustrations",
+    step2Desc: "Generating beautiful illustrations for each page",
+    step3: "Adding Audio",
+    step3Desc: "Creating narration and sound effects",
+    step4: "Book Complete",
+    step4Desc: "Your book is ready to read and share"
   }
 };

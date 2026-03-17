@@ -54,6 +54,22 @@ export default class ErrorBoundary extends React.Component {
         : 'hebrew';
       const isRTL = storedLanguage === 'hebrew' || storedLanguage === 'yiddish';
       const isHebrew = storedLanguage === 'hebrew';
+      const isYiddish = storedLanguage === 'yiddish';
+
+      const heading = isHebrew
+        ? 'אופס! משהו השתבש'
+        : isYiddish
+        ? 'אוי! עפּעס איז פֿאַלשׁ'
+        : 'Oops! Something went wrong';
+
+      const description = isHebrew
+        ? 'לא לדאוג, זה קורה לפעמים. בואו ננסה שוב!'
+        : isYiddish
+        ? 'קיין זאָרגן, דאָס פּאַסירט אַמאָל. לאָמיר פּרוּוון ווידער!'
+        : "Don't worry, this happens sometimes. Let's try again!";
+
+      const tryAgainLabel = isHebrew ? 'נסה שוב' : isYiddish ? 'פּרוּוו ווידער' : 'Try Again';
+      const goHomeLabel = isHebrew ? 'חזרה הביתה' : isYiddish ? 'גיי אַהיים' : 'Go Home';
 
       return (
         <div
@@ -69,23 +85,21 @@ export default class ErrorBoundary extends React.Component {
 
             <div className="space-y-2">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {isHebrew ? 'אופס! משהו השתבש' : 'Oops! Something went wrong'}
+                {heading}
               </h1>
               <p className="text-gray-600 dark:text-gray-400">
-                {isHebrew
-                  ? 'לא לדאוג, זה קורה לפעמים. בואו ננסה שוב!'
-                  : "Don't worry, this happens sometimes. Let's try again!"}
+                {description}
               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button onClick={this.handleReset} variant="default" className="gap-2" aria-label={isHebrew ? 'נסה שוב' : 'Try again'}>
+              <Button onClick={this.handleReset} variant="default" className="gap-2" aria-label={tryAgainLabel}>
                 <RefreshCw className="w-4 h-4" aria-hidden="true" />
-                {isHebrew ? 'נסה שוב' : 'Try Again'}
+                {tryAgainLabel}
               </Button>
-              <Button onClick={this.handleGoHome} variant="outline" className="gap-2" aria-label={isHebrew ? 'חזרה הביתה' : 'Go home'}>
+              <Button onClick={this.handleGoHome} variant="outline" className="gap-2" aria-label={goHomeLabel}>
                 <Home className="w-4 h-4" aria-hidden="true" />
-                {isHebrew ? 'חזרה הביתה' : 'Go Home'}
+                {goHomeLabel}
               </Button>
             </div>
           </div>

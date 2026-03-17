@@ -7,6 +7,7 @@ import {
   DialogContent,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useI18n } from '@/components/i18n/i18nProvider';
 
 const artStyleLabels = {
   watercolor: 'צבעי מים',
@@ -36,6 +37,7 @@ const pageVariants = {
 };
 
 const DemoBookViewer = ({ book, open, onClose }) => {
+  const { isRTL } = useI18n();
   const [currentPage, setCurrentPage] = useState(-1); // -1 = cover
   const [direction, setDirection] = useState(0);
 
@@ -71,7 +73,7 @@ const DemoBookViewer = ({ book, open, onClose }) => {
     <Dialog open={open} onOpenChange={(val) => !val && handleClose()}>
       <DialogContent
         className="max-w-2xl w-[95vw] max-h-[90dvh] p-0 overflow-hidden bg-white dark:bg-gray-900 border-0 rounded-2xl"
-        dir="rtl"
+        dir={isRTL ? "rtl" : "ltr"}
       >
         <DialogTitle className="sr-only">{book.title.he}</DialogTitle>
 

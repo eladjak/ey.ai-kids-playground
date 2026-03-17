@@ -244,7 +244,7 @@ export default function Layout({ children, currentPageName }) {
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-purple-600 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg"
       >
-        Skip to main content
+        {t("common.skipToMainContent")}
       </a>
       <div className={isRTL ? 'pr-64 max-lg:pr-0' : 'pl-64 max-lg:pl-0'}>
         <aside className={`fixed top-0 ${isRTL ? 'right-0 border-l' : 'left-0 border-r'} h-full w-64 bg-gradient-to-b from-white via-white to-purple-50/30 dark:from-gray-800 dark:via-gray-800 dark:to-purple-950/20 border-gray-200 dark:border-gray-700 flex flex-col transition-transform duration-300 z-50 ${sidebarOpen ? 'translate-x-0' : (isRTL ? 'translate-x-full' : '-translate-x-full')} lg:translate-x-0`}>
@@ -327,7 +327,7 @@ export default function Layout({ children, currentPageName }) {
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-gray-900 dark:text-gray-100 truncate">
-                    {user?.full_name || "Guest"}
+                    {user?.full_name || t("common.guest")}
                   </p>
                   <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
                     {t("common.myProfile")}

@@ -137,7 +137,16 @@ export default function CharacterEditor() {
                 prompt: prompt,
                 temperature: 0.7,
                 max_tokens: 500,
-                response_format: { type: "json_object" }
+                response_json_schema: {
+                    type: "object",
+                    properties: {
+                        name: { type: "string" },
+                        age: { type: "number" },
+                        gender: { type: "string" },
+                        personality: { type: "string" },
+                        appearance: { type: "string" }
+                    }
+                }
             });
             setCharacter(prev => ({
                 ...prev,

@@ -656,7 +656,7 @@ export default function BookView() {
                 </Button>
 
                 <div className={`text-sm ${nightMode ? "text-gray-400" : "text-gray-500 dark:text-gray-400"}`}>
-                  {t('bookView.pageOf', { current: currentPageIndex, total: pages.length - 1 })}
+                  {t('bookView.pageOf', { current: currentPageIndex, total: pages.length })}
                 </div>
 
                 <Button

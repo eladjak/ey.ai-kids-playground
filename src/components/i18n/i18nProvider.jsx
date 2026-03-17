@@ -52,6 +52,14 @@ export const I18nProvider = ({ children }) => {
     document.body.classList.add(langConfig.direction);
   };
 
+  // Detect browser language for first-time visitors (no saved preference)
+  const detectBrowserLanguage = () => {
+    const browserLang = navigator.language || navigator.userLanguage || '';
+    if (browserLang.startsWith('he')) return 'hebrew';
+    if (browserLang.startsWith('yi')) return 'yiddish';
+    return 'english';
+  };
+
   // Load user language preference
   useEffect(() => {
     const loadLanguagePreference = async () => {
@@ -63,6 +71,14 @@ export const I18nProvider = ({ children }) => {
           setTranslations(LANGUAGES[savedLanguage].translations);
           setDirection(LANGUAGES[savedLanguage].direction);
           applyLanguageSettings(savedLanguage);
+        } else {
+          // First visit: auto-detect from browser
+          const detected = detectBrowserLanguage();
+          setLanguage(detected);
+          setTranslations(LANGUAGES[detected].translations);
+          setDirection(LANGUAGES[detected].direction);
+          applyLanguageSettings(detected);
+          // Do NOT save to localStorage yet — let the user confirm via settings
         }
 
         // Then check user settings from backend

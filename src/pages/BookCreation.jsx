@@ -93,7 +93,7 @@ export default function BookCreation() {
 
   // Language / RTL
   // currentLanguage is the BOOK CONTENT language (for AI-generated content translations)
-  const currentLanguage = book?.language === "hebrew" || book?.language === "yiddish" ? "hebrew" : "english";
+  const currentLanguage = book?.language || "english";
   // isRTL for layout direction uses the UI language (from useI18n), not book content language
   const isRTL = uiIsRTL;
   const t = getBookTranslation(currentLanguage);
@@ -324,8 +324,8 @@ export default function BookCreation() {
           page_number: i,
           text_content: sanitizedTextContent,
           image_url: imageUrl,
-          // If image failed, mark it in the prompt so it can be retried
-          image_prompt: imageFailed ? `[Image generation failed] ${imagePrompt}` : imagePrompt,
+          image_prompt: imagePrompt,
+          image_failed: imageFailed ? true : undefined,
           layout_type: getLayoutForPageNumber(i)
         };
 

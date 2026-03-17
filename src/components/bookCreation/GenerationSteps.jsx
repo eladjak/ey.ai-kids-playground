@@ -1,31 +1,34 @@
 import React from 'react';
 import { Circle, CheckCircle, BookText, Image, Music } from 'lucide-react';
+import { useI18n } from '@/components/i18n/i18nProvider';
 
 export default function GenerationSteps({ currentStep }) {
+  const { t } = useI18n();
+
   const steps = [
     {
       id: "generating_story",
-      title: "Generating Story",
+      title: t("generationSteps.step1"),
       icon: BookText,
-      description: "Creating a personalized story based on your inputs"
+      description: t("generationSteps.step1Desc")
     },
     {
       id: "generating_images",
-      title: "Creating Illustrations",
+      title: t("generationSteps.step2"),
       icon: Image,
-      description: "Generating beautiful illustrations for each page"
+      description: t("generationSteps.step2Desc")
     },
     {
       id: "generating_audio",
-      title: "Adding Audio",
+      title: t("generationSteps.step3"),
       icon: Music,
-      description: "Creating narration and sound effects"
+      description: t("generationSteps.step3Desc")
     },
     {
       id: "complete",
-      title: "Book Complete",
+      title: t("generationSteps.step4"),
       icon: CheckCircle,
-      description: "Your book is ready to read and share"
+      description: t("generationSteps.step4Desc")
     }
   ];
 

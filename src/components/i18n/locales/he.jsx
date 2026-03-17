@@ -37,6 +37,8 @@ export default {
     characters: "הדמויות שלי",
     leaderboard: "טבלת מובילים",
     unknownUser: "משתמש לא ידוע",
+    guest: "אורח",
+    skipToMainContent: "דלג לתוכן הראשי",
     status: {
       draft: "טיוטה",
       generating: "מייצר",
@@ -1781,5 +1783,15 @@ export default {
       noModel: "אנא בחר מודל תמונה כדי להתחיל ליצור"
     },
     plan: "חבילה"
+  },
+  generationSteps: {
+    step1: "יוצר סיפור",
+    step1Desc: "יוצר סיפור מותאם אישית...",
+    step2: "יוצר איורים",
+    step2Desc: "מייצר איורים יפהפיים...",
+    step3: "מוסיף קריינות",
+    step3Desc: "יוצר קריינות ואפקטים קוליים",
+    step4: "הספר מוכן!",
+    step4Desc: "הספר שלך מוכן לקריאה ולשיתוף"
   }
 };

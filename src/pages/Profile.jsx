@@ -528,31 +528,59 @@ export default function Profile() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {[
-                    { icon: BookOpen, color: "purple", value: readingStats.totalBooks, label: t("profile.readingStats.booksCreated"), delay: 0 },
-                    { icon: FileText, color: "blue", value: readingStats.totalPages, label: t("profile.readingStats.totalPages"), delay: 0.1 },
-                    { icon: Star, color: "amber", value: readingStats.favoriteGenre ? readingStats.favoriteGenre.replace(/_/g, " ") : t("profile.readingStats.noGenre"), label: t("profile.readingStats.favoriteGenre"), delay: 0.2, capitalize: true },
-                    { icon: Calendar, color: "green", value: readingStats.memberSince ? formatDate(readingStats.memberSince) : "-", label: t("profile.readingStats.memberSince"), delay: 0.3 }
-                  ].map((stat, idx) => {
-                    const IconComp = stat.icon;
-                    return (
-                      <motion.div
-                        key={idx}
-                        className={`bg-gradient-to-br from-${stat.color}-50 to-${stat.color}-100/50 dark:from-${stat.color}-900/20 dark:to-${stat.color}-900/10 rounded-xl p-4 text-center border border-${stat.color}-100/50 dark:border-${stat.color}-800/20 shadow-sm hover:shadow-md transition-shadow`}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: stat.delay, duration: 0.4 }}
-                      >
-                        <div className={`mx-auto mb-3 w-12 h-12 rounded-full bg-${stat.color}-100 dark:bg-${stat.color}-900/30 flex items-center justify-center`}>
-                          <IconComp className={`h-6 w-6 text-${stat.color}-600 dark:text-${stat.color}-400`} />
-                        </div>
-                        <p className={`text-2xl font-bold text-gray-900 dark:text-white ${stat.capitalize ? 'capitalize' : ''}`}>{stat.value}</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{stat.label}</p>
-                      </motion.div>
-                    );
-                  })}
-                </div>
+                {/* Static Tailwind color maps — dynamic class strings break Tailwind's JIT scanner */}
+                {(() => {
+                  const colorClasses = {
+                    purple: {
+                      card: "bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-900/20 dark:to-purple-900/10 border border-purple-100/50 dark:border-purple-800/20",
+                      icon: "bg-purple-100 dark:bg-purple-900/30",
+                      iconText: "text-purple-600 dark:text-purple-400"
+                    },
+                    blue: {
+                      card: "bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-900/20 dark:to-blue-900/10 border border-blue-100/50 dark:border-blue-800/20",
+                      icon: "bg-blue-100 dark:bg-blue-900/30",
+                      iconText: "text-blue-600 dark:text-blue-400"
+                    },
+                    amber: {
+                      card: "bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-900/20 dark:to-amber-900/10 border border-amber-100/50 dark:border-amber-800/20",
+                      icon: "bg-amber-100 dark:bg-amber-900/30",
+                      iconText: "text-amber-600 dark:text-amber-400"
+                    },
+                    green: {
+                      card: "bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-900/20 dark:to-green-900/10 border border-green-100/50 dark:border-green-800/20",
+                      icon: "bg-green-100 dark:bg-green-900/30",
+                      iconText: "text-green-600 dark:text-green-400"
+                    }
+                  };
+                  return (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {[
+                        { icon: BookOpen, color: "purple", value: readingStats.totalBooks, label: t("profile.readingStats.booksCreated"), delay: 0 },
+                        { icon: FileText, color: "blue", value: readingStats.totalPages, label: t("profile.readingStats.totalPages"), delay: 0.1 },
+                        { icon: Star, color: "amber", value: readingStats.favoriteGenre ? readingStats.favoriteGenre.replace(/_/g, " ") : t("profile.readingStats.noGenre"), label: t("profile.readingStats.favoriteGenre"), delay: 0.2, capitalize: true },
+                        { icon: Calendar, color: "green", value: readingStats.memberSince ? formatDate(readingStats.memberSince) : "-", label: t("profile.readingStats.memberSince"), delay: 0.3 }
+                      ].map((stat, idx) => {
+                        const IconComp = stat.icon;
+                        const cc = colorClasses[stat.color];
+                        return (
+                          <motion.div
+                            key={idx}
+                            className={`${cc.card} rounded-xl p-4 text-center shadow-sm hover:shadow-md transition-shadow`}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: stat.delay, duration: 0.4 }}
+                          >
+                            <div className={`mx-auto mb-3 w-12 h-12 rounded-full ${cc.icon} flex items-center justify-center`}>
+                              <IconComp className={`h-6 w-6 ${cc.iconText}`} />
+                            </div>
+                            <p className={`text-2xl font-bold text-gray-900 dark:text-white ${stat.capitalize ? 'capitalize' : ''}`}>{stat.value}</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{stat.label}</p>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
               </CardContent>
             </Card>
           </div>
