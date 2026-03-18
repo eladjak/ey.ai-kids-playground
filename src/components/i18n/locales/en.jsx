@@ -1357,7 +1357,8 @@ export default {
       howItWorks: "How It Works",
       pricing: "Pricing",
       signIn: "Sign In",
-      cta: "Start Free"
+      cta: "Start Free",
+      goToApp: "Go to App"
     },
     hero: {
       badge: "AI-Powered Children's Book Creator",

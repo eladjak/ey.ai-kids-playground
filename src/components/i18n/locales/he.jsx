@@ -1345,7 +1345,8 @@ export default {
       howItWorks: "איך זה עובד",
       pricing: "מחירים",
       signIn: "התחברות",
-      cta: "התחילו בחינם"
+      cta: "התחילו בחינם",
+      goToApp: "כניסה לאפליקציה"
     },
     hero: {
       badge: "פלטפורמת AI ליצירת ספרי ילדים",

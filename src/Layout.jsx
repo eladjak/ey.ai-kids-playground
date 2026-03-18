@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { User } from "@/entities/User";
 import { useI18n } from "@/components/i18n/i18nProvider";
+import { useAuth } from "@/lib/AuthContext";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import useGamification from "@/hooks/useGamification";
 import GamificationOverlay from "@/components/gamification/GamificationOverlay";
@@ -44,7 +45,7 @@ const NavLink = memo(function NavLink({ item, currentPath, isRTL }) {
     <Link to={createPageUrl(item.pageName)} className="w-full">
       <Button
         variant="ghost"
-        className={`w-full justify-start py-6 px-4 rounded-xl transition-all duration-200 relative ${
+        className={`w-full ${isRTL ? 'justify-end flex-row-reverse' : 'justify-start'} py-6 px-4 rounded-xl transition-all duration-200 relative ${
           isActive
             ? 'bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 text-purple-700 dark:text-purple-300 shadow-sm'
             : 'hover:bg-gray-50 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-200'
@@ -53,7 +54,7 @@ const NavLink = memo(function NavLink({ item, currentPath, isRTL }) {
         {isActive && (
           <span className={`absolute ${isRTL ? 'right-0' : 'left-0'} top-1/2 -translate-y-1/2 w-1 h-8 rounded-full bg-purple-600 dark:bg-purple-400`} />
         )}
-        <item.icon className={`h-5 w-5 ${isRTL ? 'ml-3' : 'mr-3'} ${
+        <item.icon className={`h-5 w-5 ${isRTL ? 'ms-3' : 'me-3'} ${
           isActive ? 'text-purple-600 dark:text-purple-400' : 'text-gray-400 dark:text-gray-300'
         }`} />
         {item.label}
@@ -72,6 +73,7 @@ export default function Layout({ children, currentPageName }) {
   const [isRTL, setIsRTL] = useState(false);
   const location = useLocation();
   const { t: i18nT, isRTL: i18nIsRTL, language: i18nLanguage } = useI18n();
+  const { logout: authLogout } = useAuth();
   const { user } = useCurrentUser();
   const gamification = useGamification();
 
@@ -162,10 +164,11 @@ export default function Layout({ children, currentPageName }) {
       };
 
       localStorage.setItem("lastUserPreferences", JSON.stringify(currentPreferences));
-      await User.logout();
-      window.location.reload();
+      // authLogout calls clerk.signOut() which properly ends the Clerk session
+      authLogout(true);
     } catch (error) {
-      // silently handled
+      // silently handled — fall back to a hard reload
+      window.location.href = '/';
     }
   };
 
@@ -316,7 +319,7 @@ export default function Layout({ children, currentPageName }) {
 
           <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
             <Link to={createPageUrl("Profile")} className="w-full">
-              <div className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg transition-colors">
+              <div className={`flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Avatar className="h-10 w-10 border-2 border-white dark:border-gray-700 shadow-md">
                   {user?.avatar_url ? (
                     <AvatarImage src={user.avatar_url} alt={user.full_name} />
@@ -326,7 +329,7 @@ export default function Layout({ children, currentPageName }) {
                     </AvatarFallback>
                   )}
                 </Avatar>
-                <div className="flex-1 min-w-0">
+                <div className={`flex-1 min-w-0 ${isRTL ? 'text-right' : ''}`}>
                   <p className="font-medium text-gray-900 dark:text-gray-100 truncate">
                     {user?.full_name || t("common.guest")}
                   </p>
@@ -340,17 +343,17 @@ export default function Layout({ children, currentPageName }) {
             <div className="space-y-1 mt-4">
               <Button
                 variant="ghost"
-                className="w-full justify-start py-5 px-4 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-200"
+                className={`w-full ${isRTL ? 'justify-end flex-row-reverse' : 'justify-start'} py-5 px-4 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-200`}
                 onClick={toggleDarkMode}
               >
                 {darkMode ? (
                   <>
-                    <Sun className={`h-5 w-5 ${isRTL ? 'ml-3' : 'mr-3'} text-amber-400`} />
+                    <Sun className={`h-5 w-5 ${isRTL ? 'ms-3' : 'me-3'} text-amber-400`} />
                     {t("common.lightMode")}
                   </>
                 ) : (
                   <>
-                    <Moon className={`h-5 w-5 ${isRTL ? 'ml-3' : 'mr-3'} text-gray-400 dark:text-gray-300`} />
+                    <Moon className={`h-5 w-5 ${isRTL ? 'ms-3' : 'me-3'} text-gray-400 dark:text-gray-300`} />
                     {t("common.darkMode")}
                   </>
                 )}
@@ -359,19 +362,19 @@ export default function Layout({ children, currentPageName }) {
               <Link to="/welcome" className="w-full">
                 <Button
                   variant="ghost"
-                  className="w-full justify-start py-5 px-4 rounded-xl hover:bg-purple-50 dark:hover:bg-purple-900/20 text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-300"
+                  className={`w-full ${isRTL ? 'justify-end flex-row-reverse' : 'justify-start'} py-5 px-4 rounded-xl hover:bg-purple-50 dark:hover:bg-purple-900/20 text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-300`}
                 >
-                  <Globe className={`h-4 w-4 ${isRTL ? 'ml-3' : 'mr-3'} opacity-70`} />
+                  <Globe className={`h-4 w-4 ${isRTL ? 'ms-3' : 'me-3'} opacity-70`} />
                   <span className="text-sm">sipurai.ai</span>
                 </Button>
               </Link>
 
               <Button
                 variant="ghost"
-                className="w-full justify-start py-5 px-4 rounded-xl text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+                className={`w-full ${isRTL ? 'justify-end flex-row-reverse' : 'justify-start'} py-5 px-4 rounded-xl text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20`}
                 onClick={handleLogout}
               >
-                <LogOut className={`h-5 w-5 ${isRTL ? 'ml-3' : 'mr-3'}`} />
+                <LogOut className={`h-5 w-5 ${isRTL ? 'ms-3' : 'me-3'}`} />
                 {t("common.logout")}
               </Button>
             </div>

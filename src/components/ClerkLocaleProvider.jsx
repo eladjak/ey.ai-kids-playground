@@ -6,9 +6,14 @@ import { useI18n } from '@/components/i18n/i18nProvider';
 const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 const localeMap = {
+  // i18n language keys ('hebrew', 'english', 'yiddish')
+  hebrew: heIL,
+  english: enUS,
+  yiddish: heIL, // Yiddish falls back to Hebrew (closest RTL locale)
+  // also accept ISO codes in case any caller uses them
   he: heIL,
   en: enUS,
-  yi: heIL, // Yiddish falls back to Hebrew (closest RTL locale)
+  yi: heIL,
 };
 
 const ClerkLocaleProvider = ({ children }) => {
