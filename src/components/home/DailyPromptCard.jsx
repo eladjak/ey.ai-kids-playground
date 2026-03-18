@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useI18n } from "@/components/i18n/i18nProvider";
-import { Sparkles, ArrowRight, Lightbulb, Wand2 } from "lucide-react";
+import { Sparkles, ArrowRight, Lightbulb, Wand2, Compass } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -20,14 +20,15 @@ const DailyPromptCard = React.memo(function DailyPromptCard({ dailyPrompt, isPro
           {t("home.dailyPrompt.title")}
         </h2>
 
-        <Link
-          to={createPageUrl("StoryIdeas")}
-          className="text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 flex items-center gap-1 text-sm font-medium transition-colors"
-        >
-          {t("home.dailyPrompt.explore")}
-          {isRTL
-            ? <ArrowRight className="h-4 w-4 rotate-180" />
-            : <ArrowRight className="h-4 w-4" />}
+        <Link to={createPageUrl("StoryIdeas")}>
+          <Button
+            variant="outline"
+            size="sm"
+            className={`gap-1.5 border-amber-300 text-amber-700 hover:bg-amber-50 hover:border-amber-400 dark:border-amber-700 dark:text-amber-400 dark:hover:bg-amber-950/30 font-medium rounded-xl ${isRTL ? "flex-row-reverse" : ""}`}
+          >
+            <Compass className="h-4 w-4" />
+            {t("home.dailyPrompt.explore")}
+          </Button>
         </Link>
       </div>
 

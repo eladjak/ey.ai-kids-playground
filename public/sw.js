@@ -65,6 +65,11 @@ self.addEventListener('fetch', (event) => {
   // Skip external services — let browser handle directly
   if (url.hostname !== location.hostname) return;
 
+  // Auth routes — always pass directly to the network, never cache
+  if (url.pathname.startsWith('/sign-in') || url.pathname.startsWith('/sign-up')) {
+    return; // let the browser handle it
+  }
+
   // API calls: network-first with cache fallback
   if (url.pathname.startsWith('/api/') || url.hostname.includes('supabase')) {
     event.respondWith(networkFirst(request, API_CACHE));

@@ -19,9 +19,10 @@ function translateGenre(genre, isRTL) {
     "fantasy": isRTL ? "פנטזיה" : "Fantasy",
     "science": isRTL ? "מדע" : "Science",
     "animals": isRTL ? "חיות" : "Animals",
-    "sports": isRTL ? "ספורט" : "Sports"
+    "sports": isRTL ? "ספורט" : "Sports",
+    "custom": isRTL ? "נוצר בהפתעה!" : "Personalized"
   };
-  return genreTranslations[genre] || genre;
+  return genreTranslations[genre] || (isRTL ? "מותאם אישית" : genre);
 }
 
 function BookCardItem({ book, isRTL, t, index = 0 }) {

@@ -19,8 +19,7 @@ import {
   BookOpen,
   Sparkles,
   Wand2,
-  Search,
-  Globe
+  Search
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -284,43 +283,41 @@ export default function Home() {
 
   return (
     <div className="max-w-6xl mx-auto pb-12" dir={isRTL ? "rtl" : "ltr"}>
-      {/* Top bar: welcome card + search + create */}
+      {/* Welcome + action bar */}
       <section className="p-4 md:p-6 lg:p-8">
         <div className="flex flex-col gap-4">
           <UserWelcomeCard userData={userData} />
 
-          <div className={`flex items-center gap-2 w-full md:w-auto ${isRTL ? "flex-row-reverse" : ""}`}>
-            <div className="relative flex-1 md:flex-none">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShowSearch(s => !s);
-                  if (!showSearch) setTimeout(() => searchInputRef.current?.focus(), 100);
-                }}
-                className={`w-full md:w-auto rounded-2xl border-purple-200 hover:border-purple-400 hover:bg-purple-50 dark:border-purple-800 dark:hover:bg-purple-900/20 ${showSearch ? "hidden md:flex" : ""}`}
-              >
-                <Search className={`h-4 w-4 text-purple-500 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                <span className="hidden md:inline text-gray-500">{t("home.search.placeholder")}</span>
-              </Button>
-
-              {showSearch && (
-                <div className="absolute inset-0 z-10 flex items-center">
-                  <Input
-                    ref={searchInputRef}
-                    type="search"
-                    placeholder={t("home.search.placeholder")}
-                    className="w-full rounded-2xl border-purple-300 focus:border-purple-500 focus:ring-purple-500/20"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onBlur={() => !searchQuery && setShowSearch(false)}
-                  />
-                </div>
+          {/* Search + Create row */}
+          <div className={`flex items-center gap-2 w-full ${isRTL ? "flex-row-reverse" : ""}`}>
+            {/* Inline search — no absolute positioning */}
+            <div className={`flex-1 relative ${isRTL ? "text-right" : "text-left"}`}>
+              {showSearch ? (
+                <Input
+                  ref={searchInputRef}
+                  type="search"
+                  placeholder={t("home.search.placeholder")}
+                  dir={isRTL ? "rtl" : "ltr"}
+                  className={`w-full rounded-2xl border-purple-300 focus:border-purple-500 focus:ring-purple-500/20 ${isRTL ? "pr-10 pl-3" : "pl-10 pr-3"}`}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onBlur={() => !searchQuery && setShowSearch(false)}
+                  autoFocus
+                />
+              ) : (
+                <Button
+                  variant="outline"
+                  onClick={() => setShowSearch(true)}
+                  className={`w-full rounded-2xl border-purple-200 hover:border-purple-400 hover:bg-purple-50 dark:border-purple-800 dark:hover:bg-purple-900/20 justify-start ${isRTL ? "flex-row-reverse" : ""}`}
+                >
+                  <Search className={`h-4 w-4 text-purple-500 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                  <span className="text-gray-400">{t("home.search.placeholder")}</span>
+                </Button>
               )}
             </div>
 
             <Link to={createPageUrl("BookWizard")} className="flex-shrink-0">
-              <Button className="relative w-full md:w-auto bg-gradient-to-r from-purple-600 via-indigo-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white shadow-lg shadow-purple-500/30 rounded-2xl px-5 overflow-hidden group">
-                {/* Shimmer effect */}
+              <Button className="relative bg-gradient-to-r from-purple-600 via-indigo-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white shadow-lg shadow-purple-500/30 rounded-2xl px-5 overflow-hidden group whitespace-nowrap">
                 <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                 <Wand2 className={`relative h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                 <span className="relative">{t("home.create.button")}</span>
@@ -335,35 +332,37 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <Card className="mt-6 overflow-hidden shadow-xl">
-            <div className="relative min-h-[220px] sm:min-h-[280px] md:min-h-[320px]">
+          <Card className="mt-6 overflow-hidden shadow-xl rounded-2xl">
+            <div className="relative min-h-[220px] sm:min-h-[280px] md:min-h-[300px]">
               <img
                 src="/images/hero-banner.jpg"
                 alt=""
                 className="absolute inset-0 w-full h-full object-cover"
                 aria-hidden="true"
               />
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-900/85 via-indigo-800/80 to-violet-900/85" />
-              <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute top-8 right-12 w-32 h-32 bg-white/5 rounded-full" />
-                <div className="absolute bottom-4 right-1/4 w-20 h-20 bg-white/5 rounded-full" />
-                <div className="absolute top-1/3 right-1/3 w-48 h-48 bg-purple-500/10 rounded-full blur-2xl" />
-                <Sparkles className="absolute top-6 right-8 h-6 w-6 text-white/20" />
-                <BookOpen className="absolute bottom-8 right-16 h-8 w-8 text-white/10" />
+              {/* Cleaner gradient: dark at bottom/sides, lighter in center */}
+              <div className="absolute inset-0 bg-gradient-to-r from-indigo-950/90 via-purple-900/70 to-indigo-950/60" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+
+              {/* Subtle decorative elements */}
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-6 left-1/2 w-64 h-64 bg-violet-500/10 rounded-full blur-3xl" />
+                <Sparkles className="absolute top-5 right-6 h-5 w-5 text-white/15" />
+                <BookOpen className="absolute bottom-6 left-6 h-7 w-7 text-white/10" />
               </div>
 
-              <div className="relative flex items-center min-h-[220px] sm:min-h-[280px] md:min-h-[320px]">
-                <div className="p-4 md:p-6 lg:p-8 max-w-xl">
-                  <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-3 leading-tight drop-shadow-lg">
+              <div className={`relative flex items-center min-h-[220px] sm:min-h-[280px] md:min-h-[300px] ${isRTL ? "justify-end" : "justify-start"}`}>
+                <div className={`p-6 md:p-8 max-w-lg ${isRTL ? "text-right" : "text-left"}`}>
+                  <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-3 leading-tight drop-shadow-md">
                     {t("home.title")}
                   </h1>
-                  <p className="text-purple-100 text-sm md:text-base lg:text-lg mb-6 leading-relaxed drop-shadow-sm">
+                  <p className="text-purple-100/90 text-sm md:text-base mb-6 leading-relaxed">
                     {t("home.subtitle")}
                   </p>
 
-                  <div className="flex flex-col sm:flex-row gap-3">
+                  <div className={`flex flex-col sm:flex-row gap-3 ${isRTL ? "sm:flex-row-reverse" : ""}`}>
                     <Link to={createPageUrl("BookWizard")} className="w-full sm:w-auto">
-                      <Button className="w-full sm:w-auto bg-white text-purple-700 hover:bg-purple-50 shadow-lg">
+                      <Button className="w-full sm:w-auto bg-white text-purple-700 hover:bg-purple-50 shadow-lg font-semibold">
                         <Wand2 className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                         {t("home.create.new")}
                       </Button>
@@ -371,7 +370,7 @@ export default function Home() {
                     <Link to={createPageUrl("Library")} className="w-full sm:w-auto">
                       <Button
                         variant="outline"
-                        className="w-full sm:w-auto text-white border-white bg-purple-700/40 hover:bg-purple-600/50 backdrop-blur-sm border-opacity-70 shadow-sm"
+                        className="w-full sm:w-auto text-white border-white/70 bg-white/10 hover:bg-white/20 backdrop-blur-sm shadow-sm"
                       >
                         <BookOpen className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                         {t("home.library.button")}
@@ -427,17 +426,6 @@ export default function Home() {
       >
         <DailyPromptCard dailyPrompt={dailyPrompt} isPromptLoading={isPromptLoading} />
       </motion.div>
-
-      {/* Subtle footer link to landing page */}
-      <div className="py-6 px-8 flex justify-center">
-        <Link
-          to="/welcome"
-          className="inline-flex items-center gap-1.5 text-xs text-gray-400 dark:text-gray-500 hover:text-purple-500 dark:hover:text-purple-400 transition-colors"
-        >
-          <Globe className="h-3.5 w-3.5" />
-          {isRTL ? 'צפו בדף הנחיתה שלנו' : 'View our landing page'} · sipurai.ai
-        </Link>
-      </div>
 
       {/* First-time onboarding wizard */}
       {showOnboarding && (
