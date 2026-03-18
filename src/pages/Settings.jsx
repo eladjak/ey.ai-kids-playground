@@ -125,7 +125,7 @@ function BillingTab({ currentPlan, userEmail, isRTL, toast }) {
           </Badge>
           {currentPlan !== 'free' && (
             <span className="text-sm text-gray-500">
-              {PLANS[currentPlan]?.price[lang]}
+              {PLANS[currentPlan]?.priceDisplay?.[lang] || PLANS[currentPlan]?.priceDisplay?.en}
             </span>
           )}
         </div>
@@ -161,7 +161,7 @@ function BillingTab({ currentPlan, userEmail, isRTL, toast }) {
                   )}
                 </CardTitle>
                 <div className={`text-2xl font-bold bg-gradient-to-r from-purple-700 to-indigo-600 bg-clip-text text-transparent ${isRTL ? 'text-right' : 'text-left'}`}>
-                  {planDef.price[lang]}
+                  {planDef.priceDisplay?.[lang] || planDef.priceDisplay?.en}
                 </div>
               </CardHeader>
               <CardContent className="px-5 pb-5">

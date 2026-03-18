@@ -8,7 +8,7 @@
  * NIS conversion rate ~3.7 (updated periodically).
  */
 
-const USD_TO_NIS = 3.7;
+const USD_TO_NIS = 3.65;
 
 export const PLANS = {
   free: {
@@ -38,7 +38,7 @@ export const PLANS = {
     priceUsd: 3.90,
     priceDisplay: {
       en: '$3.90/mo',
-      he: `$3.90 / ~${Math.round(3.90 * USD_TO_NIS)}₪ לחודש`,
+      he: `~${Math.round(3.90 * USD_TO_NIS)}₪ לחודש ($3.90)`,
     },
     features: {
       en: [
@@ -62,7 +62,7 @@ export const PLANS = {
     priceUsd: 7.90,
     priceDisplay: {
       en: '$7.90/mo',
-      he: `$7.90 / ~${Math.round(7.90 * USD_TO_NIS)}₪ לחודש`,
+      he: `~${Math.round(7.90 * USD_TO_NIS)}₪ לחודש ($7.90)`,
     },
     popular: true,
     features: {
@@ -87,7 +87,7 @@ export const PLANS = {
     priceUsd: 9.90,
     priceDisplay: {
       en: '$9.90/mo',
-      he: `$9.90 / ~${Math.round(9.90 * USD_TO_NIS)}₪ לחודש`,
+      he: `~${Math.round(9.90 * USD_TO_NIS)}₪ לחודש ($9.90)`,
     },
     features: {
       en: [
