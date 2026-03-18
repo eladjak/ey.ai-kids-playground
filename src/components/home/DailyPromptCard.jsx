@@ -91,7 +91,7 @@ const DailyPromptCard = React.memo(function DailyPromptCard({ dailyPrompt, isPro
                       }
                     }}
                   >
-                    <Button variant="outline" className="border-white/60 text-white hover:bg-white/20 backdrop-blur-sm gap-2">
+                    <Button className="bg-white/20 border-2 border-white/70 text-white hover:bg-white/30 hover:border-white backdrop-blur-sm gap-2 shadow-sm">
                       <Lightbulb className="h-4 w-4" />
                       {t("home.dailyPrompt.try")}
                     </Button>
