@@ -29,9 +29,11 @@ const MainPage = mainPageKey ? Pages[mainPageKey] : <></>;
 const LandingPage = Pages['LandingPage'];
 const Blog = Pages['Blog'];
 const BlogPost = Pages['BlogPost'];
+const PrivacyPolicy = Pages['PrivacyPolicy'];
+const TermsOfService = Pages['TermsOfService'];
 
 // Pages accessible without authentication (public routes)
-const PUBLIC_PAGES = new Set(['BookView', 'LandingPage', 'Blog', 'BlogPost', 'Community']);
+const PUBLIC_PAGES = new Set(['BookView', 'LandingPage', 'Blog', 'BlogPost', 'Community', 'PrivacyPolicy', 'TermsOfService']);
 
 const pageTransition = {
   initial: { opacity: 0, y: 8 },
@@ -78,7 +80,9 @@ const AuthenticatedApp = () => {
     location.pathname === '/' ||
     location.pathname.startsWith('/blog') ||
     location.pathname.startsWith('/sign-in') ||
-    location.pathname.startsWith('/sign-up');
+    location.pathname.startsWith('/sign-up') ||
+    location.pathname === '/privacy' ||
+    location.pathname === '/terms';
 
   // Show loading spinner while checking app public settings or auth
   // For public routes, skip auth loading wait (user will be null but that's fine)
@@ -132,6 +136,9 @@ const AuthenticatedApp = () => {
           {/* Public blog routes */}
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
+          {/* Public legal pages */}
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
           {/* All registered pages (auto-generated) */}
           {Object.entries(Pages).map(([path, Page]) => (
             <Route

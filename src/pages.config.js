@@ -5,6 +5,8 @@ import __Layout from './Layout.jsx';
 // Lazy-loaded pages for code splitting
 const Blog = lazy(() => import('./pages/Blog'));
 const BlogPost = lazy(() => import('./pages/BlogPost'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('./pages/TermsOfService'));
 const BookCreation = lazy(() => import('./pages/BookCreation'));
 const BookView = lazy(() => import('./pages/BookView'));
 const BookWizard = lazy(() => import('./pages/BookWizard'));
@@ -24,6 +26,8 @@ export const PAGES = {
     "Blog": Blog,
     "BlogPost": BlogPost,
     "BookCreation": BookCreation,
+    "PrivacyPolicy": PrivacyPolicy,
+    "TermsOfService": TermsOfService,
     "BookView": BookView,
     "BookWizard": BookWizard,
     "CharacterEditor": CharacterEditor,

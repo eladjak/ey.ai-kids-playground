@@ -7,8 +7,10 @@ const FooterSection = () => {
   const { t, isRTL } = useI18n();
 
   const links = [
-    { label: t('landing.footer.blog'), href: '/blog' },
-    { label: t('landing.footer.contact'), href: 'mailto:hello@sipurai.ai' },
+    { label: t('landing.footer.blog'), href: '/blog', external: false },
+    { label: t('landing.footer.privacy'), href: '/privacy', external: false },
+    { label: t('landing.footer.terms'), href: '/terms', external: false },
+    { label: t('landing.footer.contact'), href: 'mailto:support@sipurai.ai', external: true },
   ];
 
   const socialLinks = [];
@@ -37,12 +39,21 @@ const FooterSection = () => {
             <ul className="space-y-2">
               {links.map((link) => (
                 <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-gray-400 hover:text-purple-400 transition-colors text-sm"
-                  >
-                    {link.label}
-                  </a>
+                  {link.external ? (
+                    <a
+                      href={link.href}
+                      className="text-gray-400 hover:text-purple-400 transition-colors text-sm"
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      to={link.href}
+                      className="text-gray-400 hover:text-purple-400 transition-colors text-sm"
+                    >
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

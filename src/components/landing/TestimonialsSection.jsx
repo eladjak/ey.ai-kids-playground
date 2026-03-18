@@ -142,13 +142,26 @@ const TestimonialsSection = () => {
           ))}
         </div>
 
+        {/* Testimonials disclaimer */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, delay: 0.6 }}
+          className="mt-8 text-center text-xs text-gray-400 dark:text-gray-600"
+        >
+          {isRTL
+            ? 'השמות והסיפורים הם דוגמאות להמחשה'
+            : 'Names and stories are illustrative examples'}
+        </motion.p>
+
         {/* Trust Badges */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-16 flex flex-wrap items-center justify-center gap-6 sm:gap-10"
+          className="mt-10 flex flex-wrap items-center justify-center gap-6 sm:gap-10"
         >
           {trustBadges.map((badge, index) => {
             const Icon = badge.icon;
