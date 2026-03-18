@@ -19,7 +19,8 @@ import {
   BookOpen,
   Sparkles,
   Wand2,
-  Search
+  Search,
+  Globe
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -426,6 +427,17 @@ export default function Home() {
       >
         <DailyPromptCard dailyPrompt={dailyPrompt} isPromptLoading={isPromptLoading} />
       </motion.div>
+
+      {/* Subtle footer link to landing page */}
+      <div className="py-6 px-8 flex justify-center">
+        <Link
+          to="/welcome"
+          className="inline-flex items-center gap-1.5 text-xs text-gray-400 dark:text-gray-500 hover:text-purple-500 dark:hover:text-purple-400 transition-colors"
+        >
+          <Globe className="h-3.5 w-3.5" />
+          {isRTL ? 'צפו בדף הנחיתה שלנו' : 'View our landing page'} · sipurai.ai
+        </Link>
+      </div>
 
       {/* First-time onboarding wizard */}
       {showOnboarding && (

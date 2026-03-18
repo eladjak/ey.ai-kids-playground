@@ -330,9 +330,14 @@ export default function BookView() {
   const renderHighlightedText = (text) => {
     if (!text) return null;
 
+    const isHebrewBook = book?.language === "hebrew" || book?.language === "yiddish";
+    const bookFontStyle = isHebrewBook
+      ? { fontFamily: "'David', 'David CLM', 'Times New Roman', serif" }
+      : { fontFamily: "inherit" };
+
     if (!tts.isSpeaking || tts.currentWordIndex < 0) {
       return (
-        <p className="text-lg md:text-xl leading-relaxed">
+        <p className="text-lg md:text-xl leading-relaxed" style={bookFontStyle}>
           {text}
         </p>
       );
@@ -342,7 +347,7 @@ export default function BookView() {
     let wordIdx = 0;
 
     return (
-      <p className="text-lg md:text-xl leading-relaxed">
+      <p className="text-lg md:text-xl leading-relaxed" style={bookFontStyle}>
         {words.map((segment, i) => {
           if (/^\s+$/.test(segment)) return segment;
 

@@ -26,7 +26,8 @@ import {
   Users2,
   Trophy,
   Sparkles,
-  PenTool
+  PenTool,
+  Globe
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -354,6 +355,16 @@ export default function Layout({ children, currentPageName }) {
                   </>
                 )}
               </Button>
+
+              <Link to="/welcome" className="w-full">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start py-5 px-4 rounded-xl hover:bg-purple-50 dark:hover:bg-purple-900/20 text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-300"
+                >
+                  <Globe className={`h-4 w-4 ${isRTL ? 'ml-3' : 'mr-3'} opacity-70`} />
+                  <span className="text-sm">sipurai.ai</span>
+                </Button>
+              </Link>
 
               <Button
                 variant="ghost"

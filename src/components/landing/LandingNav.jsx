@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, Globe, Menu, X } from 'lucide-react';
+import { BookOpen, Globe, Menu, X, LayoutDashboard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useI18n } from '@/components/i18n/i18nProvider';
+import { useAuth } from '@/lib/AuthContext';
 
 const LandingNav = () => {
   const { t, isRTL, language, changeLanguage, languages } = useI18n();
+  const { isAuthenticated } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
@@ -142,20 +144,32 @@ const LandingNav = () => {
               </div>
             </div>
 
-            {/* Sign In */}
-            <Link to="/sign-in">
-              <Button variant="ghost" className={`font-medium ${
-                scrolled ? 'text-gray-700 hover:text-purple-600 dark:text-gray-300' : 'text-white/90 hover:text-white hover:bg-white/10'
-              }`}>
-                {t('landing.nav.signIn')}
-              </Button>
-            </Link>
-            {/* CTA Button */}
-            <Link to="/sign-up">
-              <Button className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg">
-                {t('landing.nav.cta')}
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              /* Logged-in: show Go to App button */
+              <Link to="/">
+                <Button className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg flex items-center gap-2">
+                  <LayoutDashboard className="h-4 w-4" />
+                  {t('landing.nav.goToApp') || (language === 'hebrew' ? 'לאפליקציה' : 'Go to App')}
+                </Button>
+              </Link>
+            ) : (
+              <>
+                {/* Sign In */}
+                <Link to="/sign-in">
+                  <Button variant="ghost" className={`font-medium ${
+                    scrolled ? 'text-gray-700 hover:text-purple-600 dark:text-gray-300' : 'text-white/90 hover:text-white hover:bg-white/10'
+                  }`}>
+                    {t('landing.nav.signIn')}
+                  </Button>
+                </Link>
+                {/* CTA Button */}
+                <Link to="/sign-up">
+                  <Button className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg">
+                    {t('landing.nav.cta')}
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -210,16 +224,27 @@ const LandingNav = () => {
                 </button>
               ))}
             </div>
-            <Link to="/sign-in" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="outline" className="w-full mt-2">
-                {t('landing.nav.signIn')}
-              </Button>
-            </Link>
-            <Link to="/sign-up" onClick={() => setMobileMenuOpen(false)}>
-              <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white mt-1">
-                {t('landing.nav.cta')}
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              <Link to="/" onClick={() => setMobileMenuOpen(false)}>
+                <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white mt-2 flex items-center justify-center gap-2">
+                  <LayoutDashboard className="h-4 w-4" />
+                  {t('landing.nav.goToApp') || (language === 'hebrew' ? 'לאפליקציה' : 'Go to App')}
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <Link to="/sign-in" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="outline" className="w-full mt-2">
+                    {t('landing.nav.signIn')}
+                  </Button>
+                </Link>
+                <Link to="/sign-up" onClick={() => setMobileMenuOpen(false)}>
+                  <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white mt-1">
+                    {t('landing.nav.cta')}
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </motion.div>
       )}

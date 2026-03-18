@@ -61,10 +61,18 @@ export default function BookCreation() {
     complexity: "simple"
   });
 
-  // Text styles
+  // Text styles — default to David for Hebrew, Arial otherwise
+  const defaultFontFamily = (() => {
+    try {
+      const lang = localStorage.getItem("language") || "english";
+      return lang === "hebrew" || lang === "yiddish" ? "David" : "Arial";
+    } catch {
+      return "Arial";
+    }
+  })();
   const [textStyles, setTextStyles] = useState({
     fontSize: 18,
-    fontFamily: "Arial",
+    fontFamily: defaultFontFamily,
     color: "#000000",
     showNikud: true,
     fontWeight: "normal",

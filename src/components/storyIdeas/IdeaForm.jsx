@@ -423,17 +423,19 @@ const IdeaForm = React.memo(function IdeaForm({
         <Button
           onClick={onGenerate}
           disabled={isGenerating}
-          className="bg-gradient-to-r from-purple-600 to-indigo-600 gap-2"
+          className="relative bg-gradient-to-r from-purple-600 via-indigo-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white shadow-lg shadow-purple-500/30 rounded-2xl px-6 overflow-hidden group gap-2"
         >
+          {/* Shimmer effect */}
+          <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
           {isGenerating ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              {t("ideaGenerator.generating")}
+              <Loader2 className="relative h-4 w-4 animate-spin" />
+              <span className="relative">{t("ideaGenerator.generating")}</span>
             </>
           ) : (
             <>
-              <Wand2 className="h-4 w-4" />
-              {t("ideaGenerator.generate")}
+              <Wand2 className="relative h-4 w-4" />
+              <span className="relative">{t("ideaGenerator.generate")}</span>
             </>
           )}
         </Button>
