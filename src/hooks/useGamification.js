@@ -175,7 +175,11 @@ export default function useGamification() {
   const loadGamificationData = useCallback(async () => {
     try {
       setIsLoading(true);
-      const currentUser = await User.me();
+      const currentUser = await User.me().catch(() => null);
+      if (!currentUser) {
+        setIsLoading(false);
+        return; // Not authenticated yet — skip silently
+      }
       setUser(currentUser);
 
       // Load books for stats
