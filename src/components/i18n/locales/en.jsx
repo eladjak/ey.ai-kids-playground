@@ -1395,8 +1395,8 @@ export default {
         description: "XP, badges, daily streaks and leaderboard \u2014 every creation earns points"
       },
       pwa: {
-        title: "PWA \u2014 Any Device",
-        description: "Works on phone, tablet and computer \u2014 even offline, no installation needed"
+        title: "Works on Every Device!",
+        description: "Phone, tablet, or computer \u2014 even offline! No installation needed, just open and create"
       },
       community: {
         title: "Vibrant Community",
@@ -1409,19 +1409,23 @@ export default {
       stepLabel: "Step",
       step1: {
         title: "Choose a Topic",
-        description: "Pick from dozens of ready topics or write your own idea"
+        subtitle: "Spark the imagination",
+        description: "Pick from dozens of ready topics or write your own idea. Adventure, fantasy, animals, friendship \u2014 anything goes!"
       },
       step2: {
         title: "Design Characters",
-        description: "Add your child as the hero and choose supporting characters"
+        subtitle: "Your child is the hero",
+        description: "Add your child as the main character with their name, look and personality. Add friends, siblings, or a cute sidekick!"
       },
       step3: {
         title: "Customize Style",
-        description: "Choose illustration style, language and age-appropriate settings"
+        subtitle: "Make it truly yours",
+        description: "Choose from 18 illustration styles, select language (Hebrew, English or Yiddish) and set the age-appropriate reading level."
       },
       step4: {
         title: "Get Your Book!",
-        description: "AI creates story and illustrations \u2014 ready to read and print"
+        subtitle: "Ready in under a minute",
+        description: "Our AI writes the full story and creates matching illustrations. Read it online, download as PDF, or order a printed copy!"
       }
     },
     testimonials: {
@@ -1531,7 +1535,7 @@ export default {
     },
     whyUs: {
       badge: "Why Sipurai?",
-      sectionTitle: "Why Families Choose Sipurai",
+      sectionTitle: "What Makes Sipurai Special",
       sectionSubtitle: "Unlike generic AI tools, Sipurai was built from the ground up for children and families \u2014 with safety, creativity, and joy at its core",
       personalized: {
         title: "Your Child is the Hero",
@@ -1567,7 +1571,7 @@ export default {
       q1: "What is Sipurai?",
       a1: "Sipurai is an AI-powered platform that lets children and parents create personalized illustrated storybooks. You choose characters, art style, genre, and language \u2014 and our AI generates a complete book with story and illustrations.",
       q2: "Is Sipurai safe for children?",
-      a2: "Absolutely! Sipurai is COPPA compliant, uses child-safe AI content filters, has no ads, and includes parental controls. All generated content is age-appropriate and reviewed for safety.",
+      a2: "Absolutely! Sipurai is COPPA compliant, uses child-safe AI content filters, has no ads, and includes parental controls. All generated content is age-appropriate and reviewed for safety. COPPA (Children's Online Privacy Protection Act) is the strictest international standard for children's online safety, ensuring no personal data is collected from children under 13 without parental consent.",
       q3: "What ages is Sipurai designed for?",
       a3: "Sipurai is designed for children ages 3\u201312, with age-appropriate content settings for each range. Parents can set the age range to ensure stories and vocabulary match their child's level.",
       q4: "How does the AI create stories and illustrations?",

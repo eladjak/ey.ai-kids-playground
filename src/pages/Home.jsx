@@ -310,7 +310,7 @@ export default function Home() {
                   onClick={() => setShowSearch(true)}
                   className={`w-full rounded-2xl border-purple-200 hover:border-purple-400 hover:bg-purple-50 dark:border-purple-800 dark:hover:bg-purple-900/20 justify-start ${isRTL ? "flex-row-reverse" : ""}`}
                 >
-                  <Search className={`h-4 w-4 text-purple-500 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                  <Search className={`h-4 w-4 text-purple-500 ${isRTL ? 'ms-2' : 'me-2'}`} />
                   <span className="text-gray-400">{t("home.search.placeholder")}</span>
                 </Button>
               )}
@@ -319,7 +319,7 @@ export default function Home() {
             <Link to={createPageUrl("BookWizard")} className="flex-shrink-0">
               <Button className="relative bg-gradient-to-r from-purple-600 via-indigo-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white shadow-lg shadow-purple-500/30 rounded-2xl px-5 overflow-hidden group whitespace-nowrap">
                 <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                <Wand2 className={`relative h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                <Wand2 className={`relative h-4 w-4 ${isRTL ? 'ms-2' : 'me-2'}`} />
                 <span className="relative">{t("home.create.button")}</span>
               </Button>
             </Link>
@@ -363,7 +363,7 @@ export default function Home() {
                   <div className={`flex flex-col sm:flex-row gap-3 ${isRTL ? "sm:flex-row-reverse" : ""}`}>
                     <Link to={createPageUrl("BookWizard")} className="w-full sm:w-auto">
                       <Button className="w-full sm:w-auto bg-white text-purple-700 hover:bg-purple-50 shadow-lg font-semibold">
-                        <Wand2 className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                        <Wand2 className={`h-4 w-4 ${isRTL ? 'ms-2' : 'me-2'}`} />
                         {t("home.create.new")}
                       </Button>
                     </Link>
@@ -372,7 +372,7 @@ export default function Home() {
                         variant="outline"
                         className="w-full sm:w-auto text-white border-white/70 bg-white/10 hover:bg-white/20 backdrop-blur-sm shadow-sm"
                       >
-                        <BookOpen className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                        <BookOpen className={`h-4 w-4 ${isRTL ? 'ms-2' : 'me-2'}`} />
                         {t("home.library.button")}
                       </Button>
                     </Link>

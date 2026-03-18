@@ -117,7 +117,7 @@ export async function openCheckout(planId, userEmail) {
     return;
   }
 
-  const successUrl = `${window.location.origin}/settings?checkout=success&plan=${planId}`;
+  const successUrl = `${window.location.origin}/Settings?checkout=success&plan=${planId}`;
 
   try {
     const response = await fetch('/api/payments/checkout', {

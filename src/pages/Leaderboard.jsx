@@ -292,12 +292,12 @@ export default function Leaderboard() {
           />
           <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_70%_30%,white_0%,transparent_60%)]" />
 
-          <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-5">
-            <div className="flex items-center gap-4">
+          <div className={`relative flex flex-col md:flex-row md:items-center md:justify-between gap-5 ${isRTL ? 'md:flex-row-reverse' : ''}`}>
+            <div className={`flex items-center gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
               <div className="p-3 bg-white/20 backdrop-blur-sm rounded-2xl shadow-sm">
                 <Trophy className="h-9 w-9 text-white drop-shadow" />
               </div>
-              <div>
+              <div className={isRTL ? 'text-right' : ''}>
                 <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-sm">
                   {t("leaderboard.title")}
                 </h1>
@@ -334,7 +334,7 @@ export default function Leaderboard() {
           <Card className="md:col-span-2 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 border-purple-200 dark:border-purple-900/30 rounded-2xl shadow-sm overflow-hidden">
             <CardContent className="p-5">
               {currentUserEntry ? (
-                <div className="flex items-center gap-4">
+                <div className={`flex items-center gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <div className={`flex items-center justify-center w-14 h-14 rounded-full flex-shrink-0 ${getRankDecoration(currentUserRank).badgeClass}`}>
                     {getRankDecoration(currentUserRank).icon || (
                       <span className="text-xl font-bold">#{currentUserRank}</span>
@@ -399,7 +399,7 @@ export default function Leaderboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25, duration: 0.5 }}
           >
-            <div className="flex items-center gap-2 mb-5">
+            <div className={`flex items-center gap-2 mb-5 ${isRTL ? 'flex-row-reverse' : ''}`}>
               <Sparkles className="h-5 w-5 text-amber-500" />
               <h3 className="font-bold text-gray-900 dark:text-white">
                 {language === "hebrew" ? "שלישיית הצמרת" : "Top 3 Champions"}
@@ -456,7 +456,7 @@ export default function Leaderboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35, duration: 0.5 }}
         >
-          <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className={`p-4 border-b border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
             {/* Period pill buttons */}
             <div className="flex gap-2 p-1 bg-gray-100 dark:bg-gray-700/50 rounded-2xl w-fit">
               {periodButtons.map(btn => (
@@ -554,7 +554,7 @@ export default function Leaderboard() {
                             </div>
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap">
-                            <div className="flex items-center gap-3">
+                            <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                               <Avatar className="h-9 w-9 shrink-0 shadow-sm">
                                 {entry.avatar ? (
                                   <AvatarImage src={entry.avatar} alt={entry.name} />
@@ -564,7 +564,7 @@ export default function Leaderboard() {
                                   </AvatarFallback>
                                 )}
                               </Avatar>
-                              <div className="flex items-center gap-2">
+                              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                                 <span className="font-medium text-gray-900 dark:text-white">{entry.name}</span>
                                 {isCurrentUser && (
                                   <Badge className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 rounded-full px-2">

@@ -10,7 +10,7 @@ const FooterSection = () => {
     { label: t('landing.footer.blog'), href: '/blog', external: false },
     { label: t('landing.footer.privacy'), href: '/privacy', external: false },
     { label: t('landing.footer.terms'), href: '/terms', external: false },
-    { label: t('landing.footer.contact'), href: 'mailto:support@sipurai.ai', external: true },
+    { label: t('landing.footer.contact'), href: '/Contact', external: false },
   ];
 
   const socialLinks = [];

@@ -240,8 +240,8 @@ export default function CharacterEditor() {
 
     return (
         <div className="max-w-4xl mx-auto p-4 md:p-6" dir={isRTL ? "rtl" : "ltr"}>
-            <Button variant="ghost" onClick={() => navigate(createPageUrl('Characters'))} className="mb-4">
-                <ArrowLeft className="mr-2 h-4 w-4" />
+            <Button variant="ghost" onClick={() => navigate(createPageUrl('Characters'))} className={`mb-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <ArrowLeft className={`${isRTL ? 'ms-2 rotate-180' : 'me-2'} h-4 w-4`} />
                 {t("characterEditor.back")}
             </Button>
             
@@ -370,8 +370,8 @@ export default function CharacterEditor() {
                                         disabled={isGeneratingImage || !character.name || !character.appearance} 
                                         className="flex-1"
                                     >
-                                        {isGeneratingImage && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                        <Wand2 className="mr-2 h-4 w-4" /> {t("characterEditor.generateImage")}
+                                        {isGeneratingImage && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
+                                        <Wand2 className="me-2 h-4 w-4" /> {t("characterEditor.generateImage")}
                                     </Button>
                                     <Button 
                                         variant="outline" 
@@ -379,7 +379,7 @@ export default function CharacterEditor() {
                                         onClick={() => window.open(character.primary_image_url, '_blank', 'noopener,noreferrer')}
                                         disabled={!character.primary_image_url}
                                     >
-                                        <Eye className="mr-2 h-4 w-4" /> {t("characterEditor.viewImage")}
+                                        <Eye className="me-2 h-4 w-4" /> {t("characterEditor.viewImage")}
                                     </Button>
                                 </div>
                             </div>
@@ -388,14 +388,14 @@ export default function CharacterEditor() {
                      
                      <div className="flex flex-col space-y-2">
                         <Button onClick={handleSave} disabled={isSaving}>
-                            {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            {isSaving && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
                             {isNew ? t("characterEditor.createCharacter") : t("characterEditor.saveChanges")}
                         </Button>
                         {!isNew && (
                             <AlertDialog>
                                 <AlertDialogTrigger asChild>
                                     <Button variant="destructive" disabled={isDeleting}>
-                                        {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                        {isDeleting && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
                                         {t("characterEditor.deleteCharacter")}
                                     </Button>
                                 </AlertDialogTrigger>

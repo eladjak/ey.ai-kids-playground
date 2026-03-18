@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Lightbulb, Users, Palette, BookOpen, ArrowDown } from 'lucide-react';
+import { ArrowDown } from 'lucide-react';
 import { useI18n } from '@/components/i18n/i18nProvider';
 
 const HowItWorksSection = () => {
@@ -8,32 +8,36 @@ const HowItWorksSection = () => {
 
   const steps = [
     {
-      icon: Lightbulb,
+      emoji: '💡',
       title: t('landing.howItWorks.step1.title'),
+      subtitle: t('landing.howItWorks.step1.subtitle'),
       description: t('landing.howItWorks.step1.description'),
       color: 'from-yellow-400 to-amber-500',
       bgColor: 'bg-yellow-50 dark:bg-yellow-950/20',
       number: '1',
     },
     {
-      icon: Users,
+      emoji: '🧒',
       title: t('landing.howItWorks.step2.title'),
+      subtitle: t('landing.howItWorks.step2.subtitle'),
       description: t('landing.howItWorks.step2.description'),
       color: 'from-pink-400 to-rose-500',
       bgColor: 'bg-pink-50 dark:bg-pink-950/20',
       number: '2',
     },
     {
-      icon: Palette,
+      emoji: '🎨',
       title: t('landing.howItWorks.step3.title'),
+      subtitle: t('landing.howItWorks.step3.subtitle'),
       description: t('landing.howItWorks.step3.description'),
       color: 'from-purple-400 to-violet-500',
       bgColor: 'bg-purple-50 dark:bg-purple-950/20',
       number: '3',
     },
     {
-      icon: BookOpen,
+      emoji: '📖',
       title: t('landing.howItWorks.step4.title'),
+      subtitle: t('landing.howItWorks.step4.subtitle'),
       description: t('landing.howItWorks.step4.description'),
       color: 'from-emerald-400 to-green-500',
       bgColor: 'bg-emerald-50 dark:bg-emerald-950/20',
@@ -70,7 +74,6 @@ const HowItWorksSection = () => {
           <div className="hidden md:block absolute top-0 bottom-0 start-1/2 w-0.5 bg-gradient-to-b from-purple-200 via-purple-300 to-purple-200 dark:from-purple-800 dark:via-purple-700 dark:to-purple-800 -translate-x-1/2" />
 
           {steps.map((step, index) => {
-            const Icon = step.icon;
             const isEven = index % 2 === 0;
 
             return (
@@ -84,16 +87,21 @@ const HowItWorksSection = () => {
               >
                 {/* Mobile: stacked layout */}
                 <div className="md:hidden flex flex-col items-center text-center">
-                  {/* Step number circle */}
+                  {/* Step icon circle */}
                   <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${step.color} flex items-center justify-center shadow-lg mb-4 relative z-10`}>
-                    <Icon className="h-7 w-7 text-white" />
+                    <span className="text-2xl">{step.emoji}</span>
                   </div>
                   <div className="text-sm font-bold text-purple-600 dark:text-purple-400 mb-1">
                     {t('landing.howItWorks.stepLabel')} {step.number}
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-0.5">
                     {step.title}
                   </h3>
+                  {step.subtitle && (
+                    <p className="text-sm font-semibold text-purple-500 dark:text-purple-400 mb-2 italic">
+                      {step.subtitle}
+                    </p>
+                  )}
                   <p className="text-gray-600 dark:text-gray-400 max-w-sm">
                     {step.description}
                   </p>
@@ -111,9 +119,14 @@ const HowItWorksSection = () => {
                         <div className="text-sm font-bold text-purple-600 dark:text-purple-400 mb-1">
                           {t('landing.howItWorks.stepLabel')} {step.number}
                         </div>
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-0.5">
                           {step.title}
                         </h3>
+                        {step.subtitle && (
+                          <p className="text-sm font-semibold text-purple-500 dark:text-purple-400 mb-2 italic">
+                            {step.subtitle}
+                          </p>
+                        )}
                         <p className="text-gray-600 dark:text-gray-400">
                           {step.description}
                         </p>
@@ -123,21 +136,26 @@ const HowItWorksSection = () => {
                     )}
                   </div>
 
-                  {/* Center circle */}
+                  {/* Center circle with emoji */}
                   <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${step.color} flex items-center justify-center shadow-lg relative z-10`}>
-                    <Icon className="h-7 w-7 text-white" />
+                    <span className="text-2xl">{step.emoji}</span>
                   </div>
 
                   {/* Right content */}
-                  <div className={`${!isEven ? '' : ''}`}>
+                  <div>
                     {!isEven ? (
                       <div>
                         <div className="text-sm font-bold text-purple-600 dark:text-purple-400 mb-1">
                           {t('landing.howItWorks.stepLabel')} {step.number}
                         </div>
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-0.5">
                           {step.title}
                         </h3>
+                        {step.subtitle && (
+                          <p className="text-sm font-semibold text-purple-500 dark:text-purple-400 mb-2 italic">
+                            {step.subtitle}
+                          </p>
+                        )}
                         <p className="text-gray-600 dark:text-gray-400">
                           {step.description}
                         </p>

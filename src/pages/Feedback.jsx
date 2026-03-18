@@ -329,26 +329,26 @@ export default function FeedbackPage() {
                 <h1 className="text-2xl font-bold text-white flex items-center gap-2">
                   <MessageSquare className="h-6 w-6" />
                   {t("feedback.title").replace("{{bookTitle}}", book?.title || "")}
-                  <Badge variant="outline" className="ml-2 text-xs border-white/30 text-white/90 bg-white/10">
+                  <Badge variant="outline" className="ms-2 text-xs border-white/30 text-white/90 bg-white/10">
                     {allFeedback.length} {t("feedback.total")}
                   </Badge>
                 </h1>
                 <div className="flex items-center text-white/70 mt-1">
-                  <div className="flex items-center mr-4">
+                  <div className="flex items-center me-4">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star
                         key={i}
                         className={`h-4 w-4 ${i < Math.floor(avgRating) ? 'text-amber-300 fill-amber-300' : 'text-white/30'}`}
                       />
                     ))}
-                    <span className="ml-1 text-sm text-white/80">{avgRating.toFixed(1)}</span>
+                    <span className="ms-1 text-sm text-white/80">{avgRating.toFixed(1)}</span>
                   </div>
                   <Badge variant="outline" className="text-xs border-white/30 text-white/80 bg-white/10">
-                    <Lightbulb className="h-3 w-3 mr-1" />
+                    <Lightbulb className="h-3 w-3 me-1" />
                     {suggestionCount} {t("feedback.stats.suggestions")}
                   </Badge>
-                  <Badge variant="outline" className="text-xs border-white/30 text-white/80 bg-white/10 ml-2">
-                    <CheckCircle className="h-3 w-3 mr-1" />
+                  <Badge variant="outline" className="text-xs border-white/30 text-white/80 bg-white/10 ms-2">
+                    <CheckCircle className="h-3 w-3 me-1" />
                     {implementedCount} {t("feedback.stats.implemented")}
                   </Badge>
                 </div>
@@ -368,12 +368,12 @@ export default function FeedbackPage() {
               >
                 {showFeedbackForm ? (
                   <>
-                    <X className="h-4 w-4 mr-2" />
+                    <X className="h-4 w-4 me-2" />
                     <span className="hidden sm:inline">{t("feedback.cancel")}</span>
                   </>
                 ) : (
                   <>
-                    <MessageSquare className="h-4 w-4 mr-2" />
+                    <MessageSquare className="h-4 w-4 me-2" />
                     <span className="hidden sm:inline">{t("feedback.giveFeedback")}</span>
                   </>
                 )}
@@ -411,7 +411,7 @@ export default function FeedbackPage() {
                   </div>
                   
                   <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-6">
-                    <span className="mr-2">{t("feedback.currentPage")}:</span>
+                    <span className="me-2">{t("feedback.currentPage")}:</span>
                     <Badge variant="outline">
                       {currentPageIndex + 1} of {pages.length}
                     </Badge>
@@ -425,7 +425,7 @@ export default function FeedbackPage() {
                     onClick={handlePreviousPage}
                     disabled={currentPageIndex === 0}
                   >
-                    <ChevronLeft className="h-4 w-4 mr-2" />
+                    {isRTL ? <ChevronRight className="h-4 w-4 me-2" /> : <ChevronLeft className="h-4 w-4 me-2" />}
                     {t("common.previous")}
                   </Button>
                   <Button
@@ -435,7 +435,7 @@ export default function FeedbackPage() {
                     disabled={currentPageIndex === pages.length - 1}
                   >
                     {t("common.next")}
-                    <ChevronRight className="h-4 w-4 ml-2" />
+                    {isRTL ? <ChevronLeft className="h-4 w-4 ms-2" /> : <ChevronRight className="h-4 w-4 ms-2" />}
                   </Button>
                 </div>
               </div>
@@ -445,8 +445,8 @@ export default function FeedbackPage() {
             <div className="p-6 border-t border-gray-200 dark:border-gray-700">
               <h3 className="font-semibold mb-2 flex items-center">
                 <span>{t("feedback.bookInfo.pageContent").replace("{{current}}", currentPageIndex + 1)}</span>
-                <Badge className="ml-2" variant="outline">
-                  <MessageSquare className="h-3 w-3 mr-1" />
+                <Badge className="ms-2" variant="outline">
+                  <MessageSquare className="h-3 w-3 me-1" />
                   {pageFeedback.length} {t("feedback.bookInfo.feedback")}
                 </Badge>
               </h3>
@@ -494,12 +494,12 @@ export default function FeedbackPage() {
                     {filter === "age_appropriate" && t("feedback.form.types.age_appropriate")}
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align={isRTL ? "start" : "end"}>
                   <DropdownMenuItem onClick={() => setFilter("all")}>
                     {t("feedback.filter.all")}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setFilter("suggestions")}>
-                    <Lightbulb className="h-4 w-4 mr-2" />
+                    <Lightbulb className="h-4 w-4 me-2" />
                     {t("feedback.filter.suggestionsOnly")}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setFilter("story")}>

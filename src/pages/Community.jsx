@@ -365,7 +365,7 @@ export default function CommunityPage() {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_50%,rgba(255,255,255,0.12)_0%,transparent_70%)]" />
 
           {/* Community stats row */}
-          <div className="relative flex flex-wrap gap-3 mb-5">
+          <div className={`relative flex flex-wrap gap-3 mb-5 ${isRTL ? 'flex-row-reverse' : ''}`}>
             {[
               { icon: Globe, label: isRTL ? "ספרים משותפים" : "Shared Books", value: posts.length + "+" },
               { icon: Heart, label: isRTL ? "לייקים" : "Likes", value: "1K+" },
@@ -373,7 +373,7 @@ export default function CommunityPage() {
             ].map((stat, i) => (
               <motion.div
                 key={i}
-                className="flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1.5 border border-white/20"
+                className={`flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1.5 border border-white/20 ${isRTL ? 'flex-row-reverse' : ''}`}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 + i * 0.1 }}
@@ -384,8 +384,8 @@ export default function CommunityPage() {
             ))}
           </div>
 
-          <div className="relative flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div>
+          <div className={`relative flex flex-col md:flex-row md:items-end justify-between gap-4 ${isRTL ? 'md:flex-row-reverse' : ''}`}>
+            <div className={isRTL ? 'text-right' : ''}>
               <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-sm">
                 {t("community.title")}
               </h1>
@@ -414,7 +414,7 @@ export default function CommunityPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.5 }}
         >
-          <div className="flex items-center mb-4 gap-2">
+          <div className={`flex items-center mb-4 gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
             <div className="p-1.5 rounded-lg bg-amber-100 dark:bg-amber-900/30">
               <Sparkles className="h-5 w-5 text-amber-500" />
             </div>
@@ -471,7 +471,7 @@ export default function CommunityPage() {
         animate="visible"
       >
         {/* Search and Sort */}
-        <motion.div variants={itemVariants} className="flex flex-col md:flex-row gap-3">
+        <motion.div variants={itemVariants} className={`flex flex-col md:flex-row gap-3 ${isRTL ? 'md:flex-row-reverse' : ''}`}>
           <div className="relative flex-1">
             <Search className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4 pointer-events-none`} />
             <Input
@@ -646,7 +646,7 @@ export default function CommunityPage() {
               )}
 
               {posts.length > 0 && (
-                <div className="flex justify-center mt-6 gap-2">
+                <div className={`flex justify-center mt-6 gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <Button
                     variant="outline"
                     onClick={() => setPage(p => Math.max(1, p - 1))}

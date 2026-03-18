@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { User } from "@/entities/User";
 import { useI18n } from "@/components/i18n/i18nProvider";
 import { motion, AnimatePresence } from "framer-motion";
@@ -128,7 +128,13 @@ const OnboardingWizard = React.memo(function OnboardingWizard({ onComplete, user
   const [step, setStep] = useState(0);
   const [name, setName] = useState(userName || "");
   const [ageRange, setAgeRange] = useState("");
-  const [language, setLanguage] = useState("english");
+  const [language, setLanguage] = useState(() => {
+    // Auto-detect from browser language; fallback to English
+    const nav = (navigator.language || navigator.userLanguage || '').toLowerCase();
+    if (nav.startsWith('he')) return 'hebrew';
+    if (nav.startsWith('yi')) return 'yiddish';
+    return 'english';
+  });
   const [selectedTopics, setSelectedTopics] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -162,6 +168,9 @@ const OnboardingWizard = React.memo(function OnboardingWizard({ onComplete, user
 
   const handleFinish = async () => {
     setIsSaving(true);
+    // Apply language change to the global i18n provider immediately so the
+    // app renders in the correct language/direction right after onboarding.
+    await changeLanguage(language);
     try {
       await User.updateMyUserData({
         display_name: name.trim(),

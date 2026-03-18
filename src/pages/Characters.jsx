@@ -163,16 +163,16 @@ export default function Characters() {
       {/* Header banner with image */}
       <div className="relative mb-8 rounded-2xl overflow-hidden bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 p-6 md:p-8 shadow-lg">
         <div className="absolute inset-0 bg-[url('/images/character-workshop.jpg')] bg-cover bg-center opacity-15" />
-        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
+        <div className={`relative flex flex-col md:flex-row md:items-center justify-between gap-4 ${isRTL ? 'md:flex-row-reverse' : ''}`}>
+          <div className={isRTL ? 'text-right' : ''}>
             <h1 className="text-3xl font-bold text-white drop-shadow-sm">{t("characters.title")}</h1>
             <p className="text-purple-100 mt-1">
               {t("characters.subtitle")}
             </p>
           </div>
           <Link to={createPageUrl("CharacterEditor")}>
-            <Button className="bg-white text-purple-700 hover:bg-purple-50 shadow-md">
-              <Plus className="mr-2 h-4 w-4" />
+            <Button className={`bg-white text-purple-700 hover:bg-purple-50 shadow-md ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <Plus className="me-2 h-4 w-4" />
               {t("characters.createNew")}
             </Button>
           </Link>
@@ -263,7 +263,7 @@ export default function Characters() {
             </p>
             <Link to={createPageUrl("CharacterEditor")}>
               <Button size="lg" className="bg-purple-600 hover:bg-purple-700 text-base px-8 py-3 h-auto">
-                <Sparkles className="mr-2 h-5 w-5" />
+                <Sparkles className="me-2 h-5 w-5" />
                 {t("characters.createNew")}
               </Button>
             </Link>

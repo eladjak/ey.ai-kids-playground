@@ -261,7 +261,7 @@ export default function Library() {
             <Filter className="h-4 w-4" />
             {t("library.filters")}
             {hasActiveFilters && (
-              <Badge className="ml-1 bg-white/20 text-white border-0 text-xs px-1.5">
+              <Badge className="ms-1 bg-white/20 text-white border-0 text-xs px-1.5">
                 {t("library.active")}
               </Badge>
             )}

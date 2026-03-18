@@ -75,7 +75,19 @@ const ClerkAuthProvider = ({ children }) => {
         }
       },
       navigateToLogin: () => {
-        window.location.href = `/sign-in?redirect_url=${encodeURIComponent(window.location.href)}`;
+        // Strip checkout/payment params before encoding redirect URL
+        // so post-signup users don't end up seeing stale billing toasts.
+        const cleanUrl = (() => {
+          try {
+            const url = new URL(window.location.href);
+            url.searchParams.delete('checkout');
+            url.searchParams.delete('plan');
+            return url.toString();
+          } catch {
+            return window.location.href;
+          }
+        })();
+        window.location.href = `/sign-in?redirect_url=${encodeURIComponent(cleanUrl)}`;
       },
       checkAppState: () => {},
     }),

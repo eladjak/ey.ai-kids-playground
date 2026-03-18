@@ -315,7 +315,7 @@ export default function CommunityPost() {
           onClick={() => navigate(createPageUrl("Community"))}
           className="mb-4"
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
+          <ArrowLeft className={`${isRTL ? 'ms-2 rotate-180' : 'me-2'} h-4 w-4`} />
           {t("communityPost.backToCommunity")}
         </Button>
         
@@ -346,7 +346,7 @@ export default function CommunityPost() {
               <div className="flex flex-wrap gap-2 mt-3">
                 {post.tags.map(tag => (
                   <Badge key={tag} variant="secondary" className="bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
-                    <Tag className="mr-1 h-3 w-3" />
+                    <Tag className="me-1 h-3 w-3" />
                     {tag}
                   </Badge>
                 ))}
@@ -456,7 +456,7 @@ export default function CommunityPost() {
               className="bg-purple-600 hover:bg-purple-700"
             >
               {isSubmitting ? t("communityPost.posting") : t("communityPost.postComment")}
-              <Send className="ml-2 h-4 w-4" />
+              <Send className="ms-2 h-4 w-4" />
             </Button>
           </div>
         </div>

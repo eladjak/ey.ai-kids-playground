@@ -196,7 +196,7 @@ export default function StoryIdeas() {
       {/* Header banner with image */}
       <div className="relative mb-8 rounded-2xl overflow-hidden bg-gradient-to-r from-amber-500 via-purple-600 to-indigo-600 p-6 md:p-8 shadow-lg">
         <div className="absolute inset-0 bg-[url('/images/story-ideas.jpg')] bg-cover bg-center opacity-15" />
-        <div className="relative">
+        <div className={`relative ${isRTL ? 'text-right' : 'text-left'}`}>
           <h1 className="text-3xl font-bold text-white mb-2 drop-shadow-sm">
             {t("storyIdeas.title")}
           </h1>
@@ -216,7 +216,7 @@ export default function StoryIdeas() {
             <BookOpen className="h-4 w-4" />
             {t("storyIdeas.saved")}
             {savedIdeas.length > 0 && (
-              <Badge variant="secondary" className="ml-1">
+              <Badge variant="secondary" className="ms-1">
                 {savedIdeas.length}
               </Badge>
             )}
@@ -291,7 +291,7 @@ export default function StoryIdeas() {
                                 className="relative bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-md rounded-xl overflow-hidden group"
                             >
                                 <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                                <Save className={`relative h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                                <Save className={`relative h-4 w-4 ${isRTL ? 'ms-2' : 'me-2'}`} />
                                 <span className="relative">{t("storyIdeas.saveButton")}</span>
                             </Button>
                             <Button
@@ -300,7 +300,7 @@ export default function StoryIdeas() {
                                 disabled={isGenerating}
                                 className="border-purple-200 dark:border-purple-800 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-xl"
                             >
-                                <RefreshCw className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'} ${isGenerating ? 'animate-spin' : ''}`} />
+                                <RefreshCw className={`h-4 w-4 ${isRTL ? 'ms-2' : 'me-2'} ${isGenerating ? 'animate-spin' : ''}`} />
                                 {t("storyIdeas.regenerateButton")}
                             </Button>
                         </div>

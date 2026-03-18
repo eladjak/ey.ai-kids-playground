@@ -28,7 +28,8 @@ import {
   Trophy,
   Sparkles,
   PenTool,
-  Globe
+  Globe,
+  Mail
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -152,7 +153,8 @@ export default function Layout({ children, currentPageName }) {
       { href: "/Leaderboard", label: t("common.leaderboard"), icon: Trophy, pageName: "Leaderboard" },
     ],
     system: [
-      { href: "/Settings", label: t("common.settings"), icon: Settings, pageName: "Settings" }
+      { href: "/Settings", label: t("common.settings"), icon: Settings, pageName: "Settings" },
+      { href: "/Contact", label: t("common.contact"), icon: Mail, pageName: "Contact" }
     ]
   };
 
@@ -201,7 +203,8 @@ export default function Layout({ children, currentPageName }) {
       "CharacterEditor": "עריכת דמות",
       "Profile": "פרופיל",
       "Leaderboard": "טבלת מובילים",
-      "StoryIdeas": "רעיונות לסיפורים"
+      "StoryIdeas": "רעיונות לסיפורים",
+      "Contact": "צור קשר"
     };
 
     return hebrewPageNames[pageName] || pageName;

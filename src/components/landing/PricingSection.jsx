@@ -110,8 +110,8 @@ const PricingSection = () => {
           </div>
         </motion.div>
 
-        {/* Pricing Cards - 4 columns */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 max-w-6xl mx-auto items-start">
+        {/* Pricing Cards - 1 col mobile / 2 col tablet / 4 col desktop */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 max-w-6xl mx-auto items-start">
           {plans.map((plan, index) => (
             <motion.div
               key={index}
@@ -119,10 +119,10 @@ const PricingSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className={plan.highlighted ? 'lg:-mt-4' : ''}
+              className={`${plan.highlighted ? 'lg:-mt-4' : ''} ${plan.highlighted ? 'pt-4' : ''}`}
             >
               <Card
-                className={`h-full relative overflow-hidden ${
+                className={`h-full relative overflow-visible ${
                   plan.highlighted
                     ? 'border-2 border-purple-500 shadow-xl shadow-purple-500/10'
                     : 'border-0 shadow-sm'
@@ -130,15 +130,15 @@ const PricingSection = () => {
               >
                 {/* Badge */}
                 {plan.badge && (
-                  <div className="absolute top-0 inset-x-0 flex justify-center -translate-y-1/2">
-                    <Badge className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-0 px-4 py-1 text-sm shadow-lg">
+                  <div className="absolute top-0 inset-x-0 flex justify-center -translate-y-1/2 z-10">
+                    <Badge className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-0 px-4 py-1 text-sm shadow-lg whitespace-nowrap">
                       <Sparkles className="h-3 w-3 me-1" />
                       {plan.badge}
                     </Badge>
                   </div>
                 )}
 
-                <CardContent className={`p-5 sm:p-6 ${plan.highlighted ? 'pt-7' : ''}`}>
+                <CardContent className={`p-5 sm:p-6 ${plan.highlighted ? 'pt-8' : ''}`}>
                   {/* Plan name */}
                   <h3 className="text-base font-bold text-gray-900 dark:text-white mb-2">
                     {plan.name}

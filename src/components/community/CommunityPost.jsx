@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 function CommunityPost({ post, onLike, isLiked = false, isOwner = false, onReport }) {
-  const { language } = useI18n();
+  const { language, isRTL } = useI18n();
   if (!post || !post.book) return null;
 
   const isHebrewOrYiddish = language === "hebrew" || language === "yiddish";
@@ -49,9 +49,9 @@ function CommunityPost({ post, onLike, isLiked = false, isOwner = false, onRepor
   };
   
   return (
-    <Card className="overflow-hidden transition-all hover:shadow-md" dir={['hebrew', 'yiddish'].includes(post.book?.language) ? 'rtl' : 'ltr'}>
+    <Card className="overflow-hidden transition-all hover:shadow-md" dir={isRTL ? 'rtl' : 'ltr'}>
       <CardContent className="p-0">
-        <div className="flex flex-col md:flex-row">
+        <div className={`flex flex-col md:flex-row ${isRTL ? 'md:flex-row-reverse' : ''}`}>
           {/* Book Cover */}
           <div className="md:w-1/4 lg:w-1/5 bg-gray-100 dark:bg-gray-800 aspect-square md:aspect-auto">
             <Link to={`${createPageUrl("CommunityPost")}?id=${post.id}`}>
@@ -71,9 +71,9 @@ function CommunityPost({ post, onLike, isLiked = false, isOwner = false, onRepor
           
           {/* Content */}
           <div className="p-5 flex-1">
-            <div className="flex justify-between">
+            <div className={`flex justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
               {/* Author info */}
-              <div className="flex items-center gap-2 mb-3">
+              <div className={`flex items-center gap-2 mb-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Avatar className="h-8 w-8">
                   {post.user?.avatar_url ? (
                     <AvatarImage src={post.user.avatar_url} alt={post.user.full_name} />
@@ -97,11 +97,11 @@ function CommunityPost({ post, onLike, isLiked = false, isOwner = false, onRepor
                     <MoreHorizontal className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align={isRTL ? "start" : "end"}>
                   {isOwner && (
                     <>
-                      <DropdownMenuItem>Edit Post</DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-600">Delete Post</DropdownMenuItem>
+                      <DropdownMenuItem>{isRTL ? 'ערוך פוסט' : 'Edit Post'}</DropdownMenuItem>
+                      <DropdownMenuItem className="text-red-600">{isRTL ? 'מחק פוסט' : 'Delete Post'}</DropdownMenuItem>
                     </>
                   )}
                   {!isOwner && onReport && (
@@ -109,8 +109,8 @@ function CommunityPost({ post, onLike, isLiked = false, isOwner = false, onRepor
                       onClick={() => onReport(post.id)}
                       className="text-orange-600"
                     >
-                      <Flag className="h-4 w-4 mr-2" />
-                      Report
+                      <Flag className={`h-4 w-4 ${isRTL ? 'ms-2' : 'me-2'}`} />
+                      {isRTL ? 'דווח' : 'Report'}
                     </DropdownMenuItem>
                   )}
                 </DropdownMenuContent>
@@ -133,17 +133,17 @@ function CommunityPost({ post, onLike, isLiked = false, isOwner = false, onRepor
               <div className="flex flex-wrap gap-2 mb-4">
                 {post.tags.map(tag => (
                   <Badge key={tag} variant="secondary" className="text-xs bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
-                    <Tag className="mr-1 h-3 w-3" />
+                    <Tag className="me-1 h-3 w-3" />
                     {tag}
                   </Badge>
                 ))}
               </div>
             )}
-            
+
             {/* Book info */}
             <div className="flex flex-wrap gap-2 mb-3">
               <Badge variant="outline" className="text-xs">
-                <BookOpen className="mr-1 h-3 w-3" />
+                <BookOpen className="me-1 h-3 w-3" />
                 {post.book.title}
               </Badge>
               {post.book.genre && (
@@ -154,29 +154,29 @@ function CommunityPost({ post, onLike, isLiked = false, isOwner = false, onRepor
             </div>
             
             {/* Interactions */}
-            <div className="flex items-center gap-4 mt-3">
-              <Button 
-                variant="ghost" 
-                size="sm" 
+            <div className={`flex items-center gap-4 mt-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <Button
+                variant="ghost"
+                size="sm"
                 className="flex items-center gap-1 text-gray-600 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400"
                 onClick={() => onLike(post.id)}
               >
                 <Heart className={`h-4 w-4 ${isLiked ? 'fill-red-500 text-red-500' : ''}`} />
                 <span>{post.likes || 0}</span>
               </Button>
-              
+
               <Link to={`${createPageUrl("CommunityPost")}?id=${post.id}`}>
                 <Button variant="ghost" size="sm" className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
                   <MessageSquare className="h-4 w-4" />
                   <span>{post.commentCount || 0}</span>
                 </Button>
               </Link>
-              
-              <div className="ml-auto">
+
+              <div className="ms-auto">
                 <Link to={`${createPageUrl("CommunityPost")}?id=${post.id}`}>
-                  <Button variant="ghost" size="sm">
-                    <ExternalLink className="h-4 w-4 mr-1" />
-                    View
+                  <Button variant="ghost" size="sm" className="gap-1">
+                    <ExternalLink className="h-4 w-4" />
+                    {isRTL ? 'צפה' : 'View'}
                   </Button>
                 </Link>
               </div>

@@ -33,7 +33,7 @@ const PrivacyPolicy = Pages['PrivacyPolicy'];
 const TermsOfService = Pages['TermsOfService'];
 
 // Pages accessible without authentication (public routes)
-const PUBLIC_PAGES = new Set(['BookView', 'LandingPage', 'Blog', 'BlogPost', 'Community', 'PrivacyPolicy', 'TermsOfService']);
+const PUBLIC_PAGES = new Set(['BookView', 'LandingPage', 'Blog', 'BlogPost', 'Community', 'PrivacyPolicy', 'TermsOfService', 'Contact']);
 
 const pageTransition = {
   initial: { opacity: 0 },
@@ -84,7 +84,9 @@ const AuthenticatedApp = () => {
     location.pathname.startsWith('/sign-up') ||
     location.pathname === '/privacy' ||
     location.pathname === '/terms' ||
-    location.pathname === '/welcome';
+    location.pathname === '/welcome' ||
+    location.pathname === '/contact' ||
+    location.pathname === '/Contact';
 
   // Show loading spinner while checking app public settings or auth
   // For public routes, skip auth loading wait (user will be null but that's fine)

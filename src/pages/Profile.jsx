@@ -430,8 +430,8 @@ export default function Profile() {
 
               {/* XP progress bar */}
               <div className="mt-3 mb-4 max-w-sm">
-                <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
-                  <span className="flex items-center gap-1">
+                <div className={`flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <span className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <Zap className="h-3 w-3 text-purple-500" />
                     {userData.xp} XP
                   </span>
@@ -582,7 +582,7 @@ export default function Profile() {
                               </Badge>
                             ) : (
                               <div className="w-full mt-2">
-                                <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                <div className={`flex justify-between text-xs text-gray-500 mb-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                                   <span>{achievement.progress}/{achievement.max_progress}</span>
                                   <span>{achievement.xp_reward} XP</span>
                                 </div>
@@ -675,7 +675,7 @@ export default function Profile() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
           >
-            <div className="flex items-center justify-between">
+            <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
               <h2 className="text-2xl font-bold">{t("profile.tabs.books")}</h2>
               <Link to={createPageUrl("BookWizard")}>
                 <Button className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white rounded-xl shadow-md">
