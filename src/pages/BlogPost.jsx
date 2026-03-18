@@ -23,48 +23,26 @@ import { urlFor } from "@/lib/sanityClient";
 import PortableText, { extractHeadings } from "@/components/blog/PortableText";
 import BlogCard from "@/components/blog/BlogCard";
 import { updateMeta, resetMeta } from "@/lib/seo";
+import DEMO_POSTS, { getPostBySlug } from "@/data/blogPosts";
 
 // ---------------------------------------------------------------------------
-// Mock posts for development (keyed by slug)
+// Demo post lookup — uses the shared blogPosts data file
 // ---------------------------------------------------------------------------
 
-const MOCK_POSTS_MAP = {
-  "how-to-create-perfect-childrens-book-with-ai": {
-    _id: "mock-1",
-    slug: "how-to-create-perfect-childrens-book-with-ai",
-    title: "איך ליצור ספר ילדים מושלם עם AI",
-    excerpt: "גלו את הטכניקות המתקדמות ליצירת ספרי ילדים מרהיבים בעזרת בינה מלאכותית.",
-    publishedAt: "2026-03-01T10:00:00Z",
-    authorName: "צוות Sipurai",
-    readingTime: 5,
-    categories: [{ title: "מדריכים", slug: "guides" }, { title: "AI", slug: "ai" }],
-    body: "בינה מלאכותית שינתה לחלוטין את עולם יצירת ספרי הילדים. כעת, כל הורה יכול ליצור ספר מרהיב בדקות ספורות.\n\nהשלב הראשון הוא בחירת נושא מרתק שמתאים לגיל הילד. בחרו נושא שמעניין את הילד שלכם — חיות, הרפתקאות, חלל, או כל דבר אחר.\n\nהשלב השני הוא בחירת דמויות. ספרים עם דמויות מוכרות לילד יוצרים חיבור חזק יותר. שלבו את שמו של הילד, שמות של חברים, ואפילו שמות של חיות המחמד.\n\nבשלב השלישי, בחרו סגנון אמנותי שמתאים לאופי הסיפור. דיסני מתאים לאגדות, ציורי מים ליצירות פיוטיות, וסגנון קריקטורה להרפתקאות קלות ושמחות.\n\nבהצלחה ביצירת הספר הקסום שלכם!",
-    relatedPosts: [],
-  },
-  "5-tips-for-creative-parents": {
-    _id: "mock-2",
-    slug: "5-tips-for-creative-parents",
-    title: "5 טיפים להורים יצירתיים",
-    excerpt: "כיצד להפוך את שעת הסיפור לחוויה בלתי נשכחת?",
-    publishedAt: "2026-02-25T10:00:00Z",
-    authorName: "דנה כהן",
-    readingTime: 3,
-    categories: [{ title: "טיפים", slug: "tips" }, { title: "הורים", slug: "parents" }],
-    body: "שעת הסיפור היא אחד הרגעים הקסומים ביותר בין הורה לילד. הנה 5 טיפים שיהפכו אותה לחוויה בלתי נשכחת:\n\n1. הפכו את הילד לגיבור. ילדים מגיבים בצורה חזקה יותר לסיפורים שבהם הם מככבים.\n\n2. שאלו שאלות תוך כדי הסיפור. 'מה לדעתך יקרה עכשיו?' מגרה את הדמיון ומחזק את מיומנויות החשיבה.\n\n3. שנו קולות לדמויות שונות. הדרמטיות הופכת את הסיפור לחי יותר.\n\n4. אפשרו לילד להכתיב שינויים בעלילה. כך הסיפור הופך לשלו.\n\n5. צרו רצף — הסיפור של הלילה יכול להמשיך מחר.",
-    relatedPosts: [],
-  },
-};
-
-// Generic mock for unknown slugs
 function getMockPost(slug) {
-  if (MOCK_POSTS_MAP[slug]) return MOCK_POSTS_MAP[slug];
+  const found = getPostBySlug(slug);
+  if (found) {
+    // Pick up to 2 other posts as related
+    const related = DEMO_POSTS.filter((p) => p.slug !== slug).slice(0, 2);
+    return { ...found, relatedPosts: related };
+  }
   return {
     _id: `mock-${slug}`,
     slug,
     title: "פוסט לדוגמה",
     excerpt: "תוכן לדוגמה עבור פוסט זה.",
     publishedAt: new Date().toISOString(),
-    authorName: "צוות Sipurai",
+    authorName: "צוות סיפוראי",
     readingTime: 3,
     categories: [{ title: "כללי", slug: "general" }],
     body: "תוכן הפוסט יופיע כאן לאחר חיבור מסד הנתונים של Sanity.",

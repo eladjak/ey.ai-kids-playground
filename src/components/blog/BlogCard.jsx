@@ -31,6 +31,9 @@ function BlogCard({ post, featured = false, index = 0 }) {
     }
   }, [post.mainImage, post.coverImage, featured]);
 
+  // Fallback gradient — used when no cover image is available
+  const coverGradient = post.coverGradient || "from-purple-500 to-indigo-600";
+
   // Format date — supports ISO strings with Hebrew/English locale
   const formattedDate = React.useMemo(() => {
     if (!post.publishedAt) return "";
@@ -63,7 +66,7 @@ function BlogCard({ post, featured = false, index = 0 }) {
         <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300 border-purple-100 dark:border-purple-900 group">
           <div className="grid md:grid-cols-2 gap-0">
             {/* Image */}
-            <div className="relative aspect-video md:aspect-auto overflow-hidden bg-gradient-to-br from-purple-50 to-indigo-100 dark:from-purple-950 dark:to-gray-900 min-h-[260px]">
+            <div className={`relative aspect-video md:aspect-auto overflow-hidden min-h-[260px] ${imageUrl ? 'bg-gray-100 dark:bg-gray-800' : `bg-gradient-to-br ${coverGradient}`}`}>
               {imageUrl ? (
                 <LazyImage
                   src={imageUrl}
@@ -71,8 +74,9 @@ function BlogCard({ post, featured = false, index = 0 }) {
                   className="absolute inset-0 w-full h-full transition-transform duration-500 group-hover:scale-105"
                 />
               ) : (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-6xl">📖</span>
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                  <span className="text-6xl opacity-80">📖</span>
+                  <span className="text-white/70 text-sm font-medium px-4 text-center line-clamp-2">{post.title}</span>
                 </div>
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
@@ -156,7 +160,7 @@ function BlogCard({ post, featured = false, index = 0 }) {
     >
       <Card className="overflow-hidden h-full flex flex-col hover:shadow-xl transition-all duration-300 border-gray-200 dark:border-gray-800 hover:border-purple-200 dark:hover:border-purple-800 group">
         {/* Image */}
-        <Link to={postUrl} className="block relative aspect-video overflow-hidden bg-gradient-to-br from-purple-50 to-indigo-100 dark:from-purple-950 dark:to-gray-900 shrink-0">
+        <Link to={postUrl} className={`block relative aspect-video overflow-hidden shrink-0 ${imageUrl ? 'bg-gray-100 dark:bg-gray-800' : `bg-gradient-to-br ${coverGradient}`}`}>
           {imageUrl ? (
             <LazyImage
               src={imageUrl}
@@ -164,8 +168,9 @@ function BlogCard({ post, featured = false, index = 0 }) {
               className="absolute inset-0 w-full h-full transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-5xl">📖</span>
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+              <span className="text-4xl opacity-80">📖</span>
+              <span className="text-white/70 text-xs font-medium px-3 text-center line-clamp-2">{post.title}</span>
             </div>
           )}
         </Link>

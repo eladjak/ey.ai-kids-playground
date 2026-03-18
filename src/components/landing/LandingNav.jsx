@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, Globe, Menu, X, LayoutDashboard } from 'lucide-react';
+import { BookOpen, Globe, Menu, X, LayoutDashboard, Newspaper } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useI18n } from '@/components/i18n/i18nProvider';
 import { useAuth } from '@/lib/AuthContext';
@@ -45,6 +45,7 @@ const LandingNav = () => {
     { href: '#features', label: t('landing.nav.features') },
     { href: '#how-it-works', label: t('landing.nav.howItWorks') },
     { href: '#pricing', label: t('landing.nav.pricing') },
+    { href: '/Blog', label: language === 'english' ? 'Blog' : 'בלוג', isRoute: true },
   ];
 
   const languageOptions = Object.entries(languages).map(([key, lang]) => ({
@@ -85,18 +86,31 @@ const LandingNav = () => {
 
           {/* Desktop Nav Links */}
           <div className="hidden md:flex items-center gap-6">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={(e) => scrollToSection(e, link.href)}
-                className={`text-sm font-medium transition-colors hover:text-purple-600 ${
-                  scrolled ? 'text-gray-700 dark:text-gray-300' : 'text-white/90 hover:text-white'
-                }`}
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) =>
+              link.isRoute ? (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className={`text-sm font-medium transition-colors hover:text-purple-600 flex items-center gap-1.5 ${
+                    scrolled ? 'text-gray-700 dark:text-gray-300' : 'text-white/90 hover:text-white'
+                  }`}
+                >
+                  <Newspaper className="h-3.5 w-3.5" aria-hidden="true" />
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={(e) => scrollToSection(e, link.href)}
+                  className={`text-sm font-medium transition-colors hover:text-purple-600 ${
+                    scrolled ? 'text-gray-700 dark:text-gray-300' : 'text-white/90 hover:text-white'
+                  }`}
+                >
+                  {link.label}
+                </a>
+              )
+            )}
           </div>
 
           {/* Right Side: Language + CTA */}
@@ -195,16 +209,28 @@ const LandingNav = () => {
           className="md:hidden bg-white dark:bg-gray-900 border-t shadow-lg"
         >
           <div className="px-4 py-4 space-y-3">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={(e) => scrollToSection(e, link.href)}
-                className="block py-2 text-gray-700 dark:text-gray-300 hover:text-purple-600"
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) =>
+              link.isRoute ? (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-2 py-2 text-gray-700 dark:text-gray-300 hover:text-purple-600"
+                >
+                  <Newspaper className="h-4 w-4" aria-hidden="true" />
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={(e) => scrollToSection(e, link.href)}
+                  className="block py-2 text-gray-700 dark:text-gray-300 hover:text-purple-600"
+                >
+                  {link.label}
+                </a>
+              )
+            )}
             <hr className="border-gray-200 dark:border-gray-700" />
             <div className="flex gap-2">
               {languageOptions.map((lang) => (

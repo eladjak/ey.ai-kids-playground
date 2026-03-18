@@ -10,85 +10,13 @@ import BlogCard from "@/components/blog/BlogCard";
 import BlogHeader from "@/components/blog/BlogHeader";
 import BlogSidebar from "@/components/blog/BlogSidebar";
 import { updateMeta, resetMeta } from "@/lib/seo";
+import DEMO_POSTS from "@/data/blogPosts";
 
 // ---------------------------------------------------------------------------
 // Mock / demo data shown when Sanity is not configured
 // ---------------------------------------------------------------------------
 
-const MOCK_POSTS = [
-  {
-    _id: "mock-1",
-    slug: "how-to-create-perfect-childrens-book-with-ai",
-    title: "איך ליצור ספר ילדים מושלם עם AI",
-    excerpt: "גלו את הטכניקות המתקדמות ליצירת ספרי ילדים מרהיבים בעזרת בינה מלאכותית. מהרעיון הראשוני ועד לאיור הסופי — מדריך מקיף לכל שלב בתהליך.",
-    publishedAt: "2026-03-01T10:00:00Z",
-    coverImage: null,
-    authorName: "צוות Sipurai",
-    readingTime: 5,
-    categories: [{ title: "מדריכים", slug: "guides" }, { title: "AI", slug: "ai" }],
-    featured: true,
-  },
-  {
-    _id: "mock-2",
-    slug: "5-tips-for-creative-parents",
-    title: "5 טיפים להורים יצירתיים",
-    excerpt: "כיצד להפוך את שעת הסיפור לחוויה בלתי נשכחת? הנה חמישה טיפים מעשיים שיעזרו לכם ליצור סיפורים מותאמים אישית שהילד שלכם יאהב.",
-    publishedAt: "2026-02-25T10:00:00Z",
-    coverImage: null,
-    authorName: "דנה כהן",
-    readingTime: 3,
-    categories: [{ title: "טיפים", slug: "tips" }, { title: "הורים", slug: "parents" }],
-    featured: false,
-  },
-  {
-    _id: "mock-3",
-    slug: "power-of-personalized-stories",
-    title: "הכוח של סיפורים מותאמים אישית",
-    excerpt: "מחקרים מראים כי ילדים שמופיעים כגיבורים בסיפורים מפתחים אהבה גדולה יותר לקריאה ויכולת דמיון גבוהה יותר. גלו מדוע ספרים מותאמים אישית משנים חיים.",
-    publishedAt: "2026-02-18T10:00:00Z",
-    coverImage: null,
-    authorName: "פרופ' אורי לוי",
-    readingTime: 7,
-    categories: [{ title: "מחקר", slug: "research" }, { title: "חינוך", slug: "education" }],
-    featured: false,
-  },
-  {
-    _id: "mock-4",
-    slug: "why-children-love-to-see-themselves-in-stories",
-    title: "למה ילדים אוהבים לראות את עצמם בסיפור",
-    excerpt: "פסיכולוגים ילדים מסבירים את הקסם שמאחורי הזדהות עם גיבור הסיפור. כשהילד שלכם הוא הכוכב — כל הרפתקה הופכת לאפשרית.",
-    publishedAt: "2026-02-10T10:00:00Z",
-    coverImage: null,
-    authorName: "ד״ר מיכל ברק",
-    readingTime: 4,
-    categories: [{ title: "פסיכולוגיה", slug: "psychology" }, { title: "ילדים", slug: "children" }],
-    featured: false,
-  },
-  {
-    _id: "mock-5",
-    slug: "guide-to-choosing-art-style",
-    title: "מדריך לבחירת סגנון אומנותי",
-    excerpt: "מדיסני ועד ציורי מים — כל סגנון אמנותי יוצר חוויה שונה לחלוטין. כך תבחרו את הסגנון המושלם לסיפור הילד שלכם.",
-    publishedAt: "2026-02-03T10:00:00Z",
-    coverImage: null,
-    authorName: "יעל ממן",
-    readingTime: 6,
-    categories: [{ title: "עיצוב", slug: "design" }, { title: "מדריכים", slug: "guides" }],
-    featured: false,
-  },
-  {
-    _id: "mock-6",
-    slug: "new-yiddish-support",
-    title: "חדש: תמיכה ביידיש!",
-    excerpt: "Sipurai מכריזה על תמיכה מלאה בשפה היידיש — כולל כיוון כתיבה מימין לשמאל, גופנים מיוחדים ותרגום מלא של הממשק.",
-    publishedAt: "2026-01-28T10:00:00Z",
-    coverImage: null,
-    authorName: "צוות Sipurai",
-    readingTime: 2,
-    categories: [{ title: "עדכונים", slug: "updates" }, { title: "שפות", slug: "languages" }],
-    featured: false,
-  },
-];
+const MOCK_POSTS = DEMO_POSTS;
 
 const POSTS_PER_PAGE = 6;
 
