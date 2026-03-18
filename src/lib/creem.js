@@ -3,108 +3,104 @@
  *
  * Calls our own serverless endpoint (/api/payments/checkout) which
  * proxies to Creem and keeps the API key server-side.
+ *
+ * Prices in USD (Creem doesn't support NIS), displayed with NIS equivalent.
+ * NIS conversion rate ~3.7 (updated periodically).
  */
+
+const USD_TO_NIS = 3.7;
 
 export const PLANS = {
   free: {
     id: 'free',
     name: { en: 'Free', he: 'חינמי' },
-    price: { en: '$0/mo', he: '₪0' },
-    priceMonthly: 0,
+    priceUsd: 0,
+    priceDisplay: { en: 'Free', he: 'חינם' },
     features: {
       en: [
-        '2 books per month',
-        'Up to 5 pages per book',
-        '3 art styles',
-        '10 built-in characters',
-        'Community reading',
+        '5 books per month',
+        '6 art styles',
+        'Community access',
+        '1 PDF export per month',
       ],
       he: [
-        '2 ספרים בחודש',
-        'עד 5 עמודים לספר',
-        '3 סגנונות איור',
-        '10 דמויות מובנות',
-        'קריאה בקהילה',
+        '5 ספרים בחודש',
+        '6 סגנונות איור',
+        'גישה לקהילה',
+        'ייצוא PDF אחד בחודש',
       ],
     },
   },
   lite: {
     id: 'lite',
-    creemProductId: 'prod_2Ij1cdrPJ7LBFk10GTaaLr',
+    creemProductId: import.meta.env.VITE_CREEM_PRODUCT_LITE,
     name: { en: 'Lite', he: 'לייט' },
-    price: { en: '$3.90/mo', he: '$3.90/חודש' },
-    priceMonthly: 3.9,
+    priceUsd: 3.90,
+    priceDisplay: {
+      en: '$3.90/mo',
+      he: `$3.90 / ~${Math.round(3.90 * USD_TO_NIS)}₪ לחודש`,
+    },
     features: {
       en: [
-        '5 books per month',
-        'Up to 10 pages per book',
-        'All art styles',
-        '3 custom characters',
-        'PDF export',
-        'Community sharing',
+        '15 books per month',
+        'All 18 art styles',
+        'Unlimited PDF export',
+        'No ads',
       ],
       he: [
-        '5 ספרים בחודש',
-        'עד 10 עמודים לספר',
-        'כל סגנונות האיור',
-        '3 דמויות מותאמות',
-        'ייצוא PDF',
-        'שיתוף בקהילה',
+        '15 ספרים בחודש',
+        'כל 18 סגנונות האיור',
+        'ייצוא PDF ללא הגבלה',
+        'ללא פרסומות',
       ],
     },
   },
   premium: {
     id: 'premium',
-    creemProductId: 'prod_2pdZoAylJ4858chxMtzspo',
+    creemProductId: import.meta.env.VITE_CREEM_PRODUCT_PREMIUM,
     name: { en: 'Premium', he: 'פרימיום' },
-    price: { en: '$7.90/mo', he: '$7.90/חודש' },
-    priceMonthly: 7.9,
+    priceUsd: 7.90,
+    priceDisplay: {
+      en: '$7.90/mo',
+      he: `$7.90 / ~${Math.round(7.90 * USD_TO_NIS)}₪ לחודש`,
+    },
     popular: true,
     features: {
       en: [
         'Unlimited books',
-        'Up to 20 pages per book',
-        'All art styles',
-        'Custom AI characters',
+        'All 18 art styles',
         'PDF export',
-        'Priority AI generation',
-        'Full gamification',
+        'Priority support',
       ],
       he: [
         'ספרים ללא הגבלה',
-        'עד 20 עמודים לספר',
-        'כל סגנונות האיור',
-        'דמויות AI מותאמות',
+        'כל 18 סגנונות האיור',
         'ייצוא PDF',
-        'יצירת AI מהירה',
-        'משחוק מלא',
+        'תמיכה מועדפת',
       ],
     },
   },
   family: {
     id: 'family',
-    creemProductId: 'prod_2fjogi8mJb5Y99lCxX4urX',
+    creemProductId: import.meta.env.VITE_CREEM_PRODUCT_FAMILY,
     name: { en: 'Family', he: 'משפחתי' },
-    price: { en: '$9.90/mo', he: '$9.90/חודש' },
-    priceMonthly: 9.9,
+    priceUsd: 9.90,
+    priceDisplay: {
+      en: '$9.90/mo',
+      he: `$9.90 / ~${Math.round(9.90 * USD_TO_NIS)}₪ לחודש`,
+    },
     features: {
       en: [
-        'Everything in Premium',
-        'Up to 4 child profiles',
-        'Parental controls',
-        'Shared family library',
-        'Community sharing',
-        'Print-ready export',
-        'Collaborative creation',
+        'Up to 5 child profiles',
+        'All Premium features',
+        'Priority support',
+        'Early access to new features',
       ],
       he: [
-        'הכל מפרימיום',
-        'עד 4 פרופילי ילדים',
-        'בקרת הורים',
-        'ספריית משפחה משותפת',
-        'שיתוף בקהילה',
-        'ייצוא להדפסה',
-        'יצירה שיתופית',
+        'עד 5 פרופילי ילדים',
+        'כל תכונות הפרימיום',
+        'תמיכה מועדפת',
+        'גישה מוקדמת לתכונות חדשות',
       ],
     },
   },
@@ -113,9 +109,6 @@ export const PLANS = {
 /**
  * Open Creem checkout for the given plan by calling our serverless proxy.
  * Redirects the user to the hosted Creem checkout page on success.
- *
- * @param {'lite'|'premium'|'family'} planId
- * @param {string} [userEmail] - Pre-fill email in Creem checkout
  */
 export async function openCheckout(planId, userEmail) {
   const plan = PLANS[planId];
@@ -125,7 +118,6 @@ export async function openCheckout(planId, userEmail) {
   }
 
   const successUrl = `${window.location.origin}/settings?checkout=success&plan=${planId}`;
-  const cancelUrl = `${window.location.origin}/settings`;
 
   try {
     const response = await fetch('/api/payments/checkout', {
@@ -135,7 +127,6 @@ export async function openCheckout(planId, userEmail) {
         productId: plan.creemProductId,
         customerEmail: userEmail || undefined,
         successUrl,
-        cancelUrl,
       }),
     });
 
@@ -157,8 +148,6 @@ export async function openCheckout(planId, userEmail) {
 
 /**
  * Get the user's current plan from their metadata / Supabase row.
- * @param {object|null} user
- * @returns {'free'|'lite'|'premium'|'family'}
  */
 export function getUserPlan(user) {
   return user?.subscription_tier || 'free';
