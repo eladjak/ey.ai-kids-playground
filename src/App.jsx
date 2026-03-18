@@ -36,10 +36,10 @@ const TermsOfService = Pages['TermsOfService'];
 const PUBLIC_PAGES = new Set(['BookView', 'LandingPage', 'Blog', 'BlogPost', 'Community', 'PrivacyPolicy', 'TermsOfService']);
 
 const pageTransition = {
-  initial: { opacity: 0, y: 8 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -8 },
-  transition: { duration: 0.15, ease: 'easeInOut' },
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: { duration: 0.18, ease: 'easeInOut' },
 };
 
 const LayoutWrapper = ({ children, currentPageName }) => Layout ?
@@ -49,13 +49,14 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout ?
 const AnimatedPage = ({ children }) => {
   const location = useLocation();
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="sync">
       <motion.div
         key={location.pathname + location.search}
         initial={pageTransition.initial}
         animate={pageTransition.animate}
         exit={pageTransition.exit}
         transition={pageTransition.transition}
+        style={{ minHeight: '100dvh', backgroundColor: 'inherit' }}
       >
         {children}
       </motion.div>

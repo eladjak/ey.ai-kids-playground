@@ -238,8 +238,8 @@ async function handleText(apiKey, prompt, options = {}) {
 async function handleImage(apiKey, prompt, options = {}) {
   const { aspectRatio = '1:1' } = options;
 
-  // Append child-safety instruction
-  const safePrompt = `${prompt}\n\nIMPORTANT: This image is for a children's book. It must be completely child-friendly, wholesome, and appropriate for young readers.`;
+  // Append child-safety and no-text instructions
+  const safePrompt = `${prompt}\n\nIMPORTANT: This image is for a children's book. It must be completely child-friendly, wholesome, and appropriate for young readers. Do NOT include any text, letters, words, or writing in the illustration. The image should contain ONLY visual elements - no Hebrew letters, no English text, no numbers, no signs with text. Pure illustration only.`;
 
   const url = `${GEMINI_BASE_URL}/${GEMINI_IMAGE_MODEL}:generateContent`;
   log('IMAGE_API_CALL', { url, model: GEMINI_IMAGE_MODEL, aspectRatio, promptLength: safePrompt.length });

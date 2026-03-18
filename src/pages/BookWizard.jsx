@@ -534,7 +534,7 @@ Create exactly ${pageCount} pages (including a title page).
 For each page, provide a brief description of what happens.
 The story should have a clear beginning, middle, and end.`;
 
-      const coverPrompt = `Children's book cover for "${bookData.title}", featuring characters ${characterNames} in a ${topicDescription} setting. ${characterAppearances ? `Character appearances: ${characterAppearances}.` : ""} Illustrated in ${bookData.art_style} style. Bright, colorful, child-friendly.`;
+      const coverPrompt = `IMPORTANT: Do NOT include any text, letters, words, or writing in the illustration. Pure visual illustration only - no Hebrew letters, no English text, no numbers, no signs with text. Children's book cover art featuring characters ${characterNames} in a ${topicDescription} setting. ${characterAppearances ? `Character appearances: ${characterAppearances}.` : ""} Illustrated in ${bookData.art_style} style. Bright, colorful, child-friendly.`;
 
       const [outlineResult, coverResult] = await Promise.all([
         InvokeLLM({
@@ -599,15 +599,47 @@ The story should have a clear beginning, middle, and end.`;
       const rhymingInstruction = useRhyming
         ? (rhymeSettings.pattern === "aabb"
           ? (isHebrewBook
-            ? "\nכתוב את הסיפור בחרוזים. כל שתי שורות צריכות להתחרז זו עם זו (תבנית AABB - כל זוג שורות מתחרז)."
-            : "\nWrite the story with rhyming couplets (every two lines rhyme: AABB pattern).")
+            ? `\nכתוב את הסיפור בחרוזים מושלמים בדפוס AABB.
+כללים חשובים:
+- כל שתי שורות חייבות להתחרז בצורה מדויקת (לא חרוזים מאולצים)
+- שמור על קצב עקבי של 6-8 מילים בשורה
+- החרוזים חייבים להישמע טבעיים וזורמים, לא מאולצים
+- המשמעות חשובה יותר מהחרוז - אם החרוז לא עובד, שנה את הניסוח
+- כתוב כמו משורר ילדים מקצועי (בסגנון לאה גולדברג או מרים ילן-שטקליס)`
+            : `\nWrite the story in perfect AABB rhyming couplets.
+Rules:
+- Every two lines must rhyme perfectly (not forced or awkward rhymes)
+- Maintain consistent rhythm of 6-10 syllables per line
+- Rhymes must sound natural and flowing, never forced
+- Meaning is more important than rhyme - if a rhyme doesn't work, rephrase
+- Write like a professional children's poet (Dr. Seuss / Shel Silverstein style)`)
           : rhymeSettings.pattern === "abab"
           ? (isHebrewBook
-            ? "\nכתוב את הסיפור בחרוזים. שורות 1 ו-3 מתחרזות, שורות 2 ו-4 מתחרזות (תבנית ABAB)."
-            : "\nWrite with alternating rhyme (lines 1&3 rhyme, 2&4 rhyme: ABAB pattern).")
+            ? `\nכתוב את הסיפור בחרוזים מושלמים בדפוס ABAB.
+כללים חשובים:
+- שורות 1 ו-3 מתחרזות זו עם זו בצורה מדויקת
+- שורות 2 ו-4 מתחרזות זו עם זו בצורה מדויקת
+- שמור על קצב עקבי של 6-8 מילים בשורה
+- החרוזים חייבים להישמע טבעיים וזורמים, לא מאולצים
+- כתוב כמו משורר ילדים מקצועי (בסגנון לאה גולדברג או מרים ילן-שטקליס)`
+            : `\nWrite with alternating rhyme (lines 1&3 rhyme, 2&4 rhyme: ABAB pattern).
+Rules:
+- Lines 1 and 3 of each stanza must rhyme perfectly with each other
+- Lines 2 and 4 of each stanza must rhyme perfectly with each other
+- Maintain consistent rhythm of 6-10 syllables per line
+- Rhymes must sound natural and flowing, never forced
+- Write like a professional children's poet (Dr. Seuss / Shel Silverstein style)`)
           : (isHebrewBook
-            ? `\nכתוב את הסיפור בחרוזים בתבנית ${rhymeSettings.pattern.toUpperCase()}, משקל: ${rhymeSettings.meter}, מורכבות: ${rhymeSettings.complexity}.`
-            : `\nWrite the story in rhyming format with pattern: ${rhymeSettings.pattern.toUpperCase()}, meter: ${rhymeSettings.meter}, complexity: ${rhymeSettings.complexity}.`))
+            ? `\nכתוב את הסיפור בחרוזים מושלמים בתבנית ${rhymeSettings.pattern.toUpperCase()}.
+כללים חשובים:
+- כל החרוזים חייבים להיות מדויקים ולא מאולצים
+- שמור על קצב עקבי של 6-8 מילים בשורה
+- כתוב כמו משורר ילדים מקצועי`
+            : `\nWrite the story in perfect rhyming format with pattern: ${rhymeSettings.pattern.toUpperCase()}.
+Rules:
+- All rhymes must be precise and natural, never forced
+- Maintain consistent rhythm of 6-10 syllables per line
+- Write like a professional children's poet`))
         : "";
 
       const outlinePages = outlineResult?.outline || [];
@@ -670,7 +702,9 @@ ${isHebrewBook ? "2. text_with_nikud: The exact same page text with full nikud (
         const characterContext = characterAppearances
           ? `Characters: ${characterAppearances}. `
           : "";
-        const imagePrompt = `${characterContext}Scene: ${pageText.image_prompt}. Children's book illustration in ${bookData.art_style} style. Bright, colorful, age-appropriate for ${ageRange} year olds.`;
+        const consistencyInstruction = `CRITICAL: Maintain EXACT visual consistency for all characters across every illustration: Same hair color, eye color, skin tone, clothing in every image. Same art style, color palette, and visual mood throughout. Characters must look IDENTICAL in every page - as if drawn by the same artist. Do NOT change character appearance between pages. `;
+        const noTextInstruction = `IMPORTANT: Do NOT include any text, letters, words, or writing in the illustration. The image should contain ONLY visual elements - no Hebrew letters, no English text, no numbers, no signs with text. Pure illustration only. `;
+        const imagePrompt = `${consistencyInstruction}${noTextInstruction}${characterContext}Scene: ${pageText.image_prompt}. Children's book illustration in ${bookData.art_style} style. Bright, colorful, age-appropriate for ${ageRange} year olds.`;
         return GenerateImage({ prompt: imagePrompt })
           .then((result) => ({ url: result?.url || "", prompt: imagePrompt }))
           .catch((err) => {
