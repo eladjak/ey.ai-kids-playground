@@ -82,7 +82,8 @@ const AuthenticatedApp = () => {
     location.pathname.startsWith('/sign-in') ||
     location.pathname.startsWith('/sign-up') ||
     location.pathname === '/privacy' ||
-    location.pathname === '/terms';
+    location.pathname === '/terms' ||
+    location.pathname === '/welcome';
 
   // Show loading spinner while checking app public settings or auth
   // For public routes, skip auth loading wait (user will be null but that's fine)
@@ -130,6 +131,8 @@ const AuthenticatedApp = () => {
               <LandingPage />
             )
           } />
+          {/* Landing page always accessible (even when logged in) */}
+          <Route path="/welcome" element={<LandingPage />} />
           {/* Auth routes */}
           <Route path="/sign-in/*" element={<SignIn />} />
           <Route path="/sign-up/*" element={<SignUp />} />
