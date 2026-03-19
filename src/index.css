@@ -154,5 +154,29 @@ button:focus-visible {
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Nunito', sans-serif;
+  }
+  /* Apply Fredoka to all headings globally — Claymorphism + Playful Creative design system */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Fredoka', sans-serif;
+  }
+}
+
+@layer components {
+  /* Claymorphism card style — soft pastel bg, double shadow, colored border */
+  .clay-card {
+    border-radius: 20px;
+    border: 2px solid rgba(124, 58, 237, 0.12);
+    background: hsl(var(--card));
+    box-shadow:
+      inset -2px -2px 6px rgba(0, 0, 0, 0.05),
+      4px 4px 12px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .clay-card:hover {
+    box-shadow:
+      inset -2px -2px 6px rgba(0, 0, 0, 0.04),
+      6px 6px 18px rgba(0, 0, 0, 0.14);
+    transform: translateY(-1px);
   }
 }
