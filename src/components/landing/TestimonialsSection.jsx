@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Star, Quote, Shield, ShieldCheck, Ban } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -59,7 +60,15 @@ const TestimonialsSection = () => {
   ];
 
   const trustBadges = [
-    { icon: ShieldCheck, label: t('landing.testimonials.trustCoppa'), color: 'text-green-600 dark:text-green-400' },
+    {
+      icon: ShieldCheck,
+      label: t('landing.testimonials.trustCoppa'),
+      color: 'text-green-600 dark:text-green-400',
+      href: '/privacy#coppa',
+      tooltip: isRTL
+        ? 'תקן בינלאומי להגנת פרטיות ילדים — לחצו לפרטים'
+        : 'International child privacy standard — click to learn more',
+    },
     { icon: Shield, label: t('landing.testimonials.trustChildSafe'), color: 'text-blue-600 dark:text-blue-400' },
     { icon: Ban, label: t('landing.testimonials.trustNoAds'), color: 'text-purple-600 dark:text-purple-400' },
   ];
@@ -165,15 +174,34 @@ const TestimonialsSection = () => {
         >
           {trustBadges.map((badge, index) => {
             const Icon = badge.icon;
-            return (
-              <div key={index} className="flex items-center gap-2.5">
+            const inner = (
+              <div className="flex items-center gap-2.5">
                 <div className={`p-2 rounded-full bg-gray-100 dark:bg-gray-800 ${badge.color}`}>
                   <Icon className="h-5 w-5" />
                 </div>
-                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                  {badge.label}
-                </span>
+                <div>
+                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 block">
+                    {badge.label}
+                  </span>
+                  {badge.tooltip && (
+                    <span className="text-xs text-gray-400 dark:text-gray-500 block leading-tight">
+                      {badge.tooltip}
+                    </span>
+                  )}
+                </div>
               </div>
+            );
+            return badge.href ? (
+              <Link
+                key={index}
+                to={badge.href}
+                className="hover:opacity-80 transition-opacity"
+                title={badge.tooltip}
+              >
+                {inner}
+              </Link>
+            ) : (
+              <div key={index}>{inner}</div>
             );
           })}
         </motion.div>

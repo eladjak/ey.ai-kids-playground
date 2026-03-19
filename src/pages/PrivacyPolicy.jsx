@@ -51,6 +51,7 @@ We do not sell, rent, or trade your personal information to third parties.`,
         body: `Sipurai does not use tracking cookies. Our analytics provider (Umami) is cookieless by design. Clerk may set a session cookie to maintain your login state. This is a strictly necessary, functional cookie and does not track you across other websites.`,
       },
       {
+        id: 'coppa',
         heading: "5. Children's Privacy (COPPA)",
         body: `We take the privacy of children seriously and comply with the Children's Online Privacy Protection Act (COPPA).
 
@@ -165,6 +166,7 @@ Website: sipurai.ai`,
         body: `Sipurai אינה משתמשת בעוגיות מעקב. ספק האנליטיקה שלנו (Umami) אינו משתמש בעוגיות כלל. Clerk עשוי להגדיר עוגיית סשן כדי לשמור על מצב ההתחברות שלך. זוהי עוגייה פונקציונלית הכרחית בלבד ואינה עוקבת אחריך באתרים אחרים.`,
       },
       {
+        id: 'coppa',
         heading: '5. פרטיות ילדים (COPPA)',
         body: `אנחנו נוקטים ברצינות בפרטיות ילדים ועומדים בחוק הגנת פרטיות ילדים המקוונים (COPPA).
 
@@ -279,6 +281,7 @@ const PrivacyPolicy = () => {
           {c.sections.map((section, idx) => (
             <section
               key={idx}
+              id={section.id || undefined}
               className={`px-6 sm:px-8 py-8 ${idx < c.sections.length - 1 ? 'border-b border-gray-100 dark:border-gray-800' : ''}`}
             >
               <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-4">
