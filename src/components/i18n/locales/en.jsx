@@ -1562,7 +1562,7 @@ export default {
         description: "A safe, moderated community where families share their creations, leave likes and comments, and get inspired by other kids' stories. Creativity is better together."
       },
       compare1: "The only Hebrew-native children's book AI",
-      compare2: "Trusted by hundreds of families",
+      compare2: "Built for families who love stories",
       compare3: "100% child-safe, no ads, COPPA compliant"
     },
     faq: {
@@ -1583,7 +1583,7 @@ export default {
     },
     cta: {
       headline: "Start Creating Your Child's Story Today",
-      subheadline: "Join hundreds of families who are already creating magical personalized books with AI",
+      subheadline: "Start creating magical personalized books with AI today",
       button: "Create Your First Book",
       note: "Free to start \u2014 no credit card required"
     },
