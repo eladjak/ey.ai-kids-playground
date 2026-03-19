@@ -9,7 +9,8 @@ import { GenerateImage, InvokeLLM } from "@/integrations/Core";
 import { buildSafetyPromptPrefix, sanitizeAIOutput } from "@/utils/content-moderation";
 import { canCreateBook, recordBookCreation } from "@/utils/bookRateLimit";
 import { createPageUrl } from "@/utils";
-import { Edit, Eye, Share2, RotateCw, ArrowLeft } from "lucide-react";
+import { Edit, Eye, Share2, RotateCw, ArrowLeft, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
@@ -713,116 +714,163 @@ export default function BookCreation() {
   // Complete book: 3-tab editor (was 7 tabs)
   return (
     <div className="max-w-7xl mx-auto py-4" dir={isRTL ? "rtl" : "ltr"}>
-      {/* Header */}
-      <div className={`flex items-center justify-between mb-6 ${isRTL ? "flex-row-reverse" : ""}`}>
-        <div className={`flex items-center ${isRTL ? "flex-row-reverse" : ""}`}>
-          <Button
-            variant="ghost"
-            onClick={() => navigate(createPageUrl("Library"))}
-            className={isRTL ? "ml-2" : "mr-2"}
-          >
-            <ArrowLeft className={`h-4 w-4 ${isRTL ? "ml-2" : "mr-2"}`} />
-            {t("book.backToLibrary")}
-          </Button>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {book.title || t("book.createTitle")}
-          </h1>
-        </div>
+      {/* Gradient Header Banner */}
+      <motion.div
+        initial={{ opacity: 0, y: -16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="relative overflow-hidden rounded-2xl mb-6 shadow-lg"
+      >
+        <div className="bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 px-6 py-5">
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_20%_50%,white_0%,transparent_70%)]" />
+          <div className={`relative flex items-center justify-between gap-4 ${isRTL ? "flex-row-reverse" : ""}`}>
+            {/* Left: back + title */}
+            <div className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate(createPageUrl("Library"))}
+                className="text-white/80 hover:text-white hover:bg-white/15 rounded-xl"
+              >
+                <ArrowLeft className={`h-5 w-5 ${isRTL ? "rotate-180" : ""}`} />
+              </Button>
+              <div>
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-yellow-300" />
+                  <h1 className="text-xl font-bold text-white font-heading">
+                    {book.title || t("book.createTitle")}
+                  </h1>
+                </div>
+                <p className="text-white/60 text-sm mt-0.5">{t("book.editingLabel") || "Book Editor"}</p>
+              </div>
+            </div>
 
-        {/* Auto-save indicator */}
-        <AutoSaveIndicator
-          status={autoSaveStatus}
-          lastSaved={lastSaved}
-          isRTL={isRTL}
-          t={t}
-        />
-      </div>
-
-      {/* Simplified 3-tab layout (was 7 tabs) */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6" dir={isRTL ? "rtl" : "ltr"}>
-        <TabsList className="bg-purple-100/50 dark:bg-purple-900/20 p-1 rounded-xl">
-          <TabsTrigger
-            value="editor"
-            className="flex items-center gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 px-6 py-2.5"
-          >
-            <Edit className="h-4 w-4" />
-            <span>{t("book.tab.editor")}</span>
-          </TabsTrigger>
-          <TabsTrigger
-            value="preview"
-            className="flex items-center gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 px-6 py-2.5"
-          >
-            <Eye className="h-4 w-4" />
-            <span>{t("book.tab.preview")}</span>
-          </TabsTrigger>
-          <TabsTrigger
-            value="share"
-            className="flex items-center gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 px-6 py-2.5"
-          >
-            <Share2 className="h-4 w-4" />
-            <span>{t("book.tab.share")}</span>
-          </TabsTrigger>
-        </TabsList>
-
-        {/* Tab 1: Editor (includes text, image, layout editing + styling) */}
-        <TabsContent value="editor" className="space-y-6">
-          <BookEditorTab
-            book={book}
-            bookId={bookId}
-            pages={pages}
-            currentPageIndex={currentPageIndex}
-            currentPageText={currentPageText}
-            currentPageImagePrompt={currentPageImagePrompt}
-            currentPageLayout={currentPageLayout}
-            textStyles={textStyles}
-            interactiveElements={interactiveElements}
-            useRhyming={useRhyming}
-            isGenerating={isGenerating}
-            isRTL={isRTL}
-            t={t}
-            onPageIndexChange={setCurrentPageIndex}
-            onTextChange={setCurrentPageText}
-            onSaveText={updatePageText}
-            onAddNikud={addNikudToText}
-            onConvertToRhyme={convertToRhyme}
-            onImagePromptChange={setCurrentPageImagePrompt}
-            onRegenerateImage={updatePageImage}
-            onLayoutChange={updatePageLayout}
-          />
-
-          {/* Styling section below editor */}
-          <BookStylingTab
-            textStyles={textStyles}
-            setTextStyles={setTextStyles}
-            bookLanguage={book.language}
-            useRhyming={useRhyming}
-            setUseRhyming={setUseRhyming}
-            rhymeSettings={rhymeSettings}
-            setRhymeSettings={setRhymeSettings}
-            onConvertToRhyme={convertToRhyme}
-            isGenerating={isGenerating}
-            isRTL={isRTL}
-            t={t}
-            toast={toast}
-          />
-        </TabsContent>
-
-        {/* Tab 2: Preview */}
-        <TabsContent value="preview">
-          <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-6 mb-6">
-            <iframe
-              src={`${createPageUrl("BookView")}?id=${bookId}`}
-              className="w-full h-[70vh] rounded-lg border bg-white shadow-lg overflow-hidden"
-              title="Book Preview"
-            />
+            {/* Right: auto-save indicator */}
+            <div className="shrink-0">
+              <AutoSaveIndicator
+                status={autoSaveStatus}
+                lastSaved={lastSaved}
+                isRTL={isRTL}
+                t={t}
+              />
+            </div>
           </div>
-        </TabsContent>
+        </div>
+      </motion.div>
 
-        {/* Tab 3: Share & Export */}
-        <TabsContent value="share">
-          <ShareOptions book={book} bookId={bookId} />
-        </TabsContent>
-      </Tabs>
+      {/* Styled 3-tab layout */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, delay: 0.1 }}
+      >
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6" dir={isRTL ? "rtl" : "ltr"}>
+          <TabsList className="bg-white dark:bg-gray-800 border border-purple-100 dark:border-purple-800/30 shadow-md p-1.5 rounded-2xl gap-1">
+            <TabsTrigger
+              value="editor"
+              className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium
+                text-gray-600 dark:text-gray-400
+                data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-purple-600
+                data-[state=active]:text-white data-[state=active]:shadow-md
+                transition-all duration-200"
+            >
+              <Edit className="h-4 w-4" />
+              <span>{t("book.tab.editor")}</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="preview"
+              className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium
+                text-gray-600 dark:text-gray-400
+                data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-purple-600
+                data-[state=active]:text-white data-[state=active]:shadow-md
+                transition-all duration-200"
+            >
+              <Eye className="h-4 w-4" />
+              <span>{t("book.tab.preview")}</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="share"
+              className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium
+                text-gray-600 dark:text-gray-400
+                data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-purple-600
+                data-[state=active]:text-white data-[state=active]:shadow-md
+                transition-all duration-200"
+            >
+              <Share2 className="h-4 w-4" />
+              <span>{t("book.tab.share")}</span>
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Tab 1: Editor */}
+          <TabsContent value="editor" className="space-y-6">
+            <BookEditorTab
+              book={book}
+              bookId={bookId}
+              pages={pages}
+              currentPageIndex={currentPageIndex}
+              currentPageText={currentPageText}
+              currentPageImagePrompt={currentPageImagePrompt}
+              currentPageLayout={currentPageLayout}
+              textStyles={textStyles}
+              interactiveElements={interactiveElements}
+              useRhyming={useRhyming}
+              isGenerating={isGenerating}
+              isRTL={isRTL}
+              t={t}
+              onPageIndexChange={setCurrentPageIndex}
+              onTextChange={setCurrentPageText}
+              onSaveText={updatePageText}
+              onAddNikud={addNikudToText}
+              onConvertToRhyme={convertToRhyme}
+              onImagePromptChange={setCurrentPageImagePrompt}
+              onRegenerateImage={updatePageImage}
+              onLayoutChange={updatePageLayout}
+            />
+
+            {/* Styling section below editor */}
+            <BookStylingTab
+              textStyles={textStyles}
+              setTextStyles={setTextStyles}
+              bookLanguage={book.language}
+              useRhyming={useRhyming}
+              setUseRhyming={setUseRhyming}
+              rhymeSettings={rhymeSettings}
+              setRhymeSettings={setRhymeSettings}
+              onConvertToRhyme={convertToRhyme}
+              isGenerating={isGenerating}
+              isRTL={isRTL}
+              t={t}
+              toast={toast}
+            />
+          </TabsContent>
+
+          {/* Tab 2: Preview — gradient border frame */}
+          <TabsContent value="preview">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+              className="p-1 rounded-2xl shadow-xl mb-6"
+              style={{
+                background: "linear-gradient(135deg, #7c3aed, #6366f1, #4f46e5)"
+              }}
+            >
+              <div className="bg-gray-50 dark:bg-gray-900 rounded-[14px] p-4">
+                <iframe
+                  src={`${createPageUrl("BookView")}?id=${bookId}`}
+                  className="w-full h-[70vh] rounded-xl border-0 bg-white shadow-inner overflow-hidden"
+                  title="Book Preview"
+                />
+              </div>
+            </motion.div>
+          </TabsContent>
+
+          {/* Tab 3: Share & Export */}
+          <TabsContent value="share">
+            <ShareOptions book={book} bookId={bookId} />
+          </TabsContent>
+        </Tabs>
+      </motion.div>
     </div>
   );
 }

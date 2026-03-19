@@ -43,6 +43,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
+import { motion, AnimatePresence } from "framer-motion";
 
 import FeedbackList from "../components/feedback/FeedbackList";
 import FeedbackForm from "../components/feedback/FeedbackForm";
@@ -294,12 +295,12 @@ export default function FeedbackPage() {
     return (
       <div className="max-w-6xl mx-auto py-4">
         <div className="animate-pulse space-y-8">
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
+          <div className="h-32 bg-gradient-to-r from-purple-200 via-violet-200 to-indigo-200 rounded-2xl w-full"></div>
           <div className="flex gap-4">
-            <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-28"></div>
-            <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-28"></div>
+            <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded-xl w-28"></div>
+            <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded-xl w-28"></div>
           </div>
-          <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
+          <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-2xl w-full"></div>
         </div>
       </div>
     );
@@ -307,8 +308,13 @@ export default function FeedbackPage() {
   
   return (
     <div className="max-w-6xl mx-auto py-4" dir={isRTL ? "rtl" : "ltr"}>
-      {/* Gradient Header */}
-      <div className="relative overflow-hidden rounded-2xl mb-6 shadow-md">
+      {/* Gradient Header Banner */}
+      <motion.div
+        initial={{ opacity: 0, y: -16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="relative overflow-hidden rounded-2xl mb-6 shadow-xl"
+      >
         <div className="bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 px-6 py-6">
           <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_80%_20%,white_0%,transparent_60%)]" />
           <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -316,7 +322,7 @@ export default function FeedbackPage() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-white/80 hover:text-white hover:bg-white/10"
+                className="text-white/80 hover:text-white hover:bg-white/15 rounded-xl"
                 onClick={() => navigate(createPageUrl("Library"))}
               >
                 {isRTL ? (
@@ -326,15 +332,15 @@ export default function FeedbackPage() {
                 )}
               </Button>
               <div>
-                <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+                <h1 className="text-2xl font-bold text-white font-heading flex items-center gap-2">
                   <MessageSquare className="h-6 w-6" />
                   {t("feedback.title").replace("{{bookTitle}}", book?.title || "")}
                   <Badge variant="outline" className="ms-2 text-xs border-white/30 text-white/90 bg-white/10">
                     {allFeedback.length} {t("feedback.total")}
                   </Badge>
                 </h1>
-                <div className="flex items-center text-white/70 mt-1">
-                  <div className="flex items-center me-4">
+                <div className="flex flex-wrap items-center gap-2 text-white/70 mt-1.5">
+                  <div className="flex items-center">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star
                         key={i}
@@ -347,7 +353,7 @@ export default function FeedbackPage() {
                     <Lightbulb className="h-3 w-3 me-1" />
                     {suggestionCount} {t("feedback.stats.suggestions")}
                   </Badge>
-                  <Badge variant="outline" className="text-xs border-white/30 text-white/80 bg-white/10 ms-2">
+                  <Badge variant="outline" className="text-xs border-white/30 text-white/80 bg-white/10">
                     <CheckCircle className="h-3 w-3 me-1" />
                     {implementedCount} {t("feedback.stats.implemented")}
                   </Badge>
@@ -355,16 +361,18 @@ export default function FeedbackPage() {
               </div>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex gap-2 shrink-0">
               <Link to={`${createPageUrl("BookView")}?id=${bookId}`}>
-                <Button variant="outline" className="flex items-center gap-2 border-white/30 text-white bg-white/10 hover:bg-white/20">
+                <Button variant="outline" className="flex items-center gap-2 border-white/30 text-white bg-white/10 hover:bg-white/20 rounded-xl">
                   <BookOpen className="h-4 w-4" />
                   <span className="hidden sm:inline">{t("feedback.bookInfo.viewBook")}</span>
                 </Button>
               </Link>
               <Button
                 onClick={() => setShowFeedbackForm(!showFeedbackForm)}
-                className={showFeedbackForm ? "bg-white/20 hover:bg-white/30 text-white" : "bg-white text-purple-700 hover:bg-purple-50"}
+                className={showFeedbackForm
+                  ? "bg-white/20 hover:bg-white/30 text-white rounded-xl"
+                  : "bg-white text-purple-700 hover:bg-purple-50 rounded-xl shadow-md font-semibold"}
               >
                 {showFeedbackForm ? (
                   <>
@@ -381,111 +389,139 @@ export default function FeedbackPage() {
             </div>
           </div>
         </div>
-      </div>
-      
+      </motion.div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          {/* Book preview */}
-          <Card className="overflow-hidden border shadow-md">
-            <div className="flex flex-col md:flex-row">
-              <div className="md:w-1/3 bg-gray-100 dark:bg-gray-800 aspect-square md:aspect-auto">
-                {book?.cover_image ? (
-                  <img 
-                    src={book.cover_image} 
-                    alt={book.title}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <BookOpen className="h-16 w-16 text-gray-300 dark:text-gray-600" />
+          {/* Book preview — clay card with gradient cover border */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: 0.1 }}
+          >
+            <Card className="overflow-hidden border-2 border-purple-100 dark:border-purple-900/30 shadow-lg rounded-2xl">
+              <div className="flex flex-col md:flex-row">
+                {/* Cover image with gradient fallback */}
+                <div className="md:w-1/3 aspect-square md:aspect-auto relative overflow-hidden">
+                  {book?.cover_image ? (
+                    <img
+                      src={book.cover_image}
+                      alt={book.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full min-h-[180px] bg-gradient-to-br from-purple-400 via-violet-500 to-indigo-500 flex items-center justify-center">
+                      <BookOpen className="h-16 w-16 text-white/70" />
+                    </div>
+                  )}
+                </div>
+                <div className="p-6 flex flex-col justify-between">
+                  <div>
+                    <h2 className="text-2xl font-bold font-heading mb-2">{book?.title}</h2>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      <Badge className="bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300 border-0">
+                        {t("common.for")} {book?.child_name}
+                      </Badge>
+                      <Badge variant="outline" className="border-purple-200 dark:border-purple-800">{book?.age_range}</Badge>
+                      <Badge variant="outline" className="capitalize border-indigo-200 dark:border-indigo-800">{book?.genre?.replace(/_/g, ' ')}</Badge>
+                    </div>
+
+                    <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-6">
+                      <span className="me-2">{t("feedback.currentPage")}:</span>
+                      <Badge variant="outline" className="font-medium">
+                        {currentPageIndex + 1} / {pages.length}
+                      </Badge>
+                    </div>
                   </div>
-                )}
-              </div>
-              <div className="p-6 flex flex-col justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold mb-2">{book?.title}</h2>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    <Badge>{t("common.for")} {book?.child_name}</Badge>
-                    <Badge variant="outline">{book?.age_range}</Badge>
-                    <Badge variant="outline" className="capitalize">{book?.genre?.replace(/_/g, ' ')}</Badge>
-                  </div>
-                  
-                  <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-6">
-                    <span className="me-2">{t("feedback.currentPage")}:</span>
-                    <Badge variant="outline">
-                      {currentPageIndex + 1} of {pages.length}
-                    </Badge>
+
+                  <div className="flex justify-between gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handlePreviousPage}
+                      disabled={currentPageIndex === 0}
+                      className="rounded-xl border-purple-200 hover:bg-purple-50 dark:border-purple-800 dark:hover:bg-purple-900/20"
+                    >
+                      {isRTL ? <ChevronRight className="h-4 w-4 me-1" /> : <ChevronLeft className="h-4 w-4 me-1" />}
+                      {t("common.previous")}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleNextPage}
+                      disabled={currentPageIndex === pages.length - 1}
+                      className="rounded-xl border-purple-200 hover:bg-purple-50 dark:border-purple-800 dark:hover:bg-purple-900/20"
+                    >
+                      {t("common.next")}
+                      {isRTL ? <ChevronLeft className="h-4 w-4 ms-1" /> : <ChevronRight className="h-4 w-4 ms-1" />}
+                    </Button>
                   </div>
                 </div>
-                  
-                <div className="flex justify-between">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handlePreviousPage}
-                    disabled={currentPageIndex === 0}
-                  >
-                    {isRTL ? <ChevronRight className="h-4 w-4 me-2" /> : <ChevronLeft className="h-4 w-4 me-2" />}
-                    {t("common.previous")}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleNextPage}
-                    disabled={currentPageIndex === pages.length - 1}
-                  >
-                    {t("common.next")}
-                    {isRTL ? <ChevronLeft className="h-4 w-4 ms-2" /> : <ChevronRight className="h-4 w-4 ms-2" />}
-                  </Button>
-                </div>
               </div>
-            </div>
-            
-            {/* Page content preview */}
-            <div className="p-6 border-t border-gray-200 dark:border-gray-700">
-              <h3 className="font-semibold mb-2 flex items-center">
-                <span>{t("feedback.bookInfo.pageContent").replace("{{current}}", currentPageIndex + 1)}</span>
-                <Badge className="ms-2" variant="outline">
-                  <MessageSquare className="h-3 w-3 me-1" />
-                  {pageFeedback.length} {t("feedback.bookInfo.feedback")}
-                </Badge>
-              </h3>
-              <p className="text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 p-4 rounded-md border border-gray-200 dark:border-gray-700">
-                {currentPage?.text_content || t("feedback.noContent")}
-              </p>
-            </div>
-          </Card>
-          
-          {/* Feedback form */}
-          {showFeedbackForm && (
-            <Card className="border-purple-200 dark:border-purple-800/30 shadow-md bg-gradient-to-br from-white to-purple-50/30 dark:from-gray-800 dark:to-purple-900/10">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-purple-100 dark:bg-purple-900/30">
-                    <MessageSquare className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-                  </div>
-                  {t("feedback.giveFeedback")}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <FeedbackForm 
-                  onSubmit={handleAddFeedback}
-                  onCancel={() => setShowFeedbackForm(false)}
-                />
-              </CardContent>
+
+              {/* Page content preview */}
+              <div className="p-6 border-t border-purple-100 dark:border-purple-900/30 bg-purple-50/30 dark:bg-purple-900/10">
+                <h3 className="font-semibold mb-3 flex items-center gap-2">
+                  <span>{t("feedback.bookInfo.pageContent").replace("{{current}}", currentPageIndex + 1)}</span>
+                  <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 border-0 text-xs">
+                    <MessageSquare className="h-3 w-3 me-1" />
+                    {pageFeedback.length} {t("feedback.bookInfo.feedback")}
+                  </Badge>
+                </h3>
+                <p className="text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-4 rounded-xl border border-purple-100 dark:border-purple-900/30 leading-relaxed">
+                  {currentPage?.text_content || t("feedback.noContent")}
+                </p>
+              </div>
             </Card>
-          )}
-          
+          </motion.div>
+
+          {/* Feedback form — animated entrance */}
+          <AnimatePresence>
+            {showFeedbackForm && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                transition={{ duration: 0.25 }}
+              >
+                <Card className="border-2 border-purple-200 dark:border-purple-800/40 shadow-lg rounded-2xl bg-gradient-to-br from-white via-purple-50/20 to-indigo-50/20 dark:from-gray-800 dark:to-purple-900/10">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 font-heading">
+                      <div className="p-2 rounded-xl bg-gradient-to-br from-purple-100 to-violet-100 dark:from-purple-900/40 dark:to-violet-900/30">
+                        <MessageSquare className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                      </div>
+                      {t("feedback.giveFeedback")}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <FeedbackForm
+                      onSubmit={handleAddFeedback}
+                      onCancel={() => setShowFeedbackForm(false)}
+                    />
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Feedback for this page */}
-          <div>
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: 0.2 }}
+          >
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">
+              <h2 className="text-xl font-bold font-heading">
                 {t("feedback.feedbackForPage").replace("{{page}}", currentPageIndex + 1)}
               </h2>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="flex items-center gap-2">
-                    <Filter className="h-4 w-4" />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2 rounded-xl border-purple-200 dark:border-purple-800 hover:bg-purple-50 dark:hover:bg-purple-900/20"
+                  >
+                    <Filter className="h-4 w-4 text-purple-500" />
                     {filter === "all" && t("feedback.filter.all")}
                     {filter === "suggestions" && t("common.suggestions")}
                     {filter === "story" && t("feedback.form.types.story")}
@@ -494,12 +530,12 @@ export default function FeedbackPage() {
                     {filter === "age_appropriate" && t("feedback.form.types.age_appropriate")}
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align={isRTL ? "start" : "end"}>
+                <DropdownMenuContent align={isRTL ? "start" : "end"} className="rounded-xl border-purple-100 shadow-lg">
                   <DropdownMenuItem onClick={() => setFilter("all")}>
                     {t("feedback.filter.all")}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setFilter("suggestions")}>
-                    <Lightbulb className="h-4 w-4 me-2" />
+                    <Lightbulb className="h-4 w-4 me-2 text-amber-500" />
                     {t("feedback.filter.suggestionsOnly")}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setFilter("story")}>
@@ -517,31 +553,36 @@ export default function FeedbackPage() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            
-            <FeedbackList 
+
+            <FeedbackList
               feedback={pageFeedback}
               isOwner={isOwner}
               isCollaborator={isCollaborator}
               onUpdateStatus={handleUpdateFeedbackStatus}
               currentUser={currentUser}
             />
-          </div>
+          </motion.div>
         </div>
-        
+
         {/* Stats and book feedback context */}
-        <div className="space-y-6">
-          <FeedbackStats 
+        <motion.div
+          initial={{ opacity: 0, x: isRTL ? -20 : 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, delay: 0.15 }}
+          className="space-y-6"
+        >
+          <FeedbackStats
             feedback={allFeedback}
             book={book}
           />
-          
-          <FeedbackContext 
+
+          <FeedbackContext
             book={book}
             pages={pages}
             currentPageIndex={currentPageIndex}
             setCurrentPageIndex={setCurrentPageIndex}
           />
-        </div>
+        </motion.div>
       </div>
     </div>
   );
