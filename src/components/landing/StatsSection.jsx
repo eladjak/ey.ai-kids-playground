@@ -35,6 +35,7 @@ const StatsSection = () => {
   const stats = [
     {
       icon: BookOpen,
+      image: '/images/stats-books.jpg',
       value: 1000,
       suffix: '+',
       label: t('landing.stats.booksCreated'),
@@ -42,6 +43,7 @@ const StatsSection = () => {
     },
     {
       icon: Image,
+      image: '/images/stats-pages.jpg',
       value: 10000,
       suffix: '+',
       label: t('landing.stats.pagesIllustrated'),
@@ -49,6 +51,7 @@ const StatsSection = () => {
     },
     {
       icon: Palette,
+      image: '/images/stats-styles.jpg',
       value: 18,
       suffix: '',
       label: t('landing.stats.artStyles'),
@@ -56,6 +59,7 @@ const StatsSection = () => {
     },
     {
       icon: Globe,
+      image: '/images/stats-languages.jpg',
       value: 3,
       suffix: '',
       label: t('landing.stats.languages'),
@@ -104,8 +108,13 @@ const StatsSection = () => {
                 className="text-center"
               >
                 <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-white/10 hover:bg-white/15 transition-colors duration-300">
-                  <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${stat.color} mb-4`}>
-                    <Icon className="h-6 w-6 text-white" />
+                  <div className="flex items-center justify-center gap-3 mb-4">
+                    <img
+                      src={stat.image}
+                      alt=""
+                      aria-hidden="true"
+                      className={`w-14 h-14 rounded-xl object-cover ring-2 ring-white/30 shadow-md`}
+                    />
                   </div>
                   <div className="text-4xl sm:text-5xl font-extrabold text-white mb-2">
                     <AnimatedCounter end={stat.value} suffix={stat.suffix} inView={inView} />

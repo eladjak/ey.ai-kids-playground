@@ -26,6 +26,7 @@ const ART_STYLE_VISUAL = [
   {
     value: "disney",
     emoji: "🏰",
+    image: "/images/style-disney.jpg",
     color: "#4f46e5",
     gradient: "from-indigo-400 to-violet-500",
     bg: "bg-indigo-50 dark:bg-indigo-950/30",
@@ -38,6 +39,7 @@ const ART_STYLE_VISUAL = [
   {
     value: "watercolor",
     emoji: "🎨",
+    image: "/images/style-watercolor.jpg",
     color: "#06b6d4",
     bg: "bg-cyan-50 dark:bg-cyan-950/30",
     border: "border-cyan-200 dark:border-cyan-700",
@@ -71,6 +73,7 @@ const ART_STYLE_VISUAL = [
   {
     value: "comic",
     emoji: "💥",
+    image: "/images/style-comic.jpg",
     color: "#ef4444",
     bg: "bg-red-50 dark:bg-red-950/30",
     border: "border-red-200 dark:border-red-700",
@@ -82,6 +85,7 @@ const ART_STYLE_VISUAL = [
   {
     value: "storybook",
     emoji: "📖",
+    image: "/images/style-storybook.jpg",
     color: "#8b5cf6",
     bg: "bg-violet-50 dark:bg-violet-950/30",
     border: "border-violet-200 dark:border-violet-700",
@@ -93,6 +97,7 @@ const ART_STYLE_VISUAL = [
   {
     value: "anime",
     emoji: "⭐",
+    image: "/images/style-anime.jpg",
     color: "#ec4899",
     bg: "bg-pink-50 dark:bg-pink-950/30",
     border: "border-pink-200 dark:border-pink-700",
@@ -148,6 +153,7 @@ const ART_STYLE_VISUAL = [
   {
     value: "fantasy",
     emoji: "🧚",
+    image: "/images/style-fantasy.jpg",
     color: "#a855f7",
     bg: "bg-purple-50 dark:bg-purple-950/30",
     border: "border-purple-200 dark:border-purple-700",
@@ -504,12 +510,21 @@ export default function PreviewEditStep({
                   </div>
 
                   <div className="flex flex-col items-start gap-1">
-                    {/* Gradient swatch with emoji */}
-                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${grad} flex items-center justify-center mb-2 shadow-md`}>
-                      <span className="text-xl leading-none drop-shadow-sm" aria-hidden="true">
-                        {style.emoji}
-                      </span>
-                    </div>
+                    {/* Image preview or gradient swatch fallback */}
+                    {style.image ? (
+                      <img
+                        src={style.image}
+                        alt=""
+                        aria-hidden="true"
+                        className="w-10 h-10 rounded-xl object-cover mb-2 shadow-md"
+                      />
+                    ) : (
+                      <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${grad} flex items-center justify-center mb-2 shadow-md`}>
+                        <span className="text-xl leading-none drop-shadow-sm" aria-hidden="true">
+                          {style.emoji}
+                        </span>
+                      </div>
+                    )}
 
                     {/* Style name */}
                     <span className={`text-xs font-bold leading-tight ${isSelected ? "text-purple-800 dark:text-purple-200" : "text-gray-800 dark:text-gray-200"}`}>

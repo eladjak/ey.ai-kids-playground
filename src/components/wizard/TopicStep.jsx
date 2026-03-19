@@ -29,6 +29,7 @@ const TOPIC_CARDS = [
   {
     id: "animals",
     icon: Cat,
+    image: "/images/topic-animals.jpg",
     gradient: "from-amber-400 via-orange-400 to-red-400",
     bgCard: "from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40",
     ring: "ring-amber-400",
@@ -40,6 +41,7 @@ const TOPIC_CARDS = [
   {
     id: "space",
     icon: Rocket,
+    image: "/images/topic-space.jpg",
     gradient: "from-indigo-500 via-purple-500 to-violet-600",
     bgCard: "from-indigo-50 to-purple-50 dark:from-indigo-950/40 dark:to-purple-950/40",
     ring: "ring-indigo-400",
@@ -51,6 +53,7 @@ const TOPIC_CARDS = [
   {
     id: "family",
     icon: Users,
+    image: "/images/topic-family.jpg",
     gradient: "from-pink-400 via-rose-400 to-red-400",
     bgCard: "from-pink-50 to-rose-50 dark:from-pink-950/40 dark:to-rose-950/40",
     ring: "ring-pink-400",
@@ -62,6 +65,7 @@ const TOPIC_CARDS = [
   {
     id: "fairy_tale",
     icon: Crown,
+    image: "/images/topic-fairy-tale.jpg",
     gradient: "from-yellow-400 via-amber-400 to-orange-400",
     bgCard: "from-yellow-50 to-amber-50 dark:from-yellow-950/40 dark:to-amber-950/40",
     ring: "ring-yellow-400",
@@ -73,6 +77,7 @@ const TOPIC_CARDS = [
   {
     id: "adventure",
     icon: Compass,
+    image: "/images/topic-adventure.jpg",
     gradient: "from-emerald-400 via-green-400 to-teal-500",
     bgCard: "from-emerald-50 to-green-50 dark:from-emerald-950/40 dark:to-green-950/40",
     ring: "ring-emerald-400",
@@ -84,6 +89,7 @@ const TOPIC_CARDS = [
   {
     id: "nature",
     icon: TreePine,
+    image: "/images/topic-nature.jpg",
     gradient: "from-green-400 via-teal-400 to-cyan-500",
     bgCard: "from-green-50 to-teal-50 dark:from-green-950/40 dark:to-teal-950/40",
     ring: "ring-green-400",
@@ -95,6 +101,7 @@ const TOPIC_CARDS = [
   {
     id: "science",
     icon: GraduationCap,
+    image: "/images/topic-science.jpg",
     gradient: "from-cyan-400 via-blue-400 to-indigo-500",
     bgCard: "from-cyan-50 to-blue-50 dark:from-cyan-950/40 dark:to-blue-950/40",
     ring: "ring-cyan-400",
@@ -106,6 +113,7 @@ const TOPIC_CARDS = [
   {
     id: "magic",
     icon: Sparkles,
+    image: "/images/topic-magic.jpg",
     gradient: "from-violet-500 via-purple-500 to-fuchsia-500",
     bgCard: "from-violet-50 to-fuchsia-50 dark:from-violet-950/40 dark:to-fuchsia-950/40",
     ring: "ring-violet-400",
@@ -117,6 +125,7 @@ const TOPIC_CARDS = [
   {
     id: "friendship",
     icon: Heart,
+    image: "/images/topic-friendship.jpg",
     gradient: "from-rose-400 via-pink-400 to-fuchsia-400",
     bgCard: "from-rose-50 to-pink-50 dark:from-rose-950/40 dark:to-pink-950/40",
     ring: "ring-rose-400",
@@ -128,6 +137,7 @@ const TOPIC_CARDS = [
   {
     id: "music",
     icon: Music,
+    image: "/images/topic-music.jpg",
     gradient: "from-fuchsia-400 via-purple-400 to-violet-500",
     bgCard: "from-fuchsia-50 to-purple-50 dark:from-fuchsia-950/40 dark:to-purple-950/40",
     ring: "ring-fuchsia-400",
@@ -139,6 +149,7 @@ const TOPIC_CARDS = [
   {
     id: "art",
     icon: Palette,
+    image: "/images/topic-art.jpg",
     gradient: "from-orange-400 via-red-400 to-rose-500",
     bgCard: "from-orange-50 to-red-50 dark:from-orange-950/40 dark:to-red-950/40",
     ring: "ring-orange-400",
@@ -150,6 +161,7 @@ const TOPIC_CARDS = [
   {
     id: "travel",
     icon: Globe,
+    image: "/images/topic-travel.jpg",
     gradient: "from-sky-400 via-blue-400 to-indigo-500",
     bgCard: "from-sky-50 to-blue-50 dark:from-sky-950/40 dark:to-blue-950/40",
     ring: "ring-sky-400",
@@ -410,18 +422,28 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
                     initial="initial"
                     animate="animate"
                     exit="exit"
-                    className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br ${topic.gradient} flex items-center justify-center mb-3 shadow-md`}
+                    className="mb-3"
                   >
-                    <Icon className="h-7 w-7 md:h-8 md:w-8 text-white drop-shadow" aria-hidden="true" />
+                    <img
+                      src={topic.image}
+                      alt=""
+                      aria-hidden="true"
+                      className={`w-14 h-14 md:w-16 md:h-16 rounded-full object-cover shadow-md ring-2 ring-white/70`}
+                    />
                   </motion.div>
                 ) : (
                   <motion.div
                     key="normal"
-                    className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br ${topic.gradient} flex items-center justify-center mb-3 shadow-md`}
+                    className="mb-3"
                     animate={isSelected ? { scale: [1, 1.08, 1] } : {}}
                     transition={{ duration: 0.4 }}
                   >
-                    <Icon className="h-7 w-7 md:h-8 md:w-8 text-white drop-shadow" aria-hidden="true" />
+                    <img
+                      src={topic.image}
+                      alt=""
+                      aria-hidden="true"
+                      className={`w-14 h-14 md:w-16 md:h-16 rounded-full object-cover shadow-md ring-2 ${isSelected ? `ring-white` : "ring-white/40"}`}
+                    />
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -465,8 +487,13 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
             }
           `}
         >
-          <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-purple-400 via-violet-500 to-pink-500 flex items-center justify-center mb-3 shadow-md">
-            <PenLine className="h-7 w-7 md:h-8 md:w-8 text-white" aria-hidden="true" />
+          <div className="mb-3">
+            <img
+              src="/images/topic-custom.jpg"
+              alt=""
+              aria-hidden="true"
+              className={`w-14 h-14 md:w-16 md:h-16 rounded-full object-cover shadow-md ring-2 ${selectedTopic === "custom" ? "ring-purple-500" : "ring-white/40"}`}
+            />
           </div>
           <span className={`text-sm md:text-base font-bold text-center ${selectedTopic === "custom" ? "text-purple-700 dark:text-purple-300" : "text-gray-700 dark:text-gray-200"}`}>
             {isHebrew ? "רעיון משלי" : isYiddish ? "מײַן רעיון" : "My Own Idea"}

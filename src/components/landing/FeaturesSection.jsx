@@ -5,12 +5,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useI18n } from '@/components/i18n/i18nProvider';
 
 const featureImages = [
-  '/images/character-workshop.jpg',
-  '/images/community-sharing.jpg',
-  '/images/story-ideas.jpg',
-  '/images/achievements.jpg',
-  '/images/reading-magic.jpg',
-  '/images/leaderboard.jpg',
+  '/images/feature-art-styles.jpg',
+  '/images/feature-trilingual.jpg',
+  '/images/feature-characters.jpg',
+  '/images/feature-gamification.jpg',
+  '/images/feature-devices.jpg',
+  '/images/feature-community.jpg',
 ];
 
 const FeaturesSection = () => {
