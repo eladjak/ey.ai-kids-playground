@@ -25,14 +25,14 @@ export async function InvokeLLM(params) {
 // Gemini generates base64 → upload to Supabase Storage → persistent URL
 
 export async function GenerateImage({ prompt, quality, size }) {
-  console.log('[Core.GenerateImage] Starting image generation, prompt length:', prompt?.length);
+  if (import.meta.env.DEV) console.log('[Core.GenerateImage] Starting image generation, prompt length:', prompt?.length);
 
   let base64, mimeType;
   try {
     const result = await geminiGenerateImage({ prompt });
     base64 = result.base64;
     mimeType = result.mimeType;
-    console.log('[Core.GenerateImage] Gemini returned base64:', !!base64, 'length:', base64?.length || 0, 'mimeType:', mimeType);
+    if (import.meta.env.DEV) console.log('[Core.GenerateImage] Gemini returned base64:', !!base64, 'length:', base64?.length || 0, 'mimeType:', mimeType);
   } catch (err) {
     console.error('[Core.GenerateImage] Gemini image generation FAILED:', err?.message || err);
     throw err;
@@ -47,10 +47,10 @@ export async function GenerateImage({ prompt, quality, size }) {
 
   try {
     const uploadResult = await uploadFileToSupabase(file, 'generated');
-    console.log('[Core.GenerateImage] Upload success, URL:', uploadResult.file_url?.substring(0, 80));
+    if (import.meta.env.DEV) console.log('[Core.GenerateImage] Upload success, URL:', uploadResult.file_url?.substring(0, 80));
     return { url: uploadResult.file_url };
   } catch (uploadErr) {
-    console.warn('[Core.GenerateImage] Supabase upload failed, using data URI fallback:', uploadErr?.message);
+    if (import.meta.env.DEV) console.warn('[Core.GenerateImage] Supabase upload failed, using data URI fallback:', uploadErr?.message);
     // Fallback to base64 data URI if upload fails
     return { url: `data:${mimeType};base64,${base64}` };
   }

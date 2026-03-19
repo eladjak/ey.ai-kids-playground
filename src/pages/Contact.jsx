@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useI18n } from '@/components/i18n/i18nProvider';
+import { updateMeta, resetMeta } from '@/lib/seo';
 import { motion } from 'framer-motion';
 import { Mail, MessageSquare, Send, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -102,6 +103,11 @@ export default function Contact() {
   const { language, isRTL } = useI18n();
   const lang = language in translations ? language : 'english';
   const tx = translations[lang];
+
+  useEffect(() => {
+    updateMeta({ title: 'Contact — Sipurai', description: 'Contact the Sipurai team for support, feedback, or questions.' });
+    return () => resetMeta();
+  }, []);
 
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
