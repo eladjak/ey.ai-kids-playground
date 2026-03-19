@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
 Disallow: /api/
-Sitemap: https://sipurai.ai/sitemap.xml
+Disallow: /Settings
+Disallow: /BookWizard
+Disallow: /BookCreation
+Disallow: /CharacterEditor
+Sitemap: https://www.sipurai.ai/sitemap.xml
