@@ -335,7 +335,7 @@ export default function Home() {
           <Card className="mt-6 overflow-hidden shadow-xl rounded-2xl">
             <div className="relative min-h-[220px] sm:min-h-[280px] md:min-h-[300px]">
               <img
-                src="/images/hero-banner.jpg"
+                src="/images/home-hero-gemini.jpg"
                 alt=""
                 className="absolute inset-0 w-full h-full object-cover"
                 aria-hidden="true"
