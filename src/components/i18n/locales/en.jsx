@@ -105,8 +105,9 @@ export default {
     },
     dailyPrompt: {
       title: "Daily Story Prompt",
-      try: "Try this prompt",
-      use: "Use This Prompt",
+      try: "Save to Ideas",
+      use: "Create Book Now",
+      createFromIdea: "Create book from this idea",
       loading: "Loading inspiration...",
       explore: "Explore more ideas"
     },

@@ -107,7 +107,14 @@ const UserWelcomeCard = React.memo(function UserWelcomeCard({ userData }) {
               <span className="font-semibold">{userData.xp} XP</span>
               <span>{userData.nextLevelXp - userData.xp} XP {t("home.progress.toNext")}</span>
             </div>
-            <div className="h-2.5 rounded-full bg-white/20 overflow-hidden">
+            <div
+              className="h-2.5 rounded-full bg-white/20 overflow-hidden"
+              role="progressbar"
+              aria-valuenow={userData.xp}
+              aria-valuemin={0}
+              aria-valuemax={userData.nextLevelXp}
+              aria-label={`${userData.xp} XP — ${t("home.progress.toNext")} ${userData.nextLevelXp}`}
+            >
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${progressToNextLevel}%` }}

@@ -95,8 +95,9 @@ export default {
     },
     dailyPrompt: {
       title: "רעיון יומי לסיפור",
-      try: "נסה רעיון זה",
-      use: "השתמש ברעיון",
+      try: "שמור לרעיונות",
+      use: "צור ספר עכשיו",
+      createFromIdea: "צור ספר מהרעיון הזה",
       loading: "טוען רעיונות...",
       explore: "גלה עוד רעיונות"
     },
