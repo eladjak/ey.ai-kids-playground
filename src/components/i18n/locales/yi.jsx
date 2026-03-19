@@ -1272,6 +1272,7 @@ export default {
       booksCreated: "ביכער שאַפֿן",
       pagesIllustrated: "זייַטן אילוסטרירט",
       artStyles: "קונסט סטיילן",
+      freeBooks: "פֿרייַע ביכער אַ חודש",
       languages: "שפּראַכן"
     },
     showcase: {
