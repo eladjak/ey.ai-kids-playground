@@ -113,7 +113,7 @@ export const PLANS = {
 export async function openCheckout(planId, userEmail) {
   const plan = PLANS[planId];
   if (!plan?.creemProductId) {
-    console.warn('[creem] Unknown planId or no product ID:', planId);
+    if (import.meta.env.DEV) console.warn('[creem] Unknown planId or no product ID:', planId);
     return;
   }
 

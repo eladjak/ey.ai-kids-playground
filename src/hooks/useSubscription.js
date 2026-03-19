@@ -28,13 +28,13 @@ export default function useSubscription() {
 
       if (error) {
         // Table may not exist yet — log warning and fall back to free plan
-        console.warn('[useSubscription] Could not query subscriptions table:', error.message);
+        if (import.meta.env.DEV) console.warn('[useSubscription] Could not query subscriptions table:', error.message);
         setPlan('free');
         return;
       }
       setPlan(data?.plan || 'free');
     } catch (err) {
-      console.warn('[useSubscription] Unexpected error, defaulting to free plan:', err);
+      if (import.meta.env.DEV) console.warn('[useSubscription] Unexpected error, defaulting to free plan:', err);
       setPlan('free');
     } finally {
       setIsLoading(false);
