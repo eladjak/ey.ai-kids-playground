@@ -1368,11 +1368,11 @@ export default {
       subtitle: "Choose characters, style and genre \u2014 and AI creates a complete children's book with a personalized story and illustrations",
       primaryCta: "Create a Book \u2014 It's Free!",
       secondaryCta: "Browse Community Books",
-      socialProof: "Hundreds of families already creating stories",
-      stat1Value: "1,000+",
-      stat1Label: "Books Created",
-      stat2Value: "18",
-      stat2Label: "Art Styles",
+      socialProof: "Start creating magical stories today",
+      stat1Value: "18",
+      stat1Label: "Art Styles",
+      stat2Value: "5",
+      stat2Label: "Free Books/Month",
       stat3Value: "3",
       stat3Label: "Languages"
     },
@@ -1516,11 +1516,10 @@ export default {
       }
     },
     stats: {
-      sectionTitle: "Sipurai in Numbers",
-      sectionSubtitle: "Join the growing community of creative families",
-      booksCreated: "Books Created",
-      pagesIllustrated: "Pages Illustrated",
+      sectionTitle: "Sipurai at a Glance",
+      sectionSubtitle: "Everything you need to create magical children's books",
       artStyles: "Art Styles",
+      freeBooks: "Free Books/Month",
       languages: "Languages"
     },
     showcase: {

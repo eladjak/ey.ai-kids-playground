@@ -36,17 +36,17 @@ const StatsSection = () => {
     {
       icon: BookOpen,
       image: '/images/stats-books.jpg',
-      value: 1000,
-      suffix: '+',
-      label: t('landing.stats.booksCreated'),
+      value: 18,
+      suffix: '',
+      label: t('landing.stats.artStyles'),
       color: 'from-purple-400 to-indigo-500',
     },
     {
       icon: Image,
       image: '/images/stats-pages.jpg',
-      value: 10000,
-      suffix: '+',
-      label: t('landing.stats.pagesIllustrated'),
+      value: 5,
+      suffix: '',
+      label: t('landing.stats.freeBooks'),
       color: 'from-pink-400 to-rose-500',
     },
     {
