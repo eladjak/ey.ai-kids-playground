@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { BookOpen, Sparkles } from 'lucide-react';
+import { BookOpen, Sparkles, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useI18n } from '@/components/i18n/i18nProvider';
 import demoBooks from '@/data/demoBooks';
@@ -24,12 +24,6 @@ const ShowcaseSection = () => {
 
   const sampleBooks = demoBooks.map((book, index) => ({
     ...book,
-    image:
-      index === 0
-        ? '/images/reading-magic.jpg'
-        : index === 1
-          ? '/images/story-ideas.jpg'
-          : '/images/character-workshop.jpg',
     displayTitle:
       language === 'en' ? book.title.en : book.title.he,
     displayGenre:
@@ -75,14 +69,19 @@ const ShowcaseSection = () => {
               className="min-w-[280px] sm:min-w-0 snap-center group"
             >
               <div className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700">
-                {/* Book cover image */}
+                {/* Book cover — uses the book's own gradient */}
                 <div className="relative aspect-[4/5] overflow-hidden">
-                  <img
-                    src={book.image}
-                    alt={book.displayTitle}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  <div
+                    className={`w-full h-full bg-gradient-to-br ${book.cover_gradient} group-hover:scale-105 transition-transform duration-500`}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                  {/* Title overlay on gradient cover */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-white">
+                    <BookOpen className="h-12 w-12 mb-3 opacity-80" />
+                    <p className="text-center font-bold text-base leading-snug drop-shadow">
+                      {book.displayTitle}
+                    </p>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
                   {/* Genre badge */}
                   <div
                     className={`absolute top-3 ${isRTL ? 'right-3' : 'left-3'}`}
@@ -114,15 +113,29 @@ const ShowcaseSection = () => {
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-3 line-clamp-1 italic">
                     {book.moral}
                   </p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full border-purple-200 text-purple-700 hover:bg-purple-50 dark:border-purple-700 dark:text-purple-300 dark:hover:bg-purple-900/30"
-                    onClick={() => setSelectedBook(book)}
-                  >
-                    <BookOpen className="h-4 w-4" />
-                    {t('landing.showcase.readSample')}
-                  </Button>
+                  <div className="flex flex-col gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full border-purple-200 text-purple-700 hover:bg-purple-50 dark:border-purple-700 dark:text-purple-300 dark:hover:bg-purple-900/30"
+                      onClick={() => setSelectedBook(book)}
+                    >
+                      <BookOpen className="h-4 w-4" />
+                      {t('landing.showcase.readSample')}
+                    </Button>
+                    {/* Fix 5: How it was made */}
+                    <a
+                      href="#how-it-works"
+                      className={`flex items-center gap-1.5 text-xs text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors ${isRTL ? 'flex-row-reverse justify-end' : 'justify-center'}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                    >
+                      <Info className="h-3 w-3" />
+                      {language === 'en' ? 'See how it was made' : 'איך נוצר הספר הזה?'}
+                    </a>
+                  </div>
                 </div>
               </div>
             </motion.div>

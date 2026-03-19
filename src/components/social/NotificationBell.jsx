@@ -91,15 +91,15 @@ export default function NotificationBell() {
       >
         <Bell className="h-5 w-5" aria-hidden="true" />
 
-        {/* Unread badge */}
-        {unreadCount > 0 && (
-          <Badge
-            className="absolute -top-1 -right-1 h-5 min-w-[1.25rem] rounded-full bg-red-500 text-white text-[10px] font-bold px-1 flex items-center justify-center border-background border-2 pointer-events-none"
-            aria-hidden="true"
-          >
-            {unreadCount > 99 ? '99+' : unreadCount}
-          </Badge>
-        )}
+        {/* Unread badge — always visible so users know it's a notification counter */}
+        <Badge
+          className={`absolute -top-1 -right-1 h-5 min-w-[1.25rem] rounded-full text-white text-[10px] font-bold px-1 flex items-center justify-center border-background border-2 pointer-events-none ${
+            unreadCount > 0 ? 'bg-red-500' : 'bg-gray-400 dark:bg-gray-600'
+          }`}
+          aria-hidden="true"
+        >
+          {unreadCount > 99 ? '99+' : unreadCount}
+        </Badge>
       </Button>
 
       {/* Dropdown panel */}

@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useI18n } from "@/components/i18n/i18nProvider";
-import { Sparkles, ArrowRight, Lightbulb, Wand2, Compass } from "lucide-react";
+import { Sparkles, Wand2, Compass, Lightbulb } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -63,6 +63,7 @@ const DailyPromptCard = React.memo(function DailyPromptCard({ dailyPrompt, isPro
                   {dailyPrompt?.description}
                 </p>
                 <div className={`flex flex-wrap gap-3 ${isRTL ? "flex-row-reverse" : ""}`}>
+                  {/* Single clear CTA: go to book wizard with this prompt pre-loaded */}
                   <Link
                     to={`${createPageUrl("BookWizard")}?prompt=${encodeURIComponent(JSON.stringify(dailyPrompt))}`}
                     onClick={() => {
@@ -76,25 +77,7 @@ const DailyPromptCard = React.memo(function DailyPromptCard({ dailyPrompt, isPro
                   >
                     <Button className="bg-white text-amber-700 hover:bg-amber-50 shadow-lg font-semibold gap-2">
                       <Wand2 className="h-4 w-4" />
-                      {t("home.dailyPrompt.use")}
-                    </Button>
-                  </Link>
-
-                  <Link
-                    to={createPageUrl("StoryIdeas")}
-                    onClick={() => {
-                      if (dailyPrompt) {
-                        localStorage.setItem("lastDailyPrompt", JSON.stringify({
-                          ...dailyPrompt,
-                          date: new Date().toISOString(),
-                          source: "daily_prompt"
-                        }));
-                      }
-                    }}
-                  >
-                    <Button className="bg-white/20 border-2 border-white/70 text-white hover:bg-white/30 hover:border-white backdrop-blur-sm gap-2 shadow-sm">
-                      <Lightbulb className="h-4 w-4" />
-                      {t("home.dailyPrompt.try")}
+                      {t("home.dailyPrompt.createFromIdea")}
                     </Button>
                   </Link>
                 </div>
