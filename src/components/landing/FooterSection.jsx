@@ -85,9 +85,19 @@ const FooterSection = () => {
           <p className="text-gray-500 text-sm">
             &copy; {new Date().getFullYear()} Sipurai Playground. {t('landing.footer.rights')}
           </p>
-          <p className="text-gray-500 text-sm flex items-center gap-1">
-            {t('landing.footer.madeWith')} <Heart className="h-3.5 w-3.5 text-red-400 fill-red-400 inline" /> {t('landing.footer.madeWithEnd')}
-          </p>
+          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6">
+            <p className="text-gray-500 text-sm flex items-center gap-1">
+              {t('landing.footer.madeWith')} <Heart className="h-3.5 w-3.5 text-red-400 fill-red-400 inline" /> {t('landing.footer.madeWithEnd')}
+            </p>
+            <a
+              href="https://eladjak.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-600 hover:text-purple-400 transition-colors text-xs"
+            >
+              Created by Elad Yaakobovitch
+            </a>
+          </div>
         </div>
       </div>
     </footer>

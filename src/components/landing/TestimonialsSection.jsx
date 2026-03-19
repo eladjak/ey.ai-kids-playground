@@ -8,6 +8,16 @@ import { useI18n } from '@/components/i18n/i18nProvider';
 const TestimonialsSection = () => {
   const { t, isRTL } = useI18n();
 
+  // ageBadge: child age range shown on each card (null = no badge for that testimonial)
+  const ageBadges = [
+    { label: isRTL ? 'גיל 7' : 'Age 7', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300' },
+    { label: isRTL ? 'גיל 5–9' : 'Ages 5–9', color: 'bg-pink-100 text-pink-700 dark:bg-pink-900/40 dark:text-pink-300' },
+    { label: isRTL ? 'גיל 6' : 'Age 6', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300' },
+    { label: isRTL ? 'גיל 4' : 'Age 4', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300' },
+    { label: isRTL ? 'גיל 4–10' : 'Ages 4–10', color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-300' },
+    null, // kindergarten teacher — no child age badge
+  ];
+
   const testimonials = [
     {
       name: t('landing.testimonials.t1.name'),
@@ -16,6 +26,7 @@ const TestimonialsSection = () => {
       initials: t('landing.testimonials.t1.initials'),
       gradient: 'from-purple-400 to-indigo-500',
       stars: 5,
+      ageBadge: ageBadges[0],
     },
     {
       name: t('landing.testimonials.t2.name'),
@@ -24,6 +35,7 @@ const TestimonialsSection = () => {
       initials: t('landing.testimonials.t2.initials'),
       gradient: 'from-pink-400 to-rose-500',
       stars: 5,
+      ageBadge: ageBadges[1],
     },
     {
       name: t('landing.testimonials.t3.name'),
@@ -32,6 +44,7 @@ const TestimonialsSection = () => {
       initials: t('landing.testimonials.t3.initials'),
       gradient: 'from-amber-400 to-orange-500',
       stars: 5,
+      ageBadge: ageBadges[2],
     },
     {
       name: t('landing.testimonials.t4.name'),
@@ -40,6 +53,7 @@ const TestimonialsSection = () => {
       initials: t('landing.testimonials.t4.initials'),
       gradient: 'from-emerald-400 to-green-500',
       stars: 5,
+      ageBadge: ageBadges[3],
     },
     {
       name: t('landing.testimonials.t5.name'),
@@ -48,6 +62,7 @@ const TestimonialsSection = () => {
       initials: t('landing.testimonials.t5.initials'),
       gradient: 'from-cyan-400 to-blue-500',
       stars: 5,
+      ageBadge: ageBadges[4],
     },
     {
       name: t('landing.testimonials.t6.name'),
@@ -56,6 +71,7 @@ const TestimonialsSection = () => {
       initials: t('landing.testimonials.t6.initials'),
       gradient: 'from-violet-400 to-purple-500',
       stars: 4,
+      ageBadge: ageBadges[5],
     },
   ];
 
@@ -132,11 +148,11 @@ const TestimonialsSection = () => {
                   {/* Author */}
                   <div className="flex items-center gap-3">
                     <div
-                      className={`w-12 h-12 rounded-full bg-gradient-to-br ${testimonial.gradient} flex items-center justify-center text-white font-bold text-sm shadow-md`}
+                      className={`w-12 h-12 rounded-full bg-gradient-to-br ${testimonial.gradient} flex items-center justify-center text-white font-bold text-sm shadow-md flex-shrink-0`}
                     >
                       {testimonial.initials}
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <p className="font-semibold text-gray-900 dark:text-white text-sm">
                         {testimonial.name}
                       </p>
@@ -145,6 +161,17 @@ const TestimonialsSection = () => {
                       </p>
                     </div>
                   </div>
+
+                  {/* Age-range badge */}
+                  {testimonial.ageBadge && (
+                    <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${testimonial.ageBadge.color}`}
+                      >
+                        👶 {testimonial.ageBadge.label}
+                      </span>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>

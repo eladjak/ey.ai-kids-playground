@@ -53,6 +53,7 @@ const FAQSection = () => {
 
   return (
     <section
+      id="faq"
       className="py-20 sm:py-28 bg-gray-50 dark:bg-gray-900"
       dir={isRTL ? 'rtl' : 'ltr'}
     >

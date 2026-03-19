@@ -1,6 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowDown } from 'lucide-react';
+import { ArrowDown, Sparkles } from 'lucide-react';
 import { useI18n } from '@/components/i18n/i18nProvider';
 
 const HowItWorksSection = () => {
@@ -169,6 +170,24 @@ const HowItWorksSection = () => {
             );
           })}
         </div>
+
+        {/* CTA after steps */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-50px' }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mt-16 flex justify-center"
+        >
+          <Link
+            to="/sign-up"
+            className="inline-flex items-center gap-2.5 px-8 py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2"
+            aria-label={isRTL ? 'מוכנים ליצור? התחילו עכשיו!' : 'Ready to create? Start now!'}
+          >
+            <Sparkles className="h-5 w-5 flex-shrink-0" />
+            {isRTL ? 'מוכנים ליצור? התחילו עכשיו!' : 'Ready to create? Start now!'}
+          </Link>
+        </motion.div>
       </div>
     </section>
   );
