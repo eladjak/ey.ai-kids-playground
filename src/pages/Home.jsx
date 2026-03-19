@@ -340,9 +340,9 @@ export default function Home() {
                 className="absolute inset-0 w-full h-full object-cover"
                 aria-hidden="true"
               />
-              {/* Cleaner gradient: dark at bottom/sides, lighter in center */}
-              <div className="absolute inset-0 bg-gradient-to-r from-indigo-950/90 via-purple-900/70 to-indigo-950/60" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+              {/* Subtle gradient backdrop — lets content breathe */}
+              <div className="absolute inset-0 bg-gradient-to-r from-indigo-950/40 via-purple-900/25 to-indigo-950/30" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
 
               {/* Subtle decorative elements */}
               <div className="absolute inset-0 overflow-hidden pointer-events-none">
