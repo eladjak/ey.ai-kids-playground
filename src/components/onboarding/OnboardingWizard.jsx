@@ -58,7 +58,7 @@ const AGE_RANGES = [
   { id: "8-10", label: "8-10", icon: BookMarked, gradient: "from-green-400 to-teal-500", description: "Reader", descriptionHe: "קוראים" },
   { id: "11-13", label: "11-13", icon: GraduationCap, gradient: "from-blue-400 to-indigo-500", description: "Pre-teen", descriptionHe: "גיל ההתבגרות" },
   { id: "14-17", label: "14-17", icon: BookOpen, gradient: "from-purple-400 to-violet-500", description: "Teen", descriptionHe: "נוער" },
-  { id: "parent", label: "הורה/מבוגר", icon: UserCheck, gradient: "from-indigo-400 to-blue-600", description: "Parent / Adult", descriptionHe: "הורה/מבוגר" }
+  { id: "parent", label: "Parent", labelHe: "הורה/מבוגר", icon: UserCheck, gradient: "from-indigo-400 to-blue-600", description: "Parent / Adult", descriptionHe: "הורה/מבוגר" }
 ];
 
 const translations = {
@@ -176,6 +176,7 @@ const OnboardingWizard = React.memo(function OnboardingWizard({ onComplete, user
         display_name: name.trim(),
         preferred_age_range: ageRange,
         preferred_language: language,
+        language: language,
         favorite_topics: selectedTopics
       });
 
@@ -347,7 +348,7 @@ const OnboardingWizard = React.memo(function OnboardingWizard({ onComplete, user
                               <AgeIcon className="h-4.5 w-4.5 text-white" />
                             </div>
                             <span className={`text-sm font-bold ${isSelected ? "text-purple-700 dark:text-purple-300" : "text-gray-700 dark:text-gray-200"}`}>
-                              {range.label}
+                              {isRTL && range.labelHe ? range.labelHe : range.label}
                             </span>
                             <span className="text-xs text-gray-400 dark:text-gray-500">
                               {isRTL ? range.descriptionHe : range.description}

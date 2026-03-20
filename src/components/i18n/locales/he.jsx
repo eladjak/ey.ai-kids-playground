@@ -39,6 +39,7 @@ export default {
     unknownUser: "משתמש לא ידוע",
     guest: "אורח",
     skipToMainContent: "דלג לתוכן הראשי",
+    contact: "צור קשר",
     status: {
       draft: "טיוטה",
       generating: "מייצר",
@@ -922,7 +923,9 @@ export default {
       personality: "אישיות",
       appearance: "מראה",
       backstory: "סיפור רקע"
-    }
+    },
+    appearance: "מראה",
+    personality: "אישיות"
   },
   leaderboard: {
     title: "טבלת המובילים",
@@ -989,12 +992,15 @@ export default {
     useInBook: "השתמש בספר",
     deleteIdea: "מחק רעיון",
     generateError: "שגיאה ביצירת רעיון. נסה שוב.",
-    inappropriateInput: "חלק מהקלט מכיל תוכן לא מתאים. אנא תקן."
+    inappropriateInput: "חלק מהקלט מכיל תוכן לא מתאים. אנא תקן.",
+    moralLabel: "מוסר השכל",
+    plotPointsLabel: "נקודות עלילה"
   },
   onboarding: {
     welcome: {
-      title: "ברוכים הבאים ל-Sipurai!",
-      subtitle: "בואו נגדיר את המרחב היצירתי שלכם"
+      title: "!ברוכים הבאים לסיפוראי",
+      subtitle: "בואו נכין את הסטודיו הקסום שלכם",
+      start: "!בואו נתחיל"
     },
     profile: {
       title: "ספרו לנו על עצמכם",
@@ -1006,8 +1012,10 @@ export default {
       subtitle: "ניתן לשנות זאת מאוחר יותר בהגדרות"
     },
     topics: {
-      title: "אילו נושאים אתם אוהבים?",
-      subtitle: "נציע רעיונות לסיפורים על סמך תחומי העניין שלכם"
+      title: "?מה אתם אוהבים",
+      subtitle: "בחרו את הנושאים האהובים עליכם (לפחות 1)",
+      clearAll: "נקה הכל",
+      selectAll: "בחר הכל"
     },
     done: {
       title: "הכל מוכן!",
@@ -1108,7 +1116,7 @@ export default {
     existingChildren: "הדמויות הקיימות שלך:",
     myCharacters: "הדמויות שלי",
     childAge: "טווח גילאים",
-    genres: "ז'אנרי הסיפור",
+    genres: "ז'אנרים",
     genresPlaceholder: "בחר ז'אנרים",
     genreAdventure: "הרפתקה",
     genreFairyTale: "אגדה",
@@ -1124,8 +1132,8 @@ export default {
     charactersPlaceholder: "הוסף דמויות...",
     setting: "סביבות",
     settingPlaceholder: "הוסף סביבות...",
-    additional: "פרטים נוספים (אופציונלי)",
-    additionalPlaceholder: "העדפות או פרטים נוספים",
+    additional: "פרטים נוספים",
+    additionalPlaceholder: "הוסף פרטים נוספים...",
     generate: "צור רעיון",
     generating: "יוצר רעיון...",
     useDailyPrompt: "השתמש ברעיון היומי",
@@ -1710,6 +1718,9 @@ export default {
       memberSince: "חבר מאז",
       storytellerLevel: "רמת מספר סיפורים"
     },
+    age: "גיל",
+    name: "שם",
+    namePlaceholder: "הכנס את שמך...",
     avatar: {
       updated: "התמונה עודכנה בהצלחה",
       error: "שגיאה בעדכון התמונה",
@@ -1719,11 +1730,33 @@ export default {
     createBook: "יצירת ספר",
     achievements: {
       completed: "הושלם",
-      earnMore: "השלם משימות כדי לקבל הישגים"
+      earnMore: "השלם משימות כדי לקבל הישגים",
+      categoryView: "תצוגת קטגוריות",
+      dateLocked: "נעול",
+      empty: "עדיין אין הישגים",
+      "empty.description": "התחילו ליצור ספרים כדי להרוויח הישגים!",
+      "filter.all": "הכל",
+      "filter.locked": "נעולים",
+      "filter.unlocked": "פתוחים",
+      listView: "תצוגת רשימה",
+      "progress.complete": "הושלם!",
+      search: "חיפוש הישגים..."
     },
     activity: {
       bookCreated: "נוצר ספר חדש",
-      untitled: "ספר ללא שם"
+      untitled: "ספר ללא שם",
+      empty: "עדיין אין פעילות",
+      "empty.description": "הפעילות שלך תופיע כאן",
+      "filter.achievements": "הישגים",
+      "filter.all": "הכל",
+      "filter.books": "ספרים",
+      "filter.social": "חברתי",
+      "period.all": "כל הזמן",
+      "period.month": "החודש",
+      "period.week": "השבוע",
+      "period.year": "השנה",
+      title: "פעילות אחרונה",
+      viewAll: "הצג הכל"
     },
     readingStats: {
       title: "סטטיסטיקות",
@@ -1800,5 +1833,139 @@ export default {
     step3Desc: "יוצר קריינות ואפקטים קוליים",
     step4: "הספר מוכן!",
     step4Desc: "הספר שלך מוכן לקריאה ולשיתוף"
+  },
+  back: "חזרה",
+  finish: "סיום",
+  skip: "דלג",
+  next: "הבא",
+  activity: {
+    empty: "עדיין אין פעילות",
+    "empty.description": "הפעילות שלך תופיע כאן",
+    "filter.achievements": "הישגים",
+    "filter.all": "הכל",
+    "filter.books": "ספרים",
+    "filter.social": "חברתי",
+    "period.all": "כל הזמן",
+    "period.month": "החודש",
+    "period.week": "השבוע",
+    "period.year": "השנה",
+    title: "פעילות אחרונה",
+    viewAll: "הצג הכל"
+  },
+  avatar: {
+    ai: "נוצר ב-AI",
+    browse: "עיון",
+    cancel: "ביטול",
+    create: {
+      generate: "צור אווטאר",
+      generating: "יוצר...",
+      prompt: "תאר את האווטאר שלך",
+      promptPlaceholder: "דמות מצוירת חברותית עם...",
+      style: "סגנון",
+      tab: "יצירה"
+    },
+    drag: "גרור ושחרר או לחץ להעלאה",
+    error: {
+      format: "פורמט קובץ לא נתמך",
+      generation: "יצירת האווטאר נכשלה",
+      size: "הקובץ גדול מדי (מקסימום 5MB)",
+      upload: "העלאת האווטאר נכשלה"
+    },
+    formats: "PNG, JPG או GIF (מקסימום 5MB)",
+    generate: "יצירה",
+    generating: "יוצר...",
+    illustrations: "איורים",
+    illustrationsDescription: "אווטארים מאוירים מהנים",
+    or: "או",
+    presets: "מוכנים מראש",
+    preview: "תצוגה מקדימה",
+    prompt: "תאר את האווטאר שלך",
+    promptPlaceholder: "דמות מצוירת חברותית עם...",
+    rewards: "פרסים",
+    rewardsDescription: "אווטארים שהרווחת",
+    save: "שמור אווטאר",
+    style: "סגנון",
+    styles: {
+      anime: "אנימה",
+      cartoon: "קריקטורה",
+      pixel: "פיקסל ארט",
+      realistic: "ריאליסטי"
+    },
+    type: {
+      label: "סוג",
+      animal: "חיה",
+      fantasy: "פנטזיה",
+      human: "אדם"
+    },
+    upload: {
+      label: "העלאה",
+      drag: "גרור ושחרר תמונה",
+      or: "או לחץ לעיון",
+      tab: "העלאה"
+    },
+    uploading: "מעלה..."
+  },
+  book: {
+    addCharacter: "הוסף דמות",
+    addNikud: "הוסף ניקוד"
+  },
+  rhyme: {
+    complexity: {
+      label: "מורכבות",
+      complex: "מורכב",
+      moderate: "בינוני",
+      simple: "פשוט"
+    },
+    meter: {
+      label: "משקל",
+      anapestic: "אנפסטי",
+      dactylic: "דקטילי",
+      free: "חופשי",
+      iambic: "יאמבי",
+      trochaic: "טרוכאי"
+    },
+    pattern: {
+      label: "תבנית",
+      aabb: "AABB (חרוזים זוגיים)",
+      abab: "ABAB (חרוזים מתחלפים)",
+      abba: "ABBA (חרוזים מוקפים)",
+      abcb: "ABCB (בלדה)",
+      monorhyme: "חרוז אחיד"
+    }
+  },
+  textOverlay: {
+    addText: "הוסף טקסט",
+    cancel: "ביטול",
+    color: "צבע",
+    download: "הורדה",
+    fontFamily: "גופן",
+    fontSize: "גודל גופן",
+    save: "שמור",
+    subtitle: "הוסף שכבות טקסט לאיורים",
+    text: "טקסט",
+    textAlign: "יישור",
+    title: "שכבת טקסט"
+  },
+  stats: {
+    badges: "תגים",
+    badgesCount: "תגים",
+    books: "ספרים",
+    complete: "הושלם!",
+    keepGoing: "המשיכו כך!",
+    level: "רמה",
+    nextLevel: "הרמה הבאה",
+    pages: "עמודים",
+    storyteller: "מספר סיפורים",
+    streak: "ימי רצף",
+    xp: "נקודות ניסיון"
+  },
+  model: {
+    credits: "קרדיטים",
+    locked: "נעול",
+    new: "חדש",
+    quality: "איכות",
+    recommended: "מומלץ",
+    specialties: "התמחויות",
+    speed: "מהירות"
   }
 };

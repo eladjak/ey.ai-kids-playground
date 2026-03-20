@@ -39,6 +39,7 @@ export default {
     unknownUser: "Unknown User",
     guest: "Guest",
     skipToMainContent: "Skip to main content",
+    contact: "Contact",
     status: {
       draft: "Draft",
       generating: "Generating",
@@ -934,7 +935,9 @@ export default {
       personality: "Personality",
       appearance: "Appearance",
       backstory: "Backstory"
-    }
+    },
+    appearance: "Appearance",
+    personality: "Personality"
   },
   leaderboard: {
     title: "Storytellers Leaderboard",
@@ -1001,25 +1004,33 @@ export default {
     useInBook: "Use in Book",
     deleteIdea: "Delete Idea",
     generateError: "Error generating idea. Please try again.",
-    inappropriateInput: "Some input contains inappropriate content. Please revise."
+    inappropriateInput: "Some input contains inappropriate content. Please revise.",
+    moralLabel: "Moral",
+    plotPointsLabel: "Plot Points"
   },
   onboarding: {
     welcome: {
       title: "Welcome to Sipurai!",
-      subtitle: "Let's set up your creative space"
+      subtitle: "Let's set up your magical book studio",
+      start: "Let's Go!"
     },
     profile: {
       title: "Tell us about yourself",
       nameLabel: "Your Name",
-      ageLabel: "Age Group"
+      ageLabel: "Age Group",
+      age: "Age",
+      name: "Name",
+      namePlaceholder: "Enter your name..."
     },
     language: {
       title: "Choose your language",
       subtitle: "You can change this later in settings"
     },
     topics: {
-      title: "What topics do you love?",
-      subtitle: "We'll suggest story ideas based on your interests"
+      title: "What Do You Love?",
+      subtitle: "Pick your favorite topics (at least 1)",
+      clearAll: "Clear All",
+      selectAll: "Select All"
     },
     done: {
       title: "You're all set!",
@@ -1720,6 +1731,9 @@ export default {
       memberSince: "Member Since",
       storytellerLevel: "Storyteller Level"
     },
+    age: "Age",
+    name: "Name",
+    namePlaceholder: "Enter your name...",
     avatar: {
       updated: "Avatar updated successfully",
       error: "Failed to update avatar",
@@ -1729,11 +1743,33 @@ export default {
     createBook: "Create Book",
     achievements: {
       completed: "Completed",
-      earnMore: "Complete actions to earn achievements"
+      earnMore: "Complete actions to earn achievements",
+      categoryView: "Category View",
+      dateLocked: "Locked",
+      empty: "No achievements yet",
+      "empty.description": "Start creating books to earn achievements!",
+      "filter.all": "All",
+      "filter.locked": "Locked",
+      "filter.unlocked": "Unlocked",
+      listView: "List View",
+      "progress.complete": "Complete!",
+      search: "Search achievements..."
     },
     activity: {
       bookCreated: "Created a new book",
-      untitled: "Untitled Book"
+      untitled: "Untitled Book",
+      empty: "No activity yet",
+      "empty.description": "Your activity will appear here as you use the app",
+      "filter.achievements": "Achievements",
+      "filter.all": "All",
+      "filter.books": "Books",
+      "filter.social": "Social",
+      "period.all": "All Time",
+      "period.month": "This Month",
+      "period.week": "This Week",
+      "period.year": "This Year",
+      title: "Recent Activity",
+      viewAll: "View All"
     },
     readingStats: {
       title: "Reading Stats",
@@ -1810,5 +1846,139 @@ export default {
     step3Desc: "Creating narration and sound effects",
     step4: "Book Complete",
     step4Desc: "Your book is ready to read and share"
+  },
+  back: "Back",
+  finish: "Finish",
+  skip: "Skip",
+  next: "Next",
+  activity: {
+    empty: "No activity yet",
+    "empty.description": "Your activity will appear here as you use the app",
+    "filter.achievements": "Achievements",
+    "filter.all": "All",
+    "filter.books": "Books",
+    "filter.social": "Social",
+    "period.all": "All Time",
+    "period.month": "This Month",
+    "period.week": "This Week",
+    "period.year": "This Year",
+    title: "Recent Activity",
+    viewAll: "View All"
+  },
+  avatar: {
+    ai: "AI Generated",
+    browse: "Browse",
+    cancel: "Cancel",
+    create: {
+      generate: "Generate Avatar",
+      generating: "Generating...",
+      prompt: "Describe your avatar",
+      promptPlaceholder: "A friendly cartoon character with...",
+      style: "Style",
+      tab: "Create"
+    },
+    drag: "Drag & drop or click to upload",
+    error: {
+      format: "Unsupported file format",
+      generation: "Failed to generate avatar",
+      size: "File is too large (max 5MB)",
+      upload: "Failed to upload avatar"
+    },
+    formats: "PNG, JPG, or GIF (max 5MB)",
+    generate: "Generate",
+    generating: "Generating...",
+    illustrations: "Illustrations",
+    illustrationsDescription: "Fun illustrated avatars",
+    or: "or",
+    presets: "Presets",
+    preview: "Preview",
+    prompt: "Describe your avatar",
+    promptPlaceholder: "A friendly cartoon character with...",
+    rewards: "Rewards",
+    rewardsDescription: "Avatars you've earned",
+    save: "Save Avatar",
+    style: "Style",
+    styles: {
+      anime: "Anime",
+      cartoon: "Cartoon",
+      pixel: "Pixel Art",
+      realistic: "Realistic"
+    },
+    type: {
+      label: "Type",
+      animal: "Animal",
+      fantasy: "Fantasy",
+      human: "Human"
+    },
+    upload: {
+      label: "Upload",
+      drag: "Drag & drop an image",
+      or: "or click to browse",
+      tab: "Upload"
+    },
+    uploading: "Uploading..."
+  },
+  book: {
+    addCharacter: "Add Character",
+    addNikud: "Add Nikud (Vowels)"
+  },
+  rhyme: {
+    complexity: {
+      label: "Complexity",
+      complex: "Complex",
+      moderate: "Moderate",
+      simple: "Simple"
+    },
+    meter: {
+      label: "Meter",
+      anapestic: "Anapestic",
+      dactylic: "Dactylic",
+      free: "Free Verse",
+      iambic: "Iambic",
+      trochaic: "Trochaic"
+    },
+    pattern: {
+      label: "Pattern",
+      aabb: "AABB (Couplets)",
+      abab: "ABAB (Alternate)",
+      abba: "ABBA (Enclosed)",
+      abcb: "ABCB (Ballad)",
+      monorhyme: "Monorhyme"
+    }
+  },
+  textOverlay: {
+    addText: "Add Text",
+    cancel: "Cancel",
+    color: "Color",
+    download: "Download",
+    fontFamily: "Font",
+    fontSize: "Font Size",
+    save: "Save",
+    subtitle: "Add text overlays to your illustrations",
+    text: "Text",
+    textAlign: "Alignment",
+    title: "Text Overlay"
+  },
+  stats: {
+    badges: "Badges",
+    badgesCount: "Badges",
+    books: "Books",
+    complete: "Complete!",
+    keepGoing: "Keep Going!",
+    level: "Level",
+    nextLevel: "Next Level",
+    pages: "Pages",
+    storyteller: "Storyteller",
+    streak: "Day Streak",
+    xp: "XP"
+  },
+  model: {
+    credits: "Credits",
+    locked: "Locked",
+    new: "New",
+    quality: "Quality",
+    recommended: "Recommended",
+    specialties: "Specialties",
+    speed: "Speed"
   }
 };

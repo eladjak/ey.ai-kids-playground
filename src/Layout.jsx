@@ -70,68 +70,51 @@ export default function Layout({ children, currentPageName }) {
     if (typeof window === 'undefined') return false;
     return localStorage.getItem("darkMode") === "true";
   });
-  const [currentLanguage, setCurrentLanguage] = useState("english");
-  const [isRTL, setIsRTL] = useState(false);
   const location = useLocation();
   const { t: i18nT, isRTL: i18nIsRTL, language: i18nLanguage } = useI18n();
+  // Use i18n context as single source of truth for language/RTL
+  const currentLanguage = i18nLanguage;
+  const isRTL = i18nIsRTL;
   const { logout: authLogout } = useAuth();
   const { user } = useCurrentUser();
   const gamification = useGamification();
 
+  // Sync dark mode from user preferences
   useEffect(() => {
-    const applyUserSettings = () => {
-      try {
-        const storedLanguage = localStorage.getItem("language");
-        const defaultLanguage = "english";
-        const userLanguage = user?.language;
+    try {
+      const userDarkMode = user?.dark_mode;
+      const storedDarkMode = localStorage.getItem("darkMode") === "true";
+      const shouldUseDarkMode = userDarkMode ?? storedDarkMode;
 
-        const selectedLanguage = userLanguage || storedLanguage || defaultLanguage;
+      setDarkMode(shouldUseDarkMode);
+      localStorage.setItem("darkMode", shouldUseDarkMode.toString());
 
-        setCurrentLanguage(selectedLanguage);
-        localStorage.setItem("language", selectedLanguage);
-
-        const rtl = selectedLanguage === "hebrew" || selectedLanguage === "yiddish";
-        setIsRTL(rtl);
-
-        if (rtl) {
-          document.documentElement.dir = "rtl";
-          document.body.classList.add("rtl");
-          document.body.classList.remove("ltr");
-        } else {
-          document.documentElement.dir = "ltr";
-          document.body.classList.remove("rtl");
-          document.body.classList.add("ltr");
-        }
-
-        const userDarkMode = user?.dark_mode;
-        const storedDarkMode = localStorage.getItem("darkMode") === "true";
-        const shouldUseDarkMode = userDarkMode ?? storedDarkMode;
-
-        setDarkMode(shouldUseDarkMode);
-        localStorage.setItem("darkMode", shouldUseDarkMode.toString());
-
-        if (shouldUseDarkMode) {
-          document.documentElement.classList.add("dark");
-        } else {
-          document.documentElement.classList.remove("dark");
-        }
-      } catch (error) {
-        const storedLanguage = localStorage.getItem("language");
-        if (storedLanguage) {
-          setCurrentLanguage(storedLanguage);
-          setIsRTL(storedLanguage === "hebrew" || storedLanguage === "yiddish");
-        }
-
-        const storedDarkMode = localStorage.getItem("darkMode") === "true";
-        setDarkMode(storedDarkMode);
-        if (storedDarkMode) {
-          document.documentElement.classList.add("dark");
-        }
+      if (shouldUseDarkMode) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
       }
-    };
-
-    applyUserSettings();
+    } catch {
+      const storedDarkMode = localStorage.getItem("darkMode") === "true";
+      setDarkMode(storedDarkMode);
+      if (storedDarkMode) {
+        document.documentElement.classList.add("dark");
+      }
+    }
   }, [user]);
+
+  // Sync dir attribute from i18n context (single source of truth)
+  useEffect(() => {
+    if (isRTL) {
+      document.documentElement.dir = "rtl";
+      document.body.classList.add("rtl");
+      document.body.classList.remove("ltr");
+    } else {
+      document.documentElement.dir = "ltr";
+      document.body.classList.remove("rtl");
+      document.body.classList.add("ltr");
+    }
+  }, [isRTL]);
 
   const t = i18nT;
 

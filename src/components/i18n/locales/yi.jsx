@@ -39,6 +39,7 @@ export default {
     unknownUser: "אומבאַוווּסטן ניצער",
     guest: "גאַסט",
     skipToMainContent: "שפּרינג צו הויפּט אינהאַלט",
+    contact: "קאָנטאַקט",
     status: {
       draft: "דראַפֿט",
       generating: "שאַפֿן...",
@@ -922,7 +923,9 @@ export default {
       personality: "פּערזענלעכקייט",
       appearance: "אויסזען",
       backstory: "הינטערגרונט געשיכטע"
-    }
+    },
+    appearance: "אויסזען",
+    personality: "פּערזענלעכקייט"
   },
   leaderboard: {
     title: "ליידערבאָרד",
@@ -979,7 +982,7 @@ export default {
     noIdeas: "נאָך קיין געהיטענע אידעען",
     noIdeasDesc: "שאַפֿן אָדער שרייַב דיינע אייגענע געשיכטע אידעען",
     startGenerating: "אָנהויבן שאַפֿן דיין ערשטע אידעע!",
-    generatedIdeaTitle: "שאַפֿן אידעע",
+    generatedIdeaTitle: "באַשאַפֿענער רעיון",
     titleLabel: "טיטל:",
     descriptionLabel: "באַשרייַבונג:",
     saveButton: "היטן אידעע",
@@ -989,7 +992,10 @@ export default {
     useInBook: "ניצן אין בוך",
     deleteIdea: "מעקן אידעע",
     generateError: "טעות ביי שאַפֿן אידעע. פּרוּוו נאָך אַ מאָל.",
-    inappropriateInput: "טייל פֿון דער אַרייַנגאַבע האָט אומפּאַסיקן אינהאַלט. ביטע פֿאַרריכט."
+    inappropriateInput: "טייל פֿון דער אַרייַנגאַבע האָט אומפּאַסיקן אינהאַלט. ביטע פֿאַרריכט.",
+    moralLabel: "מוסר",
+    plotPointsLabel: "עלילה פּונקטן",
+    saved: "!אָפּגעהיט"
   },
   onboarding: {
     welcome: {
@@ -999,7 +1005,10 @@ export default {
     profile: {
       title: "דערציילט אונדז וועגן זיך",
       nameLabel: "דיין נאָמען",
-      ageLabel: "עלטער גרופּע"
+      ageLabel: "עלטער גרופּע",
+      age: "עלטער",
+      name: "נאָמען",
+      namePlaceholder: "שרייַב דײַן נאָמען..."
     },
     language: {
       title: "קלייַב דיין שפּראַך",
@@ -1710,6 +1719,9 @@ export default {
       memberSince: "מיטגליד זינט",
       storytellerLevel: "מדרגה פֿון מעשׂה-זאָגער"
     },
+    age: "עלטער",
+    name: "נאָמען",
+    namePlaceholder: "שרייַב דײַן נאָמען...",
     avatar: {
       updated: "בילד דערהייַנטיקט מיט הצלחה",
       error: "טעות בײַם דערהייַנטיקן בילד",
@@ -1719,7 +1731,17 @@ export default {
     createBook: "שאַפֿן בוך",
     achievements: {
       completed: "פֿאַרענדיקט",
-      earnMore: "פֿאַרענדיקט אויפֿגאַבן כדי צו קריגן הישׂגים"
+      earnMore: "פֿאַרענדיקט אויפֿגאַבן כדי צו קריגן הישׂגים",
+      categoryView: "קאַטעגאָריע בליק",
+      dateLocked: "פֿאַרשלאָסן",
+      empty: "נאָך קיין דערגרייכונגען",
+      "empty.description": "!הייב אָן שאַפֿן ביכער צו פֿאַרדינען דערגרייכונגען",
+      "filter.all": "אַלעס",
+      "filter.locked": "פֿאַרשלאָסן",
+      "filter.unlocked": "אָפֿן",
+      listView: "ליסטע בליק",
+      "progress.complete": "!פֿאַרטיק",
+      search: "...זוכן דערגרייכונגען"
     },
     activity: {
       bookCreated: "אַ נײַ בוך נשאַפֿן",
@@ -1800,5 +1822,139 @@ export default {
     step3Desc: "שאַפֿן נאַראַציע",
     step4: "דער בוך איז גרייט!",
     step4Desc: "דיין בוך איז גרייט צו לייענען"
+  },
+  back: "צוריק",
+  finish: "פֿאַרטיק",
+  skip: "איבערשפּרינגען",
+  next: "ווײַטער",
+  activity: {
+    empty: "נאָך קיין אַקטיוויטעט",
+    "empty.description": "דײַן אַקטיוויטעט וועט דאָ אויפטרעטן",
+    "filter.achievements": "דערגרייכונגען",
+    "filter.all": "אַלעס",
+    "filter.books": "ביכער",
+    "filter.social": "סאָציאַל",
+    "period.all": "אַלע צײַט",
+    "period.month": "דער חודש",
+    "period.week": "די וואָך",
+    "period.year": "דאָס יאָר",
+    title: "לעצטע אַקטיוויטעט",
+    viewAll: "זע אַלעס"
+  },
+  avatar: {
+    ai: "AI באַשאַפֿן",
+    browse: "בלעטערן",
+    cancel: "אָפּזאָגן",
+    create: {
+      generate: "שאַפֿן אַוואַטאַר",
+      generating: "שאַפֿט...",
+      prompt: "באַשרײַב דײַן אַוואַטאַר",
+      promptPlaceholder: "אַ פֿרײַנטלעך קאַרטון כאַראַקטער מיט...",
+      style: "סטיל",
+      tab: "שאַפֿן"
+    },
+    drag: "שלעפּ און לאָז אָדער קליק צו אַרויפֿלאָדן",
+    error: {
+      format: "ניט געשטיצטער פֿאָרמאַט",
+      generation: "אַוואַטאַר שאַפֿונג איז דורכגעפֿאַלן",
+      size: "טעקע איז צו גרויס (מאַקסימום 5MB)",
+      upload: "אַרויפֿלאָדן איז דורכגעפֿאַלן"
+    },
+    formats: "PNG, JPG אָדער GIF (מאַקסימום 5MB)",
+    generate: "שאַפֿן",
+    generating: "שאַפֿט...",
+    illustrations: "אילוסטראַציעס",
+    illustrationsDescription: "לוסטיקע אילוסטרירטע אַוואַטאַרן",
+    or: "אָדער",
+    presets: "גרייטע",
+    preview: "פֿאָראויסבליק",
+    prompt: "באַשרײַב דײַן אַוואַטאַר",
+    promptPlaceholder: "אַ פֿרײַנטלעך קאַרטון כאַראַקטער מיט...",
+    rewards: "פּרײַזן",
+    rewardsDescription: "אַוואַטאַרן וואָס דו האָסט פֿאַרדינט",
+    save: "אָפּהיטן אַוואַטאַר",
+    style: "סטיל",
+    styles: {
+      anime: "אַנימע",
+      cartoon: "קאַרטון",
+      pixel: "פּיקסל קונסט",
+      realistic: "רעאַליסטיש"
+    },
+    type: {
+      label: "טיפּ",
+      animal: "חיה",
+      fantasy: "פֿאַנטאַזיע",
+      human: "מענטש"
+    },
+    upload: {
+      label: "אַרויפֿלאָדן",
+      drag: "שלעפּ און לאָז אַ בילד",
+      or: "אָדער קליק צו בלעטערן",
+      tab: "אַרויפֿלאָדן"
+    },
+    uploading: "לאָדט אַרויף..."
+  },
+  book: {
+    addCharacter: "צולייגן כאַראַקטער",
+    addNikud: "צולייגן ניקוד"
+  },
+  rhyme: {
+    complexity: {
+      label: "קאָמפּליצירטקייט",
+      complex: "קאָמפּליצירט",
+      moderate: "מיטלמעסיק",
+      simple: "פּשוט"
+    },
+    meter: {
+      label: "מעטער",
+      anapestic: "אַנאַפּעסטיש",
+      dactylic: "דאַקטיליש",
+      free: "פֿרײַ",
+      iambic: "יאַמביש",
+      trochaic: "טראָכעאיש"
+    },
+    pattern: {
+      label: "מוסטער",
+      aabb: "AABB (פּאָרווײַז)",
+      abab: "ABAB (אָפּוועקסלנד)",
+      abba: "ABBA (אַרומגענומען)",
+      abcb: "ABCB (באַלאַדע)",
+      monorhyme: "איין גרײַם"
+    }
+  },
+  textOverlay: {
+    addText: "צולייגן טעקסט",
+    cancel: "אָפּזאָגן",
+    color: "קאָליר",
+    download: "אַראָפּלאָדן",
+    fontFamily: "שריפֿט",
+    fontSize: "שריפֿט גרייס",
+    save: "אָפּהיטן",
+    subtitle: "צולייגן טעקסט שיכטן צו אילוסטראַציעס",
+    text: "טעקסט",
+    textAlign: "אויסגלײַכן",
+    title: "טעקסט שיכט"
+  },
+  stats: {
+    badges: "באַדזשעס",
+    badgesCount: "באַדזשעס",
+    books: "ביכער",
+    complete: "!פֿאַרטיק",
+    keepGoing: "!האַלט אָן",
+    level: "מדרגה",
+    nextLevel: "קומענדיקע מדרגה",
+    pages: "בלעטער",
+    storyteller: "מעשה דערציילער",
+    streak: "טעג סטריק",
+    xp: "XP פּונקטן"
+  },
+  model: {
+    credits: "קרעדיטן",
+    locked: "פֿאַרשלאָסן",
+    new: "נײַ",
+    quality: "קוואַליטעט",
+    recommended: "רעקאָמענדירט",
+    specialties: "ספּעציאַליטעטן",
+    speed: "גיכקייט"
   }
 };

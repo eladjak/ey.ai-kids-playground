@@ -298,18 +298,38 @@ export default function BookView() {
     }
   };
 
-  // Render text with word highlighting for TTS + David font for Hebrew
+  // Map art styles to child-friendly font families
+  const getBookFontFamily = () => {
+    const style = book?.art_style;
+    // For Hebrew books, use Fredoka (playful, supports Hebrew) for all styles
+    // For English, vary by art style
+    if (isHebrewBook) {
+      return "'Fredoka', 'Nunito', sans-serif";
+    }
+    switch (style) {
+      case "storybook":
+      case "vintage":
+        return "'Fredoka', Georgia, serif";
+      case "comic":
+      case "popArt":
+        return "'Fredoka', 'Comic Sans MS', cursive";
+      case "minimalist":
+        return "'Nunito', sans-serif";
+      default:
+        return "'Fredoka', 'Nunito', sans-serif";
+    }
+  };
+
+  // Render text with word highlighting for TTS + child-friendly fonts
   const renderHighlightedText = (text, extraClass = "") => {
     if (!text) return null;
 
-    const bookFontStyle = isHebrewBook
-      ? { fontFamily: "'David', 'David CLM', 'Times New Roman', serif" }
-      : { fontFamily: "inherit" };
+    const bookFontStyle = { fontFamily: getBookFontFamily() };
 
     if (!tts.isSpeaking || tts.currentWordIndex < 0) {
       return (
         <p
-          className={`text-lg md:text-xl leading-relaxed ${isRTL ? "text-right" : ""} ${extraClass}`}
+          className={`text-xl md:text-2xl leading-loose ${isRTL ? "text-right" : ""} ${extraClass}`}
           style={bookFontStyle}
         >
           {text}
@@ -322,7 +342,7 @@ export default function BookView() {
 
     return (
       <p
-        className={`text-lg md:text-xl leading-relaxed ${isRTL ? "text-right" : ""} ${extraClass}`}
+        className={`text-xl md:text-2xl leading-loose ${isRTL ? "text-right" : ""} ${extraClass}`}
         style={bookFontStyle}
       >
         {words.map((segment, i) => {
@@ -590,7 +610,7 @@ export default function BookView() {
                               <div className="text-6xl mb-4">📖</div>
                               <h2
                                 className="text-3xl md:text-4xl font-bold text-white mb-4 drop-shadow-sm"
-                                style={isHebrewBook ? { fontFamily: "'David', 'David CLM', serif" } : {}}
+                                style={{ fontFamily: getBookFontFamily() }}
                               >
                                 {book.title}
                               </h2>
@@ -607,7 +627,7 @@ export default function BookView() {
                           <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
                             <h2
                               className={`text-xl md:text-2xl font-bold text-white drop-shadow-sm ${isRTL ? "text-right" : ""}`}
-                              style={isHebrewBook ? { fontFamily: "'David', 'David CLM', serif" } : {}}
+                              style={{ fontFamily: getBookFontFamily() }}
                             >
                               {book.title}
                             </h2>
@@ -665,10 +685,13 @@ export default function BookView() {
                                   onClick={zoomIn}
                                 />
                               ) : (
-                                <div className="w-full h-full min-h-[200px] flex items-center justify-center">
-                                  <p className="text-gray-400">
-                                    {t('bookView.noIllustration')}
-                                  </p>
+                                <div className="w-full h-full min-h-[200px] flex items-center justify-center bg-gradient-to-br from-purple-50 via-indigo-50 to-violet-50 dark:from-purple-900/20 dark:via-indigo-900/20 dark:to-violet-900/20">
+                                  <div className="text-center p-6">
+                                    <div className="text-5xl mb-3 opacity-50">🎨</div>
+                                    <p className="text-gray-400 text-sm">
+                                      {t('bookView.noIllustration')}
+                                    </p>
+                                  </div>
                                 </div>
                               )}
                             </div>

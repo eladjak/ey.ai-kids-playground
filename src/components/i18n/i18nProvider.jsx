@@ -104,14 +104,16 @@ export const I18nProvider = ({ children }) => {
 
         // Then check user settings from backend
         const user = await User.me();
-        if (user && user.language && LANGUAGES[user.language]) {
-          setLanguage(user.language);
-          setTranslations(LANGUAGES[user.language].translations);
-          setDirection(LANGUAGES[user.language].direction);
-          applyLanguageSettings(user.language);
-          
+        // Support both field names: 'language' (canonical) and 'preferred_language' (onboarding legacy)
+        const userLang = user?.language || user?.preferred_language;
+        if (user && userLang && LANGUAGES[userLang]) {
+          setLanguage(userLang);
+          setTranslations(LANGUAGES[userLang].translations);
+          setDirection(LANGUAGES[userLang].direction);
+          applyLanguageSettings(userLang);
+
           // Update localStorage to match user settings
-          localStorage.setItem('language', user.language);
+          localStorage.setItem('language', userLang);
         }
       } catch (error) {
         // silently handled
