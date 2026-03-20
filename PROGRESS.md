@@ -1,7 +1,59 @@
 # Sipurai - Progress & Analysis Report
 
-## Status: Active - Renamed to Sipurai
-## Last Updated: 2026-03-19
+## Status: Active - UX/i18n Overhaul
+## Last Updated: 2026-03-20
+
+---
+
+## Session 36: i18n Overhaul + UX Fixes (Mar 20, 2026)
+
+### i18n — Massive Translation Fix
+- [x] Found 175 missing translation keys via automated audit
+- [x] Added all 175 keys to English + Hebrew + Yiddish locales
+- [x] Fixed `common.contact` showing as raw key in sidebar
+- [x] Fixed Layout duplicate language state → now single source of truth from i18n context
+- [x] Fixed `preferred_language` vs `language` field mismatch (onboarding → i18nProvider)
+- [x] i18nProvider now reads both field names as fallback
+
+### BookView UX — Child-Friendly Reading
+- [x] Replaced David serif font with Fredoka/Nunito (child-friendly)
+- [x] Art-style-based font mapping (storybook→serif, comic→cursive, etc.)
+- [x] Increased text size (xl/2xl) with loose leading for better readability
+- [x] Improved empty illustration state with gradient + icon
+
+### Onboarding Fixes
+- [x] Parent age option label now language-aware (was always Hebrew)
+
+### Infrastructure Verified
+- [x] Gemini API key works (tested directly)
+- [x] Production proxy at www.sipurai.ai/api/ai/generate works
+- [x] Supabase bucket `sipurai-images` exists and is public
+- [x] Image generation pipeline is functional end-to-end
+- [x] `GEMINI_API_KEY` added to local .env for proxy testing
+
+### Visual QA (Autonomous Dogfood)
+- [x] Landing Hero — Hebrew, RTL, gradient ✅
+- [x] Landing Showcase — 3 demo books with Hebrew titles ✅
+- [x] Landing Testimonials — reviews, stars, age badges ✅
+- [x] Landing Footer — links, "צור קשר" translated ✅
+- [x] Blog — 5 articles, Hebrew filters ✅
+- [x] Contact — public, Hebrew ✅
+- [x] Privacy — public at /privacy ✅
+- [x] Sign-in — Clerk in Hebrew ✅
+- [x] Production proxy verified — returns images correctly ✅
+
+### Remaining from Elad's Feedback
+- [ ] Test full book creation flow with logged-in user (verify images generate)
+- [ ] Improve book creation wizard UX (more visual, less form-like)
+- [ ] Fix Clerk DNS for production auth (clerk.sipurai.ai)
+- [ ] Generate demo books for showcase
+- [ ] Blog content (Sanity CMS infrastructure exists)
+- [ ] Supabase RLS tightening with Clerk JWT
+
+---
+
+## Session 35: Design System + QA + SEO (Mar 19, 2026)
+- See MEMORY.md for detailed session notes
 
 ---
 
