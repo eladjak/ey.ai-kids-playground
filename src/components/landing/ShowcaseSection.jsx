@@ -35,6 +35,7 @@ const ShowcaseSection = () => {
 
   return (
     <section
+      id="showcase"
       className="py-20 sm:py-28 bg-gray-50 dark:bg-gray-900"
       dir={isRTL ? 'rtl' : 'ltr'}
     >

@@ -2,16 +2,16 @@ import { describe, it, expect } from 'vitest';
 import { createPageUrl } from './index.ts';
 
 describe('createPageUrl', () => {
-  it('converts page name to lowercase URL path', () => {
-    expect(createPageUrl('Home')).toBe('/home');
+  it('maps Home to root path', () => {
+    expect(createPageUrl('Home')).toBe('/');
   });
 
-  it('replaces spaces with hyphens', () => {
-    expect(createPageUrl('Story Ideas')).toBe('/story-ideas');
+  it('replaces spaces with hyphens preserving case', () => {
+    expect(createPageUrl('Story Ideas')).toBe('/Story-Ideas');
   });
 
   it('handles multiple spaces', () => {
-    expect(createPageUrl('My Book View')).toBe('/my-book-view');
+    expect(createPageUrl('My Book View')).toBe('/My-Book-View');
   });
 
   it('handles already lowercase names', () => {

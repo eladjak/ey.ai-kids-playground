@@ -1,10 +1,10 @@
-# EY.AI Kids Playground
+# Sipurai (סיפוראי)
 
 **Create, Share & Print Personalized Children's Books with AI**
 
 ## Overview
 
-EY.AI Kids Playground is an interactive platform where children and parents create personalized storybooks from scratch using AI. The platform guides users through every step - from brainstorming story ideas to generating illustrations, and finally exporting print-ready books.
+Sipurai is an interactive platform where children and parents create personalized storybooks from scratch using AI. The platform guides users through every step - from brainstorming story ideas to generating illustrations, and finally exporting print-ready books.
 
 ### Key Features
 

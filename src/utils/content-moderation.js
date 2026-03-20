@@ -1,5 +1,5 @@
 /**
- * Content Moderation Utilities for EY.AI Kids Playground
+ * Content Moderation Utilities for Sipurai
  *
  * Provides input sanitization, prompt injection protection,
  * and child-safety content filtering for AI-generated content.

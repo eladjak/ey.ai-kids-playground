@@ -1,7 +1,7 @@
 // @ts-check
 
 /**
- * Common selectors for the EY.AI Kids Playground app.
+ * Common selectors for the Sipurai app.
  *
  * Prefer role-based and text-based selectors over CSS/XPath selectors for
  * resilience against UI refactoring.

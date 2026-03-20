@@ -39,7 +39,7 @@ export function useSanityQuery(queryKey, query, params = {}, options = {}) {
 // ---------------------------------------------------------------------------
 
 /**
- * Fetch all published blog posts for EY.AI Kids.
+ * Fetch all published blog posts for Sipurai.
  */
 export function useBlogPosts() {
   return useSanityQuery('blogPosts', BLOG_POSTS_QUERY);

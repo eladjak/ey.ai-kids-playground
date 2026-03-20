@@ -147,7 +147,13 @@ const HeroSection = () => {
                   </Button>
                 </motion.div>
               </Link>
-              <Link to="/Community">
+              <a
+                href="#showcase"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('showcase')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
                 <Button
                   size="lg"
                   variant="ghost"
@@ -156,7 +162,7 @@ const HeroSection = () => {
                   <BookOpen className="h-6 w-6" />
                   {t('landing.hero.secondaryCta')}
                 </Button>
-              </Link>
+              </a>
             </div>
 
             {/* Social proof */}

@@ -80,5 +80,7 @@
     "typescript": "^5.8.2",
     "vite": "^6.1.0",
     "vitest": "^4.0.18"
-  }
+  },
+  "displayName": "Sipurai (סיפוראי)",
+  "description": ""
 }

@@ -1,4 +1,4 @@
-# EY.AI Kids Playground - Gaps & Requirements
+# Sipurai (סיפוראי) - Gaps & Requirements
 
 **Last Updated:** 2026-02-27
 **Purpose:** What Elad needs to provide so Claude Code can work with this Base44 project.
@@ -202,8 +202,8 @@ Still unknown:
 | Question | Status |
 |----------|--------|
 | Production URL? | `https://eyai-kids-playground-306dbd07.base44.app` |
-| Custom domain? | `ey.ai-kids-playground.com` available (not purchased) |
-| Email sender | `no-reply@base44-apps.com` (Sender: EY.AI Kids Playground App) |
+| Custom domain? | `sipurai.ai` (configured) |
+| Email sender | `no-reply@base44-apps.com` (Sender: Sipurai App) |
 | Vercel? | `vercel.json` exists but may be for local dev only - Base44 hosts the app |
 
 - [x] Production URL confirmed

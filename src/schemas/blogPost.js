@@ -3,7 +3,7 @@
  *
  * This schema matches the actual post type in your Sanity project:
  * - Posts are filtered by siteId to separate content between sites
- * - EY.AI Kids Playground uses siteId: "eyai-kids"
+ * - Sipurai uses siteId: "eyai-kids"
  * - Title, excerpt, and body are plain strings (not trilingual in actual schema)
  * - Language field allows filtering posts by language (he/en)
  */

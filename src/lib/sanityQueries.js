@@ -3,7 +3,7 @@
  *
  * The Sanity post schema uses simple string fields (not localized objects),
  * with a `language` field ('he'|'en'|'yi') and a `siteId` field for filtering.
- * Posts for EY.AI Kids use siteId == "eyai-kids".
+ * Posts for Sipurai use siteId == "eyai-kids".
  */
 
 // ---------------------------------------------------------------------------
@@ -11,7 +11,7 @@
 // ---------------------------------------------------------------------------
 
 /**
- * Fetch all published blog posts for EY.AI Kids, ordered by date descending.
+ * Fetch all published blog posts for Sipurai, ordered by date descending.
  */
 export const BLOG_POSTS_QUERY = `*[_type == "post" && siteId == "eyai-kids" && status == "published" && !(_id in path("drafts.**"))] | order(publishedAt desc) {
   _id,
@@ -119,6 +119,6 @@ export const AUTHORS_QUERY = `*[_type == "author"] {
 }`;
 
 /**
- * Fetch unique tags used across EY.AI Kids posts.
+ * Fetch unique tags used across Sipurai posts.
  */
 export const TAGS_QUERY = `array::unique(*[_type == "post" && siteId == "eyai-kids" && status == "published"].tags[])`;

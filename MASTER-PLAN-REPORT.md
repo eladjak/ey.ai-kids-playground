@@ -1,4 +1,4 @@
-# EY.AI Kids Playground
+# Sipurai (סיפוראי)
 # Master Plan — Final Report
 ### "The Best Kids Book Creation App on the Market"
 ### February 27, 2026
