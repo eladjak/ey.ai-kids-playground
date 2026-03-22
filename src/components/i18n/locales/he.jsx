@@ -569,6 +569,21 @@ export default {
       allStories: "כל הסיפורים",
       myShared: "הסיפורים המשותפים שלי"
     },
+    genreTags: {
+      adventure: "הרפתקאות",
+      fantasy: "פנטזיה",
+      education: "חינוך",
+      animals: "חיות",
+      family: "משפחה",
+      friendship: "חברות",
+      science: "מדע",
+      magic: "קסם",
+      nature: "טבע",
+      values: "ערכים"
+    },
+    parentApproval: "אישור הורה נדרש",
+    parentApprovalDesc: "כדי לפרסם ספר בקהילה, יש להזין את קוד ה-PIN של ההורה.",
+    enterPin: "הזן PIN (4-6 ספרות)",
     post: {
       readMore: "קרא עוד",
       sharedBy: "שותף על ידי {{name}}",
@@ -783,12 +798,14 @@ export default {
       create: "צור ספר"
     },
     topic: {
-      title: "איזה סיפור תרצה ליצור?",
+      title: "על מה יהיה הסיפור?",
+      subtitle: "בחר נושא שמעניין אותך",
       customIdea: "רעיון שלי",
       customIdeaDesc: "כתוב רעיון משלך לסיפור",
       useSavedIdea: "השתמש ברעיון שמור",
       useSavedIdeaDesc: "בחר מהרעיונות השמורים שלך",
-      customPlaceholder: "תאר את הרעיון שלך לסיפור..."
+      customPlaceholder: "תאר את הרעיון שלך לסיפור...",
+      surpriseMe: "הפתע אותי!"
     },
     characters: {
       title: "בחר את הדמויות שלך",
@@ -796,12 +813,48 @@ export default {
       addMore: "הוסף עוד דמויות"
     },
     preview: {
-      title: "תצוגה מקדימה ועריכה",
+      title: "בדוק ועדכן את הסיפור",
+      subtitle: "אפשר לערוך לפני שממשיכים",
       language: "שפת הסיפור",
       advanced: "אפשרויות מתקדמות",
-      tone: "טון",
-      ageRange: "טווח גילאים",
-      moral: "מוסר השכל / לקח"
+      advancedToggle: "הגדרות מתקדמות",
+      tone: "טון הסיפור:",
+      toneExciting: "מרגש",
+      toneCalm: "רגוע",
+      toneFunny: "מצחיק",
+      toneEducational: "חינוכי",
+      toneMysterious: "מסתורי",
+      ageRange: "טווח גילאים:",
+      age3to5: "3-5 (גן)",
+      age5to7: "5-7 (גן-א)",
+      age7to10: "7-10 (בית ספר)",
+      age10to12: "10-12 (נוער)",
+      moral: "מוסר השכל / לקח",
+      moralPlaceholder: "מה הלקח של הסיפור?",
+      moralDetail: "פירוט המסר (אופציונלי):",
+      moralDetailPlaceholder: "הסבר מפורט יותר על המסר שתרצה שהסיפור יעביר...",
+      storyTitle: "שם הסיפור",
+      storyTitlePlaceholder: "שם הסיפור שלך...",
+      storyDescription: "תיאור הסיפור",
+      storyDescPlaceholder: "תיאור קצר על מה הסיפור...",
+      storyLanguage: "שפת הסיפור:",
+      selectLanguage: "בחר שפה",
+      artStyle: "סגנון אמנותי",
+      selectArtStyle: "בחר סגנון אמנותי",
+      storyLength: "אורך הסיפור:",
+      lengthShort: "קצר (6)",
+      lengthMedium: "בינוני (10)",
+      lengthLong: "ארוך (15)",
+      rhymingStory: "סיפור בחרוזים",
+      enableRhyming: "הפעל חרוזים",
+      surpriseMe: "הפתע אותי — מלא אוטומטית!",
+      surpriseMeLabel: "מלא אוטומטית",
+      newIdea: "רעיון חדש",
+      newIdeaLabel: "יצירת רעיון חדש",
+      preparingStory: "מכינים את הסיפור שלך...",
+      aiCrafting: "ה-AI עובד על רעיון מדהים בשבילך",
+      generatingStory: "יוצר את הסיפור...",
+      selectTone: "בחר טון"
     },
     creating: {
       title: "יוצר את הספר שלך...",
@@ -957,6 +1010,8 @@ export default {
       books: "ספרים שנוצרו",
       streak: "רצף הארוך ביותר"
     },
+    loginToSeeRank: "התחבר כדי לראות את הדירוג שלך",
+    booksCount: "ספרים",
     your: {
       rank: "הדירוג שלך"
     },

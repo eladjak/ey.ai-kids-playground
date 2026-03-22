@@ -62,7 +62,7 @@ export default function Home() {
       id: "sample1",
       title: "The Dragon's Quest",
       description: "Join Maya on her adventure with a friendly dragon who lost his fire.",
-      cover_image: "https://images.unsplash.com/photo-1613155296671-1f9236922850?w=400&auto=format&fit=crop&q=80",
+      cover_image: "/images/style-fantasy.jpg",
       genre: "adventure",
       age_range: "5-7",
       isSample: true
@@ -71,7 +71,7 @@ export default function Home() {
       id: "sample2",
       title: "Ocean Explorers",
       description: "Dive deep with Sam as he discovers the magical world under the sea.",
-      cover_image: "https://images.unsplash.com/photo-1566438480900-0609be27a4be?w=400&auto=format&fit=crop&q=80",
+      cover_image: "/images/style-watercolor.jpg",
       genre: "fantasy",
       age_range: "8-10",
       isSample: true
@@ -80,7 +80,7 @@ export default function Home() {
       id: "sample3",
       title: "Stars and Dreams",
       description: "A bedtime story about catching dreams among the stars.",
-      cover_image: "https://images.unsplash.com/photo-1519749087703-55167e3d235e?w=400&auto=format&fit=crop&q=80",
+      cover_image: "/images/topic-space.jpg",
       genre: "bedtime",
       age_range: "2-4",
       isSample: true

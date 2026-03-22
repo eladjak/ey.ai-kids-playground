@@ -321,24 +321,8 @@ export default function CommunityPage() {
     "friendship", "science", "magic", "nature", "values"
   ];
 
-  const hebrewTags = {
-    "adventure": "הרפתקאות",
-    "fantasy": "פנטזיה",
-    "education": "חינוך",
-    "animals": "חיות",
-    "family": "משפחה",
-    "friendship": "חברות",
-    "science": "מדע",
-    "magic": "קסם",
-    "nature": "טבע",
-    "values": "ערכים"
-  };
-
   const getTagDisplay = (tag) => {
-    if (isRTL && hebrewTags[tag]) {
-      return hebrewTags[tag];
-    }
-    return tag;
+    return t(`community.genreTags.${tag}`) || tag;
   };
 
   const containerVariants = {
@@ -755,12 +739,10 @@ export default function CommunityPage() {
               <div className="p-1.5 rounded-lg bg-purple-100 dark:bg-purple-900/30">
                 <Lock className="h-5 w-5 text-purple-600" />
               </div>
-              {isRTL ? "אישור הורה נדרש" : "Parental Approval Required"}
+              {t("community.parentApproval")}
             </DialogTitle>
             <DialogDescription>
-              {isRTL
-                ? "כדי לפרסם ספר בקהילה, יש להזין את קוד ה-PIN של ההורה."
-                : "To publish a book to the community, please enter the parental PIN."}
+              {t("community.parentApprovalDesc")}
             </DialogDescription>
           </DialogHeader>
 
@@ -769,7 +751,7 @@ export default function CommunityPage() {
               type="password"
               inputMode="numeric"
               maxLength={6}
-              placeholder={isRTL ? "הזן PIN (4-6 ספרות)" : "Enter PIN (4-6 digits)"}
+              placeholder={t("community.enterPin")}
               value={pinInput}
               onChange={(e) => {
                 setPinInput(e.target.value);

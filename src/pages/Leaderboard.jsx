@@ -353,7 +353,7 @@ export default function Leaderboard() {
                       </Badge>
                       <Badge variant="outline" className="gap-1 font-normal bg-white/70 dark:bg-gray-800/50 text-xs rounded-full">
                         <BookOpen className="h-3 w-3 text-blue-500" />
-                        {currentUserEntry.books} {language === "hebrew" ? "ספרים" : "books"}
+                        {currentUserEntry.books} {t("leaderboard.booksCount")}
                       </Badge>
                     </div>
                   </div>
@@ -361,7 +361,7 @@ export default function Leaderboard() {
               ) : (
                 <div className="text-center py-2">
                   <p className="text-gray-600 dark:text-gray-400 text-sm">
-                    {language === "hebrew" ? "התחבר כדי לראות את הדירוג שלך" : "Login to see your rank"}
+                    {t("leaderboard.loginToSeeRank")}
                   </p>
                 </div>
               )}

@@ -21,6 +21,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { StoryIdea } from "@/entities/StoryIdea";
+import { useI18n } from "@/components/i18n/i18nProvider";
 
 /**
  * Topic cards data with icons, colors, and Hebrew/English labels.
@@ -246,6 +247,7 @@ function getSurpriseButtonLabel(language) {
  * Visual topic cards with gradients, "Surprise Me!" button, and custom idea input.
  */
 export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, onCustomIdeaChange, isRTL, language }) {
+  const { t } = useI18n();
   const isHebrew = language === "hebrew";
   const isYiddish = language === "yiddish";
   const [showCustomIdea, setShowCustomIdea] = useState(!!customIdea);
@@ -321,7 +323,7 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
           transition={{ duration: 0.4 }}
         >
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            {isHebrew ? "על מה יהיה הסיפור?" : isYiddish ? "וועגן וואָס וועט די מעשׂה זײַן?" : "What's the story about?"}
+            {t("wizard.topic.title")}
           </h2>
         </motion.div>
         <motion.div
@@ -330,7 +332,7 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
           transition={{ delay: 0.15, duration: 0.4 }}
         >
           <p className="text-gray-500 dark:text-gray-400 text-base">
-            {isHebrew ? "בחר נושא שמעניין אותך" : isYiddish ? "קלײַב אַ טעמע וואָס אינטערעסירט דיך" : "Pick a topic you love"}
+            {t("wizard.topic.subtitle")}
           </p>
         </motion.div>
       </div>

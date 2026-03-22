@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-// PreviewEditStep — enhanced UI
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -17,6 +16,7 @@ import { Sparkles, RefreshCw, Edit3, BookOpen, Globe, ChevronDown, Settings2, Ch
 import { Switch } from "@/components/ui/switch";
 import RhymeOptions from "@/components/bookCreation/RhymeOptions";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useI18n } from "@/components/i18n/i18nProvider";
 
 /**
  * Visual art style definitions with emoji, color, and trilingual descriptions.
@@ -275,6 +275,7 @@ export default function PreviewEditStep({
   rhymeSettings,
   onRhymeSettingsChange
 }) {
+  const { t } = useI18n();
   const isHebrew = language === "hebrew";
   const isYiddish = language === "yiddish";
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -293,10 +294,10 @@ export default function PreviewEditStep({
       <div className="space-y-6" dir={isRTL ? "rtl" : "ltr"}>
         <div className="text-center mb-6">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            {isHebrew ? "מכינים את הסיפור שלך..." : isYiddish ? "מיר גרייטן דײַן מעשׂה..." : "Preparing your story..."}
+            {t("wizard.preview.preparingStory")}
           </h2>
           <p className="text-gray-500 dark:text-gray-400 text-lg">
-            {isHebrew ? "ה-AI עובד על רעיון מדהים בשבילך" : "The AI is crafting an amazing story for you"}
+            {t("wizard.preview.aiCrafting")}
           </p>
         </div>
 
@@ -315,7 +316,7 @@ export default function PreviewEditStep({
               <div className="flex items-center gap-2 text-purple-600">
                 <RefreshCw className="h-5 w-5 animate-spin" aria-hidden="true" />
                 <span className="text-sm font-medium">
-                  {isHebrew ? "יוצר את הסיפור..." : "Generating story..."}
+                  {t("wizard.preview.generatingStory")}
                 </span>
               </div>
             </div>
@@ -333,7 +334,7 @@ export default function PreviewEditStep({
           animate={{ opacity: 1, y: 0 }}
         >
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            {isHebrew ? "בדוק ועדכן את הסיפור" : isYiddish ? "קוק איבער דײַן מעשׂה" : "Review & edit your story"}
+            {t("wizard.preview.title")}
           </h2>
         </motion.div>
         <motion.div
@@ -342,7 +343,7 @@ export default function PreviewEditStep({
           transition={{ delay: 0.15 }}
         >
           <p className="text-gray-500 dark:text-gray-400 text-base">
-            {isHebrew ? "אפשר לערוך לפני שממשיכים" : "You can make changes before continuing"}
+            {t("wizard.preview.subtitle")}
           </p>
         </motion.div>
       </div>
@@ -363,7 +364,7 @@ export default function PreviewEditStep({
             hover:shadow-lg hover:shadow-orange-300/50
             transition-shadow duration-200 overflow-hidden
           "
-          aria-label={isHebrew ? "מלא אוטומטית" : "Auto-fill settings"}
+          aria-label={t("wizard.preview.surpriseMeLabel")}
         >
           <motion.div
             className="absolute inset-0 bg-white/25 skew-x-12"
@@ -373,7 +374,7 @@ export default function PreviewEditStep({
           />
           <Shuffle className="h-4 w-4 relative z-10" aria-hidden="true" />
           <span className="relative z-10">
-            {isHebrew ? "הפתע אותי — מלא אוטומטית!" : "Surprise Me — Auto-fill!"}
+            {t("wizard.preview.surpriseMe")}
           </span>
           <Wand2 className="h-4 w-4 relative z-10" aria-hidden="true" />
         </motion.button>
@@ -384,18 +385,18 @@ export default function PreviewEditStep({
         <CardHeader>
           <CardTitle className={`flex items-center gap-2 text-lg ${isRTL ? "flex-row-reverse" : ""}`}>
             <BookOpen className="h-5 w-5 text-purple-600" aria-hidden="true" />
-            {isHebrew ? "שם הסיפור" : "Story Title"}
+            {t("wizard.preview.storyTitle")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <Input
             value={bookData.title || ""}
             onChange={(e) => onBookDataChange("title", e.target.value)}
-            placeholder={isHebrew ? "שם הסיפור שלך..." : "Your story title..."}
+            placeholder={t("wizard.preview.storyTitlePlaceholder")}
             dir={isRTL ? "rtl" : "ltr"}
             className="text-lg font-semibold"
             maxLength={100}
-            aria-label={isHebrew ? "שם הסיפור" : "Story title"}
+            aria-label={t("wizard.preview.storyTitle")}
           />
         </CardContent>
       </Card>
@@ -405,33 +406,33 @@ export default function PreviewEditStep({
         <CardHeader>
           <CardTitle className={`flex items-center gap-2 text-lg ${isRTL ? "flex-row-reverse" : ""}`}>
             <Edit3 className="h-5 w-5 text-blue-600" aria-hidden="true" />
-            {isHebrew ? "תיאור הסיפור" : "Story Description"}
+            {t("wizard.preview.storyDescription")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <Textarea
             value={bookData.description || ""}
             onChange={(e) => onBookDataChange("description", e.target.value)}
-            placeholder={isHebrew ? "תיאור קצר על מה הסיפור..." : "Brief description of the story..."}
+            placeholder={t("wizard.preview.storyDescPlaceholder")}
             dir={isRTL ? "rtl" : "ltr"}
             rows={4}
             maxLength={500}
             className="resize-none"
-            aria-label={isHebrew ? "תיאור הסיפור" : "Story description"}
+            aria-label={t("wizard.preview.storyDescription")}
           />
 
           {/* Moral / Lesson */}
           <div>
             <Label className="mb-1 block text-sm font-medium">
-              {isHebrew ? "מסר או לקח" : "Moral / Lesson"}
+              {t("wizard.preview.moral")}
             </Label>
             <Input
               value={bookData.moral || ""}
               onChange={(e) => onBookDataChange("moral", e.target.value)}
-              placeholder={isHebrew ? "מה הלקח של הסיפור?" : "What's the lesson of the story?"}
+              placeholder={t("wizard.preview.moralPlaceholder")}
               dir={isRTL ? "rtl" : "ltr"}
               maxLength={200}
-              aria-label={isHebrew ? "מסר או לקח" : "Moral or lesson"}
+              aria-label={t("wizard.preview.moral")}
             />
           </div>
         </CardContent>
@@ -443,13 +444,13 @@ export default function PreviewEditStep({
           <div className={`flex items-center gap-4 ${isRTL ? "flex-row-reverse" : ""}`}>
             <Globe className="h-5 w-5 text-blue-600 flex-shrink-0" aria-hidden="true" />
             <Label className="text-sm font-medium whitespace-nowrap">
-              {isHebrew ? "שפת הסיפור:" : "Story language:"}
+              {t("wizard.preview.storyLanguage")}
             </Label>
             <Select
               value={bookData.language || "english"}
               onValueChange={(value) => onBookDataChange("language", value)}
             >
-              <SelectTrigger className="w-[160px]" aria-label={isHebrew ? "בחר שפה" : "Select language"}>
+              <SelectTrigger className="w-[160px]" aria-label={t("wizard.preview.selectLanguage")}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -467,14 +468,14 @@ export default function PreviewEditStep({
         <CardHeader>
           <CardTitle className={`flex items-center gap-2 text-lg ${isRTL ? "flex-row-reverse" : ""}`}>
             <Sparkles className="h-5 w-5 text-amber-500" aria-hidden="true" />
-            {isHebrew ? "סגנון אמנותי" : isYiddish ? "קונסט-סטיל" : "Art Style"}
+            {t("wizard.preview.artStyle")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div
             className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"
             role="radiogroup"
-            aria-label={isHebrew ? "בחר סגנון אמנותי" : "Choose art style"}
+            aria-label={t("wizard.preview.selectArtStyle")}
           >
             {ART_STYLE_VISUAL.map((style, index) => {
               const isSelected = bookData.art_style === style.value;
@@ -548,13 +549,13 @@ export default function PreviewEditStep({
         <CardContent className="p-4">
           <div className={`flex items-center gap-4 flex-wrap ${isRTL ? "flex-row-reverse" : ""}`}>
             <Label className="text-sm font-semibold whitespace-nowrap">
-              {isHebrew ? "אורך הסיפור:" : "Story length:"}
+              {t("wizard.preview.storyLength")}
             </Label>
             <div className={`flex gap-2 flex-wrap ${isRTL ? "flex-row-reverse" : ""}`}>
               {[
-                { value: "short", en: "Short (6p)", he: "קצר (6)" },
-                { value: "medium", en: "Medium (10p)", he: "בינוני (10)" },
-                { value: "long", en: "Long (15p)", he: "ארוך (15)" }
+                { value: "short", label: t("wizard.preview.lengthShort") },
+                { value: "medium", label: t("wizard.preview.lengthMedium") },
+                { value: "long", label: t("wizard.preview.lengthLong") }
               ].map((opt) => (
                 <motion.button
                   key={opt.value}
@@ -567,7 +568,7 @@ export default function PreviewEditStep({
                       : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
                   }`}
                 >
-                  {isHebrew ? opt.he : opt.en}
+                  {opt.label}
                 </motion.button>
               ))}
             </div>
@@ -581,13 +582,13 @@ export default function PreviewEditStep({
           <div className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}>
             <Music className="h-5 w-5 text-purple-500 flex-shrink-0" aria-hidden="true" />
             <Label htmlFor="use-rhyming-wizard" className="text-sm font-medium flex-1">
-              {isHebrew ? "סיפור בחרוזים" : isYiddish ? "רײַמענדיק מעשׂה" : "Rhyming Story"}
+              {t("wizard.preview.rhymingStory")}
             </Label>
             <Switch
               id="use-rhyming-wizard"
               checked={useRhyming}
               onCheckedChange={onUseRhymingChange}
-              aria-label={isHebrew ? "הפעל חרוזים" : "Enable rhyming"}
+              aria-label={t("wizard.preview.enableRhyming")}
             />
           </div>
           {useRhyming && rhymeSettings && onRhymeSettingsChange && (
@@ -611,7 +612,7 @@ export default function PreviewEditStep({
           aria-expanded={showAdvanced}
         >
           <Settings2 className="h-4 w-4" aria-hidden="true" />
-          {isHebrew ? "הגדרות מתקדמות" : "Advanced Settings"}
+          {t("wizard.preview.advancedToggle")}
           <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${showAdvanced ? "rotate-180" : ""}`} aria-hidden="true" />
         </Button>
       </div>
@@ -629,21 +630,21 @@ export default function PreviewEditStep({
               <CardContent className="p-4">
                 <div className={`flex items-center gap-4 ${isRTL ? "flex-row-reverse" : ""}`}>
                   <Label className="text-sm font-medium whitespace-nowrap">
-                    {isHebrew ? "טון הסיפור:" : "Story tone:"}
+                    {t("wizard.preview.tone")}
                   </Label>
                   <Select
                     value={bookData.tone || "exciting"}
                     onValueChange={(value) => onBookDataChange("tone", value)}
                   >
-                    <SelectTrigger className="w-[180px]" aria-label={isHebrew ? "בחר טון" : "Select tone"}>
+                    <SelectTrigger className="w-[180px]" aria-label={t("wizard.preview.selectTone")}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="exciting">{isHebrew ? "מרגש" : "Exciting"}</SelectItem>
-                      <SelectItem value="calm">{isHebrew ? "רגוע" : "Calm"}</SelectItem>
-                      <SelectItem value="funny">{isHebrew ? "מצחיק" : "Funny"}</SelectItem>
-                      <SelectItem value="educational">{isHebrew ? "חינוכי" : "Educational"}</SelectItem>
-                      <SelectItem value="mysterious">{isHebrew ? "מסתורי" : "Mysterious"}</SelectItem>
+                      <SelectItem value="exciting">{t("wizard.preview.toneExciting")}</SelectItem>
+                      <SelectItem value="calm">{t("wizard.preview.toneCalm")}</SelectItem>
+                      <SelectItem value="funny">{t("wizard.preview.toneFunny")}</SelectItem>
+                      <SelectItem value="educational">{t("wizard.preview.toneEducational")}</SelectItem>
+                      <SelectItem value="mysterious">{t("wizard.preview.toneMysterious")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -655,20 +656,20 @@ export default function PreviewEditStep({
               <CardContent className="p-4">
                 <div className={`flex items-center gap-4 ${isRTL ? "flex-row-reverse" : ""}`}>
                   <Label className="text-sm font-medium whitespace-nowrap">
-                    {isHebrew ? "טווח גילאים:" : "Age range:"}
+                    {t("wizard.preview.ageRange")}
                   </Label>
                   <Select
                     value={bookData.age_range || "5-7"}
                     onValueChange={(value) => onBookDataChange("age_range", value)}
                   >
-                    <SelectTrigger className="w-[180px]" aria-label={isHebrew ? "בחר טווח גילאים" : "Select age range"}>
+                    <SelectTrigger className="w-[180px]" aria-label={t("wizard.preview.ageRange")}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="3-5">{isHebrew ? "3-5 (גן)" : "3-5 (Preschool)"}</SelectItem>
-                      <SelectItem value="5-7">{isHebrew ? "5-7 (גן-א)" : "5-7 (Kindergarten)"}</SelectItem>
-                      <SelectItem value="7-10">{isHebrew ? "7-10 (בית ספר)" : "7-10 (Elementary)"}</SelectItem>
-                      <SelectItem value="10-12">{isHebrew ? "10-12 (נוער)" : "10-12 (Pre-teen)"}</SelectItem>
+                      <SelectItem value="3-5">{t("wizard.preview.age3to5")}</SelectItem>
+                      <SelectItem value="5-7">{t("wizard.preview.age5to7")}</SelectItem>
+                      <SelectItem value="7-10">{t("wizard.preview.age7to10")}</SelectItem>
+                      <SelectItem value="10-12">{t("wizard.preview.age10to12")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -679,20 +680,17 @@ export default function PreviewEditStep({
             <Card>
               <CardContent className="p-4 space-y-2">
                 <Label className="text-sm font-medium block">
-                  {isHebrew ? "פירוט המסר (אופציונלי):" : "Detailed moral message (optional):"}
+                  {t("wizard.preview.moralDetail")}
                 </Label>
                 <Textarea
                   value={bookData.moral_detail || ""}
                   onChange={(e) => onBookDataChange("moral_detail", e.target.value)}
-                  placeholder={isHebrew
-                    ? "הסבר מפורט יותר על המסר שתרצה שהסיפור יעביר..."
-                    : "More detailed explanation of the message you want the story to convey..."
-                  }
+                  placeholder={t("wizard.preview.moralDetailPlaceholder")}
                   dir={isRTL ? "rtl" : "ltr"}
                   rows={2}
                   maxLength={300}
                   className="resize-none"
-                  aria-label={isHebrew ? "פירוט המסר" : "Detailed moral"}
+                  aria-label={t("wizard.preview.moralDetail")}
                 />
               </CardContent>
             </Card>
@@ -708,10 +706,10 @@ export default function PreviewEditStep({
             onClick={onRegenerateOutline}
             disabled={isGeneratingOutline}
             className="gap-2"
-            aria-label={isHebrew ? "יצירת רעיון חדש" : "Generate new idea"}
+            aria-label={t("wizard.preview.newIdeaLabel")}
           >
             <RefreshCw className="h-4 w-4" aria-hidden="true" />
-            {isHebrew ? "רעיון חדש" : "New Idea"}
+            {t("wizard.preview.newIdea")}
           </Button>
         </div>
       )}

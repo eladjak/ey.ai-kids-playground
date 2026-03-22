@@ -581,6 +581,21 @@ export default {
       allStories: "All Stories",
       myShared: "My Shared Stories"
     },
+    genreTags: {
+      adventure: "Adventure",
+      fantasy: "Fantasy",
+      education: "Education",
+      animals: "Animals",
+      family: "Family",
+      friendship: "Friendship",
+      science: "Science",
+      magic: "Magic",
+      nature: "Nature",
+      values: "Values"
+    },
+    parentApproval: "Parental Approval Required",
+    parentApprovalDesc: "To publish a book to the community, please enter the parental PIN.",
+    enterPin: "Enter PIN (4-6 digits)",
     post: {
       readMore: "Read More",
       sharedBy: "Shared by {{name}}",
@@ -795,12 +810,14 @@ export default {
       create: "Create Book"
     },
     topic: {
-      title: "What story would you like to create?",
+      title: "What's the story about?",
+      subtitle: "Pick a topic you love",
       customIdea: "My Own Idea",
       customIdeaDesc: "Write your own story idea",
       useSavedIdea: "Use Saved Idea",
       useSavedIdeaDesc: "Pick from your saved story ideas",
-      customPlaceholder: "Describe your story idea..."
+      customPlaceholder: "Describe your story idea...",
+      surpriseMe: "Surprise Me!"
     },
     characters: {
       title: "Choose your characters",
@@ -808,12 +825,48 @@ export default {
       addMore: "Add More Characters"
     },
     preview: {
-      title: "Preview & Edit Your Book",
+      title: "Review & edit your story",
+      subtitle: "You can make changes before continuing",
       language: "Story Language",
-      advanced: "Advanced Options",
-      tone: "Tone",
-      ageRange: "Age Range",
-      moral: "Moral / Lesson"
+      advanced: "Advanced Settings",
+      advancedToggle: "Advanced Settings",
+      tone: "Story tone:",
+      toneExciting: "Exciting",
+      toneCalm: "Calm",
+      toneFunny: "Funny",
+      toneEducational: "Educational",
+      toneMysterious: "Mysterious",
+      ageRange: "Age range:",
+      age3to5: "3-5 (Preschool)",
+      age5to7: "5-7 (Kindergarten)",
+      age7to10: "7-10 (Elementary)",
+      age10to12: "10-12 (Pre-teen)",
+      moral: "Moral / Lesson",
+      moralPlaceholder: "What's the lesson of the story?",
+      moralDetail: "Detailed moral message (optional):",
+      moralDetailPlaceholder: "More detailed explanation of the message you want the story to convey...",
+      storyTitle: "Story Title",
+      storyTitlePlaceholder: "Your story title...",
+      storyDescription: "Story Description",
+      storyDescPlaceholder: "Brief description of the story...",
+      storyLanguage: "Story language:",
+      selectLanguage: "Select language",
+      artStyle: "Art Style",
+      selectArtStyle: "Choose art style",
+      storyLength: "Story length:",
+      lengthShort: "Short (6p)",
+      lengthMedium: "Medium (10p)",
+      lengthLong: "Long (15p)",
+      rhymingStory: "Rhyming Story",
+      enableRhyming: "Enable rhyming",
+      surpriseMe: "Surprise Me — Auto-fill!",
+      surpriseMeLabel: "Auto-fill settings",
+      newIdea: "New Idea",
+      newIdeaLabel: "Generate new idea",
+      preparingStory: "Preparing your story...",
+      aiCrafting: "The AI is crafting an amazing story for you",
+      generatingStory: "Generating story...",
+      selectTone: "Select tone"
     },
     creating: {
       title: "Creating your book...",
@@ -969,6 +1022,8 @@ export default {
       books: "Books Created",
       streak: "Longest Streak"
     },
+    loginToSeeRank: "Login to see your rank",
+    booksCount: "books",
     your: {
       rank: "Your Rank"
     },
