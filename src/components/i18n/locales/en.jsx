@@ -1442,7 +1442,7 @@ export default {
     },
     testimonials: {
       sectionTitle: "What Parents Say",
-      sectionSubtitle: "Families across the country are already creating magical stories for their kids",
+      sectionSubtitle: "See what parents think about Sipurai",
       t1: {
         name: "Sarah Cohen",
         role: "Mother of a 7-year-old",
@@ -1534,8 +1534,8 @@ export default {
       languages: "Languages"
     },
     showcase: {
-      sectionTitle: "Books Created by Families Like Yours",
-      sectionSubtitle: "See what other families have created with Sipurai \u2014 every book is unique!",
+      sectionTitle: "Sample Books from Sipurai",
+      sectionSubtitle: "See examples of the magical books you can create \u2014 every book is unique!",
       book1Title: "The Dragon's Secret Garden",
       book1Genre: "Fantasy",
       book2Title: "Space Adventure with Yael",

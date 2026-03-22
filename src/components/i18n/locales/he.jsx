@@ -1427,7 +1427,7 @@ export default {
     },
     testimonials: {
       sectionTitle: "מה אומרים ההורים",
-      sectionSubtitle: "משפחות מכל הארץ כבר יוצרות סיפורים קסומים לילדים שלהן",
+      sectionSubtitle: "ראו מה הורים אומרים על סיפוראי",
       t1: {
         name: "שרה כהן",
         role: "אמא לילד בן 7",
@@ -1513,7 +1513,7 @@ export default {
     },
     stats: {
       sectionTitle: "סיפוראי במספרים",
-      sectionSubtitle: "הצטרפו לקהילה הגדלה של משפחות יוצרות",
+      sectionSubtitle: "כל מה שצריך כדי ליצור ספרי ילדים קסומים",
       booksCreated: "ספרים נוצרו",
       pagesIllustrated: "עמודים אוירו",
       artStyles: "סגנונות איור",
@@ -1521,8 +1521,8 @@ export default {
       languages: "שפות"
     },
     showcase: {
-      sectionTitle: "ספרים שנוצרו על ידי משפחות כמוכם",
-      sectionSubtitle: "ראו מה משפחות אחרות יצרו עם סיפוראי — כל ספר הוא ייחודי!",
+      sectionTitle: "דוגמאות לספרים מסיפוראי",
+      sectionSubtitle: "ראו דוגמאות לספרים קסומים שאפשר ליצור — כל ספר הוא ייחודי!",
       book1Title: "הגן הסודי של הדרקון",
       book1Genre: "פנטזיה",
       book2Title: "הרפתקה בחלל עם יעל",
