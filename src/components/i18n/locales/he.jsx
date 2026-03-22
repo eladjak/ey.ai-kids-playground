@@ -50,6 +50,31 @@ export default {
       implemented: "יושם"
     }
   },
+  pageTitles: {
+    home: "דף הבית",
+    settings: "הגדרות",
+    library: "ספרייה",
+    createbook: "יצירת ספר",
+    bookview: "צפייה בספר",
+    collaborate: "שיתוף פעולה",
+    feedback: "משוב",
+    community: "קהילה",
+    Home: "דף הבית",
+    Library: "ספרייה",
+    Community: "קהילה",
+    Settings: "הגדרות",
+    BookCreation: "עורך מתקדם",
+    BookView: "צפייה בספר",
+    BookWizard: "יצירת ספר",
+    Feedback: "משוב",
+    CommunityPost: "פרסום קהילה",
+    Characters: "דמויות",
+    CharacterEditor: "עריכת דמות",
+    Profile: "פרופיל",
+    Leaderboard: "טבלת מובילים",
+    StoryIdeas: "רעיונות לסיפורים",
+    Contact: "צור קשר"
+  },
   home: {
     title: "ספרי ילדים קסומים — בלחיצת כפתור",
     subtitle: "תנו לילדים שלכם סיפורים מותאמים אישית עם דמויות שהם אוהבים",
@@ -754,6 +779,7 @@ export default {
     }
   },
   bookView: {
+    defaultDescription: "ספר ילדים מאת סיפוראי",
     loading: "טוען את הספר...",
     bookViewer: "צפייה בספר",
     backToLibrary: "חזרה לספרייה",

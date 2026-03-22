@@ -58,7 +58,22 @@ export default {
     bookview: "Book View",
     collaborate: "Collaborate",
     feedback: "Feedback",
-    community: "Community"
+    community: "Community",
+    Home: "Home",
+    Library: "Library",
+    Community: "Community",
+    Settings: "Settings",
+    BookCreation: "Advanced Editor",
+    BookView: "Book View",
+    BookWizard: "Create Book",
+    Feedback: "Feedback",
+    CommunityPost: "Community Post",
+    Characters: "Characters",
+    CharacterEditor: "Edit Character",
+    Profile: "Profile",
+    Leaderboard: "Leaderboard",
+    StoryIdeas: "Story Ideas",
+    Contact: "Contact"
   },
   home: {
     title: "Create Magical Personalized Children's Books",
@@ -766,6 +781,7 @@ export default {
     }
   },
   bookView: {
+    defaultDescription: "Children's book by Sipurai",
     loading: "Loading book...",
     bookViewer: "Book Viewer",
     backToLibrary: "Back to Library",

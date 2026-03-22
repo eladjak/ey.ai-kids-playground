@@ -109,7 +109,7 @@ export default function BookView() {
 
         updateMeta({
           title: bookData.title,
-          description: bookData.description || 'ספר ילדים מאת Sipurai',
+          description: bookData.description || t("bookView.defaultDescription"),
           image: bookData.cover_image,
           type: 'article',
         });

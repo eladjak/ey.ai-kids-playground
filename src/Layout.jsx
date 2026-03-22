@@ -170,27 +170,8 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const getLocalizedPageName = (pageName) => {
-    if (currentLanguage === "english") return pageName;
-
-    const hebrewPageNames = {
-      "Home": "דף הבית",
-      "Library": "ספרייה",
-      "Community": "קהילה",
-      "Settings": "הגדרות",
-      "BookCreation": "עורך מתקדם",
-      "BookView": "צפייה בספר",
-      "BookWizard": "יצירת ספר",
-      "Feedback": "משוב",
-      "CommunityPost": "פרסום קהילה",
-      "Characters": "דמויות",
-      "CharacterEditor": "עריכת דמות",
-      "Profile": "פרופיל",
-      "Leaderboard": "טבלת מובילים",
-      "StoryIdeas": "רעיונות לסיפורים",
-      "Contact": "צור קשר"
-    };
-
-    return hebrewPageNames[pageName] || pageName;
+    const localized = i18nT(`pageTitles.${pageName}`);
+    return localized !== `pageTitles.${pageName}` ? localized : pageName;
   };
 
   const getCurrentPageFromPath = () => {
