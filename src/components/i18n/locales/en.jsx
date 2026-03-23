@@ -1819,7 +1819,9 @@ export default {
     relatedPostsTitle: "Related Articles",
     newsletterTitle: "Stay in the loop",
     newsletterDesc: "Get our latest articles and tips delivered to your inbox.",
-    subscribeBtn: "Subscribe"
+    subscribeBtn: "Subscribe",
+    metaDescription: "Articles and tips for creating children's books",
+    tableOfContents: "Table of Contents"
   },
   profile: {
     title: "Profile",
@@ -2124,5 +2126,31 @@ export default {
     recommended: "Recommended",
     specialties: "Specialties",
     speed: "Speed"
+  },
+  contact: {
+    title: "Contact Us",
+    subtitle: "We'd love to hear from you. Send us a message and we'll get back to you as soon as possible.",
+    emailLabel: "Direct Email",
+    formTitle: "Send a Message",
+    name: "Full Name",
+    namePlaceholder: "Your name...",
+    email: "Email Address",
+    emailPlaceholder: "your@email.com",
+    subject: "Subject",
+    subjectPlaceholder: "Select a subject...",
+    subjects: {
+      general: "General Question",
+      bug: "Bug Report",
+      billing: "Billing & Subscription",
+      feature: "Feature Request"
+    },
+    message: "Message",
+    messagePlaceholder: "Tell us how we can help...",
+    send: "Send Message",
+    sending: "Sending...",
+    successTitle: "Message Sent!",
+    successText: "Thank you for reaching out. We'll get back to you within 1-2 business days.",
+    sendAnother: "Send Another Message",
+    responseTime: "We typically respond within 1-2 business days."
   }
 };

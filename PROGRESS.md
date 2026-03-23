@@ -1,7 +1,47 @@
 # Sipurai - Progress & Analysis Report
 
-## Status: Active - UX/i18n Overhaul
-## Last Updated: 2026-03-20
+## Status: Active - i18n Migration + Creem Compliance
+## Last Updated: 2026-03-23
+
+---
+
+## Session 37: Creem Compliance + i18n Migration (Mar 23, 2026)
+
+### Creem Compliance Fixes (CRITICAL)
+- [x] Removed TestimonialsSection from landing page (no real customers)
+- [x] Added visible support@sipurai.ai email with Mail icon in footer
+- [x] Compliance copy — removed "families across the country" claims
+
+### i18n Migration (Massive)
+- [x] PreviewEditStep: 30+ hardcoded strings → t() keys
+- [x] TopicStep: heading + subtitle → i18n
+- [x] Community: genre tags (10) + parent approval dialog → i18n
+- [x] Leaderboard: books count + login prompt → i18n
+- [x] Layout: 15 hardcoded page names → i18nT(pageTitles.X) lookup
+- [x] BookView: hardcoded Hebrew meta description → t() key
+- [x] CharacterPicker: placeholder → i18n
+- [x] WizardProgress: aria-labels → i18n
+- [x] SEO lib: language-aware title and meta description
+- [x] pageTitles section added to he.jsx (was missing)
+- [x] Home.jsx: Unsplash URLs → local Gemini images
+- [ ] Contact page: hardcoded translations → i18n (in progress)
+- [ ] Settings page: hardcoded ternaries → i18n (in progress)
+- [ ] Blog/BlogPost: hardcoded Hebrew → i18n (in progress)
+- [ ] RhymeOptions: hardcoded labels → i18n (in progress)
+- [ ] TTSControls, PageStyler, TextOverlay, PageFlip (remaining)
+
+### QA Results
+- Build: clean (exit code 0)
+- Tests: 231/232 pass (1 = Node 22 worker crash, not code)
+- No TODOs, placeholder images, or broken imports
+- All console logs properly guarded with DEV check
+- Hardcoded strings reduced from ~150 to ~30 (in progress)
+
+### Remaining Work
+- [ ] Clerk DNS (clerk.sipurai.ai) — needs Elad's dashboard access
+- [ ] Supabase RLS tightening — needs Clerk JWT integration
+- [ ] Creem re-review submission
+- [ ] Test full book creation flow with logged-in user
 
 ---
 

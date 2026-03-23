@@ -1,29 +1,30 @@
 import React from 'react';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Type, AlignLeft, AlignCenter, AlignRight, AlignJustify } from "lucide-react";
+import { useI18n } from "@/components/i18n/i18nProvider";
 
 export default function PageStyler({ textStyles, setTextStyles, bookLanguage, onApplyStyles }) {
-  const isRTL = bookLanguage === "hebrew" || bookLanguage === "yiddish";
-  
+  const { t, isRTL } = useI18n();
+
   const fonts = [
     { value: "Arial", label: "Arial" },
     { value: "Times New Roman", label: "Times New Roman" },
@@ -32,19 +33,19 @@ export default function PageStyler({ textStyles, setTextStyles, bookLanguage, on
     { value: "Verdana", label: "Verdana" },
     { value: "Tahoma", label: "Tahoma" },
     // Fonts good for Hebrew
-    { value: "David", label: "דוד (David)" },
-    { value: "Miriam", label: "מרים (Miriam)" },
-    { value: "Narkisim", label: "נרקיסים (Narkisim)" },
-    { value: "Guttman Yad", label: "גוטמן יד (Guttman Yad)" }
+    { value: "David", label: t("book.styler.fontDavid") },
+    { value: "Miriam", label: t("book.styler.fontMiriam") },
+    { value: "Narkisim", label: t("book.styler.fontNarkisim") },
+    { value: "Guttman Yad", label: t("book.styler.fontGuttmanYad") }
   ];
-  
+
   const handleChange = (field, value) => {
     setTextStyles(prev => ({
       ...prev,
       [field]: value
     }));
   };
-  
+
   const getExampleText = () => {
     if (bookLanguage === "hebrew") {
       return textStyles.showNikud
@@ -56,7 +57,7 @@ export default function PageStyler({ textStyles, setTextStyles, bookLanguage, on
       return "Once upon a time there was a special story for children";
     }
   };
-  
+
   const getExampleStyle = () => {
     return {
       fontSize: `${textStyles.fontSize}px`,
@@ -68,23 +69,23 @@ export default function PageStyler({ textStyles, setTextStyles, bookLanguage, on
       direction: isRTL ? "rtl" : "ltr"
     };
   };
-  
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <Card>
         <CardHeader>
           <CardTitle>
             <Type className="h-5 w-5 mr-2 inline-block text-purple-500" />
-            Text Styling Options
+            {t("book.styler.title")}
           </CardTitle>
           <CardDescription>
-            Customize how text appears in your book
+            {t("book.styler.subtitle")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
             <div className="flex justify-between">
-              <Label htmlFor="fontSize">Font Size: {textStyles.fontSize}px</Label>
+              <Label htmlFor="fontSize">{t("book.styler.fontSize")}: {textStyles.fontSize}px</Label>
             </div>
             <Slider
               id="fontSize"
@@ -95,15 +96,15 @@ export default function PageStyler({ textStyles, setTextStyles, bookLanguage, on
               onValueChange={(value) => handleChange("fontSize", value[0])}
             />
           </div>
-          
+
           <div className="space-y-2">
-            <Label htmlFor="fontFamily">Font Family</Label>
+            <Label htmlFor="fontFamily">{t("book.styler.fontFamily")}</Label>
             <Select
               value={textStyles.fontFamily}
               onValueChange={(value) => handleChange("fontFamily", value)}
             >
               <SelectTrigger id="fontFamily">
-                <SelectValue placeholder="Select a font" />
+                <SelectValue placeholder={t("book.styler.selectFont")} />
               </SelectTrigger>
               <SelectContent>
                 {fonts.map((font) => (
@@ -114,26 +115,26 @@ export default function PageStyler({ textStyles, setTextStyles, bookLanguage, on
               </SelectContent>
             </Select>
           </div>
-          
+
           <div className="space-y-2">
-            <Label htmlFor="fontWeight">Font Weight</Label>
+            <Label htmlFor="fontWeight">{t("book.styler.fontWeight")}</Label>
             <Select
               value={textStyles.fontWeight}
               onValueChange={(value) => handleChange("fontWeight", value)}
             >
               <SelectTrigger id="fontWeight">
-                <SelectValue placeholder="Select weight" />
+                <SelectValue placeholder={t("book.styler.selectWeight")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="normal">Normal</SelectItem>
-                <SelectItem value="bold">Bold</SelectItem>
-                <SelectItem value="lighter">Light</SelectItem>
+                <SelectItem value="normal">{t("book.styler.weightNormal")}</SelectItem>
+                <SelectItem value="bold">{t("book.styler.weightBold")}</SelectItem>
+                <SelectItem value="lighter">{t("book.styler.weightLight")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          
+
           <div className="space-y-2">
-            <Label htmlFor="textColor">Text Color</Label>
+            <Label htmlFor="textColor">{t("book.styler.textColor")}</Label>
             <div className="flex gap-2">
               <Input
                 type="color"
@@ -142,7 +143,7 @@ export default function PageStyler({ textStyles, setTextStyles, bookLanguage, on
                 onChange={(e) => handleChange("color", e.target.value)}
                 className="w-12 h-10 p-1"
               />
-              <Input 
+              <Input
                 type="text"
                 value={textStyles.color}
                 onChange={(e) => handleChange("color", e.target.value)}
@@ -150,9 +151,9 @@ export default function PageStyler({ textStyles, setTextStyles, bookLanguage, on
               />
             </div>
           </div>
-          
+
           <div className="space-y-2">
-            <Label>Text Alignment</Label>
+            <Label>{t("book.styler.textAlignment")}</Label>
             <div className="flex gap-2">
               <Button
                 type="button"
@@ -188,10 +189,10 @@ export default function PageStyler({ textStyles, setTextStyles, bookLanguage, on
               </Button>
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <div className="flex justify-between">
-              <Label htmlFor="lineHeight">Line Height: {textStyles.lineHeight}</Label>
+              <Label htmlFor="lineHeight">{t("book.styler.lineHeight")}: {textStyles.lineHeight}</Label>
             </div>
             <Slider
               id="lineHeight"
@@ -202,10 +203,10 @@ export default function PageStyler({ textStyles, setTextStyles, bookLanguage, on
               onValueChange={(value) => handleChange("lineHeight", value[0])}
             />
           </div>
-          
+
           {(bookLanguage === "hebrew" || bookLanguage === "yiddish") && (
             <div className="flex items-center justify-between space-x-2">
-              <Label htmlFor="showNikud">Show Nikud (Vowel Points)</Label>
+              <Label htmlFor="showNikud">{t("book.styler.showNikud")}</Label>
               <Switch
                 id="showNikud"
                 checked={textStyles.showNikud}
@@ -216,20 +217,20 @@ export default function PageStyler({ textStyles, setTextStyles, bookLanguage, on
         </CardContent>
         <CardFooter>
           <Button onClick={() => onApplyStyles(textStyles)} className="w-full">
-            Apply Styles
+            {t("book.styler.applyStyles")}
           </Button>
         </CardFooter>
       </Card>
-      
+
       <Card>
         <CardHeader>
-          <CardTitle>Text Preview</CardTitle>
+          <CardTitle>{t("book.styler.preview")}</CardTitle>
           <CardDescription>
-            See how your text will appear in the book
+            {t("book.styler.previewSubtitle")}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div 
+          <div
             className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 min-h-[300px] flex items-center justify-center"
             dir={isRTL ? "rtl" : "ltr"}
           >

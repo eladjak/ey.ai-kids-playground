@@ -39,13 +39,13 @@ function getMockPost(slug) {
   return {
     _id: `mock-${slug}`,
     slug,
-    title: "פוסט לדוגמה",
-    excerpt: "תוכן לדוגמה עבור פוסט זה.",
+    title: null,
+    excerpt: null,
     publishedAt: new Date().toISOString(),
-    authorName: "צוות סיפוראי",
+    authorName: null,
     readingTime: 3,
-    categories: [{ title: "כללי", slug: "general" }],
-    body: "תוכן הפוסט יופיע כאן לאחר חיבור מסד הנתונים של Sanity.",
+    categories: [],
+    body: null,
     relatedPosts: [],
   };
 }
@@ -54,13 +54,13 @@ function getMockPost(slug) {
 // Table of Contents component
 // ---------------------------------------------------------------------------
 
-function TableOfContents({ headings, isRTL }) {
+function TableOfContents({ headings, isRTL, t }) {
   if (!headings || headings.length === 0) return null;
   return (
-    <nav aria-label="תוכן עניינים" className="mb-8 p-4 rounded-xl bg-purple-50 dark:bg-purple-950/30 border border-purple-100 dark:border-purple-900">
+    <nav aria-label={t("blog.tableOfContents")} className="mb-8 p-4 rounded-xl bg-purple-50 dark:bg-purple-950/30 border border-purple-100 dark:border-purple-900">
       <h3 className="font-semibold text-purple-800 dark:text-purple-200 flex items-center gap-2 mb-3 text-sm">
         <List className="h-4 w-4" aria-hidden="true" />
-        {isRTL ? "תוכן עניינים" : "Table of Contents"}
+        {t("blog.tableOfContents")}
       </h3>
       <ul className="space-y-1.5">
         {headings.map((h) => (
@@ -371,7 +371,7 @@ export default function BlogPost() {
 
           {/* Table of contents (only for long portable text content) */}
           {headings.length >= 3 && (
-            <TableOfContents headings={headings} isRTL={isRTL} />
+            <TableOfContents headings={headings} isRTL={isRTL} t={t} />
           )}
 
           {/* Body */}

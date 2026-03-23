@@ -1686,7 +1686,9 @@ export default {
     relatedPostsTitle: "פארבונדענע ארטיקלן",
     newsletterTitle: "בלייבט אקטועל",
     newsletterDesc: "קריגט אונדזערע לעצטיקע ארטיקלן און טיפס גלייך אין אייער בריוו.",
-    subscribeBtn: "אבאנירן"
+    subscribeBtn: "אבאנירן",
+    metaDescription: "ארטיקלן און טיפס פאר שאפן קינדער ביכער",
+    tableOfContents: "אינהאלט"
   },
   profile: {
     title: "פּראָפֿיל",
@@ -1956,5 +1958,31 @@ export default {
     recommended: "רעקאָמענדירט",
     specialties: "ספּעציאַליטעטן",
     speed: "גיכקייט"
+  },
+  contact: {
+    title: "קאָנטאַקטירט אונדז",
+    subtitle: "מיר וועלן שמחה זיין צו הערן פֿון אייך.",
+    emailLabel: "דירעקטע בליצפּאָסט",
+    formTitle: "שיקט אַ מעסעדזש",
+    name: "פֿולן נאָמען",
+    namePlaceholder: "...אייער נאָמען",
+    email: "בליצפּאָסט אַדרעס",
+    emailPlaceholder: "your@email.com",
+    subject: "טעמע",
+    subjectPlaceholder: "...קלויבט אַ טעמע",
+    subjects: {
+      general: "אַלגעמיינע פֿראַגע",
+      bug: "פעלער באַריכט",
+      billing: "צאָלונג",
+      feature: "בקשה"
+    },
+    message: "מעסעדזש",
+    messagePlaceholder: "...דערציילט אונדז ווי מיר קענען העלפֿן",
+    send: "שיקן מעסעדזש",
+    sending: "...שיקן",
+    successTitle: "!מעסעדזש געשיקט",
+    successText: "אַ דאַנק פֿאַר זיך צו ווענדן. מיר וועלן ענטפֿערן אין 1-2 אַרבעטס טעג.",
+    sendAnother: "שיקן נאָך אַ מעסעדזש",
+    responseTime: "מיר ענטפֿערן בדרך כלל אין 1-2 אַרבעטס טעג."
   }
 };

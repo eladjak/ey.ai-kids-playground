@@ -173,7 +173,7 @@ export default function Blog() {
   React.useEffect(() => {
     updateMeta({
       title: t("blog.title"),
-      description: 'מאמרים וטיפים ליצירת ספרי ילדים',
+      description: t("blog.metaDescription"),
     });
     return () => resetMeta();
   }, [t]);

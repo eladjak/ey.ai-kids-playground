@@ -90,6 +90,7 @@ function SettingCard({ title, icon, children, isRTL, className = "" }) {
 }
 
 function BillingTab({ currentPlan, userEmail, isRTL, toast }) {
+  const { t } = useI18n();
   const [upgrading, setUpgrading] = useState(null); // planId being upgraded
   const lang = isRTL ? 'he' : 'en';
 
@@ -99,10 +100,8 @@ function BillingTab({ currentPlan, userEmail, isRTL, toast }) {
       await openCheckout(planId, userEmail);
     } catch {
       toast({
-        title: isRTL ? 'שגיאה' : 'Error',
-        description: isRTL
-          ? 'לא ניתן לפתוח את דף התשלום. נסו שוב.'
-          : 'Could not open checkout. Please try again.',
+        title: t('settings.billing.checkoutError'),
+        description: t('settings.billing.checkoutErrorDesc'),
         variant: 'destructive',
       });
     } finally {
@@ -115,13 +114,13 @@ function BillingTab({ currentPlan, userEmail, isRTL, toast }) {
 
       {/* Current plan summary */}
       <SettingCard
-        title={isRTL ? 'מנוי נוכחי' : 'Current Plan'}
+        title={t('settings.billing.currentPlanLabel')}
         icon={<CreditCard className="h-5 w-5 text-purple-500" />}
         isRTL={isRTL}
       >
         <div className={`flex items-center gap-3 mt-2 ${isRTL ? "flex-row-reverse" : ""}`}>
           <Badge className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-0 px-3 py-1 text-sm shadow-md">
-            {PLANS[currentPlan]?.name[lang] || (isRTL ? 'חינמי' : 'Free')}
+            {PLANS[currentPlan]?.name[lang] || t('settings.billing.free')}
           </Badge>
           {currentPlan !== 'free' && (
             <span className="text-sm text-gray-500">
@@ -147,7 +146,7 @@ function BillingTab({ currentPlan, userEmail, isRTL, toast }) {
             >
               {planDef.popular && (
                 <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-center text-xs py-1 font-semibold">
-                  {isRTL ? 'הכי פופולרי' : 'Most Popular'}
+                  {t('settings.billing.mostPopular')}
                 </div>
               )}
               <CardHeader className={`${planDef.popular ? 'pt-8' : 'pt-5'} px-5 pb-3`}>
@@ -156,7 +155,7 @@ function BillingTab({ currentPlan, userEmail, isRTL, toast }) {
                   {planDef.name[lang]}
                   {isCurrent && (
                     <Badge className="bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300 border-0 text-xs">
-                      {isRTL ? 'נוכחי' : 'Active'}
+                      {t('settings.billing.activeBadge')}
                     </Badge>
                   )}
                 </CardTitle>
@@ -175,7 +174,7 @@ function BillingTab({ currentPlan, userEmail, isRTL, toast }) {
                 </ul>
                 {isCurrent ? (
                   <Button className="w-full rounded-xl" variant="outline" disabled>
-                    {isRTL ? 'המנוי הנוכחי' : 'Current Plan'}
+                    {t('settings.billing.currentPlanBtn')}
                   </Button>
                 ) : isPaid ? (
                   <Button
@@ -186,12 +185,12 @@ function BillingTab({ currentPlan, userEmail, isRTL, toast }) {
                     {isLoadingThis ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                      isRTL ? 'שדרג עכשיו' : 'Upgrade Now'
+                      t('settings.billing.upgradeNow')
                     )}
                   </Button>
                 ) : (
                   <Button className="w-full rounded-xl" variant="outline" disabled>
-                    {isRTL ? 'חינמי' : 'Free'}
+                    {t('settings.billing.free')}
                   </Button>
                 )}
               </CardContent>
@@ -231,10 +230,8 @@ export default function Settings() {
 
     if (checkoutStatus === 'success') {
       toast({
-        title: isRTL ? 'שדרוג הצליח!' : 'Upgrade Successful!',
-        description: isRTL
-          ? `ברכות! שודרגת לתוכנית ${upgradedPlan || 'פרימיום'}`
-          : `Congratulations! You've been upgraded to the ${upgradedPlan || 'premium'} plan.`,
+        title: t('settings.upgradeSuccess'),
+        description: t('settings.upgradeSuccessDesc').replace('{plan}', upgradedPlan || (isRTL ? 'פרימיום' : 'premium')),
       });
       refetchSubscription();
       window.history.replaceState({}, '', window.location.pathname);
@@ -269,8 +266,8 @@ export default function Settings() {
     } catch (error) {
       toast({
         variant: "destructive",
-        title: isRTL ? "שגיאה בטעינת הגדרות" : "Failed to load settings",
-        description: isRTL ? "לא ניתן לטעון את ההגדרות שלך. נסה לרענן את הדף." : "Could not load your settings. Please try refreshing the page.",
+        title: t("settings.errorLoadTitle"),
+        description: t("settings.errorLoadDesc"),
       });
     } finally {
       setIsLoading(false);
@@ -298,15 +295,15 @@ export default function Settings() {
       }
 
       toast({
-        title: isRTL ? "ההגדרות נשמרו" : "Settings saved",
-        description: isRTL ? "ההגדרות שלך עודכנו בהצלחה." : "Your settings have been updated successfully.",
+        title: t("settings.savedTitle"),
+        description: t("settings.savedDesc"),
         className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100",
       });
     } catch (error) {
       toast({
         variant: "destructive",
-        title: isRTL ? "שגיאה בשמירת הגדרות" : "Failed to save settings",
-        description: isRTL ? "לא ניתן לשמור את ההגדרות. נסה שוב." : "Could not save your settings. Please try again.",
+        title: t("settings.errorSaveTitle"),
+        description: t("settings.errorSaveDesc"),
       });
     } finally {
       setIsSaving(false);
@@ -322,10 +319,8 @@ export default function Settings() {
     window.location.href = "/";
   };
 
-  const logoutConfirmTitle = isRTL ? "האם אתה בטוח?" : "Are you sure you want to log out?";
-  const logoutConfirmDesc = isRTL
-    ? "תצא מהחשבון שלך. תוכל להתחבר מחדש בכל עת."
-    : "You will be signed out of your account. You can sign back in at any time.";
+  const logoutConfirmTitle = t("settings.logoutConfirmTitle");
+  const logoutConfirmDesc = t("settings.logoutConfirmDesc");
 
   const TAB_CONFIG = [
     { value: "general", icon: <SettingsIcon className="h-4 w-4" />, label: t("settings.tabs.general") },
@@ -489,10 +484,10 @@ export default function Settings() {
                   <Label className={`text-xs font-semibold text-gray-500 uppercase tracking-wide ${isRTL ? "text-right block" : ""}`}>{t("settings.audioSpeed")}</Label>
                   <div className={`flex gap-2 flex-wrap ${isRTL ? "flex-row-reverse" : ""}`}>
                     {[
-                      { value: "0.75", label: isRTL ? "איטי" : "Slow" },
-                      { value: "1", label: isRTL ? "רגיל" : "Normal" },
-                      { value: "1.25", label: isRTL ? "מהיר" : "Fast" },
-                      { value: "1.5", label: isRTL ? "מהיר מאוד" : "Very Fast" },
+                      { value: "0.75", label: t("settings.audioSpeeds.slow") },
+                      { value: "1", label: t("settings.audioSpeeds.normal") },
+                      { value: "1.25", label: t("settings.audioSpeeds.fast") },
+                      { value: "1.5", label: t("settings.audioSpeeds.veryFast") },
                     ].map(opt => (
                       <button
                         key={opt.value}
@@ -551,7 +546,7 @@ export default function Settings() {
                 <div className={`flex items-center justify-between gap-4 ${isRTL ? "flex-row-reverse" : ""}`}>
                   <div className={`${isRTL ? "text-right" : "text-left"}`}>
                     <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("settings.darkMode")}</p>
-                    <p className="text-xs text-gray-400">{tempSettings.dark_mode ? (isRTL ? "מצב לילה פעיל" : "Dark mode on") : (isRTL ? "מצב יום פעיל" : "Light mode on")}</p>
+                    <p className="text-xs text-gray-400">{tempSettings.dark_mode ? t("settings.appearance.darkModeOn") : t("settings.appearance.darkModeOff")}</p>
                   </div>
                   <button
                     onClick={() => updateTempSetting("dark_mode", !tempSettings.dark_mode)}
@@ -698,9 +693,9 @@ export default function Settings() {
                       <AlertDialogDescription>{logoutConfirmDesc}</AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className={isRTL ? "flex-row-reverse" : ""}>
-                      <AlertDialogCancel>{isRTL ? "ביטול" : "Cancel"}</AlertDialogCancel>
+                      <AlertDialogCancel>{t("settings.logoutCancel")}</AlertDialogCancel>
                       <AlertDialogAction onClick={handleLogout} className="bg-red-600 hover:bg-red-700 text-white">
-                        {isRTL ? "יציאה" : "Log out"}
+                        {t("settings.logoutConfirmBtn")}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>

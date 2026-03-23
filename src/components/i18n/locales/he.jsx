@@ -1816,7 +1816,9 @@ export default {
     relatedPostsTitle: "מאמרים קשורים",
     newsletterTitle: "הישארו מעודכנים",
     newsletterDesc: "קבלו את המאמרים והטיפים האחרונים שלנו ישירות לתיבת הדואר.",
-    subscribeBtn: "הירשם"
+    subscribeBtn: "הירשם",
+    metaDescription: "מאמרים וטיפים ליצירת ספרי ילדים",
+    tableOfContents: "תוכן עניינים"
   },
   profile: {
     title: "פרופיל",
@@ -2121,5 +2123,31 @@ export default {
     recommended: "מומלץ",
     specialties: "התמחויות",
     speed: "מהירות"
+  },
+  contact: {
+    title: "צור קשר",
+    subtitle: "נשמח לשמוע מכם. שלחו לנו הודעה ונחזור אליכם בהקדם.",
+    emailLabel: "אימייל ישיר",
+    formTitle: "שליחת הודעה",
+    name: "שם מלא",
+    namePlaceholder: "...השם שלך",
+    email: "כתובת אימייל",
+    emailPlaceholder: "your@email.com",
+    subject: "נושא",
+    subjectPlaceholder: "...בחרו נושא",
+    subjects: {
+      general: "שאלה כללית",
+      bug: "דיווח על תקלה",
+      billing: "חיוב ומנוי",
+      feature: "בקשת פיצ'ר"
+    },
+    message: "הודעה",
+    messagePlaceholder: "...ספרו לנו כיצד נוכל לעזור",
+    send: "שליחת הודעה",
+    sending: "...שולח",
+    successTitle: "!ההודעה נשלחה",
+    successText: "תודה על הפנייה. נחזור אליכם תוך 1-2 ימי עסקים.",
+    sendAnother: "שליחת הודעה נוספת",
+    responseTime: "אנו בדרך כלל עונים תוך 1-2 ימי עסקים."
   }
 };

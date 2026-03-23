@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Play, Pause, Square, Minus, Plus } from "lucide-react";
+import { useI18n } from "@/components/i18n/i18nProvider";
 
 /**
  * TTSControls - Text-to-Speech play/pause/stop controls with speed adjustment.
@@ -14,14 +15,15 @@ export default function TTSControls({
   onResume,
   onStop,
   onRateChange,
-  isRTL,
-  isHebrew
+  isRTL
 }) {
+  const { t } = useI18n();
+
   const speedLabel = rate === 0.5
-    ? (isHebrew ? "איטי" : "Slow")
+    ? t("bookView.tts.slow")
     : rate === 1
-      ? (isHebrew ? "רגיל" : "Normal")
-      : (isHebrew ? "מהיר" : "Fast");
+      ? t("bookView.tts.normal")
+      : t("bookView.tts.fast");
 
   return (
     <div className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
@@ -32,10 +34,10 @@ export default function TTSControls({
           size="sm"
           onClick={onPlay}
           className="gap-1.5"
-          aria-label={isHebrew ? "הקרא בקול" : "Read aloud"}
+          aria-label={t("bookView.tts.readAloud")}
         >
           <Play className="h-3.5 w-3.5" aria-hidden="true" />
-          <span className="text-xs">{isHebrew ? "הקרא" : "Read"}</span>
+          <span className="text-xs">{t("bookView.tts.read")}</span>
         </Button>
       ) : isPaused ? (
         <Button
@@ -43,10 +45,10 @@ export default function TTSControls({
           size="sm"
           onClick={onResume}
           className="gap-1.5"
-          aria-label={isHebrew ? "המשך" : "Resume"}
+          aria-label={t("bookView.tts.resume")}
         >
           <Play className="h-3.5 w-3.5" aria-hidden="true" />
-          <span className="text-xs">{isHebrew ? "המשך" : "Resume"}</span>
+          <span className="text-xs">{t("bookView.tts.resume")}</span>
         </Button>
       ) : (
         <Button
@@ -54,10 +56,10 @@ export default function TTSControls({
           size="sm"
           onClick={onPause}
           className="gap-1.5"
-          aria-label={isHebrew ? "השהה" : "Pause"}
+          aria-label={t("bookView.tts.pause")}
         >
           <Pause className="h-3.5 w-3.5" aria-hidden="true" />
-          <span className="text-xs">{isHebrew ? "השהה" : "Pause"}</span>
+          <span className="text-xs">{t("bookView.tts.pause")}</span>
         </Button>
       )}
 
@@ -67,7 +69,7 @@ export default function TTSControls({
           variant="ghost"
           size="sm"
           onClick={onStop}
-          aria-label={isHebrew ? "עצור" : "Stop"}
+          aria-label={t("bookView.tts.stop")}
         >
           <Square className="h-3.5 w-3.5" aria-hidden="true" />
         </Button>
@@ -81,7 +83,7 @@ export default function TTSControls({
           className="h-7 w-7"
           onClick={() => onRateChange(Math.max(0.5, rate - 0.25))}
           disabled={rate <= 0.5}
-          aria-label={isHebrew ? "האט" : "Slower"}
+          aria-label={t("bookView.tts.slower")}
         >
           <Minus className="h-3 w-3" aria-hidden="true" />
         </Button>
@@ -94,7 +96,7 @@ export default function TTSControls({
           className="h-7 w-7"
           onClick={() => onRateChange(Math.min(2, rate + 0.25))}
           disabled={rate >= 2}
-          aria-label={isHebrew ? "מהר" : "Faster"}
+          aria-label={t("bookView.tts.faster")}
         >
           <Plus className="h-3 w-3" aria-hidden="true" />
         </Button>
