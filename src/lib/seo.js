@@ -4,7 +4,12 @@
  */
 export function updateMeta({ title, description, image, url, type = 'website', locale = 'he_IL' }) {
   // Set document title
-  document.title = title ? `${title} | סיפוראי` : 'סיפוראי — ספרי ילדים מותאמים אישית עם AI';
+  const lang = localStorage.getItem('language') || 'hebrew';
+  const siteName = lang === 'hebrew' ? 'סיפוראי' : 'Sipurai';
+  const defaultTitle = lang === 'hebrew'
+    ? 'סיפוראי — ספרי ילדים מותאמים אישית עם AI'
+    : 'Sipurai — Personalized AI Children\'s Books';
+  document.title = title ? `${title} | ${siteName}` : defaultTitle;
 
   // Helper to set/create meta tag
   const setMeta = (property, content) => {
@@ -40,6 +45,8 @@ export function updateMeta({ title, description, image, url, type = 'website', l
 export function resetMeta() {
   updateMeta({
     title: '',
-    description: 'סיפוראי — יוצרים ספרי ילדים מותאמים אישית עם AI. בחרו דמויות, סגנון איור ושפה — וקבלו ספר שלם עם סיפור ואיורים. בעברית, אנגלית ויידיש.',
+    description: (localStorage.getItem('language') || 'hebrew') === 'hebrew'
+      ? 'סיפוראי — יוצרים ספרי ילדים מותאמים אישית עם AI. בחרו דמויות, סגנון איור ושפה — וקבלו ספר שלם עם סיפור ואיורים.'
+      : 'Sipurai — Create personalized AI children\'s books. Choose characters, art style, and language to get a complete book with story and illustrations.',
   });
 }
