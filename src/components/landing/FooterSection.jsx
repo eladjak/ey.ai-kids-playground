@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, Heart, Twitter, Instagram, Facebook, Youtube } from 'lucide-react';
+import { BookOpen, Heart, Mail, Twitter, Instagram, Facebook, Youtube } from 'lucide-react';
 import { useI18n } from '@/components/i18n/i18nProvider';
 
 const FooterSection = () => {
@@ -31,6 +31,13 @@ const FooterSection = () => {
             <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
               {t('landing.footer.description')}
             </p>
+            <a
+              href="mailto:support@sipurai.ai"
+              className="inline-flex items-center gap-2 mt-3 text-sm text-purple-400 hover:text-purple-300 transition-colors"
+            >
+              <Mail className="h-4 w-4" />
+              support@sipurai.ai
+            </a>
           </div>
 
           {/* Links */}

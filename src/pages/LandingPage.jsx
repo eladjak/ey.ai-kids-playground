@@ -7,7 +7,6 @@ import FeaturesSection from '@/components/landing/FeaturesSection';
 import ShowcaseSection from '@/components/landing/ShowcaseSection';
 import WhyUsSection from '@/components/landing/WhyUsSection';
 import HowItWorksSection from '@/components/landing/HowItWorksSection';
-import TestimonialsSection from '@/components/landing/TestimonialsSection';
 import PricingSection from '@/components/landing/PricingSection';
 import FAQSection from '@/components/landing/FAQSection';
 import CTASection from '@/components/landing/CTASection';
@@ -34,7 +33,6 @@ const LandingPage = () => {
       <ShowcaseSection />
       <WhyUsSection />
       <HowItWorksSection />
-      <TestimonialsSection />
       <PricingSection />
       <FAQSection />
       <CTASection />
