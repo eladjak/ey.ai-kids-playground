@@ -37,11 +37,17 @@
 - All console logs properly guarded with DEV check
 - Hardcoded strings reduced from ~150 to ~30 (in progress)
 
+### Infrastructure (All Done via Chrome MCP!)
+- [x] Clerk DNS — **Verified + SSL Issued** (was already configured)
+- [x] Clerk + Supabase Third-Party Auth — **ENABLED** (connected clerk.sipurai.ai)
+- [x] Supabase RLS — **TIGHTENED** (35 new policies replacing 44 open ones)
+- [x] Google OAuth — **Custom credentials configured** (Client ID + Secret from GCP)
+- [x] Creem re-review — submitted by Elad
+- [x] Visual QA — all landing page sections verified via Chrome
+
 ### Remaining Work
-- [ ] Clerk DNS (clerk.sipurai.ai) — needs Elad's dashboard access
-- [ ] Supabase RLS tightening — needs Clerk JWT integration
-- [ ] Creem re-review submission
-- [ ] Test full book creation flow with logged-in user
+- [ ] Test full book creation flow end-to-end with logged-in user
+- [ ] Verify RLS policies work correctly with Clerk user IDs (created_by field match)
 
 ---
 
