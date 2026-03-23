@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Trash2, UserPlus, User, BookOpen, Star, Check, Shuffle, Wand2 } from "lucide-react";
 import useCharacterSelector from "@/hooks/useCharacterSelector";
+import { useI18n } from "@/components/i18n/i18nProvider";
 
 const CHARACTER_TEMPLATES = [
   {
@@ -160,6 +161,7 @@ export default function CharacterPicker({
   isRTL,
   language
 }) {
+  const { t } = useI18n();
   const isHebrew = language === "hebrew";
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [customCharacterName, setCustomCharacterName] = useState("");
@@ -507,7 +509,7 @@ export default function CharacterPicker({
                   id="custom-character-name"
                   value={customCharacterName}
                   onChange={(e) => setCustomCharacterName(e.target.value)}
-                  placeholder={isHebrew ? "למשל: דני הדובי" : "e.g. Danny the Bear"}
+                  placeholder={t("wizard.characters.namePlaceholder")}
                   dir={isRTL ? "rtl" : "ltr"}
                   maxLength={50}
                   className="rounded-xl"

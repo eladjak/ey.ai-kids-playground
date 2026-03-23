@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Check, BookOpen, Users, Eye, Rocket } from "lucide-react";
+import { useI18n } from "@/components/i18n/i18nProvider";
 
 const STEP_ICONS = [BookOpen, Users, Eye, Rocket];
 
@@ -9,12 +10,13 @@ const STEP_ICONS = [BookOpen, Users, Eye, Rocket];
  * Features gradient active state, step icons, and animated progress fill.
  */
 export default function WizardProgress({ steps, currentStep, onStepClick, isRTL }) {
+  const { t } = useI18n();
   return (
     <div
       className="mb-8 px-2"
       dir={isRTL ? "rtl" : "ltr"}
       role="navigation"
-      aria-label={isRTL ? "שלבי יצירת הספר" : "Book creation steps"}
+      aria-label={t("wizard.title")}
     >
       <div className={`flex items-start justify-between ${isRTL ? "flex-row-reverse" : "flex-row"}`}>
         {steps.map((step, index) => {
@@ -45,7 +47,7 @@ export default function WizardProgress({ steps, currentStep, onStepClick, isRTL 
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.08 }}
-                  aria-label={`${step.title} - ${isCompleted ? (isRTL ? "הושלם" : "completed") : isActive ? (isRTL ? "שלב נוכחי" : "current step") : (isRTL ? "טרם הושלם" : "not completed")}`}
+                  aria-label={`${step.title} - ${isCompleted ? t("wizard.stepStatus.completed") : isActive ? t("wizard.stepStatus.current") : t("wizard.stepStatus.notCompleted")}`}
                   aria-current={isActive ? "step" : undefined}
                 >
                   {isCompleted ? (

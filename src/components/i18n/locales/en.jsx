@@ -714,6 +714,8 @@ export default {
       description: "Customize how the application looks",
       darkMode: "Dark Mode",
       darkModeDescription: "Switch to dark theme",
+      darkModeOn: "Dark mode on",
+      darkModeOff: "Light mode on",
       textDensity: "Text Density",
       density: {
         low: "Low",
@@ -757,7 +759,33 @@ export default {
       title: "Billing & Subscription",
       desc: "View your current plan, usage, and billing history.",
       comingSoon: "Billing management is coming soon.",
-      upgradePlan: "Upgrade Plan"
+      upgradePlan: "Upgrade Plan",
+      currentPlanLabel: "Current Plan",
+      free: "Free",
+      mostPopular: "Most Popular",
+      activeBadge: "Active",
+      currentPlanBtn: "Current Plan",
+      upgradeNow: "Upgrade Now",
+      checkoutError: "Error",
+      checkoutErrorDesc: "Could not open checkout. Please try again."
+    },
+    upgradeSuccess: "Upgrade Successful!",
+    upgradeSuccessDesc: "Congratulations! You've been upgraded to the {plan} plan.",
+    errorLoadTitle: "Failed to load settings",
+    errorLoadDesc: "Could not load your settings. Please try refreshing the page.",
+    savedTitle: "Settings saved",
+    savedDesc: "Your settings have been updated successfully.",
+    errorSaveTitle: "Failed to save settings",
+    errorSaveDesc: "Could not save your settings. Please try again.",
+    logoutConfirmTitle: "Are you sure you want to log out?",
+    logoutConfirmDesc: "You will be signed out of your account. You can sign back in at any time.",
+    logoutCancel: "Cancel",
+    logoutConfirmBtn: "Log out",
+    audioSpeeds: {
+      slow: "Slow",
+      normal: "Normal",
+      fast: "Fast",
+      veryFast: "Very Fast"
     },
     accessibility: {
       title: "Accessibility",
@@ -812,6 +840,22 @@ export default {
       title: "Book not found",
       description: "The book you're looking for might have been removed or doesn't exist.",
       goToLibrary: "Go to Library"
+    },
+    tts: {
+      readAloud: "Read aloud",
+      read: "Read",
+      resume: "Resume",
+      pause: "Pause",
+      stop: "Stop",
+      slower: "Slower",
+      faster: "Faster",
+      slow: "Slow",
+      normal: "Normal",
+      fast: "Fast"
+    },
+    navigation: {
+      previous: "Previous",
+      next: "Next"
     }
   },
   wizard: {
@@ -824,6 +868,11 @@ export default {
       characters: "Choose Characters",
       preview: "Preview & Edit",
       create: "Create Book"
+    },
+    stepStatus: {
+      completed: "completed",
+      current: "current step",
+      notCompleted: "not completed"
     },
     topic: {
       title: "What's the story about?",
@@ -838,7 +887,8 @@ export default {
     characters: {
       title: "Choose your characters",
       subtitle: "Select characters for your story",
-      addMore: "Add More Characters"
+      addMore: "Add More Characters",
+      namePlaceholder: "e.g. Danny the Bear"
     },
     preview: {
       title: "Review & edit your story",
@@ -1991,7 +2041,30 @@ export default {
   },
   book: {
     addCharacter: "Add Character",
-    addNikud: "Add Nikud (Vowels)"
+    addNikud: "Add Nikud (Vowels)",
+    styler: {
+      title: "Text Styling Options",
+      subtitle: "Customize how text appears in your book",
+      fontSize: "Font Size",
+      fontFamily: "Font Family",
+      selectFont: "Select a font",
+      fontWeight: "Font Weight",
+      weightNormal: "Normal",
+      weightBold: "Bold",
+      weightLight: "Light",
+      textColor: "Text Color",
+      textAlignment: "Text Alignment",
+      lineHeight: "Line Height",
+      showNikud: "Show Nikud (Vowel Points)",
+      applyStyles: "Apply Styles",
+      preview: "Text Preview",
+      previewSubtitle: "See how your text will appear in the book",
+      selectWeight: "Select weight",
+      fontDavid: "דוד (David)",
+      fontMiriam: "מרים (Miriam)",
+      fontNarkisim: "נרקיסים (Narkisim)",
+      fontGuttmanYad: "גוטמן יד (Guttman Yad)"
+    }
   },
   rhyme: {
     complexity: {

@@ -712,6 +712,8 @@ export default {
       description: "התאם כיצד האפליקציה נראית",
       darkMode: "מצב כהה",
       darkModeDescription: "עבור לערכת נושא כהה",
+      darkModeOn: "מצב לילה פעיל",
+      darkModeOff: "מצב יום פעיל",
       textDensity: "צפיפות טקסט",
       density: {
         low: "נמוכה",
@@ -755,7 +757,33 @@ export default {
       title: "חיובים ומנוי",
       desc: "צפה בחבילה הנוכחית, שימוש, והיסטוריית חיובים.",
       comingSoon: "ניהול חיובים יתווסף בקרוב.",
-      upgradePlan: "שדרג חבילה"
+      upgradePlan: "שדרג חבילה",
+      currentPlanLabel: "מנוי נוכחי",
+      free: "חינמי",
+      mostPopular: "הכי פופולרי",
+      activeBadge: "נוכחי",
+      currentPlanBtn: "המנוי הנוכחי",
+      upgradeNow: "שדרג עכשיו",
+      checkoutError: "שגיאה",
+      checkoutErrorDesc: "לא ניתן לפתוח את דף התשלום. נסו שוב."
+    },
+    upgradeSuccess: "שדרוג הצליח!",
+    upgradeSuccessDesc: "ברכות! שודרגת לתוכנית {plan}",
+    errorLoadTitle: "שגיאה בטעינת הגדרות",
+    errorLoadDesc: "לא ניתן לטעון את ההגדרות שלך. נסה לרענן את הדף.",
+    savedTitle: "ההגדרות נשמרו",
+    savedDesc: "ההגדרות שלך עודכנו בהצלחה.",
+    errorSaveTitle: "שגיאה בשמירת הגדרות",
+    errorSaveDesc: "לא ניתן לשמור את ההגדרות. נסה שוב.",
+    logoutConfirmTitle: "האם אתה בטוח?",
+    logoutConfirmDesc: "תצא מהחשבון שלך. תוכל להתחבר מחדש בכל עת.",
+    logoutCancel: "ביטול",
+    logoutConfirmBtn: "יציאה",
+    audioSpeeds: {
+      slow: "איטי",
+      normal: "רגיל",
+      fast: "מהיר",
+      veryFast: "מהיר מאוד"
     },
     accessibility: {
       title: "נגישות",
@@ -810,6 +838,22 @@ export default {
       title: "ספר לא נמצא",
       description: "הספר שאתה מחפש אולי הוסר או לא קיים.",
       goToLibrary: "עבור לספרייה"
+    },
+    tts: {
+      readAloud: "הקרא בקול",
+      read: "הקרא",
+      resume: "המשך",
+      pause: "השהה",
+      stop: "עצור",
+      slower: "האט",
+      faster: "מהר",
+      slow: "איטי",
+      normal: "רגיל",
+      fast: "מהיר"
+    },
+    navigation: {
+      previous: "הקודם",
+      next: "הבא"
     }
   },
   wizard: {
@@ -822,6 +866,11 @@ export default {
       characters: "בחר דמויות",
       preview: "תצוגה מקדימה ועריכה",
       create: "צור ספר"
+    },
+    stepStatus: {
+      completed: "הושלם",
+      current: "שלב נוכחי",
+      notCompleted: "טרם הושלם"
     },
     topic: {
       title: "על מה יהיה הסיפור?",
@@ -836,7 +885,8 @@ export default {
     characters: {
       title: "בחר את הדמויות שלך",
       subtitle: "בחר דמויות לסיפור שלך",
-      addMore: "הוסף עוד דמויות"
+      addMore: "הוסף עוד דמויות",
+      namePlaceholder: "למשל: דני הדובי"
     },
     preview: {
       title: "בדוק ועדכן את הסיפור",
@@ -1988,7 +2038,30 @@ export default {
   },
   book: {
     addCharacter: "הוסף דמות",
-    addNikud: "הוסף ניקוד"
+    addNikud: "הוסף ניקוד",
+    styler: {
+      title: "אפשרויות עיצוב טקסט",
+      subtitle: "התאם כיצד הטקסט יופיע בספר",
+      fontSize: "גודל גופן",
+      fontFamily: "משפחת גופן",
+      selectFont: "בחר גופן",
+      fontWeight: "עובי גופן",
+      weightNormal: "רגיל",
+      weightBold: "מודגש",
+      weightLight: "דק",
+      textColor: "צבע טקסט",
+      textAlignment: "יישור טקסט",
+      lineHeight: "גובה שורה",
+      showNikud: "הצג ניקוד",
+      applyStyles: "החל עיצוב",
+      preview: "תצוגה מקדימה",
+      previewSubtitle: "כך הטקסט יופיע בספר",
+      selectWeight: "בחר עובי",
+      fontDavid: "דוד (David)",
+      fontMiriam: "מרים (Miriam)",
+      fontNarkisim: "נרקיסים (Narkisim)",
+      fontGuttmanYad: "גוטמן יד (Guttman Yad)"
+    }
   },
   rhyme: {
     complexity: {
