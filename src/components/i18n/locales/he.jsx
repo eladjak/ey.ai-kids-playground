@@ -598,13 +598,19 @@ export default {
       adventure: "הרפתקאות",
       fantasy: "פנטזיה",
       education: "חינוך",
+      educational: "חינוכי",
       animals: "חיות",
       family: "משפחה",
       friendship: "חברות",
       science: "מדע",
       magic: "קסם",
       nature: "טבע",
-      values: "ערכים"
+      values: "ערכים",
+      bedtime: "סיפור לפני השינה",
+      fairy_tale: "אגדה",
+      sports: "ספורט",
+      humor: "הומור",
+      custom: "מותאם אישית"
     },
     parentApproval: "אישור הורה נדרש",
     parentApprovalDesc: "כדי לפרסם ספר בקהילה, יש להזין את קוד ה-PIN של ההורה.",
@@ -2100,7 +2106,9 @@ export default {
     subtitle: "הוסף שכבות טקסט לאיורים",
     text: "טקסט",
     textAlign: "יישור",
-    title: "שכבת טקסט"
+    title: "שכבת טקסט",
+    sampleText: "טקסט לדוגמה",
+    newText: "טקסט חדש"
   },
   stats: {
     badges: "תגים",

@@ -600,13 +600,19 @@ export default {
       adventure: "Adventure",
       fantasy: "Fantasy",
       education: "Education",
+      educational: "Educational",
       animals: "Animals",
       family: "Family",
       friendship: "Friendship",
       science: "Science",
       magic: "Magic",
       nature: "Nature",
-      values: "Values"
+      values: "Values",
+      bedtime: "Bedtime",
+      fairy_tale: "Fairy Tale",
+      sports: "Sports",
+      humor: "Humor",
+      custom: "Personalized"
     },
     parentApproval: "Parental Approval Required",
     parentApprovalDesc: "To publish a book to the community, please enter the parental PIN.",
@@ -2103,7 +2109,9 @@ export default {
     subtitle: "Add text overlays to your illustrations",
     text: "Text",
     textAlign: "Alignment",
-    title: "Text Overlay"
+    title: "Text Overlay",
+    sampleText: "Sample Text",
+    newText: "New Text"
   },
   stats: {
     badges: "Badges",

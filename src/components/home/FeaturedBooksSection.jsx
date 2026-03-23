@@ -10,19 +10,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
 
-function translateGenre(genre, isRTL) {
-  const genreTranslations = {
-    "adventure": isRTL ? "הרפתקאה" : "Adventure",
-    "fairy_tale": isRTL ? "אגדה" : "Fairy Tale",
-    "educational": isRTL ? "חינוכי" : "Educational",
-    "bedtime": isRTL ? "סיפור לפני השינה" : "Bedtime",
-    "fantasy": isRTL ? "פנטזיה" : "Fantasy",
-    "science": isRTL ? "מדע" : "Science",
-    "animals": isRTL ? "חיות" : "Animals",
-    "sports": isRTL ? "ספורט" : "Sports",
-    "custom": isRTL ? "נוצר בהפתעה!" : "Personalized"
-  };
-  return genreTranslations[genre] || (isRTL ? "מותאם אישית" : genre);
+function translateGenre(genre, t) {
+  const translated = t(`community.genreTags.${genre}`);
+  return translated !== `community.genreTags.${genre}` ? translated : genre;
 }
 
 function BookCardItem({ book, isRTL, t, index = 0 }) {
@@ -56,7 +46,7 @@ function BookCardItem({ book, isRTL, t, index = 0 }) {
             <div className={`flex gap-1.5 flex-wrap ${isRTL ? "flex-row-reverse" : ""}`}>
               {book.genre && (
                 <Badge className="text-xs bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 border-0 capitalize">
-                  {translateGenre(book.genre, isRTL)}
+                  {translateGenre(book.genre, t)}
                 </Badge>
               )}
               {book.age_range && (
@@ -172,7 +162,7 @@ const FeaturedBooksSection = React.memo(function FeaturedBooksSection({ featured
                         <div className="flex gap-1.5">
                           {book.genre && (
                             <Badge className="text-xs bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 border-0 capitalize">
-                              {translateGenre(book.genre, isRTL)}
+                              {translateGenre(book.genre, t)}
                             </Badge>
                           )}
                         </div>
