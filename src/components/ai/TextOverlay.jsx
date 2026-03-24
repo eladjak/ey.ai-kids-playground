@@ -4,11 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { 
-  Move, 
-  Type, 
-  Palette, 
-  Save, 
+import {
+  Move,
+  Type,
+  Palette,
+  Save,
   Download,
   RotateCcw,
   Plus,
@@ -23,74 +23,38 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from "@/components/ui/select";
+import { useI18n } from "@/components/i18n/i18nProvider";
 
 export default function TextOverlay({ imageUrl, onSave, onCancel, currentLanguage = "hebrew" }) {
+  const { t, isRTL } = useI18n();
+
   const [textElements, setTextElements] = useState([
     {
       id: 1,
-      text: currentLanguage === "hebrew" ? 'טקסט לדוגמה' : 'Sample Text',
+      text: t("textOverlay.sampleText"),
       fontSize: 32,
       color: '#FFFFFF',
       position: { x: 50, y: 50 },
-      fontFamily: currentLanguage === "hebrew" ? 'Heebo' : 'Arial',
+      fontFamily: isRTL ? 'Heebo' : 'Arial',
       fontWeight: '700',
       textAlign: 'center',
       shadowColor: '#000000',
       shadowBlur: 3
     }
   ]);
-  
+
   const [selectedElement, setSelectedElement] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
-
-  const isRTL = currentLanguage === "hebrew" || currentLanguage === "yiddish";
-
-  const translations = {
-    english: {
-      "textOverlay.title": "Add Text to Image",
-      "textOverlay.subtitle": "Position and style your text",
-      "textOverlay.text": "Text",
-      "textOverlay.fontSize": "Font Size",
-      "textOverlay.color": "Text Color",
-      "textOverlay.fontFamily": "Font",
-      "textOverlay.textAlign": "Alignment",
-      "textOverlay.shadow": "Shadow",
-      "textOverlay.addText": "Add Text",
-      "textOverlay.save": "Save Image",
-      "textOverlay.download": "Download",
-      "textOverlay.cancel": "Cancel",
-      "textOverlay.reset": "Reset"
-    },
-    hebrew: {
-      "textOverlay.title": "הוספת טקסט לתמונה",
-      "textOverlay.subtitle": "מקם ועצב את הטקסט שלך",
-      "textOverlay.text": "טקסט",
-      "textOverlay.fontSize": "גודל גופן",
-      "textOverlay.color": "צבע טקסט",
-      "textOverlay.fontFamily": "גופן",
-      "textOverlay.textAlign": "יישור",
-      "textOverlay.shadow": "צל",
-      "textOverlay.addText": "הוסף טקסט",
-      "textOverlay.save": "שמור תמונה",
-      "textOverlay.download": "הורד",
-      "textOverlay.cancel": "ביטול",
-      "textOverlay.reset": "איפוס"
-    }
-  };
-
-  const t = (key) => {
-    return translations[currentLanguage]?.[key] || translations.english[key] || key;
-  };
 
   const hebrewFonts = [
     { value: 'Heebo', label: 'Heebo (מודרני)' },
@@ -160,7 +124,7 @@ export default function TextOverlay({ imageUrl, onSave, onCancel, currentLanguag
   const addTextElement = () => {
     const newElement = {
       id: Date.now(),
-      text: isRTL ? 'טקסט חדש' : 'New Text',
+      text: t("textOverlay.newText"),
       fontSize: 24,
       color: '#FFFFFF',
       position: { x: 30 + textElements.length * 10, y: 30 + textElements.length * 10 },

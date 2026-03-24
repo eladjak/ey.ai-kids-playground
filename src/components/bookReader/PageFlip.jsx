@@ -1,6 +1,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useI18n } from "@/components/i18n/i18nProvider";
 
 /**
  * PageFlip - Animated page transition component with 3D flip effect.
@@ -54,6 +55,8 @@ const PageFlip = React.memo(function PageFlip({
   canGoNext = true,
   children
 }) {
+  const { t } = useI18n();
+
   // RTL flips direction
   const effectiveDirection = isRTL ? -direction : direction;
 
@@ -84,7 +87,7 @@ const PageFlip = React.memo(function PageFlip({
             type="button"
             onClick={prevOnRight ? onNext : onPrev}
             disabled={prevOnRight ? !canGoNext : !canGoPrev}
-            aria-label={prevOnRight ? (isRTL ? "הבא" : "Next") : (isRTL ? "הקודם" : "Previous")}
+            aria-label={prevOnRight ? t("bookView.navigation.next") : t("bookView.navigation.previous")}
             className={[
               "absolute top-1/2 -translate-y-1/2 -left-5",
               "flex items-center justify-center",
@@ -105,7 +108,7 @@ const PageFlip = React.memo(function PageFlip({
             type="button"
             onClick={prevOnRight ? onPrev : onNext}
             disabled={prevOnRight ? !canGoPrev : !canGoNext}
-            aria-label={prevOnRight ? (isRTL ? "הקודם" : "Previous") : (isRTL ? "הבא" : "Next")}
+            aria-label={prevOnRight ? t("bookView.navigation.previous") : t("bookView.navigation.next")}
             className={[
               "absolute top-1/2 -translate-y-1/2 -right-5",
               "flex items-center justify-center",
