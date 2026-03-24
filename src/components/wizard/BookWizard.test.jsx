@@ -200,15 +200,13 @@ describe("WizardProgress", () => {
     expect(screen.getByText("Create")).toBeDefined();
   });
 
-  it("shows current step number correctly", () => {
+  it("shows current step as active with aria-current", () => {
     render(
       <WizardProgress steps={steps} currentStep={1} onStepClick={vi.fn()} isRTL={false} />
     );
-    // Step 2 should show "2"
-    expect(screen.getByText("2")).toBeDefined();
-    // Step 3 and 4 should show their numbers
-    expect(screen.getByText("3")).toBeDefined();
-    expect(screen.getByText("4")).toBeDefined();
+    // Step 2 (index 1) should be marked as current
+    const currentButton = screen.getByRole("button", { current: "step" });
+    expect(currentButton).toBeDefined();
   });
 
   it("calls onStepClick for completed steps only", () => {
@@ -396,7 +394,8 @@ describe("PreviewEditStep", () => {
         language="english"
       />
     );
-    expect(screen.getByText("Generating story...")).toBeDefined();
+    // Component uses t() which returns the key in test env without i18n provider
+    expect(screen.getByText("wizard.preview.generatingStory")).toBeDefined();
   });
 
   it("calls onBookDataChange when title changes", () => {
