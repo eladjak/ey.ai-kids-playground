@@ -47,20 +47,10 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout ?
   : <>{children}</>;
 
 const AnimatedPage = ({ children }) => {
-  const location = useLocation();
   return (
-    <AnimatePresence mode="sync">
-      <motion.div
-        key={location.pathname + location.search}
-        initial={pageTransition.initial}
-        animate={pageTransition.animate}
-        exit={pageTransition.exit}
-        transition={pageTransition.transition}
-        style={{ minHeight: '100dvh', backgroundColor: 'inherit' }}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <div style={{ minHeight: '100dvh', backgroundColor: 'inherit' }}>
+      {children}
+    </div>
   );
 };
 
