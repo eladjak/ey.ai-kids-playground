@@ -351,9 +351,8 @@ export default function CommunityPage() {
           {/* Community stats row */}
           <div className={`relative flex flex-wrap gap-3 mb-5 ${isRTL ? 'flex-row-reverse' : ''}`}>
             {[
-              { icon: Globe, label: isRTL ? "ספרים משותפים" : "Shared Books", value: posts.length + "+" },
-              { icon: Heart, label: isRTL ? "לייקים" : "Likes", value: "1K+" },
-              { icon: Users, label: isRTL ? "סופרים" : "Authors", value: "50+" },
+              { icon: Globe, label: t("community.sharedBooks") || (isRTL ? "ספרים משותפים" : "Shared Books"), value: String(posts.length) },
+              { icon: Users, label: t("community.activeAuthors") || (isRTL ? "סופרים" : "Authors"), value: String(new Set(posts.map(p => p.user_id)).size) },
             ].map((stat, i) => (
               <motion.div
                 key={i}

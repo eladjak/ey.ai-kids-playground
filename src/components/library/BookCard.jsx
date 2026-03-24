@@ -56,7 +56,9 @@ function BookCard({ book, viewType = "grid", onDuplicate }) {
   };
 
   const formatGenre = (genre) => {
-    return genre.replace(/_/g, ' ');
+    if (!genre) return '';
+    const translated = t(`community.genreTags.${genre}`);
+    return translated !== `community.genreTags.${genre}` ? translated : genre.replace(/_/g, ' ');
   };
   
   const statusLabels = {
@@ -137,7 +139,7 @@ function BookCard({ book, viewType = "grid", onDuplicate }) {
                 </Badge>
                 {book.language && book.language !== "english" && (
                   <Badge variant="outline" className="text-xs border-blue-200 dark:border-blue-900 text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/30">
-                    {book.language}
+                    {book.language === "hebrew" ? "עברית" : book.language === "yiddish" ? "יידיש" : book.language}
                   </Badge>
                 )}
               </div>
@@ -245,7 +247,7 @@ function BookCard({ book, viewType = "grid", onDuplicate }) {
               )}
               {book.language && book.language !== "english" && (
                 <Badge variant="outline" className="text-xs border-blue-200 dark:border-blue-900 text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/30">
-                  {book.language}
+                  {book.language === "hebrew" ? "עברית" : book.language === "yiddish" ? "יידיש" : book.language}
                 </Badge>
               )}
             </div>
