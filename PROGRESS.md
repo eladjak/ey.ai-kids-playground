@@ -45,9 +45,39 @@
 - [x] Creem re-review — submitted by Elad
 - [x] Visual QA — all landing page sections verified via Chrome
 
+### Dogfooding QA Results (Chrome MCP Visual Audit)
+- [x] Landing page: hero, stats, features, showcase, pricing, FAQ, CTA, footer — all verified
+- [x] Sign-in: Clerk Hebrew UI with Google+Apple OAuth — working
+- [x] Home dashboard: welcome card, books, daily prompt — working (purple gradient FIXED)
+- [x] BookWizard: topic selection, progress bar, i18n — working
+- [x] Library: 3 books, genre/language tags now in Hebrew — working
+- [x] BookView: reading view with illustrations — working (page counter FIXED)
+- [x] Characters: empty state, filters — working
+- [x] Community: real stats (no fake numbers), genre filters in Hebrew — working
+- [x] Profile: XP, level, badges, tabs — working
+- [x] Leaderboard: ranking, stats — working ("אני" instead of "את/ה")
+- [x] StoryIdeas: generator with genres in Hebrew — working
+- [x] Settings: language, audio, notifications — working (toggle alignment FIXED)
+- [x] Contact: form + support email — working
+- [x] Blog: articles, filters, sidebar — working
+- [x] Privacy Policy: Hebrew, support email — working
+- [x] Terms of Service: Hebrew — working
+
+### Critical Bugs Fixed in QA
+- [x] **SPA Routing broken** — AnimatePresence was blocking React Router re-renders
+- [x] **Purple gradient overflow** — UserWelcomeCard absolute gradient covering entire page
+- [x] **Select RTL** — Radix Select not inheriting dir, using LTR internally
+- [x] **Community fake stats** — removed hardcoded "+50 authors, +1K likes"
+- [x] **i18n interpolation** — all {var} → {{var}} for proper template replacement
+- [x] **BookView page counter** — was showing raw {current}/{total} placeholders
+- [x] **Library genre/language tags** — now show Hebrew translations
+- [x] **Settings toggle alignment** — Notifications card was too wide
+
 ### Remaining Work
-- [ ] Test full book creation flow end-to-end with logged-in user
-- [ ] Verify RLS policies work correctly with Clerk user IDs (created_by field match)
+- [ ] Test full book creation flow end-to-end
+- [ ] Verify RLS policies with Clerk user IDs
+- [ ] Fix test failures (Node 22 worker crash + potential broken tests from changes)
+- [ ] 2 books missing cover images (data issue, not code)
 
 ---
 
