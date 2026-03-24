@@ -376,7 +376,7 @@ export default {
     },
     copy: "Copy",
     duplicated: "Book duplicated!",
-    duplicatedDesc: "\"{title}\" has been added to your library",
+    duplicatedDesc: "\"{{title}}\" has been added to your library",
     duplicateError: "Failed to duplicate book"
   },
   collaborate: {
@@ -776,7 +776,7 @@ export default {
       checkoutErrorDesc: "Could not open checkout. Please try again."
     },
     upgradeSuccess: "Upgrade Successful!",
-    upgradeSuccessDesc: "Congratulations! You've been upgraded to the {plan} plan.",
+    upgradeSuccessDesc: "Congratulations! You've been upgraded to the {{plan}} plan.",
     errorLoadTitle: "Failed to load settings",
     errorLoadDesc: "Could not load your settings. Please try refreshing the page.",
     savedTitle: "Settings saved",
@@ -826,10 +826,10 @@ export default {
     downloadCompleteDesc: "The book was downloaded as PDF",
     pdfExportError: "Failed to export PDF",
     editAdvanced: "Edit in Advanced Editor",
-    storyFor: "A story for {name}",
-    pageAlt: "Page {number}",
+    storyFor: "A story for {{name}}",
+    pageAlt: "Page {{number}}",
     noIllustration: "No illustration",
-    pageOf: "Page {current} of {total}",
+    pageOf: "Page {{current}} of {{total}}",
     previous: "Previous",
     next: "Next",
     guestBanner: "Reading as guest — sign in to create books, save progress, and earn XP",
@@ -970,12 +970,12 @@ export default {
     },
     toast: {
       retryingImages: "Retrying failed illustrations...",
-      retryingImagesDesc: "Attempting to regenerate {count} illustrations",
+      retryingImagesDesc: "Attempting to regenerate {{count}} illustrations",
       allImagesGenerated: "All illustrations generated!",
-      imagesFailed: "{count} illustrations still failed",
+      imagesFailed: "{{count}} illustrations still failed",
       imagesFailedRetry: "You can retry again later",
       bookCreatedWithIssues: "Book created with issues",
-      imagesPartialSuccess: "{success} of {total} illustrations generated successfully. {failed} failed.",
+      imagesPartialSuccess: "{{success}} of {{total}} illustrations generated successfully. {{failed}} failed.",
       bookCreated: "Book created!",
       bookReady: "Your book is ready to read!"
     },
@@ -1011,7 +1011,7 @@ export default {
     },
     draft: {
       found: "Draft found",
-      foundDesc: "Continue working on \"{title}\"?",
+      foundDesc: "Continue working on \"{{title}}\"?",
       restore: "Restore",
       restored: "Draft restored!",
       cleared: "Draft cleared",

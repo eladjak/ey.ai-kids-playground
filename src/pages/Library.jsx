@@ -140,7 +140,7 @@ export default function Library() {
 
       toast({
         title: t("library.duplicated"),
-        description: t("library.duplicatedDesc").replace("{title}", newBook.title),
+        description: t("library.duplicatedDesc", { title: newBook.title }),
         className: "bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-100",
       });
 

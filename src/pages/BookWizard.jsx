@@ -215,7 +215,7 @@ export default function BookWizard() {
         const draftTitle = draft.bookData?.title || draft.selectedTopic || t("wizard.draft.untitled");
         toast({
           title: t("wizard.draft.found"),
-          description: t("wizard.draft.foundDesc").replace("{title}", draftTitle),
+          description: t("wizard.draft.foundDesc", { title: draftTitle }),
           duration: 8000,
           action: (
             <Button
@@ -426,7 +426,7 @@ The story should be age-appropriate for children ages ${ageRange}, fun, engaging
 
     toast({
       title: t("wizard.toast.retryingImages"),
-      description: t("wizard.toast.retryingImagesDesc").replace("{count}", failures.length)
+      description: t("wizard.toast.retryingImagesDesc", { count: failures.length })
     });
 
     const retryResults = await Promise.allSettled(
@@ -458,7 +458,7 @@ The story should be age-appropriate for children ages ${ageRange}, fun, engaging
     } else {
       toast({
         variant: "destructive",
-        title: t("wizard.toast.imagesFailed").replace("{count}", stillFailed.length),
+        title: t("wizard.toast.imagesFailed", { count: stillFailed.length }),
         description: t("wizard.toast.imagesFailedRetry")
       });
     }

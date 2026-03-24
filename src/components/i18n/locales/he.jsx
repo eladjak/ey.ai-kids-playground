@@ -374,7 +374,7 @@ export default {
     },
     copy: "עותק",
     duplicated: "הספר שוכפל!",
-    duplicatedDesc: "\"{title}\" נוסף לספרייה שלך",
+    duplicatedDesc: "\"{{title}}\" נוסף לספרייה שלך",
     duplicateError: "שגיאה בשכפול הספר"
   },
   collaborate: {
@@ -774,7 +774,7 @@ export default {
       checkoutErrorDesc: "לא ניתן לפתוח את דף התשלום. נסו שוב."
     },
     upgradeSuccess: "שדרוג הצליח!",
-    upgradeSuccessDesc: "ברכות! שודרגת לתוכנית {plan}",
+    upgradeSuccessDesc: "ברכות! שודרגת לתוכנית {{plan}}",
     errorLoadTitle: "שגיאה בטעינת הגדרות",
     errorLoadDesc: "לא ניתן לטעון את ההגדרות שלך. נסה לרענן את הדף.",
     savedTitle: "ההגדרות נשמרו",
@@ -824,10 +824,10 @@ export default {
     downloadCompleteDesc: "הספר הורד כ-PDF",
     pdfExportError: "שגיאה ביצוא PDF",
     editAdvanced: "ערוך בעורך מתקדם",
-    storyFor: "סיפור עבור {name}",
-    pageAlt: "עמוד {number}",
+    storyFor: "סיפור עבור {{name}}",
+    pageAlt: "עמוד {{number}}",
     noIllustration: "אין איור",
-    pageOf: "עמוד {current} מתוך {total}",
+    pageOf: "עמוד {{current}} מתוך {{total}}",
     previous: "הקודם",
     next: "הבא",
     guestBanner: "קורא כאורח — התחבר כדי ליצור ספרים, לשמור קריאה ולקבל XP",
@@ -968,12 +968,12 @@ export default {
     },
     toast: {
       retryingImages: "מנסה שוב איורים שנכשלו...",
-      retryingImagesDesc: "מנסה ליצור {count} איורים מחדש",
+      retryingImagesDesc: "מנסה ליצור {{count}} איורים מחדש",
       allImagesGenerated: "כל האיורים נוצרו!",
-      imagesFailed: "{count} איורים עדיין נכשלו",
+      imagesFailed: "{{count}} איורים עדיין נכשלו",
       imagesFailedRetry: "ניתן לנסות שוב מאוחר יותר",
       bookCreatedWithIssues: "הספר נוצר עם בעיות",
-      imagesPartialSuccess: "{success} מתוך {total} איורים נוצרו בהצלחה. {failed} נכשלו.",
+      imagesPartialSuccess: "{{success}} מתוך {{total}} איורים נוצרו בהצלחה. {{failed}} נכשלו.",
       bookCreated: "הספר נוצר!",
       bookReady: "הספר שלך מוכן לקריאה!"
     },
@@ -1009,7 +1009,7 @@ export default {
     },
     draft: {
       found: "נמצאה טיוטה",
-      foundDesc: "להמשיך לעבוד על \"{title}\"?",
+      foundDesc: "להמשיך לעבוד על \"{{title}}\"?",
       restore: "שחזר",
       restored: "הטיוטה שוחזרה!",
       cleared: "הטיוטה נמחקה",
