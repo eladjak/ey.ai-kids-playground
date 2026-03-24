@@ -512,7 +512,6 @@ export default function Settings() {
               title={t("settings.notifications")}
               icon={<Bell className="h-5 w-5 text-orange-500" />}
               isRTL={isRTL}
-              className="md:col-span-2"
             >
               <div className="pt-2">
                 <SettingRow label={t("settings.notification.enable")} isRTL={isRTL}>

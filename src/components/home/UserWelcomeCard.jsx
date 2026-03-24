@@ -47,7 +47,7 @@ const UserWelcomeCard = React.memo(function UserWelcomeCard({ userData }) {
       className="flex flex-col md:flex-row gap-4 md:gap-6"
     >
       {/* User info card */}
-      <Card className="w-full md:w-auto flex-grow-0 flex-shrink-0 border-0 shadow-lg overflow-hidden">
+      <Card className="relative w-full md:w-auto flex-grow-0 flex-shrink-0 border-0 shadow-lg overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500 via-indigo-500 to-violet-600 opacity-100 rounded-xl" />
         <CardContent className="relative p-5">
           <div className={`flex items-center gap-3 mb-4 ${isRTL ? "flex-row-reverse" : ""}`}>
