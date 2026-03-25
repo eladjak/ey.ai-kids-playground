@@ -49,12 +49,12 @@ export default function Leaderboard() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hookUser]);
 
   useEffect(() => {
-    if (currentUser) {
-      buildLeaderboard();
-    }
+    buildLeaderboard();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timePeriod, category]);
 
   const loadData = async () => {
@@ -76,7 +76,6 @@ export default function Leaderboard() {
   const buildLeaderboard = async (userOverride) => {
     try {
       const user = userOverride || currentUser;
-      if (!user) return;
 
       const allBooks = await Book.list("-created_date", 200);
 
@@ -106,30 +105,32 @@ export default function Leaderboard() {
             xp: 0,
             streak: 0,
             level: 1,
-            isCurrentUser: email === user.email
+            isCurrentUser: user ? email === user.email : false
           };
         }
         userMap[email].books += 1;
         userMap[email].xp += 100;
       }
 
-      if (userMap[user.email]) {
-        userMap[user.email].name = user.display_name || user.full_name || user.email.split("@")[0];
-        userMap[user.email].avatar = user.avatar_url || "";
-        userMap[user.email].xp = user.xp || userMap[user.email].xp;
-        userMap[user.email].level = user.level || getLevelFromXP(userMap[user.email].xp);
-        userMap[user.email].streak = user.streak_days || 0;
-      } else {
-        userMap[user.email] = {
-          email: user.email,
-          name: user.display_name || user.full_name || user.email.split("@")[0],
-          avatar: user.avatar_url || "",
-          books: 0,
-          xp: user.xp || 0,
-          streak: user.streak_days || 0,
-          level: user.level || 1,
-          isCurrentUser: true
-        };
+      if (user) {
+        if (userMap[user.email]) {
+          userMap[user.email].name = user.display_name || user.full_name || user.email.split("@")[0];
+          userMap[user.email].avatar = user.avatar_url || "";
+          userMap[user.email].xp = user.xp || userMap[user.email].xp;
+          userMap[user.email].level = user.level || getLevelFromXP(userMap[user.email].xp);
+          userMap[user.email].streak = user.streak_days || 0;
+        } else {
+          userMap[user.email] = {
+            email: user.email,
+            name: user.display_name || user.full_name || user.email.split("@")[0],
+            avatar: user.avatar_url || "",
+            books: 0,
+            xp: user.xp || 0,
+            streak: user.streak_days || 0,
+            level: user.level || 1,
+            isCurrentUser: true
+          };
+        }
       }
 
       let entries = Object.values(userMap);
@@ -402,7 +403,7 @@ export default function Leaderboard() {
             <div className={`flex items-center gap-2 mb-5 ${isRTL ? 'flex-row-reverse' : ''}`}>
               <Sparkles className="h-5 w-5 text-amber-500" />
               <h3 className="font-bold text-gray-900 dark:text-white">
-                {language === "hebrew" ? "שלישיית הצמרת" : "Top 3 Champions"}
+                {t("leaderboard.top3Champions")}
               </h3>
             </div>
 
@@ -600,7 +601,7 @@ export default function Leaderboard() {
                               <span className="text-sm">{entry.streak}
                                 {timePeriod !== "allTime" ? (
                                   <span className="text-xs text-gray-400 ms-1">
-                                    {language === "hebrew" ? "ימים" : "d"}
+                                    {t("leaderboard.days")}
                                   </span>
                                 ) : null}
                               </span>

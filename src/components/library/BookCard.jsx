@@ -75,11 +75,10 @@ function BookCard({ book, viewType = "grid", onDuplicate }) {
         exit={{ opacity: 0, scale: 0.95 }}
         transition={{ duration: 0.3 }}
         whileHover={{ scale: 1.02, y: -4 }}
-        className="h-full"
         dir={isRTL ? "rtl" : "ltr"}
       >
         <Card
-          className="overflow-hidden h-full transition-all duration-200 shadow-md hover:shadow-2xl border-gray-200 dark:border-gray-800 hover:border-purple-300 dark:hover:border-purple-700"
+          className="overflow-hidden transition-all duration-200 shadow-md hover:shadow-2xl border-gray-200 dark:border-gray-800 hover:border-purple-300 dark:hover:border-purple-700"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
@@ -139,7 +138,7 @@ function BookCard({ book, viewType = "grid", onDuplicate }) {
                 </Badge>
                 {book.language && book.language !== "english" && (
                   <Badge variant="outline" className="text-xs border-blue-200 dark:border-blue-900 text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/30">
-                    {book.language === "hebrew" ? "עברית" : book.language === "yiddish" ? "יידיש" : book.language}
+                    {t(`common.languageNames.${book.language}`) || book.language}
                   </Badge>
                 )}
               </div>
@@ -247,7 +246,7 @@ function BookCard({ book, viewType = "grid", onDuplicate }) {
               )}
               {book.language && book.language !== "english" && (
                 <Badge variant="outline" className="text-xs border-blue-200 dark:border-blue-900 text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/30">
-                  {book.language === "hebrew" ? "עברית" : book.language === "yiddish" ? "יידיש" : book.language}
+                  {t(`common.languageNames.${book.language}`) || book.language}
                 </Badge>
               )}
             </div>

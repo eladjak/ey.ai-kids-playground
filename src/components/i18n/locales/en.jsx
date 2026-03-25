@@ -28,6 +28,11 @@ export default {
     page: "Page",
     of: "of",
     for: "for",
+    languageNames: {
+      hebrew: "Hebrew",
+      english: "English",
+      yiddish: "Yiddish"
+    },
     main: "Main",
     create: "Create",
     mySpace: "My Space",
@@ -614,6 +619,8 @@ export default {
       humor: "Humor",
       custom: "Personalized"
     },
+    sharedBooks: "Shared Books",
+    activeAuthors: "Active Authors",
     parentApproval: "Parental Approval Required",
     parentApprovalDesc: "To publish a book to the community, please enter the parental PIN.",
     enterPin: "Enter PIN (4-6 digits)",
@@ -1119,7 +1126,9 @@ export default {
     },
     view: {
       profile: "View Profile"
-    }
+    },
+    top3Champions: "Top 3 Champions",
+    days: "d"
   },
   storyIdeas: {
     title: "Story Ideas",

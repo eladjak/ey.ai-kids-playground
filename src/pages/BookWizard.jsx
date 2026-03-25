@@ -296,9 +296,10 @@ export default function BookWizard() {
   const nextStep = async () => {
     if (currentStep >= steps.length - 1) return;
 
-    // When moving from step 2 to step 3, generate outline if not already done
+    // When moving from characters to preview, generate outline if not already done
     if (currentStep === 1 && !generatedOutline) {
-      await generateOutline();
+      const success = await generateOutline();
+      if (!success) return; // Don't advance if outline generation failed
     }
 
     setCurrentStep((prev) => prev + 1);
@@ -310,7 +311,7 @@ export default function BookWizard() {
     }
   };
 
-  // Generate story outline from AI
+  // Generate story outline from AI. Returns true on success, false on failure.
   const generateOutline = async () => {
     try {
       setIsGeneratingOutline(true);
@@ -332,7 +333,7 @@ export default function BookWizard() {
             description: t("wizard.error.nameInappropriate")
           });
           setIsGeneratingOutline(false);
-          return;
+          return false;
         }
       }
 
@@ -387,7 +388,7 @@ The story should be age-appropriate for children ages ${ageRange}, fun, engaging
             description: t("wizard.error.contentNotAppropriate")
           });
           setIsGeneratingOutline(false);
-          return;
+          return false;
         }
 
         const sanitizedResult = { ...result, title: sanitizedTitle, description: sanitizedDescription, moral_lesson: sanitizedMoral };
@@ -408,13 +409,22 @@ The story should be age-appropriate for children ages ${ageRange}, fun, engaging
             primary_image_url: c.avatar || null
           }))
         }));
+        return true;
       }
+      // InvokeLLM returned null/empty — show error
+      setError({
+        title: t("wizard.error.outlineTitle"),
+        message: t("wizard.error.outlineMessage"),
+        onRetry: generateOutline
+      });
+      return false;
     } catch {
       setError({
         title: t("wizard.error.outlineTitle"),
         message: t("wizard.error.outlineMessage"),
         onRetry: generateOutline
       });
+      return false;
     } finally {
       setIsGeneratingOutline(false);
     }

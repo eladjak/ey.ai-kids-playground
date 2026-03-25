@@ -63,7 +63,7 @@ export default function SavedIdeas({
                 </p>
                 <div className="mt-2">
                   <Badge variant="outline" className="bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 border-gray-200 dark:border-gray-700">
-                    {idea.language === 'hebrew' ? 'עברית' : 'English'}
+                    {t(`common.languageNames.${idea.language}`) || idea.language}
                   </Badge>
                 </div>
               </CardContent>

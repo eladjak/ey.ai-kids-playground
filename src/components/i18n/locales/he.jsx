@@ -28,6 +28,11 @@ export default {
     page: "עמוד",
     of: "מתוך",
     for: "עבור",
+    languageNames: {
+      hebrew: "עברית",
+      english: "אנגלית",
+      yiddish: "יידיש"
+    },
     main: "ראשי",
     create: "יצירה",
     mySpace: "המרחב שלי",
@@ -612,6 +617,8 @@ export default {
       humor: "הומור",
       custom: "מותאם אישית"
     },
+    sharedBooks: "ספרים משותפים",
+    activeAuthors: "יוצרים פעילים",
     parentApproval: "אישור הורה נדרש",
     parentApprovalDesc: "כדי לפרסם ספר בקהילה, יש להזין את קוד ה-PIN של ההורה.",
     enterPin: "הזן PIN (4-6 ספרות)",
@@ -1117,7 +1124,9 @@ export default {
     },
     view: {
       profile: "צפה בפרופיל"
-    }
+    },
+    top3Champions: "שלישיית הצמרת",
+    days: "ימים"
   },
   storyIdeas: {
     title: "רעיונות לסיפורים",

@@ -163,7 +163,7 @@ const LandingNav = () => {
               <Link to="/">
                 <Button className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg flex items-center gap-2">
                   <LayoutDashboard className="h-4 w-4" />
-                  {t('landing.nav.goToApp') || (language === 'hebrew' ? 'לאפליקציה' : 'Go to App')}
+                  {t('landing.nav.goToApp')}
                 </Button>
               </Link>
             ) : (
@@ -254,7 +254,7 @@ const LandingNav = () => {
               <Link to="/" onClick={() => setMobileMenuOpen(false)}>
                 <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white mt-2 flex items-center justify-center gap-2">
                   <LayoutDashboard className="h-4 w-4" />
-                  {t('landing.nav.goToApp') || (language === 'hebrew' ? 'לאפליקציה' : 'Go to App')}
+                  {t('landing.nav.goToApp')}
                 </Button>
               </Link>
             ) : (

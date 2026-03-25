@@ -28,6 +28,11 @@ export default {
     page: "בלאַט",
     of: "פֿון",
     for: "פֿאַר",
+    languageNames: {
+      hebrew: "העברעאיש",
+      english: "ענגליש",
+      yiddish: "ייִדיש"
+    },
     main: "הויפּט",
     create: "שאַפֿן",
     mySpace: "מײַן פּלאַץ",
@@ -616,6 +621,8 @@ export default {
       postReply: "פּאָסטירן ענטפֿער",
       unknownUser: "אומבאַוווּסטן ניצער"
     },
+    sharedBooks: "געטיילטע ביכער",
+    activeAuthors: "אַקטיווע מחברים",
     featured: {
       badge: "פֿיטשערד",
       sharedBy: "געטיילט דורך",
@@ -968,7 +975,9 @@ export default {
     },
     view: {
       profile: "זען פּראָפֿיל"
-    }
+    },
+    top3Champions: "שפּיץ 3 טשעמפּיאָנס",
+    days: "טעג"
   },
   storyIdeas: {
     title: "געשיכטע אידעען",
