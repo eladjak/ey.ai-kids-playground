@@ -37,8 +37,6 @@ export default function GamificationOverlay({
         celebration={current}
         onDismiss={onDismiss}
         isRTL={isRTL}
-        isHebrew={isHebrew}
-        isYiddish={isYiddish}
       />
     );
   }

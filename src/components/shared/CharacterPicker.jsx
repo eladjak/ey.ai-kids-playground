@@ -137,7 +137,7 @@ function getChildNameFromStorage() {
   return null;
 }
 
-function buildChildCharacter(name, isHebrew) {
+function buildChildCharacter(name, t) {
   return {
     id: CHILD_CHARACTER_ID,
     name,
@@ -147,7 +147,7 @@ function buildChildCharacter(name, isHebrew) {
     isTemplate: false,
     isEntity: false,
     isChildSelf: true,
-    label: isHebrew ? "זה אתה!" : "That's you!"
+    label: t("characterPicker.thatsYou")
   };
 }
 
@@ -172,7 +172,7 @@ export default function CharacterPicker({
     if (selectedCharacters.length > 0) return;
     const childName = getChildNameFromStorage();
     if (!childName) return;
-    const childChar = buildChildCharacter(childName, isHebrew);
+    const childChar = buildChildCharacter(childName, t);
     onCharactersChange([childChar]);
   // Only run once on mount
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -252,7 +252,7 @@ export default function CharacterPicker({
           transition={{ duration: 0.4 }}
         >
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            {isHebrew ? "מי יהיו הדמויות?" : "Who are the characters?"}
+            {t("characterPicker.title")}
           </h2>
         </motion.div>
         <motion.div
@@ -261,7 +261,7 @@ export default function CharacterPicker({
           transition={{ delay: 0.15 }}
         >
           <p className="text-gray-500 dark:text-gray-400 text-base">
-            {isHebrew ? "בחר מהדמויות שלך, מהתבניות, או צור חדש" : "Pick from your characters, templates, or create new"}
+            {t("characterPicker.subtitle")}
           </p>
         </motion.div>
       </div>
@@ -275,7 +275,7 @@ export default function CharacterPicker({
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          aria-label={isHebrew ? "הוסף דמות מפתיעה" : "Add a surprise character"}
+          aria-label={t("characterPicker.surpriseLabel")}
           className="
             relative flex items-center gap-3 px-7 py-3 rounded-2xl font-bold text-base
             bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500
@@ -291,7 +291,7 @@ export default function CharacterPicker({
             aria-hidden="true"
           />
           <Shuffle className="h-5 w-5 relative z-10" aria-hidden="true" />
-          <span className="relative z-10">{isHebrew ? "הוסף דמות מפתיעה!" : "Surprise Character!"}</span>
+          <span className="relative z-10">{t("characterPicker.surpriseButton")}</span>
           <Wand2 className="h-5 w-5 relative z-10" aria-hidden="true" />
         </motion.button>
       </div>
@@ -300,7 +300,7 @@ export default function CharacterPicker({
       {isLoading ? (
         <div>
           <p className="text-sm font-semibold mb-3 text-purple-700 dark:text-purple-300">
-            {isHebrew ? "הדמויות שלי" : "My Characters"}
+            {t("characterPicker.myCharacters")}
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {Array(4).fill(0).map((_, i) => (
@@ -312,12 +312,12 @@ export default function CharacterPicker({
         <div>
           <p className="text-sm font-semibold mb-3 text-purple-700 dark:text-purple-300 flex items-center gap-1.5">
             <BookOpen className="h-4 w-4" aria-hidden="true" />
-            {isHebrew ? "הדמויות שלי" : "My Characters"}
+            {t("characterPicker.myCharacters")}
           </p>
           <div
             className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"
             role="group"
-            aria-label={isHebrew ? "הדמויות שלי" : "My Characters"}
+            aria-label={t("characterPicker.myCharacters")}
           >
             {savedCharacters.map((entity, index) => {
               const selectionId = `entity_${entity.id}`;
@@ -371,12 +371,12 @@ export default function CharacterPicker({
       {/* Quick Templates */}
       <div>
         <p className="text-sm font-semibold mb-3 text-gray-600 dark:text-gray-400">
-          {isHebrew ? "תבניות מהירות" : "Quick Templates"}
+          {t("characterPicker.quickTemplates")}
         </p>
         <div
           className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"
           role="group"
-          aria-label={isHebrew ? "תבניות דמויות" : "Character templates"}
+          aria-label={t("characterPicker.templateLabel")}
         >
           {CHARACTER_TEMPLATES.map((template, index) => {
             const isSelected = selectedCharacters.some((c) => c.id === template.id);
@@ -431,7 +431,7 @@ export default function CharacterPicker({
           className="p-4 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-950/30 dark:to-indigo-950/30 rounded-2xl border border-purple-100 dark:border-purple-900/50"
         >
           <p className="text-sm font-semibold mb-3 text-purple-700 dark:text-purple-300">
-            {isHebrew ? `דמויות נבחרות (${selectedCharacters.length})` : `Selected Characters (${selectedCharacters.length})`}
+            {t("characterPicker.selectedCount", { count: selectedCharacters.length })}
           </p>
           <div className="flex flex-wrap gap-2">
             <AnimatePresence>
@@ -471,7 +471,7 @@ export default function CharacterPicker({
                   <button
                     onClick={() => removeCharacter(char.id)}
                     className="ml-1 text-gray-400 hover:text-red-500 transition-colors rounded-full p-0.5 hover:bg-red-50 dark:hover:bg-red-950/30"
-                    aria-label={isHebrew ? `הסר ${char.name}` : `Remove ${char.name}`}
+                    aria-label={t("characterPicker.removeChar", { name: char.name })}
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
@@ -489,10 +489,10 @@ export default function CharacterPicker({
             variant="outline"
             onClick={() => setShowCustomInput(true)}
             className="gap-2 rounded-xl border-dashed border-gray-300 dark:border-gray-600 hover:border-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950/20"
-            aria-label={isHebrew ? "הוסף דמות מותאמת" : "Add custom character"}
+            aria-label={t("characterPicker.addCustomLabel")}
           >
             <UserPlus className="h-4 w-4" aria-hidden="true" />
-            {isHebrew ? "הוסף דמות משלך" : "Add your own character"}
+            {t("characterPicker.addCustomButton")}
           </Button>
         ) : (
           <motion.div
@@ -503,7 +503,7 @@ export default function CharacterPicker({
             <div className="flex gap-2 items-end p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-200 dark:border-gray-700">
               <div className="flex-1">
                 <Label htmlFor="custom-character-name" className="mb-1.5 block text-sm font-medium">
-                  {isHebrew ? "שם הדמות" : "Character name"}
+                  {t("characterPicker.charNameLabel")}
                 </Label>
                 <Input
                   id="custom-character-name"
@@ -522,7 +522,7 @@ export default function CharacterPicker({
                 onClick={addCustomCharacter}
                 disabled={!customCharacterName.trim()}
                 className="bg-purple-600 hover:bg-purple-700 rounded-xl"
-                aria-label={isHebrew ? "הוסף" : "Add"}
+                aria-label={t("characterPicker.addButton")}
               >
                 <Plus className="h-4 w-4" />
               </Button>
@@ -533,9 +533,9 @@ export default function CharacterPicker({
                   setCustomCharacterName("");
                 }}
                 className="rounded-xl"
-                aria-label={isHebrew ? "ביטול" : "Cancel"}
+                aria-label={t("characterPicker.cancelButton")}
               >
-                {isHebrew ? "ביטול" : "Cancel"}
+                {t("characterPicker.cancelButton")}
               </Button>
             </div>
           </motion.div>

@@ -1993,5 +1993,35 @@ export default {
     successText: "אַ דאַנק פֿאַר זיך צו ווענדן. מיר וועלן ענטפֿערן אין 1-2 אַרבעטס טעג.",
     sendAnother: "שיקן נאָך אַ מעסעדזש",
     responseTime: "מיר ענטפֿערן בדרך כלל אין 1-2 אַרבעטס טעג."
+  },
+  error: {
+    defaultTitle: "אוי! עפּעס איז שיפגעגאַנגען",
+    defaultMessage: "זאָרג זיך ניט, מיר קענען פּרובירן נאָכאַמאָל!",
+    retry: "פּרובירן נאָכאַמאָל",
+    retryButton: "לאָמיר פּרובירן נאָכאַמאָל!",
+    goBack: "צוריק"
+  },
+  characterPicker: {
+    title: "ווער וועלן זייַן די כאַראַקטערס?",
+    subtitle: "קלייַב פֿון דײַנע כאַראַקטערס, שאַבלאָנען, אָדער שאַף נײַ",
+    surpriseLabel: "לייג צו אַ איבערראַשונג כאַראַקטער",
+    surpriseButton: "איבערראַשונג כאַראַקטער!",
+    myCharacters: "מײַנע כאַראַקטערס",
+    quickTemplates: "שנעלע שאַבלאָנען",
+    templateLabel: "כאַראַקטער שאַבלאָנען",
+    selectedCount: "אויסגעקליבענע כאַראַקטערס ({{count}})",
+    removeChar: "אַוועקנעמען {{name}}",
+    addCustomLabel: "לייג צו אַ אייגענעם כאַראַקטער",
+    addCustomButton: "לייג צו דײַן אייגענעם כאַראַקטער",
+    charNameLabel: "נאָמען פֿונעם כאַראַקטער",
+    addButton: "לייג צו",
+    cancelButton: "אָפּזאָגן",
+    thatsYou: "דאָס ביסט דו!"
+  },
+  userWelcome: {
+    morning: "גוט מאָרגן, {{name}}!",
+    afternoon: "גוט נאָכמיטאָג, {{name}}!",
+    evening: "גוט אָוונט, {{name}}!",
+    night: "גוטע נאַכט, {{name}}!"
   }
 };

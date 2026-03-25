@@ -2,20 +2,14 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, ArrowLeft } from "lucide-react";
+import { useI18n } from "@/components/i18n/i18nProvider";
 
 /**
  * FriendlyError - A child-friendly error display with cute illustrations.
  * Shows a friendly message with retry and go-back buttons.
- *
- * @param {string} title - Error title
- * @param {string} message - Friendly error message
- * @param {function} onRetry - Retry callback
- * @param {function} onGoBack - Go back callback
- * @param {boolean} isRTL - Right-to-left layout
- * @param {string} language - Current language
  */
-export default function FriendlyError({ title, message, onRetry, onGoBack, isRTL, language }) {
-  const isHebrew = language === "hebrew";
+export default function FriendlyError({ title, message, onRetry, onGoBack, isRTL }) {
+  const { t } = useI18n();
 
   return (
     <motion.div
@@ -47,12 +41,12 @@ export default function FriendlyError({ title, message, onRetry, onGoBack, isRTL
 
       {/* Title */}
       <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-        {title || (isHebrew ? "אופס! משהו השתבש" : "Oops! Something went wrong")}
+        {title || t("error.defaultTitle")}
       </h2>
 
       {/* Message */}
       <p className="text-gray-600 dark:text-gray-400 text-lg mb-8 max-w-md">
-        {message || (isHebrew ? "לא לדאוג, אפשר לנסות שוב!" : "Don't worry, we can try again!")}
+        {message || t("error.defaultMessage")}
       </p>
 
       {/* Action buttons */}
@@ -61,10 +55,10 @@ export default function FriendlyError({ title, message, onRetry, onGoBack, isRTL
           <Button
             onClick={onRetry}
             className="bg-purple-600 hover:bg-purple-700 gap-2"
-            aria-label={isHebrew ? "נסה שוב" : "Try again"}
+            aria-label={t("error.retry")}
           >
             <RefreshCw className="h-4 w-4" aria-hidden="true" />
-            {isHebrew ? "ננסה שוב!" : "Let's try again!"}
+            {t("error.retryButton")}
           </Button>
         )}
         {onGoBack && (
@@ -72,10 +66,10 @@ export default function FriendlyError({ title, message, onRetry, onGoBack, isRTL
             variant="outline"
             onClick={onGoBack}
             className="gap-2"
-            aria-label={isHebrew ? "חזור" : "Go back"}
+            aria-label={t("error.goBack")}
           >
             <ArrowLeft className={`h-4 w-4 ${isRTL ? "rotate-180" : ""}`} aria-hidden="true" />
-            {isHebrew ? "חזור" : "Go Back"}
+            {t("error.goBack")}
           </Button>
         )}
       </div>

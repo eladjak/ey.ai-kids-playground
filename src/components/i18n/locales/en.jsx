@@ -2181,5 +2181,43 @@ export default {
     successText: "Thank you for reaching out. We'll get back to you within 1-2 business days.",
     sendAnother: "Send Another Message",
     responseTime: "We typically respond within 1-2 business days."
+  },
+  error: {
+    defaultTitle: "Oops! Something went wrong",
+    defaultMessage: "Don't worry, we can try again!",
+    retry: "Try again",
+    retryButton: "Let's try again!",
+    goBack: "Go Back"
+  },
+  characterPicker: {
+    title: "Who are the characters?",
+    subtitle: "Pick from your characters, templates, or create new",
+    surpriseLabel: "Add a surprise character",
+    surpriseButton: "Surprise Character!",
+    myCharacters: "My Characters",
+    quickTemplates: "Quick Templates",
+    templateLabel: "Character templates",
+    selectedCount: "Selected Characters ({{count}})",
+    removeChar: "Remove {{name}}",
+    addCustomLabel: "Add custom character",
+    addCustomButton: "Add your own character",
+    charNameLabel: "Character name",
+    addButton: "Add",
+    cancelButton: "Cancel",
+    thatsYou: "That's you!"
+  },
+  userWelcome: {
+    morning: "Good morning, {{name}}!",
+    afternoon: "Good afternoon, {{name}}!",
+    evening: "Good evening, {{name}}!",
+    night: "Good night, {{name}}!"
+  },
+  celebration: {
+    title: "Celebration",
+    close: "Close",
+    levelUp: "Level Up!",
+    levelAdvance: "You advanced from level {{oldLevel}} to level {{newLevel}}!",
+    newBadge: "New Badge!",
+    awesome: "Awesome!"
   }
 };

@@ -2,28 +2,24 @@ import React, { useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trophy, Award, Star, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/components/i18n/i18nProvider";
 import confetti from "canvas-confetti";
 
 /**
  * CelebrationModal - Shows level-up and badge unlock celebrations
  * with confetti animation.
  */
-// Language helper used for Yiddish-aware text
-function getLabel(isHebrew, isYiddish, heText, yiText, enText) {
-  if (isYiddish) return yiText;
-  if (isHebrew) return heText;
-  return enText;
-}
-
 export default function CelebrationModal({
   celebration,
   onDismiss,
-  isRTL = false,
-  isHebrew = false,
-  isYiddish = false
+  isRTL = false
 }) {
+  const { t, language } = useI18n();
   const hasFireRef = useRef(false);
   const modalRef = useRef(null);
+
+  const isHebrew = language === "he";
+  const isYiddish = language === "yi";
 
   // Focus trap: keep focus inside modal while open
   const handleKeyDown = useCallback((e) => {
@@ -129,7 +125,7 @@ export default function CelebrationModal({
           dir={isRTL ? "rtl" : "ltr"}
           role="dialog"
           aria-modal="true"
-          aria-label={getLabel(isHebrew, isYiddish, "חגיגה", "פֿייַערן", "Celebration")}
+          aria-label={t("celebration.title")}
         >
           {/* Decorative gradient top */}
           <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-500 via-amber-400 to-indigo-500" />
@@ -138,7 +134,7 @@ export default function CelebrationModal({
           <button
             onClick={onDismiss}
             className={`absolute top-3 ${isRTL ? "left-3" : "right-3"} text-gray-400 hover:text-gray-600 dark:hover:text-gray-300`}
-            aria-label={getLabel(isHebrew, isYiddish, "סגור", "פֿאַרמאַכן", "Close")}
+            aria-label={t("celebration.close")}
           >
             <X className="h-5 w-5" />
           </button>
@@ -161,7 +157,7 @@ export default function CelebrationModal({
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
-                {getLabel(isHebrew, isYiddish, "עלית רמה!", "לעוועל הויך!", "Level Up!")}
+                {t("celebration.levelUp")}
               </motion.h2>
 
               <motion.div
@@ -174,11 +170,7 @@ export default function CelebrationModal({
               </motion.div>
 
               <p className="text-gray-500 dark:text-gray-400 mb-6">
-                {isYiddish
-                  ? `דו ביסט אויפגעגאנגן פֿון לעוועל ${celebration.oldLevel} צו לעוועל ${celebration.newLevel}!`
-                  : isHebrew
-                    ? `עלית מרמה ${celebration.oldLevel} לרמה ${celebration.newLevel}!`
-                    : `You advanced from level ${celebration.oldLevel} to level ${celebration.newLevel}!`}
+                {t("celebration.levelAdvance", { oldLevel: celebration.oldLevel, newLevel: celebration.newLevel })}
               </p>
             </>
           )}
@@ -201,7 +193,7 @@ export default function CelebrationModal({
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
-                {getLabel(isHebrew, isYiddish, "תג חדש!", "נײַ אַבצייכן!", "New Badge!")}
+                {t("celebration.newBadge")}
               </motion.h2>
 
               <motion.p
@@ -243,7 +235,7 @@ export default function CelebrationModal({
             onClick={onDismiss}
             className="mt-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
           >
-            {getLabel(isHebrew, isYiddish, "מעולה!", "וווּנדערלעך!", "Awesome!")}
+            {t("celebration.awesome")}
           </Button>
         </motion.div>
       </motion.div>

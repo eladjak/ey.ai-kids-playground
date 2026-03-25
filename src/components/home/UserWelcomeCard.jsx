@@ -9,21 +9,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import BadgeDisplay from "@/components/gamification/BadgeDisplay";
 import { motion } from "framer-motion";
 
-function getTimeOfDayGreeting(language, isRTL, name) {
+function getTimeOfDayGreeting(t, name) {
   const hour = new Date().getHours();
-  const displayName = name && name !== "Guest" ? `, ${name}` : "";
+  const displayName = name && name !== "Guest" ? name : "";
 
-  if (isRTL && language === "hebrew") {
-    if (hour >= 5 && hour < 12) return `בוקר טוב${displayName}!`;
-    if (hour >= 12 && hour < 17) return `צהריים טובים${displayName}!`;
-    if (hour >= 17 && hour < 22) return `ערב טוב${displayName}!`;
-    return `לילה טוב${displayName}!`;
-  }
-
-  if (hour >= 5 && hour < 12) return `Good morning${displayName}!`;
-  if (hour >= 12 && hour < 17) return `Good afternoon${displayName}!`;
-  if (hour >= 17 && hour < 22) return `Good evening${displayName}!`;
-  return `Sweet dreams${displayName}!`;
+  if (hour >= 5 && hour < 12) return t("userWelcome.morning", { name: displayName });
+  if (hour >= 12 && hour < 17) return t("userWelcome.afternoon", { name: displayName });
+  if (hour >= 17 && hour < 22) return t("userWelcome.evening", { name: displayName });
+  return t("userWelcome.night", { name: displayName });
 }
 
 const UserWelcomeCard = React.memo(function UserWelcomeCard({ userData }) {
@@ -33,7 +26,7 @@ const UserWelcomeCard = React.memo(function UserWelcomeCard({ userData }) {
     ? Math.min((userData.xp / userData.nextLevelXp) * 100, 100)
     : 0;
 
-  const greeting = getTimeOfDayGreeting(currentLanguage, isRTL, userData.full_name);
+  const greeting = getTimeOfDayGreeting(t, userData.full_name);
 
   const streakDays = userData.streakDays || 0;
   const showStreak = streakDays >= 3;

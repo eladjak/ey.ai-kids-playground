@@ -2178,5 +2178,43 @@ export default {
     successText: "תודה על הפנייה. נחזור אליכם תוך 1-2 ימי עסקים.",
     sendAnother: "שליחת הודעה נוספת",
     responseTime: "אנו בדרך כלל עונים תוך 1-2 ימי עסקים."
+  },
+  error: {
+    defaultTitle: "אופס! משהו השתבש",
+    defaultMessage: "לא לדאוג, אפשר לנסות שוב!",
+    retry: "נסה שוב",
+    retryButton: "ננסה שוב!",
+    goBack: "חזור"
+  },
+  characterPicker: {
+    title: "מי יהיו הדמויות?",
+    subtitle: "בחר מהדמויות שלך, מהתבניות, או צור חדש",
+    surpriseLabel: "הוסף דמות מפתיעה",
+    surpriseButton: "הוסף דמות מפתיעה!",
+    myCharacters: "הדמויות שלי",
+    quickTemplates: "תבניות מהירות",
+    templateLabel: "תבניות דמויות",
+    selectedCount: "דמויות נבחרות ({{count}})",
+    removeChar: "הסר {{name}}",
+    addCustomLabel: "הוסף דמות מותאמת",
+    addCustomButton: "הוסף דמות משלך",
+    charNameLabel: "שם הדמות",
+    addButton: "הוסף",
+    cancelButton: "ביטול",
+    thatsYou: "זה אתה!"
+  },
+  userWelcome: {
+    morning: "בוקר טוב, {{name}}!",
+    afternoon: "צהריים טובים, {{name}}!",
+    evening: "ערב טוב, {{name}}!",
+    night: "לילה טוב, {{name}}!"
+  },
+  celebration: {
+    title: "חגיגה",
+    close: "סגור",
+    levelUp: "עלית רמה!",
+    levelAdvance: "עלית מרמה {{oldLevel}} לרמה {{newLevel}}!",
+    newBadge: "תג חדש!",
+    awesome: "מעולה!"
   }
 };
