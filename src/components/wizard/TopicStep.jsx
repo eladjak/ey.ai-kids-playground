@@ -372,7 +372,7 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
       <div
         className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4"
         role="radiogroup"
-        aria-label={isHebrew ? "בחר נושא" : "Choose topic"}
+        aria-label={t("wizard.topic.chooseTopic")}
       >
         {TOPIC_CARDS.map((topic, index) => {
           const Icon = topic.icon;
@@ -477,7 +477,7 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
           onClick={handleSelectCustomIdea}
           role="radio"
           aria-checked={selectedTopic === "custom"}
-          aria-label={isHebrew ? "יש לי רעיון משלי" : isYiddish ? "איך האָב מײַן אייגענעם רעיון" : "I have my own idea"}
+          aria-label={t("wizard.topic.customIdea")}
           className={`
             relative flex flex-col items-center justify-center p-4 md:p-5 rounded-2xl
             transition-all duration-200 cursor-pointer min-h-[130px] md:min-h-[150px]
@@ -498,7 +498,7 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
             />
           </div>
           <span className={`text-sm md:text-base font-bold text-center ${selectedTopic === "custom" ? "text-purple-700 dark:text-purple-300" : "text-gray-700 dark:text-gray-200"}`}>
-            {isHebrew ? "רעיון משלי" : isYiddish ? "מײַן רעיון" : "My Own Idea"}
+            {t("wizard.topic.customIdeaShort")}
           </span>
           {selectedTopic === "custom" && !surprisedTopicId && (
             <motion.div
@@ -522,7 +522,7 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
           >
             <div className="bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-950/30 dark:to-indigo-950/30 rounded-2xl p-4 space-y-3 border border-purple-100 dark:border-purple-900/50 shadow-sm">
               <label className="text-sm font-semibold text-purple-800 dark:text-purple-300 block">
-                {isHebrew ? "ספר לנו על הרעיון שלך:" : isYiddish ? "דערציי אונדז וועגן דײַן רעיון:" : "Tell us about your idea:"}
+                {t("wizard.topic.tellUsIdea")}
               </label>
               <Textarea
                 value={customIdea || ""}
@@ -537,7 +537,7 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
                 rows={3}
                 maxLength={500}
                 className="resize-none bg-white dark:bg-gray-900 border-purple-200 dark:border-purple-800 focus:border-purple-400 rounded-xl"
-                aria-label={isHebrew ? "תיאור הרעיון שלך" : "Describe your idea"}
+                aria-label={t("wizard.topic.describeIdeaLabel")}
               />
             </div>
           </motion.div>
@@ -553,7 +553,7 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
           aria-expanded={showSavedIdeas}
         >
           <Lightbulb className="h-4 w-4" aria-hidden="true" />
-          {isHebrew ? "השתמש ברעיון שמור" : isYiddish ? "נוץ אַ געשפּאָרטן רעיון" : "Use Saved Idea"}
+          {t("wizard.topic.useSavedIdea")}
         </Button>
       </div>
 
@@ -568,7 +568,7 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
           >
             <div className="bg-gradient-to-br from-blue-50 to-sky-50 dark:from-blue-950/30 dark:to-sky-950/30 rounded-2xl p-4 space-y-3 border border-blue-100 dark:border-blue-900/50">
               <h3 className="text-sm font-semibold text-blue-800 dark:text-blue-300">
-                {isHebrew ? "הרעיונות השמורים שלך:" : "Your saved ideas:"}
+                {t("wizard.topic.savedIdeasTitle")}
               </h3>
               {isLoadingIdeas ? (
                 <div className="flex justify-center py-4">
@@ -576,7 +576,7 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
                 </div>
               ) : savedIdeas.length === 0 ? (
                 <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-3">
-                  {isHebrew ? "אין רעיונות שמורים עדיין" : "No saved ideas yet"}
+                  {t("wizard.topic.noSavedIdeas")}
                 </p>
               ) : (
                 <div className="space-y-2 max-h-60 overflow-y-auto">

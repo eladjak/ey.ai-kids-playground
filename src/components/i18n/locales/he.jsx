@@ -888,10 +888,16 @@ export default {
     topic: {
       title: "על מה יהיה הסיפור?",
       subtitle: "בחר נושא שמעניין אותך",
+      chooseTopic: "בחר נושא",
       customIdea: "רעיון שלי",
+      customIdeaShort: "רעיון משלי",
       customIdeaDesc: "כתוב רעיון משלך לסיפור",
+      tellUsIdea: "ספר לנו על הרעיון שלך:",
+      describeIdeaLabel: "תיאור הרעיון שלך",
       useSavedIdea: "השתמש ברעיון שמור",
       useSavedIdeaDesc: "בחר מהרעיונות השמורים שלך",
+      savedIdeasTitle: "הרעיונות השמורים שלך:",
+      noSavedIdeas: "אין רעיונות שמורים עדיין",
       customPlaceholder: "תאר את הרעיון שלך לסיפור...",
       surpriseMe: "הפתע אותי!"
     },

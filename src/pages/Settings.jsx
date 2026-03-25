@@ -59,9 +59,9 @@ import { motion } from 'framer-motion';
 
 // Language option with flag
 const LANGUAGE_OPTIONS = [
-  { value: "english", flag: "🇺🇸", label_en: "English", label_he: "אנגלית" },
-  { value: "hebrew", flag: "🇮🇱", label_en: "Hebrew", label_he: "עברית" },
-  { value: "yiddish", flag: "🟡", label_en: "Yiddish", label_he: "יידיש" },
+  { value: "english", flag: "🇺🇸" },
+  { value: "hebrew", flag: "🇮🇱" },
+  { value: "yiddish", flag: "🟡" },
 ];
 
 function SettingRow({ label, children, isRTL }) {
@@ -231,7 +231,7 @@ export default function Settings() {
     if (checkoutStatus === 'success') {
       toast({
         title: t('settings.upgradeSuccess'),
-        description: t('settings.upgradeSuccessDesc').replace('{plan}', upgradedPlan || (isRTL ? 'פרימיום' : 'premium')),
+        description: t('settings.upgradeSuccessDesc').replace('{plan}', upgradedPlan || 'Premium'),
       });
       refetchSubscription();
       window.history.replaceState({}, '', window.location.pathname);
@@ -437,7 +437,7 @@ export default function Settings() {
                         }`}
                       >
                         <span className="text-base">{opt.flag}</span>
-                        <span>{isRTL ? opt.label_he : opt.label_en}</span>
+                        <span>{t(`common.languageNames.${opt.value}`)}</span>
                       </button>
                     ))}
                   </div>
@@ -457,7 +457,7 @@ export default function Settings() {
                         }`}
                       >
                         <span className="text-base">{opt.flag}</span>
-                        <span>{isRTL ? opt.label_he : opt.label_en}</span>
+                        <span>{t(`common.languageNames.${opt.value}`)}</span>
                       </button>
                     ))}
                   </div>

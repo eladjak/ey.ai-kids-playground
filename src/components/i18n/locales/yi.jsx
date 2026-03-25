@@ -791,10 +791,16 @@ export default {
     },
     topic: {
       title: "וואָס פֿאַר אַ געשיכטע ווילסט שאַפֿן?",
+      chooseTopic: "קלייַב אַ טעמע",
       customIdea: "מײַן אייגן אידעע",
+      customIdeaShort: "מײַן רעיון",
       customIdeaDesc: "שרייַב דיין אייגן געשיכטע אידעע",
+      tellUsIdea: "דערציי אונדז וועגן דײַן רעיון:",
+      describeIdeaLabel: "באַשרייַב דײַן רעיון",
       useSavedIdea: "ניצן געהיטן אידעע",
       useSavedIdeaDesc: "קלייַב פֿון דיינע געהיטענע אידעען",
+      savedIdeasTitle: "דיינע געהיטענע אידעען:",
+      noSavedIdeas: "נאָך קיין געהיטענע אידעען",
       customPlaceholder: "באַשרייַב דיין געשיכטע אידעע..."
     },
     characters: {

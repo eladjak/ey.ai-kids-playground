@@ -890,10 +890,16 @@ export default {
     topic: {
       title: "What's the story about?",
       subtitle: "Pick a topic you love",
+      chooseTopic: "Choose topic",
       customIdea: "My Own Idea",
+      customIdeaShort: "My Own Idea",
       customIdeaDesc: "Write your own story idea",
+      tellUsIdea: "Tell us about your idea:",
+      describeIdeaLabel: "Describe your idea",
       useSavedIdea: "Use Saved Idea",
       useSavedIdeaDesc: "Pick from your saved story ideas",
+      savedIdeasTitle: "Your saved ideas:",
+      noSavedIdeas: "No saved ideas yet",
       customPlaceholder: "Describe your story idea...",
       surpriseMe: "Surprise Me!"
     },
