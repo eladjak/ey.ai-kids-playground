@@ -56,20 +56,13 @@ export default class ErrorBoundary extends React.Component {
       const isHebrew = storedLanguage === 'hebrew';
       const isYiddish = storedLanguage === 'yiddish';
 
-      const heading = isHebrew
-        ? 'אופס! משהו השתבש'
-        : isYiddish
-        ? 'אוי! עפּעס איז פֿאַלשׁ'
-        : 'Oops! Something went wrong';
-
-      const description = isHebrew
-        ? 'לא לדאוג, זה קורה לפעמים. בואו ננסה שוב!'
-        : isYiddish
-        ? 'קיין זאָרגן, דאָס פּאַסירט אַמאָל. לאָמיר פּרוּוון ווידער!'
-        : "Don't worry, this happens sometimes. Let's try again!";
-
-      const tryAgainLabel = isHebrew ? 'נסה שוב' : isYiddish ? 'פּרוּוו ווידער' : 'Try Again';
-      const goHomeLabel = isHebrew ? 'חזרה הביתה' : isYiddish ? 'גיי אַהיים' : 'Go Home';
+      const ERROR_LABELS = {
+        english: { heading: 'Oops! Something went wrong', description: "Don't worry, this happens sometimes. Let's try again!", tryAgain: 'Try Again', goHome: 'Go Home' },
+        hebrew: { heading: 'אופס! משהו השתבש', description: 'לא לדאוג, זה קורה לפעמים. בואו ננסה שוב!', tryAgain: 'נסה שוב', goHome: 'חזרה הביתה' },
+        yiddish: { heading: 'אוי! עפּעס איז פֿאַלשׁ', description: 'קיין זאָרגן, דאָס פּאַסירט אַמאָל. לאָמיר פּרוּוון ווידער!', tryAgain: 'פּרוּוו ווידער', goHome: 'גיי אַהיים' },
+      };
+      const labels = ERROR_LABELS[storedLanguage] || ERROR_LABELS.english;
+      const { heading, description, tryAgain: tryAgainLabel, goHome: goHomeLabel } = labels;
 
       return (
         <div
