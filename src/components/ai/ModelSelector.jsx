@@ -21,7 +21,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-export default function ModelSelector({ 
+import { useI18n } from "@/components/i18n/i18nProvider";
+
+export default function ModelSelector({
   category = "image",
   selectedModel,
   onModelChange,
@@ -31,43 +33,7 @@ export default function ModelSelector({
   showDetails = true
 }) {
   const [models, setModels] = useState([]);
-
-  const translations = {
-    english: {
-      "model.free": "Free",
-      "model.creator": "Creator",
-      "model.pro": "Pro",
-      "model.recommended": "Recommended",
-      "model.new": "New",
-      "model.premium": "Premium",
-      "model.locked": "Upgrade Required",
-      "model.speed": "Speed",
-      "model.quality": "Quality",
-      "model.credits": "Credits per use",
-      "model.specialties": "Best for",
-      "model.learn-more": "Learn More"
-    },
-    hebrew: {
-      "model.free": "חינמי",
-      "model.creator": "יוצר",
-      "model.pro": "מקצועי",
-      "model.recommended": "מומלץ",
-      "model.new": "חדש",
-      "model.premium": "פרימיום",
-      "model.locked": "דרוש שדרוג",
-      "model.speed": "מהירות",
-      "model.quality": "איכות",
-      "model.credits": "קרדיטים לשימוש",
-      "model.specialties": "מתאים ל",
-      "model.learn-more": "למד עוד"
-    }
-  };
-
-  const t = (key) => {
-    return translations[currentLanguage]?.[key] || translations.english[key] || key;
-  };
-
-  const isRTL = currentLanguage === "hebrew" || currentLanguage === "yiddish";
+  const { t, isRTL } = useI18n();
 
   // מודלים מלאים כמו ב-Gamma (מהתמונות שצירפת)
   const modelsByCategory = {
@@ -510,19 +476,19 @@ export default function ModelSelector({
               {model.name}
               {model.tags.includes("recommended") && (
                 <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
-                  {t("model.recommended")}
+                  {t("modelSelector.recommended")}
                 </Badge>
               )}
               {model.tags.includes("new") && (
                 <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
-                  {t("model.new")}
+                  {t("modelSelector.new")}
                 </Badge>
               )}
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400">{model.provider}</p>
           </div>
           <Badge className={tierColors[model.tier]} variant="secondary">
-            {t(`model.${model.tier}`)}
+            {t(`modelSelector.${model.tier}`)}
           </Badge>
         </div>
 
@@ -534,20 +500,20 @@ export default function ModelSelector({
             
             <div className="flex flex-wrap gap-2">
               <Badge className={speedColors[model.speed]} variant="secondary">
-                {t("model.speed")}: {model.speed}
+                {t("modelSelector.speed")}: {model.speed}
               </Badge>
               <Badge className={qualityColors[model.quality]} variant="secondary">
-                {t("model.quality")}: {model.quality}
+                {t("modelSelector.quality")}: {model.quality}
               </Badge>
             </div>
 
             <div className="text-sm">
-              <span className="text-gray-600 dark:text-gray-400">{t("model.credits")}: </span>
+              <span className="text-gray-600 dark:text-gray-400">{t("modelSelector.credits")}: </span>
               <span className="font-medium">{model.credits}</span>
             </div>
 
             <div className="text-sm">
-              <span className="text-gray-600 dark:text-gray-400">{t("model.specialties")}: </span>
+              <span className="text-gray-600 dark:text-gray-400">{t("modelSelector.specialties")}: </span>
               <span className="font-medium">{model.specialties.slice(0, 2).join(", ")}</span>
             </div>
           </div>
@@ -556,7 +522,7 @@ export default function ModelSelector({
         {isLocked && (
           <div className="mt-3 p-2 bg-gray-100 dark:bg-gray-800 rounded text-center">
             <p className="text-xs text-gray-600 dark:text-gray-400">
-              {t("model.locked")}
+              {t("modelSelector.locked")}
             </p>
           </div>
         )}

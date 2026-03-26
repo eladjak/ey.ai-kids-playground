@@ -2387,5 +2387,19 @@ export default {
     blog: "Blog",
     openMenu: "Open menu",
     closeMenu: "Close menu"
+  },
+  modelSelector: {
+    free: "Free",
+    creator: "Creator",
+    pro: "Pro",
+    recommended: "Recommended",
+    new: "New",
+    premium: "Premium",
+    locked: "Upgrade Required",
+    speed: "Speed",
+    quality: "Quality",
+    credits: "Credits per use",
+    specialties: "Best for",
+    learnMore: "Learn More"
   }
 };

@@ -2191,5 +2191,19 @@ export default {
     blog: "בלאָג",
     openMenu: "עפֿן מעניו",
     closeMenu: "שליסן מעניו"
+  },
+  modelSelector: {
+    free: "פֿרײַ",
+    creator: "שאַפֿער",
+    pro: "פּראָ",
+    recommended: "רעקאָמענדירט",
+    new: "נײַ",
+    premium: "פּרעמיום",
+    locked: "דאַרף שדרוג",
+    speed: "גיכקייט",
+    quality: "קוואַליטעט",
+    credits: "קרעדיטן פּער נוץ",
+    specialties: "פּאַסט פֿאַר",
+    learnMore: "לערן מער"
   }
 };

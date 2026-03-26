@@ -2384,5 +2384,19 @@ export default {
     blog: "בלוג",
     openMenu: "פתח תפריט",
     closeMenu: "סגור תפריט"
+  },
+  modelSelector: {
+    free: "חינמי",
+    creator: "יוצר",
+    pro: "מקצועי",
+    recommended: "מומלץ",
+    new: "חדש",
+    premium: "פרימיום",
+    locked: "דרוש שדרוג",
+    speed: "מהירות",
+    quality: "איכות",
+    credits: "קרדיטים לשימוש",
+    specialties: "מתאים ל",
+    learnMore: "למד עוד"
   }
 };
