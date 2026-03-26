@@ -4,39 +4,10 @@ import { Progress } from "@/components/ui/progress";
 import { Trophy, BookOpen, Star, Award, BadgeCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
+import { useI18n } from "@/components/i18n/i18nProvider";
 
 export default function UserStats({ userData, currentLanguage = "english" }) {
-  const translations = {
-    english: {
-      "stats.level": "Level",
-      "stats.storyteller": "Storyteller",
-      "stats.xp": "XP",
-      "stats.nextLevel": "to next level",
-      "stats.books": "Books",
-      "stats.pages": "pages created",
-      "stats.streak": "day streak",
-      "stats.keepGoing": "Keep it going!",
-      "stats.badges": "Earned Badges",
-      "stats.complete": "Complete actions to earn badges",
-      "stats.badgesCount": "badges earned"
-    },
-    hebrew: {
-      "stats.level": "רמה",
-      "stats.storyteller": "מספר סיפורים",
-      "stats.xp": "נקודות ניסיון",
-      "stats.nextLevel": "לרמה הבאה",
-      "stats.books": "ספרים",
-      "stats.pages": "דפים נוצרו",
-      "stats.streak": "ימים ברצף",
-      "stats.keepGoing": "המשך כך!",
-      "stats.badges": "תגים שהושגו",
-      "stats.complete": "השלם משימות כדי להרוויח תגים",
-      "stats.badgesCount": "תגים הושגו"
-    }
-  };
-
-  const t = (key) => translations[currentLanguage]?.[key] || translations.english[key];
-  const isRTL = currentLanguage === "hebrew";
+  const { t, isRTL } = useI18n();
 
   const completedBadges = userData.badges?.filter(badge => badge.completed) || [];
   const xpProgress = (userData.xp / userData.next_level_xp) * 100;
@@ -46,7 +17,7 @@ export default function UserStats({ userData, currentLanguage = "english" }) {
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-lg">
           <Trophy className="h-5 w-5 text-amber-500" />
-          {t("stats.level")} {userData.level} {t("stats.storyteller")}
+          {t("userStats.level")} {userData.level} {t("userStats.storyteller")}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -55,10 +26,10 @@ export default function UserStats({ userData, currentLanguage = "english" }) {
           <div className="md:col-span-2 bg-gradient-to-r from-purple-500 to-blue-500 dark:from-purple-800 dark:to-blue-800 rounded-lg p-5 text-white">
             <div className="flex justify-between items-start">
               <div>
-                <h3 className="text-white/80 font-medium">{t("stats.level")}</h3>
+                <h3 className="text-white/80 font-medium">{t("userStats.level")}</h3>
                 <div className="flex items-end gap-1">
                   <span className="text-4xl font-bold">{userData.level}</span>
-                  <span className="text-lg mb-1">{t("stats.storyteller")}</span>
+                  <span className="text-lg mb-1">{t("userStats.storyteller")}</span>
                 </div>
               </div>
               <Trophy className="h-8 w-8 text-amber-300" />
@@ -66,8 +37,8 @@ export default function UserStats({ userData, currentLanguage = "english" }) {
             
             <div className="mt-4 space-y-1">
               <div className="flex justify-between text-sm">
-                <span>{userData.xp} {t("stats.xp")}</span>
-                <span>{userData.next_level_xp - userData.xp} {t("stats.nextLevel")}</span>
+                <span>{userData.xp} {t("userStats.xp")}</span>
+                <span>{userData.next_level_xp - userData.xp} {t("userStats.nextLevel")}</span>
               </div>
               <motion.div 
                 className="h-2 bg-white/20 rounded-full overflow-hidden"
@@ -93,12 +64,12 @@ export default function UserStats({ userData, currentLanguage = "english" }) {
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             <div className="flex justify-between items-start">
-              <h3 className="text-blue-800 dark:text-blue-300 font-medium">{t("stats.books")}</h3>
+              <h3 className="text-blue-800 dark:text-blue-300 font-medium">{t("userStats.books")}</h3>
               <BookOpen className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             </div>
             <p className="text-2xl font-bold mt-2">{userData.total_books}</p>
             <p className="text-blue-600/70 dark:text-blue-300/70 text-sm">
-              {userData.total_pages} {t("stats.pages")}
+              {userData.total_pages} {t("userStats.pages")}
             </p>
           </motion.div>
           
@@ -110,12 +81,12 @@ export default function UserStats({ userData, currentLanguage = "english" }) {
             transition={{ duration: 0.5, delay: 0.3 }}
           >
             <div className="flex justify-between items-start">
-              <h3 className="text-amber-800 dark:text-amber-300 font-medium">{t("stats.streak")}</h3>
+              <h3 className="text-amber-800 dark:text-amber-300 font-medium">{t("userStats.streak")}</h3>
               <Star className="h-5 w-5 text-amber-600 dark:text-amber-400" />
             </div>
             <p className="text-2xl font-bold mt-2">{userData.streak_days}</p>
             <p className="text-amber-600/70 dark:text-amber-300/70 text-sm">
-              {t("stats.keepGoing")}
+              {t("userStats.keepGoing")}
             </p>
           </motion.div>
           
@@ -124,10 +95,10 @@ export default function UserStats({ userData, currentLanguage = "english" }) {
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-medium flex items-center gap-2">
                 <Award className="h-5 w-5 text-purple-600" />
-                {t("stats.badges")}
+                {t("userStats.badges")}
               </h3>
               <Badge variant="outline" className="px-2 py-0 text-xs">
-                {completedBadges.length} {t("stats.badgesCount")}
+                {completedBadges.length} {t("userStats.badgesCount")}
               </Badge>
             </div>
             
@@ -153,7 +124,7 @@ export default function UserStats({ userData, currentLanguage = "english" }) {
                 <div className="col-span-full flex flex-col items-center border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg p-6">
                   <Award className="h-8 w-8 text-gray-400 mb-2" />
                   <span className="text-sm font-medium text-gray-500 dark:text-gray-400 text-center">
-                    {t("stats.complete")}
+                    {t("userStats.complete")}
                   </span>
                 </div>
               )}

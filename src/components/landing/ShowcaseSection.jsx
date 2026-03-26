@@ -99,9 +99,7 @@ const ShowcaseSection = () => {
                     className={`absolute top-3 ${isRTL ? 'left-3' : 'right-3'}`}
                   >
                     <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-white/80 text-gray-700 backdrop-blur-sm">
-                      {language === 'en'
-                        ? `Ages ${book.age_range}`
-                        : `גילאי ${book.age_range}`}
+                      {t('showcase.ageRange', { range: book.age_range })}
                     </span>
                   </div>
                 </div>
@@ -134,7 +132,7 @@ const ShowcaseSection = () => {
                       }}
                     >
                       <Info className="h-3 w-3" />
-                      {language === 'en' ? 'See how it was made' : 'איך נוצר הספר הזה?'}
+                      {t('showcase.howItWasMade')}
                     </a>
                   </div>
                 </div>

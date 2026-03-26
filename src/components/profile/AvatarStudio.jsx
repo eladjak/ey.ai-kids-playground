@@ -2,8 +2,8 @@
 import React, { useState } from 'react';
 import { GenerateImage } from "@/integrations/Core";
 import { buildSafetyPromptPrefix, moderateInput } from "@/utils/content-moderation";
-import { 
-  Camera, 
+import {
+  Camera,
   Wand2,
   Palette,
   RefreshCw,
@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useI18n } from "@/components/i18n/i18nProvider";
 
 export default function AvatarStudio({ currentAvatar, onAvatarSelected, onClose, currentLanguage = "english" }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -34,73 +35,7 @@ export default function AvatarStudio({ currentAvatar, onAvatarSelected, onClose,
   const [generationStyle, setGenerationStyle] = useState("cartoon");
   const [characterType, setCharacterType] = useState("human");
 
-  const translations = {
-    english: {
-      "avatar.title": "Avatar Studio",
-      "avatar.presets": "Preset Avatars",
-      "avatar.ai": "AI Generation",
-      "avatar.characters": "Story Characters",
-      "avatar.generate": "Generate Avatar",
-      "avatar.generating": "Generating...",
-      "avatar.style": "Style",
-      "avatar.type": "Character Type",
-      "avatar.prompt": "Description",
-      "avatar.promptPlaceholder": "Describe your ideal avatar...",
-      "avatar.save": "Save Avatar",
-      "avatar.cancel": "Cancel",
-      "avatar.styles.cartoon": "Cartoon",
-      "avatar.styles.anime": "Anime",
-      "avatar.styles.pixel": "Pixel Art",
-      "avatar.styles.realistic": "Realistic",
-      "avatar.type.human": "Human",
-      "avatar.type.animal": "Animal",
-      "avatar.type.fantasy": "Fantasy",
-      "avatar.preview": "Preview",
-      "avatar.upload": "Upload Image",
-      "avatar.uploadDescription": "Upload your own avatar image",
-      "avatar.drag": "Drag and drop an image here",
-      "avatar.or": "or",
-      "avatar.browse": "Browse files",
-      "avatar.rewards": "Reward Avatars",
-      "avatar.rewardsDescription": "Avatars you've earned through achievements",
-      "avatar.illustrations": "Your Illustrations",
-      "avatar.illustrationsDescription": "Use your book illustrations as avatar"
-    },
-    hebrew: {
-      "avatar.title": "סטודיו אווטאר",
-      "avatar.presets": "אווטארים מוכנים",
-      "avatar.ai": "יצירה באמצעות AI",
-      "avatar.characters": "דמויות מהסיפורים",
-      "avatar.generate": "צור אווטאר",
-      "avatar.generating": "יוצר...",
-      "avatar.style": "סגנון",
-      "avatar.type": "סוג דמות",
-      "avatar.prompt": "תיאור",
-      "avatar.promptPlaceholder": "תאר את האווטאר הרצוי...",
-      "avatar.save": "שמור אווטאר",
-      "avatar.cancel": "ביטול",
-      "avatar.styles.cartoon": "מצויר",
-      "avatar.styles.anime": "אנימה",
-      "avatar.styles.pixel": "פיקסל ארט",
-      "avatar.styles.realistic": "ריאליסטי",
-      "avatar.type.human": "אנושי",
-      "avatar.type.animal": "חיה",
-      "avatar.type.fantasy": "פנטזיה",
-      "avatar.preview": "תצוגה מקדימה",
-      "avatar.upload": "העלאת תמונה",
-      "avatar.uploadDescription": "העלה תמונת אווטאר משלך",
-      "avatar.drag": "גרור ושחרר תמונה כאן",
-      "avatar.or": "או",
-      "avatar.browse": "בחר קובץ",
-      "avatar.rewards": "אווטארים שהושגו",
-      "avatar.rewardsDescription": "אווטארים שהרווחת דרך הישגים",
-      "avatar.illustrations": "האיורים שלך",
-      "avatar.illustrationsDescription": "השתמש באיורי הספרים שלך כאווטאר"
-    }
-  };
-
-  const t = (key) => translations[currentLanguage]?.[key] || translations.english[key];
-  const isRTL = currentLanguage === "hebrew";
+  const { t, isRTL } = useI18n();
 
   const generateAIAvatar = async () => {
     setIsGenerating(true);
@@ -172,7 +107,7 @@ export default function AvatarStudio({ currentAvatar, onAvatarSelected, onClose,
       <Tabs defaultValue="presets" className="w-full" onValueChange={setActiveTab}>
         <TabsList className="grid grid-cols-5 mb-4">
           <TabsTrigger value="presets">{t("avatar.presets")}</TabsTrigger>
-          <TabsTrigger value="upload">{t("avatar.upload")}</TabsTrigger>
+          <TabsTrigger value="upload">{t("avatar.upload.tab")}</TabsTrigger>
           <TabsTrigger value="rewards">{t("avatar.rewards")}</TabsTrigger>
           <TabsTrigger value="illustrations">{t("avatar.illustrations")}</TabsTrigger>
           <TabsTrigger value="ai">{t("avatar.ai")}</TabsTrigger>
@@ -263,7 +198,7 @@ export default function AvatarStudio({ currentAvatar, onAvatarSelected, onClose,
               </div>
 
               <div className="space-y-2">
-                <Label>{t("avatar.type")}</Label>
+                <Label>{t("avatar.type.label")}</Label>
                 <Select value={characterType} onValueChange={setCharacterType}>
                   <SelectTrigger>
                     <SelectValue />

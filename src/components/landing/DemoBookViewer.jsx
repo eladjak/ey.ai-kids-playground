@@ -16,9 +16,9 @@ const artStyleLabels = {
 };
 
 const genreLabels = {
-  fantasy: 'פנטזיה',
-  'science-fiction': 'מדע בדיוני',
-  adventure: 'הרפתקאות',
+  fantasy: { he: 'פנטזיה', en: 'Fantasy' },
+  'science-fiction': { he: 'מדע בדיוני', en: 'Sci-Fi' },
+  adventure: { he: 'הרפתקאות', en: 'Adventure' },
 };
 
 const pageVariants = {
@@ -37,7 +37,7 @@ const pageVariants = {
 };
 
 const DemoBookViewer = ({ book, open, onClose }) => {
-  const { isRTL } = useI18n();
+  const { t, isRTL, language } = useI18n();
   const [currentPage, setCurrentPage] = useState(-1); // -1 = cover
   const [direction, setDirection] = useState(0);
 
@@ -88,13 +88,13 @@ const DemoBookViewer = ({ book, open, onClose }) => {
           <div className="flex items-center gap-3">
             <span className="text-xs text-gray-400">
               {isOnCover
-                ? 'עטיפה'
-                : `עמוד ${currentPage + 1} מתוך ${totalPages}`}
+                ? t('demoBookViewer.cover')
+                : t('demoBookViewer.pageOf', { current: String(currentPage + 1), total: String(totalPages) })}
             </span>
             <button
               onClick={handleClose}
               className="rounded-full p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-              aria-label="סגור"
+              aria-label={t('demoBookViewer.close')}
             >
               <X className="h-4 w-4 text-gray-500" />
             </button>
@@ -129,13 +129,13 @@ const DemoBookViewer = ({ book, open, onClose }) => {
                 {/* Book metadata */}
                 <div className="flex flex-wrap gap-2 justify-center mb-4">
                   <span className="px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
-                    {genreLabels[book.genre] || book.genre}
+                    {(language === 'en' ? genreLabels[book.genre]?.en : genreLabels[book.genre]?.he) || book.genre}
                   </span>
                   <span className="px-3 py-1 rounded-full text-xs font-medium bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300">
                     {artStyleLabels[book.art_style] || book.art_style}
                   </span>
                   <span className="px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
-                    גילאי {book.age_range}
+                    {t('demoBookViewer.ageRange', { range: book.age_range })}
                   </span>
                 </div>
 
@@ -148,7 +148,7 @@ const DemoBookViewer = ({ book, open, onClose }) => {
                   className="mt-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
                 >
                   <BookOpen className="h-4 w-4" />
-                  התחילו לקרוא
+                  {t('demoBookViewer.startReading')}
                 </Button>
               </motion.div>
             ) : (
@@ -201,7 +201,7 @@ const DemoBookViewer = ({ book, open, onClose }) => {
             className="flex items-center gap-1"
           >
             <ChevronRight className="h-4 w-4" />
-            {isOnLastPage ? 'סוף' : 'הבא'}
+            {isOnLastPage ? t('demoBookViewer.end') : t('demoBookViewer.next')}
           </Button>
 
           {/* Progress dots */}
@@ -216,7 +216,7 @@ const DemoBookViewer = ({ book, open, onClose }) => {
                   ? 'bg-purple-500'
                   : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400'
               }`}
-              aria-label="עטיפה"
+              aria-label={t('demoBookViewer.coverAriaLabel')}
             />
             {book.pages.map((_, idx) => (
               <button
@@ -230,7 +230,7 @@ const DemoBookViewer = ({ book, open, onClose }) => {
                     ? 'bg-purple-500'
                     : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400'
                 }`}
-                aria-label={`עמוד ${idx + 1}`}
+                aria-label={t('demoBookViewer.pageAriaLabel', { number: String(idx + 1) })}
               />
             ))}
           </div>
@@ -242,7 +242,7 @@ const DemoBookViewer = ({ book, open, onClose }) => {
             disabled={isOnCover}
             className="flex items-center gap-1"
           >
-            {isOnCover ? 'עטיפה' : 'הקודם'}
+            {isOnCover ? t('demoBookViewer.cover') : t('demoBookViewer.previous')}
             <ChevronLeft className="h-4 w-4" />
           </Button>
         </div>

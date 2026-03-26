@@ -6,20 +6,21 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { 
-  Upload, 
-  Camera, 
-  X, 
-  Crop, 
-  RotateCw, 
-  ZoomIn, 
-  Check, 
-  Loader2, 
-  Sparkles, 
+import {
+  Upload,
+  Camera,
+  X,
+  Crop,
+  RotateCw,
+  ZoomIn,
+  Check,
+  Loader2,
+  Sparkles,
   Image as ImageIcon,
   AlertCircle
 } from 'lucide-react';
 import { GenerateImage, UploadFile } from "@/integrations/Core";
+import { useI18n } from "@/components/i18n/i18nProvider";
 
 export default function AvatarSelector({ 
   open, 
@@ -49,71 +50,7 @@ export default function AvatarSelector({
     realistic: "realistic digital portrait, photorealistic"
   };
 
-  const translations = {
-    english: {
-      "avatar.title": "Avatar Studio",
-      "avatar.upload.tab": "Upload Image",
-      "avatar.create.tab": "Create Avatar",
-      "avatar.upload.title": "Upload your photo",
-      "avatar.upload.description": "Upload a profile picture in JPG, PNG or WebP format",
-      "avatar.upload.drag": "Drag and drop your image here",
-      "avatar.upload.or": "or",
-      "avatar.upload.browse": "Browse files",
-      "avatar.formats": "Formats: JPG, PNG, WebP",
-      "avatar.create.title": "Create Avatar",
-      "avatar.create.description": "Generate a unique avatar with AI",
-      "avatar.create.prompt": "Describe your avatar",
-      "avatar.create.promptPlaceholder": "Describe how you want your avatar to look...",
-      "avatar.create.style": "Art Style",
-      "avatar.create.generate": "Generate Avatar",
-      "avatar.create.generating": "Generating...",
-      "avatar.create.regenerate": "Try Again",
-      "avatar.preview": "Preview",
-      "avatar.save": "Save Avatar",
-      "avatar.cancel": "Cancel",
-      "avatar.error.size": "Image must be under 10MB",
-      "avatar.error.format": "Please use JPG, PNG or WebP format",
-      "avatar.error.dimensions": "Image must be at least 200x200 pixels",
-      "avatar.error.upload": "Failed to upload image",
-      "avatar.error.generation": "Failed to generate avatar",
-      "avatar.success.upload": "Image uploaded successfully",
-      "avatar.success.generation": "Avatar generated successfully",
-      "avatar.uploading": "Uploading..."
-    },
-    hebrew: {
-      "avatar.title": "סטודיו אווטאר",
-      "avatar.upload.tab": "העלאת תמונה",
-      "avatar.create.tab": "יצירת אווטאר",
-      "avatar.upload.title": "העלה את התמונה שלך",
-      "avatar.upload.description": "העלה תמונת פרופיל בפורמט JPG, PNG או WebP",
-      "avatar.upload.drag": "גרור ושחרר את התמונה שלך כאן",
-      "avatar.upload.or": "או",
-      "avatar.upload.browse": "בחר קובץ",
-      "avatar.formats": "פורמטים: JPG, PNG, WebP",
-      "avatar.create.title": "יצירת אווטאר",
-      "avatar.create.description": "צור אווטאר ייחודי באמצעות בינה מלאכותית",
-      "avatar.create.prompt": "תאר את האווטאר",
-      "avatar.create.promptPlaceholder": "תאר איך אתה רוצה שהאווטאר שלך ייראה...",
-      "avatar.create.style": "סגנון אמנותי",
-      "avatar.create.generate": "צור אווטאר",
-      "avatar.create.generating": "יוצר...",
-      "avatar.create.regenerate": "נסה שוב",
-      "avatar.preview": "תצוגה מקדימה",
-      "avatar.save": "שמור אווטאר",
-      "avatar.cancel": "ביטול",
-      "avatar.error.size": "התמונה חייבת להיות מתחת ל-10MB",
-      "avatar.error.format": "אנא השתמש בפורמט JPG, PNG או WebP",
-      "avatar.error.dimensions": "התמונה חייבת להיות לפחות 200x200 פיקסלים",
-      "avatar.error.upload": "שגיאה בהעלאת התמונה",
-      "avatar.error.generation": "שגיאה ביצירת האווטאר",
-      "avatar.success.upload": "התמונה הועלתה בהצלחה",
-      "avatar.success.generation": "האווטאר נוצר בהצלחה",
-      "avatar.uploading": "מעלה..."
-    }
-  };
-
-  const t = (key) => translations[currentLanguage]?.[key] || translations.english[key];
-  const isRTL = currentLanguage === "hebrew";
+  const { t, isRTL } = useI18n();
 
   // Set currentAvatar as preview when component mounts or currentAvatar changes
   useEffect(() => {

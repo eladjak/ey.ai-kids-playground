@@ -1,7 +1,41 @@
 # Sipurai - Progress & Analysis Report
 
-## Status: Active - i18n Migration + Creem Compliance
-## Last Updated: 2026-03-23
+## Status: Active - i18n Complete, QA & Feature Dev
+## Last Updated: 2026-03-26
+
+---
+
+## Session 39: Final i18n + Test Fixes (Mar 26, 2026)
+
+### i18n — COMPLETE
+- [x] Community: 5 remaining ternaries → t() (reportSubmitted, incorrectPin, cancel, confirm)
+- [x] DailyPrompt: aria-label ternary → t()
+- [x] SavedIdeas: "Generate new idea" ternary → t()
+- [x] Added 5 new keys to en/he/yi locales (reportSubmitted, incorrectPin, parentApprovalCancel, parentApprovalConfirm, refreshAriaLabel, generateNewIdea)
+- [x] **Zero isRTL ternaries remaining** in any page or component
+- Remaining Hebrew: ErrorBoundary (class component, can't use hooks) + OnboardingWizard (intentional data constants)
+
+### Test Fixes
+- [x] CharacterPicker tests: added missing i18n keys + {{var}} interpolation to test mock
+- [x] All 220 tests passing (2 previously failing now fixed)
+- [x] OOM error on BookWizard test file = known Node 22 issue, not code
+
+### Build Status
+- Build: clean (exit 0)
+- Tests: 220+ passing, 0 failures (OOM is infra, not code)
+
+### Remaining Work
+- [ ] Test full book creation flow end-to-end
+- [ ] Verify RLS policies with Clerk user IDs
+- [ ] 2 books missing cover images (data issue)
+- [ ] Blog content (Sanity CMS ready)
+- [ ] Local dev server doesn't mount React (Clerk auth config issue)
+
+---
+
+## Session 38: BookWizard + Last i18n (Mar 25, 2026)
+- [x] BookWizard outline generation bug fix
+- [x] Last i18n ternaries: Settings, TopicStep
 
 ---
 

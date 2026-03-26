@@ -1865,24 +1865,12 @@ export default {
     viewAll: "זע אַלעס"
   },
   avatar: {
-    ai: "AI באַשאַפֿן",
+    title: "אַוואַטאַר סטודיאָ",
+    ai: "AI שאַפֿן",
+    characters: "סיפּור כאַראַקטערן",
     browse: "בלעטערן",
     cancel: "אָפּזאָגן",
-    create: {
-      generate: "שאַפֿן אַוואַטאַר",
-      generating: "שאַפֿט...",
-      prompt: "באַשרײַב דײַן אַוואַטאַר",
-      promptPlaceholder: "אַ פֿרײַנטלעך קאַרטון כאַראַקטער מיט...",
-      style: "סטיל",
-      tab: "שאַפֿן"
-    },
     drag: "שלעפּ און לאָז אָדער קליק צו אַרויפֿלאָדן",
-    error: {
-      format: "ניט געשטיצטער פֿאָרמאַט",
-      generation: "אַוואַטאַר שאַפֿונג איז דורכגעפֿאַלן",
-      size: "טעקע איז צו גרויס (מאַקסימום 5MB)",
-      upload: "אַרויפֿלאָדן איז דורכגעפֿאַלן"
-    },
     formats: "PNG, JPG אָדער GIF (מאַקסימום 5MB)",
     generate: "שאַפֿן",
     generating: "שאַפֿט...",
@@ -1891,8 +1879,8 @@ export default {
     or: "אָדער",
     presets: "גרייטע",
     preview: "פֿאָראויסבליק",
-    prompt: "באַשרײַב דײַן אַוואַטאַר",
-    promptPlaceholder: "אַ פֿרײַנטלעך קאַרטון כאַראַקטער מיט...",
+    prompt: "באַשרײַבונג",
+    promptPlaceholder: "באַשרײַב דײַן אידעאַלן אַוואַטאַר...",
     rewards: "פּרײַזן",
     rewardsDescription: "אַוואַטאַרן וואָס דו האָסט פֿאַרדינט",
     save: "אָפּהיטן אַוואַטאַר",
@@ -1905,15 +1893,41 @@ export default {
     },
     type: {
       label: "טיפּ",
+      human: "מענטש",
       animal: "חיה",
-      fantasy: "פֿאַנטאַזיע",
-      human: "מענטש"
+      fantasy: "פֿאַנטאַזיע"
     },
     upload: {
       label: "אַרויפֿלאָדן",
       drag: "שלעפּ און לאָז אַ בילד",
       or: "אָדער קליק צו בלעטערן",
-      tab: "אַרויפֿלאָדן"
+      tab: "אַרויפֿלאָדן",
+      title: "אַרויפֿלאָדן דײַן בילד",
+      description: "אַרויפֿלאָדן אַ פּראָפֿיל בילד אין JPG, PNG אָדער WebP פֿאָרמאַט",
+      browse: "קוק טעקעס"
+    },
+    create: {
+      generate: "שאַפֿן אַוואַטאַר",
+      generating: "שאַפֿט...",
+      prompt: "באַשרײַב דײַן אַוואַטאַר",
+      promptPlaceholder: "באַשרײַב ווי דו ווילסט אַז דײַן אַוואַטאַר זאָל אויסזען...",
+      style: "קונסט סטיל",
+      tab: "שאַפֿן",
+      title: "שאַפֿן אַוואַטאַר",
+      description: "שאַף אַ אייגנאַרטיקן אַוואַטאַר מיט AI",
+      regenerate: "פּרוּוון נאָך אַ מאָל"
+    },
+    error: {
+      format: "ניט געשטיצטער פֿאָרמאַט",
+      generation: "אַוואַטאַר שאַפֿונג איז דורכגעפֿאַלן",
+      size: "טעקע איז צו גרויס (מאַקסימום 5MB)",
+      upload: "אַרויפֿלאָדן איז דורכגעפֿאַלן",
+      dimensions: "בילד מוז זײַן לפּחות 200x200 פּיקסלן",
+      loading: "בילד לאָדן האָט פֿאַרסאָגט"
+    },
+    success: {
+      upload: "בילד איז אַרויפֿגעלאָדן בהצלחה",
+      generation: "אַוואַטאַר איז באַשאַפֿן בהצלחה"
     },
     uploading: "לאָדט אַרויף..."
   },
@@ -2035,5 +2049,147 @@ export default {
     afternoon: "גוט נאָכמיטאָג, {{name}}!",
     evening: "גוט אָוונט, {{name}}!",
     night: "גוטע נאַכט, {{name}}!"
+  },
+  userStats: {
+    level: "לעוועל",
+    storyteller: "דערציילער",
+    xp: "XP",
+    nextLevel: "צום נאָנטן לעוועל",
+    books: "ביכער",
+    pages: "זייטן באַשאַפֿן",
+    streak: "טאָג סדרה",
+    keepGoing: "ווײַטער אַזוי!",
+    badges: "פֿאַרדינטע אָפּצייכנס",
+    complete: "פֿאַרענדיק טעטיקייטן כדי צו פֿאַרדינען אָפּצייכנס",
+    badgesCount: "אָפּצייכנס פֿאַרדינט"
+  },
+  achievements: {
+    title: "הישגים",
+    search: "זוכן הישגים",
+    filter: {
+      all: "אַלץ",
+      unlocked: "אויפֿגעמאַכט",
+      locked: "אין פּראָגרעס"
+    },
+    categories: {
+      all: "אַלע קאַטעגאָריעס",
+      books: "ביכער",
+      activity: "טעטיקייט",
+      creativity: "קרעאַטיוויטעט",
+      community: "קהילה"
+    },
+    progress: "פּראָגרעס",
+    xpEarned: "XP פֿאַרדינט",
+    dateLocked: "אויפֿגעמאַכט",
+    progressComplete: "פֿאַרענדיקט",
+    progressInProgress: "אין פּראָגרעס",
+    empty: "קיין הישגים ניט געפֿונען",
+    emptyDescription: "פֿאַרענדיק טעטיקייטן כדי צו פֿאַרדינען הישגים",
+    unlock: "ווי צו אויפֿמאַכן",
+    listView: "רשימה",
+    categoryView: "קאַטעגאָריעס"
+  },
+  recentActivity: {
+    title: "לעצטע טעטיקייט",
+    viewAll: "זען אַלע טעטיקייט",
+    empty: "קיין לעצטע טעטיקייט",
+    emptyDescription: "דײַן טעטיקייט וועט דאָ דערשײַנען",
+    today: "הײַנט",
+    yesterday: "נעכטן",
+    thisWeek: "דעם אויסגעשמייסטן",
+    thisMonth: "דעם חודש",
+    earlier: "פֿריִער",
+    filter: {
+      all: "אַלע טעטיקייטן",
+      books: "ביכער",
+      achievements: "הישגים",
+      social: "סאָציאַל"
+    },
+    period: {
+      all: "אַלע צײַטן",
+      week: "דעם אויסגעשמייסטן",
+      month: "דעם חודש",
+      year: "דעם יאָר"
+    }
+  },
+  activityTypes: {
+    bookCreated: "האָט באַשאַפֿן אַ נײַ בוך",
+    achievementUnlocked: "האָט אויפֿגעמאַכט הישג",
+    collaborationStarted: "האָט אָנגעהויבן צוזאַמענאַרבעטן",
+    levelUp: "איז אַרויפֿגעגאַנגען צום לעוועל",
+    bookShared: "האָט געטיילט אַ בוך",
+    commentReceived: "האָט באַקומען פֿידבעק",
+    ideaGenerated: "האָט באַשאַפֿן סיפּור אידעע",
+    bookCompleted: "האָט פֿאַרענדיקט אַ בוך",
+    streakMilestone: "האָט דערגרייכט סדרה מייסטן"
+  },
+  xpToast: {
+    bookCreated: "בוך געשאַפֿן",
+    bookRead: "בוך געלייענט",
+    pageEdited: "בלאַט רעדאַקטירט",
+    characterCreated: "כאַראַקטער געשאַפֿן",
+    communityShare: "געטיילט מיט קהילה",
+    streakDay: "טעגלעכע שטרייַף",
+    bookCompleted: "בוך פֿאַרענדיקט",
+    firstLogin: "ברוכים הבאים צוריק"
+  },
+  badgeNames: {
+    firstBook: "ערשטן בוך",
+    storyteller: "מעשהזאָגער",
+    prolificAuthor: "פּראָדוקטיווער מחבר",
+    characterCreator: "כאַראַקטער שאַפֿער",
+    communityStar: "קהילה שטערן",
+    streakMaster: "שטרייַף מייסטער",
+    genreExplorer: "זשאַנר אַנטדעקער",
+    multilingual: "פֿיל-שפּראַכיק",
+    creativeMind: "קרעאַטיווער קאָפּ",
+    dedicatedAuthor: "דעדיקירטער מחבר",
+    steadyCreator: "שטענדיקער שאַפֿער",
+    adventurer: "אַוואַנטוריסט",
+    socialButterfly: "חברותשאַפֿטלעכער",
+    feedbackExpert: "פֿידבעק מומחה",
+    communityFan: "קהילה ליבהאָבער",
+    fastLearner: "שנעלער לערנער",
+    starAuthor: "שטערן מחבר",
+    collector: "זאַמלער"
+  },
+  demoBookViewer: {
+    cover: "קאָווער",
+    pageOf: "בלאַט {{current}} פֿון {{total}}",
+    close: "שליסן",
+    ageRange: "עלטער {{range}}",
+    startReading: "אָנהייבן לייענען",
+    end: "סוף",
+    next: "ווייַטער",
+    previous: "פֿאָריקע",
+    coverAriaLabel: "קאָווער",
+    pageAriaLabel: "בלאַט {{number}}"
+  },
+  installPrompt: {
+    message: "אינסטאלירט Sipurai פאר די בעסטע דערפאַרונג",
+    install: "אינסטאלירן",
+    dismiss: "נישט יעצט"
+  },
+  showcase: {
+    ageRange: "עלטער {{range}}",
+    howItWasMade: "ווי אַזוי איז דאָס בוך געשאַפֿן?"
+  },
+  testimonials: {
+    disclaimer: "נעמען און מעשיות זיינען בשביל ביישפּילן",
+    coppaTooltip: "אינטערנאַציאָנאַלע קינדער פּריוואַטקייט סטאַנדאַרד",
+    age7: "עלטער 7",
+    ages5to9: "עלטער 5–9",
+    age6: "עלטער 6",
+    age4: "עלטער 4",
+    ages4to10: "עלטער 4–10"
+  },
+  howItWorks: {
+    readyCta: "גרייט צו שאַפֿן? הייבט אָן יעצט!",
+    readyCtaAriaLabel: "גרייט צו שאַפֿן? הייבט אָן יעצט!"
+  },
+  nav: {
+    blog: "בלאָג",
+    openMenu: "עפֿן מעניו",
+    closeMenu: "שליסן מעניו"
   }
 };

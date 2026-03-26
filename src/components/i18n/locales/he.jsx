@@ -2025,55 +2025,69 @@ export default {
     viewAll: "הצג הכל"
   },
   avatar: {
-    ai: "נוצר ב-AI",
+    title: "סטודיו אווטאר",
+    ai: "יצירה באמצעות AI",
+    characters: "דמויות מהסיפורים",
     browse: "עיון",
     cancel: "ביטול",
-    create: {
-      generate: "צור אווטאר",
-      generating: "יוצר...",
-      prompt: "תאר את האווטאר שלך",
-      promptPlaceholder: "דמות מצוירת חברותית עם...",
-      style: "סגנון",
-      tab: "יצירה"
-    },
     drag: "גרור ושחרר או לחץ להעלאה",
-    error: {
-      format: "פורמט קובץ לא נתמך",
-      generation: "יצירת האווטאר נכשלה",
-      size: "הקובץ גדול מדי (מקסימום 5MB)",
-      upload: "העלאת האווטאר נכשלה"
-    },
     formats: "PNG, JPG או GIF (מקסימום 5MB)",
     generate: "יצירה",
     generating: "יוצר...",
     illustrations: "איורים",
     illustrationsDescription: "אווטארים מאוירים מהנים",
     or: "או",
-    presets: "מוכנים מראש",
+    presets: "אווטארים מוכנים",
     preview: "תצוגה מקדימה",
-    prompt: "תאר את האווטאר שלך",
-    promptPlaceholder: "דמות מצוירת חברותית עם...",
-    rewards: "פרסים",
-    rewardsDescription: "אווטארים שהרווחת",
+    prompt: "תיאור",
+    promptPlaceholder: "תאר את האווטאר הרצוי...",
+    rewards: "אווטארים שהושגו",
+    rewardsDescription: "אווטארים שהרווחת דרך הישגים",
     save: "שמור אווטאר",
     style: "סגנון",
     styles: {
       anime: "אנימה",
-      cartoon: "קריקטורה",
+      cartoon: "מצויר",
       pixel: "פיקסל ארט",
       realistic: "ריאליסטי"
     },
     type: {
-      label: "סוג",
+      label: "סוג דמות",
+      human: "אנושי",
       animal: "חיה",
-      fantasy: "פנטזיה",
-      human: "אדם"
+      fantasy: "פנטזיה"
     },
     upload: {
       label: "העלאה",
       drag: "גרור ושחרר תמונה",
       or: "או לחץ לעיון",
-      tab: "העלאה"
+      tab: "העלאה",
+      title: "העלה את התמונה שלך",
+      description: "העלה תמונת פרופיל בפורמט JPG, PNG או WebP",
+      browse: "בחר קובץ"
+    },
+    create: {
+      generate: "צור אווטאר",
+      generating: "יוצר...",
+      prompt: "תאר את האווטאר",
+      promptPlaceholder: "תאר איך אתה רוצה שהאווטאר שלך ייראה...",
+      style: "סגנון אמנותי",
+      tab: "יצירה",
+      title: "יצירת אווטאר",
+      description: "צור אווטאר ייחודי באמצעות בינה מלאכותית",
+      regenerate: "נסה שוב"
+    },
+    error: {
+      format: "פורמט קובץ לא נתמך",
+      generation: "יצירת האווטאר נכשלה",
+      size: "הקובץ גדול מדי (מקסימום 5MB)",
+      upload: "העלאת האווטאר נכשלה",
+      dimensions: "התמונה חייבת להיות לפחות 200x200 פיקסלים",
+      loading: "טעינת התמונה נכשלה"
+    },
+    success: {
+      upload: "התמונה הועלתה בהצלחה",
+      generation: "האווטאר נוצר בהצלחה"
     },
     uploading: "מעלה..."
   },
@@ -2228,5 +2242,147 @@ export default {
     levelAdvance: "עלית מרמה {{oldLevel}} לרמה {{newLevel}}!",
     newBadge: "תג חדש!",
     awesome: "מעולה!"
+  },
+  userStats: {
+    level: "רמה",
+    storyteller: "מספר סיפורים",
+    xp: "נקודות ניסיון",
+    nextLevel: "לרמה הבאה",
+    books: "ספרים",
+    pages: "דפים נוצרו",
+    streak: "ימים ברצף",
+    keepGoing: "המשך כך!",
+    badges: "תגים שהושגו",
+    complete: "השלם משימות כדי להרוויח תגים",
+    badgesCount: "תגים הושגו"
+  },
+  achievements: {
+    title: "הישגים",
+    search: "חיפוש הישגים",
+    filter: {
+      all: "הכל",
+      unlocked: "נפתחו",
+      locked: "בתהליך"
+    },
+    categories: {
+      all: "כל הקטגוריות",
+      books: "ספרים",
+      activity: "פעילות",
+      creativity: "יצירתיות",
+      community: "קהילה"
+    },
+    progress: "התקדמות",
+    xpEarned: "XP הורווח",
+    dateLocked: "נפתח",
+    progressComplete: "הושלם",
+    progressInProgress: "בתהליך",
+    empty: "לא נמצאו הישגים",
+    emptyDescription: "השלם פעילויות כדי להרוויח הישגים",
+    unlock: "איך לפתוח",
+    listView: "רשימה",
+    categoryView: "קטגוריות"
+  },
+  recentActivity: {
+    title: "פעילות אחרונה",
+    viewAll: "צפה בכל הפעילות",
+    empty: "אין פעילות אחרונה",
+    emptyDescription: "הפעילות שלך תופיע כאן",
+    today: "היום",
+    yesterday: "אתמול",
+    thisWeek: "השבוע",
+    thisMonth: "החודש",
+    earlier: "מוקדם יותר",
+    filter: {
+      all: "כל הפעילויות",
+      books: "ספרים",
+      achievements: "הישגים",
+      social: "חברתי"
+    },
+    period: {
+      all: "כל הזמן",
+      week: "השבוע",
+      month: "החודש",
+      year: "השנה"
+    }
+  },
+  activityTypes: {
+    bookCreated: "יצר ספר חדש",
+    achievementUnlocked: "פתח הישג חדש",
+    collaborationStarted: "התחיל שיתוף פעולה",
+    levelUp: "עלה לרמה",
+    bookShared: "שיתף ספר",
+    commentReceived: "קיבל משוב",
+    ideaGenerated: "יצר רעיון לסיפור",
+    bookCompleted: "סיים ספר",
+    streakMilestone: "הגיע לאבן דרך ברצף"
+  },
+  xpToast: {
+    bookCreated: "ספר נוצר",
+    bookRead: "ספר נקרא",
+    pageEdited: "עמוד נערך",
+    characterCreated: "דמות נוצרה",
+    communityShare: "שותף עם הקהילה",
+    streakDay: "רצף יומי",
+    bookCompleted: "ספר הושלם",
+    firstLogin: "ברוך שובך"
+  },
+  badgeNames: {
+    firstBook: "הספר הראשון",
+    storyteller: "מספר סיפורים",
+    prolificAuthor: "סופר פורה",
+    characterCreator: "יוצר דמויות",
+    communityStar: "כוכב הקהילה",
+    streakMaster: "אלוף הרצף",
+    genreExplorer: "חוקר ז'אנרים",
+    multilingual: "רב-לשוני",
+    creativeMind: "יוצר יצירתי",
+    dedicatedAuthor: "סופר מסור",
+    steadyCreator: "יוצר עקבי",
+    adventurer: "הרפתקן",
+    socialButterfly: "פרפר חברתי",
+    feedbackExpert: "מומחה משוב",
+    communityFan: "חובב קהילה",
+    fastLearner: "לומד מהיר",
+    starAuthor: "סופר כוכב",
+    collector: "אספן"
+  },
+  demoBookViewer: {
+    cover: "עטיפה",
+    pageOf: "עמוד {{current}} מתוך {{total}}",
+    close: "סגור",
+    ageRange: "גילאי {{range}}",
+    startReading: "התחילו לקרוא",
+    end: "סוף",
+    next: "הבא",
+    previous: "הקודם",
+    coverAriaLabel: "עטיפה",
+    pageAriaLabel: "עמוד {{number}}"
+  },
+  installPrompt: {
+    message: "התקינו את Sipurai לחוויה הטובה ביותר",
+    install: "התקן",
+    dismiss: "אחר כך"
+  },
+  showcase: {
+    ageRange: "גילאי {{range}}",
+    howItWasMade: "איך נוצר הספר הזה?"
+  },
+  testimonials: {
+    disclaimer: "השמות והסיפורים הם דוגמאות להמחשה",
+    coppaTooltip: "תקן בינלאומי להגנת פרטיות ילדים — לחצו לפרטים",
+    age7: "גיל 7",
+    ages5to9: "גיל 5–9",
+    age6: "גיל 6",
+    age4: "גיל 4",
+    ages4to10: "גיל 4–10"
+  },
+  howItWorks: {
+    readyCta: "מוכנים ליצור? התחילו עכשיו!",
+    readyCtaAriaLabel: "מוכנים ליצור? התחילו עכשיו!"
+  },
+  nav: {
+    blog: "בלוג",
+    openMenu: "פתח תפריט",
+    closeMenu: "סגור תפריט"
   }
 };

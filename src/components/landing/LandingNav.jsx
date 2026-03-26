@@ -45,7 +45,7 @@ const LandingNav = () => {
     { href: '#features', label: t('landing.nav.features') },
     { href: '#how-it-works', label: t('landing.nav.howItWorks') },
     { href: '#pricing', label: t('landing.nav.pricing') },
-    { href: '/Blog', label: language === 'english' ? 'Blog' : 'בלוג', isRoute: true },
+    { href: '/Blog', label: t('landing.footer.blog'), isRoute: true },
   ];
 
   const languageOptions = Object.entries(languages).map(([key, lang]) => ({
@@ -192,7 +192,7 @@ const LandingNav = () => {
             className={`md:hidden p-2 rounded-lg ${
               scrolled ? 'text-gray-700 dark:text-gray-300' : 'text-white'
             }`}
-            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-label={mobileMenuOpen ? t('nav.closeMenu') : t('nav.openMenu')}
           >
             {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>

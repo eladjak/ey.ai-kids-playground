@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 function CommunityPost({ post, onLike, isLiked = false, isOwner = false, onReport }) {
-  const { language, isRTL } = useI18n();
+  const { t, language, isRTL } = useI18n();
   if (!post || !post.book) return null;
 
   const isHebrewOrYiddish = language === "hebrew" || language === "yiddish";
@@ -100,8 +100,8 @@ function CommunityPost({ post, onLike, isLiked = false, isOwner = false, onRepor
                 <DropdownMenuContent align={isRTL ? "start" : "end"}>
                   {isOwner && (
                     <>
-                      <DropdownMenuItem>{isRTL ? 'ערוך פוסט' : 'Edit Post'}</DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-600">{isRTL ? 'מחק פוסט' : 'Delete Post'}</DropdownMenuItem>
+                      <DropdownMenuItem>{t('communityPost.editPost')}</DropdownMenuItem>
+                      <DropdownMenuItem className="text-red-600">{t('communityPost.deletePost')}</DropdownMenuItem>
                     </>
                   )}
                   {!isOwner && onReport && (
@@ -110,7 +110,7 @@ function CommunityPost({ post, onLike, isLiked = false, isOwner = false, onRepor
                       className="text-orange-600"
                     >
                       <Flag className={`h-4 w-4 ${isRTL ? 'ms-2' : 'me-2'}`} />
-                      {isRTL ? 'דווח' : 'Report'}
+                      {t('communityPost.report')}
                     </DropdownMenuItem>
                   )}
                 </DropdownMenuContent>
@@ -176,7 +176,7 @@ function CommunityPost({ post, onLike, isLiked = false, isOwner = false, onRepor
                 <Link to={`${createPageUrl("CommunityPost")}?id=${post.id}`}>
                   <Button variant="ghost" size="sm" className="gap-1">
                     <ExternalLink className="h-4 w-4" />
-                    {isRTL ? 'צפה' : 'View'}
+                    {t('communityPost.view')}
                   </Button>
                 </Link>
               </div>

@@ -1,6 +1,7 @@
 import React from "react";
-import { Trophy, BookOpen, Sparkles, Award, Star, Users, Calendar, Zap, 
+import { Trophy, BookOpen, Sparkles, Award, Star, Users, Calendar, Zap,
   Heart, MessageCircle, PenTool, Globe, Bookmark, Crown } from "lucide-react";
+import { useI18n } from "@/components/i18n/i18nProvider";
 
 const BadgeIcons = {
   "first_book": BookOpen,
@@ -24,86 +25,47 @@ const BadgeIcons = {
   "achievement": Trophy
 };
 
+/**
+ * Maps snake_case badge IDs to camelCase i18n keys under badgeNames.*
+ */
+const BADGE_ID_TO_I18N_KEY = {
+  "first_book": "firstBook",
+  "storyteller": "storyteller",
+  "prolific_author": "prolificAuthor",
+  "character_creator": "characterCreator",
+  "community_star": "communityStar",
+  "streak_master": "streakMaster",
+  "genre_explorer": "genreExplorer",
+  "multilingual": "multilingual",
+  "creative_mind": "creativeMind",
+  "dedicated_author": "dedicatedAuthor",
+  "steady_creator": "steadyCreator",
+  "adventurer": "adventurer",
+  "social_butterfly": "socialButterfly",
+  "feedback_expert": "feedbackExpert",
+  "community_fan": "communityFan",
+  "fast_learner": "fastLearner",
+  "star_author": "starAuthor",
+  "collector": "collector"
+};
+
 // הוספת ייצוא ברירת מחדל לפונקציה
 const BadgeDisplay = React.memo(function BadgeDisplay({
-  badgeId, 
-  size = "md", 
-  showLabel = true, 
-  currentLanguage = "english",
+  badgeId,
+  size = "md",
+  showLabel = true,
+  currentLanguage,
   completed = false,
   inProgress = false
 }) {
-  // Map badge IDs to translated names
-  const badgeTranslations = {
-    english: {
-      "first_book": "First Book",
-      "storyteller": "Storyteller",
-      "prolific_author": "Prolific Author",
-      "character_creator": "Character Creator",
-      "community_star": "Community Star",
-      "streak_master": "Streak Master",
-      "genre_explorer": "Genre Explorer",
-      "multilingual": "Multilingual",
-      "creative_mind": "Creative Mind",
-      "dedicated_author": "Dedicated Author",
-      "steady_creator": "Steady Creator",
-      "adventurer": "Adventurer",
-      "social_butterfly": "Social Butterfly",
-      "feedback_expert": "Feedback Expert",
-      "community_fan": "Community Fan",
-      "fast_learner": "Fast Learner",
-      "star_author": "Star Author",
-      "collector": "Collector"
-    },
-    hebrew: {
-      "first_book": "הספר הראשון",
-      "storyteller": "מספר סיפורים",
-      "prolific_author": "סופר פורה",
-      "character_creator": "יוצר דמויות",
-      "community_star": "כוכב הקהילה",
-      "streak_master": "אלוף הרצף",
-      "genre_explorer": "חוקר ז'אנרים",
-      "multilingual": "רב-לשוני",
-      "creative_mind": "יוצר יצירתי",
-      "dedicated_author": "סופר מסור",
-      "steady_creator": "יוצר עקבי",
-      "adventurer": "הרפתקן",
-      "social_butterfly": "פרפר חברתי",
-      "feedback_expert": "מומחה משוב",
-      "community_fan": "חובב קהילה",
-      "fast_learner": "לומד מהיר",
-      "star_author": "סופר כוכב",
-      "collector": "אספן"
-    },
-    yiddish: {
-      "first_book": "ערשטן בוך",
-      "storyteller": "מעשהזאָגער",
-      "prolific_author": "פּראָדוקטיווער מחבר",
-      "character_creator": "כאַראַקטער שאַפֿער",
-      "community_star": "קהילה שטערן",
-      "streak_master": "שטרייַף מייסטער",
-      "genre_explorer": "זשאַנר אַנטדעקער",
-      "multilingual": "פֿיל-שפּראַכיק",
-      "creative_mind": "קרעאַטיווער קאָפּ",
-      "dedicated_author": "דעדיקירטער מחבר",
-      "steady_creator": "שטענדיקער שאַפֿער",
-      "adventurer": "אַוואַנטוריסט",
-      "social_butterfly": "חברותשאַפֿטלעכער",
-      "feedback_expert": "פֿידבעק מומחה",
-      "community_fan": "קהילה ליבהאָבער",
-      "fast_learner": "שנעלער לערנער",
-      "star_author": "שטערן מחבר",
-      "collector": "זאַמלער"
-    }
-  };
+  const { t } = useI18n();
 
   // Get the appropriate icon or use a fallback
   const IconComponent = BadgeIcons[badgeId] || Trophy;
 
-  // Get translated name or fall back to badge ID
-  const badgeName = badgeTranslations[currentLanguage]?.[badgeId] ||
-                   badgeTranslations.english[badgeId] ||
-                   badgeId;
+  // Get translated name via i18n system, fall back to badge ID
+  const i18nKey = BADGE_ID_TO_I18N_KEY[badgeId];
+  const badgeName = i18nKey ? t(`badgeNames.${i18nKey}`) : badgeId;
   
   // Standardized sizes: sm = compact (w-10 h-10 container), lg = large (w-16 h-16 container)
   const sizeMappings = {

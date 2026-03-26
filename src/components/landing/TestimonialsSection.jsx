@@ -10,11 +10,11 @@ const TestimonialsSection = () => {
 
   // ageBadge: child age range shown on each card (null = no badge for that testimonial)
   const ageBadges = [
-    { label: isRTL ? 'גיל 7' : 'Age 7', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300' },
-    { label: isRTL ? 'גיל 5–9' : 'Ages 5–9', color: 'bg-pink-100 text-pink-700 dark:bg-pink-900/40 dark:text-pink-300' },
-    { label: isRTL ? 'גיל 6' : 'Age 6', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300' },
-    { label: isRTL ? 'גיל 4' : 'Age 4', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300' },
-    { label: isRTL ? 'גיל 4–10' : 'Ages 4–10', color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-300' },
+    { label: t('testimonials.age7'), color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300' },
+    { label: t('testimonials.ages5to9'), color: 'bg-pink-100 text-pink-700 dark:bg-pink-900/40 dark:text-pink-300' },
+    { label: t('testimonials.age6'), color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300' },
+    { label: t('testimonials.age4'), color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300' },
+    { label: t('testimonials.ages4to10'), color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-300' },
     null, // kindergarten teacher — no child age badge
   ];
 
@@ -81,9 +81,7 @@ const TestimonialsSection = () => {
       label: t('landing.testimonials.trustCoppa'),
       color: 'text-green-600 dark:text-green-400',
       href: '/privacy#coppa',
-      tooltip: isRTL
-        ? 'תקן בינלאומי להגנת פרטיות ילדים — לחצו לפרטים'
-        : 'International child privacy standard — click to learn more',
+      tooltip: t('testimonials.coppaTooltip'),
     },
     { icon: Shield, label: t('landing.testimonials.trustChildSafe'), color: 'text-blue-600 dark:text-blue-400' },
     { icon: Ban, label: t('landing.testimonials.trustNoAds'), color: 'text-purple-600 dark:text-purple-400' },
@@ -186,9 +184,7 @@ const TestimonialsSection = () => {
           transition={{ duration: 0.4, delay: 0.6 }}
           className="mt-8 text-center text-xs text-gray-400 dark:text-gray-600"
         >
-          {isRTL
-            ? 'השמות והסיפורים הם דוגמאות להמחשה'
-            : 'Names and stories are illustrative examples'}
+          {t('testimonials.disclaimer')}
         </motion.p>
 
         {/* Trust Badges */}

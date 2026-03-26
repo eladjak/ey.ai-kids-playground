@@ -2028,24 +2028,12 @@ export default {
     viewAll: "View All"
   },
   avatar: {
-    ai: "AI Generated",
+    title: "Avatar Studio",
+    ai: "AI Generation",
+    characters: "Story Characters",
     browse: "Browse",
     cancel: "Cancel",
-    create: {
-      generate: "Generate Avatar",
-      generating: "Generating...",
-      prompt: "Describe your avatar",
-      promptPlaceholder: "A friendly cartoon character with...",
-      style: "Style",
-      tab: "Create"
-    },
     drag: "Drag & drop or click to upload",
-    error: {
-      format: "Unsupported file format",
-      generation: "Failed to generate avatar",
-      size: "File is too large (max 5MB)",
-      upload: "Failed to upload avatar"
-    },
     formats: "PNG, JPG, or GIF (max 5MB)",
     generate: "Generate",
     generating: "Generating...",
@@ -2054,8 +2042,8 @@ export default {
     or: "or",
     presets: "Presets",
     preview: "Preview",
-    prompt: "Describe your avatar",
-    promptPlaceholder: "A friendly cartoon character with...",
+    prompt: "Description",
+    promptPlaceholder: "Describe your ideal avatar...",
     rewards: "Rewards",
     rewardsDescription: "Avatars you've earned",
     save: "Save Avatar",
@@ -2068,15 +2056,41 @@ export default {
     },
     type: {
       label: "Type",
+      human: "Human",
       animal: "Animal",
-      fantasy: "Fantasy",
-      human: "Human"
+      fantasy: "Fantasy"
     },
     upload: {
       label: "Upload",
       drag: "Drag & drop an image",
       or: "or click to browse",
-      tab: "Upload"
+      tab: "Upload",
+      title: "Upload your photo",
+      description: "Upload a profile picture in JPG, PNG or WebP format",
+      browse: "Browse files"
+    },
+    create: {
+      generate: "Generate Avatar",
+      generating: "Generating...",
+      prompt: "Describe your avatar",
+      promptPlaceholder: "Describe how you want your avatar to look...",
+      style: "Art Style",
+      tab: "Create",
+      title: "Create Avatar",
+      description: "Generate a unique avatar with AI",
+      regenerate: "Try Again"
+    },
+    error: {
+      format: "Unsupported file format",
+      generation: "Failed to generate avatar",
+      size: "File is too large (max 5MB)",
+      upload: "Failed to upload avatar",
+      dimensions: "Image must be at least 200x200 pixels",
+      loading: "Failed to load image"
+    },
+    success: {
+      upload: "Image uploaded successfully",
+      generation: "Avatar generated successfully"
     },
     uploading: "Uploading..."
   },
@@ -2231,5 +2245,147 @@ export default {
     levelAdvance: "You advanced from level {{oldLevel}} to level {{newLevel}}!",
     newBadge: "New Badge!",
     awesome: "Awesome!"
+  },
+  userStats: {
+    level: "Level",
+    storyteller: "Storyteller",
+    xp: "XP",
+    nextLevel: "to next level",
+    books: "Books",
+    pages: "pages created",
+    streak: "day streak",
+    keepGoing: "Keep it going!",
+    badges: "Earned Badges",
+    complete: "Complete actions to earn badges",
+    badgesCount: "badges earned"
+  },
+  achievements: {
+    title: "Achievements",
+    search: "Search achievements",
+    filter: {
+      all: "All",
+      unlocked: "Unlocked",
+      locked: "In Progress"
+    },
+    categories: {
+      all: "All Categories",
+      books: "Books",
+      activity: "Activity",
+      creativity: "Creativity",
+      community: "Community"
+    },
+    progress: "Progress",
+    xpEarned: "XP earned",
+    dateLocked: "Unlocked",
+    progressComplete: "Complete",
+    progressInProgress: "In Progress",
+    empty: "No achievements found",
+    emptyDescription: "Complete activities to earn achievements",
+    unlock: "How to unlock",
+    listView: "List",
+    categoryView: "Categories"
+  },
+  recentActivity: {
+    title: "Recent Activity",
+    viewAll: "View All Activity",
+    empty: "No recent activity",
+    emptyDescription: "Your activity will appear here",
+    today: "Today",
+    yesterday: "Yesterday",
+    thisWeek: "This Week",
+    thisMonth: "This Month",
+    earlier: "Earlier",
+    filter: {
+      all: "All Activities",
+      books: "Books",
+      achievements: "Achievements",
+      social: "Social"
+    },
+    period: {
+      all: "All Time",
+      week: "This Week",
+      month: "This Month",
+      year: "This Year"
+    }
+  },
+  activityTypes: {
+    bookCreated: "Created a new book",
+    achievementUnlocked: "Unlocked achievement",
+    collaborationStarted: "Started collaboration",
+    levelUp: "Leveled up to",
+    bookShared: "Shared a book",
+    commentReceived: "Received feedback",
+    ideaGenerated: "Generated story idea",
+    bookCompleted: "Completed a book",
+    streakMilestone: "Reached streak milestone"
+  },
+  xpToast: {
+    bookCreated: "Book Created",
+    bookRead: "Book Read",
+    pageEdited: "Page Edited",
+    characterCreated: "Character Created",
+    communityShare: "Shared with Community",
+    streakDay: "Daily Streak",
+    bookCompleted: "Book Completed",
+    firstLogin: "Welcome Back"
+  },
+  badgeNames: {
+    firstBook: "First Book",
+    storyteller: "Storyteller",
+    prolificAuthor: "Prolific Author",
+    characterCreator: "Character Creator",
+    communityStar: "Community Star",
+    streakMaster: "Streak Master",
+    genreExplorer: "Genre Explorer",
+    multilingual: "Multilingual",
+    creativeMind: "Creative Mind",
+    dedicatedAuthor: "Dedicated Author",
+    steadyCreator: "Steady Creator",
+    adventurer: "Adventurer",
+    socialButterfly: "Social Butterfly",
+    feedbackExpert: "Feedback Expert",
+    communityFan: "Community Fan",
+    fastLearner: "Fast Learner",
+    starAuthor: "Star Author",
+    collector: "Collector"
+  },
+  demoBookViewer: {
+    cover: "Cover",
+    pageOf: "Page {{current}} of {{total}}",
+    close: "Close",
+    ageRange: "Ages {{range}}",
+    startReading: "Start Reading",
+    end: "End",
+    next: "Next",
+    previous: "Previous",
+    coverAriaLabel: "Cover",
+    pageAriaLabel: "Page {{number}}"
+  },
+  installPrompt: {
+    message: "Install Sipurai for the best experience",
+    install: "Install",
+    dismiss: "Not now"
+  },
+  showcase: {
+    ageRange: "Ages {{range}}",
+    howItWasMade: "See how it was made"
+  },
+  testimonials: {
+    disclaimer: "Names and stories are illustrative examples",
+    coppaTooltip: "International child privacy standard — click to learn more",
+    age7: "Age 7",
+    ages5to9: "Ages 5–9",
+    age6: "Age 6",
+    age4: "Age 4",
+    ages4to10: "Ages 4–10"
+  },
+  howItWorks: {
+    readyCta: "Ready to create? Start now!",
+    readyCtaAriaLabel: "Ready to create? Start now!"
+  },
+  nav: {
+    blog: "Blog",
+    openMenu: "Open menu",
+    closeMenu: "Close menu"
   }
 };

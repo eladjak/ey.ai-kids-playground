@@ -1,46 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { X, Download } from "lucide-react";
+import { useI18n } from "@/components/i18n/i18nProvider";
 
 const DISMISS_KEY = "pwa_install_dismissed_at";
 const DISMISS_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 const SHOW_DELAY_MS = 30_000; // 30 seconds
 
-const LABELS = {
-  en: {
-    message: "Install Sipurai for the best experience",
-    install: "Install",
-    dismiss: "Not now",
-  },
-  he: {
-    message: "התקינו את Sipurai לחוויה הטובה ביותר",
-    install: "התקן",
-    dismiss: "אחר כך",
-  },
-  yi: {
-    message: "אינסטאלירט Sipurai פאר די בעסטע דערפאַרונג",
-    install: "אינסטאלירן",
-    dismiss: "נישט יעצט",
-  },
-};
-
 /**
  * InstallPrompt — subtle bottom banner that prompts mobile users to install
  * the PWA after 30 seconds. Dismissal is persisted for 7 days.
- *
- * Props:
- *   lang — "en" | "he" | "yi" (defaults to localStorage "language" or "en")
  */
-const InstallPrompt = React.memo(function InstallPrompt({ lang }) {
+const InstallPrompt = React.memo(function InstallPrompt() {
+  const { t, isRTL: isRtl } = useI18n();
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [visible, setVisible] = useState(false);
-
-  // Resolve display language
-  const resolvedLang = lang ||
-    (typeof window !== "undefined"
-      ? (localStorage.getItem("language") || "en")
-      : "en");
-  const t = LABELS[resolvedLang] || LABELS.en;
-  const isRtl = resolvedLang === "he" || resolvedLang === "yi";
 
   useEffect(() => {
     // Check if dismissed recently
@@ -100,7 +73,7 @@ const InstallPrompt = React.memo(function InstallPrompt({ lang }) {
 
       {/* Message */}
       <p className="flex-1 text-sm font-medium text-gray-800">
-        {t.message}
+        {t('installPrompt.message')}
       </p>
 
       {/* Actions */}
@@ -109,11 +82,11 @@ const InstallPrompt = React.memo(function InstallPrompt({ lang }) {
           onClick={handleInstall}
           className="px-3 py-1.5 text-sm font-semibold text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-1 transition-colors"
         >
-          {t.install}
+          {t('installPrompt.install')}
         </button>
         <button
           onClick={handleDismiss}
-          aria-label={t.dismiss}
+          aria-label={t('installPrompt.dismiss')}
           className="p-1.5 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-md transition-colors"
         >
           <X className="w-4 h-4" />

@@ -182,10 +182,10 @@ const HowItWorksSection = () => {
           <Link
             to="/sign-up"
             className="inline-flex items-center gap-2.5 px-8 py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2"
-            aria-label={isRTL ? 'מוכנים ליצור? התחילו עכשיו!' : 'Ready to create? Start now!'}
+            aria-label={t('howItWorks.readyCtaAriaLabel')}
           >
             <Sparkles className="h-5 w-5 flex-shrink-0" />
-            {isRTL ? 'מוכנים ליצור? התחילו עכשיו!' : 'Ready to create? Start now!'}
+            {t('howItWorks.readyCta')}
           </Link>
         </motion.div>
       </div>

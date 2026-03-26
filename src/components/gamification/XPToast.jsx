@@ -1,41 +1,20 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, Zap } from "lucide-react";
+import { useI18n } from "@/components/i18n/i18nProvider";
 
 /**
- * XP event type labels for display
+ * Maps snake_case event types to camelCase i18n keys under xpToast.*
  */
-const EVENT_LABELS = {
-  english: {
-    book_created: "Book Created",
-    book_read: "Book Read",
-    page_edited: "Page Edited",
-    character_created: "Character Created",
-    community_share: "Shared with Community",
-    streak_day: "Daily Streak",
-    book_completed: "Book Completed",
-    first_login: "Welcome Back"
-  },
-  hebrew: {
-    book_created: "ספר נוצר",
-    book_read: "ספר נקרא",
-    page_edited: "עמוד נערך",
-    character_created: "דמות נוצרה",
-    community_share: "שותף עם הקהילה",
-    streak_day: "רצף יומי",
-    book_completed: "ספר הושלם",
-    first_login: "ברוך שובך"
-  },
-  yiddish: {
-    book_created: "בוך געשאַפֿן",
-    book_read: "בוך געלייענט",
-    page_edited: "בלאַט רעדאַקטירט",
-    character_created: "כאַראַקטער געשאַפֿן",
-    community_share: "געטיילט מיט קהילה",
-    streak_day: "טעגלעכע שטרייַף",
-    book_completed: "בוך פֿאַרענדיקט",
-    first_login: "ברוכים הבאים צוריק"
-  }
+const EVENT_TYPE_TO_I18N_KEY = {
+  book_created: "bookCreated",
+  book_read: "bookRead",
+  page_edited: "pageEdited",
+  character_created: "characterCreated",
+  community_share: "communityShare",
+  streak_day: "streakDay",
+  book_completed: "bookCompleted",
+  first_login: "firstLogin"
 };
 
 /**
@@ -43,18 +22,14 @@ const EVENT_LABELS = {
  */
 const XPToast = React.memo(function XPToast({
   celebration,
-  onDismiss,
-  isHebrew = false,
-  isYiddish = false,
-  isRTL = false
+  onDismiss
 }) {
+  const { t, isRTL } = useI18n();
+
   if (!celebration || celebration.type !== "xp") return null;
 
-  const eventLabel = isYiddish
-    ? EVENT_LABELS.yiddish[celebration.eventType] || ""
-    : isHebrew
-      ? EVENT_LABELS.hebrew[celebration.eventType] || ""
-      : EVENT_LABELS.english[celebration.eventType] || "";
+  const i18nKey = EVENT_TYPE_TO_I18N_KEY[celebration.eventType];
+  const eventLabel = i18nKey ? t(`xpToast.${i18nKey}`) : "";
 
   // In RTL layouts, toast appears on the left side
   const positionClass = isRTL ? "fixed top-20 left-4 z-40 pointer-events-none" : "fixed top-20 right-4 z-40 pointer-events-none";

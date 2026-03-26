@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import {
   BookOpen, Trophy, Star, Award, Heart, MessageCircle,
   Users, Calendar, Clock, ArrowUpRight, Gift, Sparkles,
   Zap, Target, Crown, BookMarked, PenTool, Palette
@@ -17,88 +17,62 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useI18n } from "@/components/i18n/i18nProvider";
 
 const activityTypes = {
   "book_created": {
     icon: BookOpen,
     color: "text-blue-500",
     bgColor: "bg-blue-100 dark:bg-blue-900/30",
-    translations: {
-      en: "Created a new book",
-      he: "יצר ספר חדש"
-    }
+    i18nKey: "activityTypes.bookCreated"
   },
   "achievement_unlocked": {
     icon: Trophy,
     color: "text-amber-500",
     bgColor: "bg-amber-100 dark:bg-amber-900/30",
-    translations: {
-      en: "Unlocked achievement",
-      he: "פתח הישג חדש"
-    }
+    i18nKey: "activityTypes.achievementUnlocked"
   },
   "collaboration_started": {
     icon: Users,
     color: "text-green-500",
     bgColor: "bg-green-100 dark:bg-green-900/30",
-    translations: {
-      en: "Started collaboration",
-      he: "התחיל שיתוף פעולה"
-    }
+    i18nKey: "activityTypes.collaborationStarted"
   },
   "level_up": {
     icon: Zap,
     color: "text-purple-500",
     bgColor: "bg-purple-100 dark:bg-purple-900/30",
-    translations: {
-      en: "Leveled up to",
-      he: "עלה לרמה"
-    }
+    i18nKey: "activityTypes.levelUp"
   },
   "book_shared": {
     icon: Heart,
     color: "text-pink-500",
     bgColor: "bg-pink-100 dark:bg-pink-900/30",
-    translations: {
-      en: "Shared a book",
-      he: "שיתף ספר"
-    }
+    i18nKey: "activityTypes.bookShared"
   },
   "comment_received": {
     icon: MessageCircle,
     color: "text-indigo-500",
     bgColor: "bg-indigo-100 dark:bg-indigo-900/30",
-    translations: {
-      en: "Received feedback",
-      he: "קיבל משוב"
-    }
+    i18nKey: "activityTypes.commentReceived"
   },
   "idea_generated": {
     icon: Sparkles,
     color: "text-teal-500",
     bgColor: "bg-teal-100 dark:bg-teal-900/30",
-    translations: {
-      en: "Generated story idea",
-      he: "יצר רעיון לסיפור"
-    }
+    i18nKey: "activityTypes.ideaGenerated"
   },
   "book_completed": {
     icon: BookMarked,
     color: "text-emerald-500",
     bgColor: "bg-emerald-100 dark:bg-emerald-900/30",
-    translations: {
-      en: "Completed a book",
-      he: "סיים ספר"
-    }
+    i18nKey: "activityTypes.bookCompleted"
   },
   "streak_milestone": {
     icon: Calendar,
     color: "text-orange-500",
     bgColor: "bg-orange-100 dark:bg-orange-900/30",
-    translations: {
-      en: "Reached streak milestone",
-      he: "הגיע לאבן דרך ברצף"
-    }
+    i18nKey: "activityTypes.streakMilestone"
   }
 };
 
@@ -106,49 +80,7 @@ export default function RecentActivity({ activities = [], currentLanguage = "eng
   const [filter, setFilter] = useState("all");
   const [period, setPeriod] = useState("all");
 
-  const translations = {
-    english: {
-      "activity.title": "Recent Activity",
-      "activity.viewAll": "View All Activity",
-      "activity.empty": "No recent activity",
-      "activity.empty.description": "Your activity will appear here",
-      "activity.today": "Today",
-      "activity.yesterday": "Yesterday",
-      "activity.thisWeek": "This Week",
-      "activity.thisMonth": "This Month",
-      "activity.earlier": "Earlier",
-      "activity.filter.all": "All Activities",
-      "activity.filter.books": "Books",
-      "activity.filter.achievements": "Achievements",
-      "activity.filter.social": "Social",
-      "activity.period.all": "All Time",
-      "activity.period.week": "This Week",
-      "activity.period.month": "This Month",
-      "activity.period.year": "This Year"
-    },
-    hebrew: {
-      "activity.title": "פעילות אחרונה",
-      "activity.viewAll": "צפה בכל הפעילות",
-      "activity.empty": "אין פעילות אחרונה",
-      "activity.empty.description": "הפעילות שלך תופיע כאן",
-      "activity.today": "היום",
-      "activity.yesterday": "אתמול",
-      "activity.thisWeek": "השבוע",
-      "activity.thisMonth": "החודש",
-      "activity.earlier": "מוקדם יותר",
-      "activity.filter.all": "כל הפעילויות",
-      "activity.filter.books": "ספרים",
-      "activity.filter.achievements": "הישגים",
-      "activity.filter.social": "חברתי",
-      "activity.period.all": "כל הזמן",
-      "activity.period.week": "השבוע",
-      "activity.period.month": "החודש",
-      "activity.period.year": "השנה"
-    }
-  };
-
-  const t = (key) => translations[currentLanguage]?.[key] || translations.english[key];
-  const isRTL = currentLanguage === "hebrew";
+  const { t, isRTL, language } = useI18n();
 
   const filterActivities = (activities) => {
     if (!activities || activities.length === 0) return [];
@@ -218,7 +150,7 @@ export default function RecentActivity({ activities = [], currentLanguage = "eng
   };
 
   const formatTime = (date) => {
-    return new Intl.DateTimeFormat(currentLanguage === "hebrew" ? "he-IL" : "en-US", {
+    return new Intl.DateTimeFormat(language === "hebrew" ? "he-IL" : "en-US", {
       hour: "numeric",
       minute: "numeric"
     }).format(new Date(date));
@@ -245,10 +177,10 @@ export default function RecentActivity({ activities = [], currentLanguage = "eng
       <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
         <CardTitle className="flex items-center gap-2">
           <Clock className="h-5 w-5 text-blue-500" />
-          {t("activity.title")}
+          {t("recentActivity.title")}
         </CardTitle>
         <Button variant="ghost" size="sm" className="gap-1 text-blue-500 hover:text-blue-600">
-          {t("activity.viewAll")}
+          {t("recentActivity.viewAll")}
           <ArrowUpRight className="h-4 w-4" />
         </Button>
       </CardHeader>
@@ -257,23 +189,23 @@ export default function RecentActivity({ activities = [], currentLanguage = "eng
         <div className="px-6 pt-2 pb-4 flex flex-wrap gap-3 border-b border-gray-100 dark:border-gray-800">
           <Tabs defaultValue="all" value={filter} onValueChange={setFilter}>
             <TabsList>
-              <TabsTrigger value="all">{t("activity.filter.all")}</TabsTrigger>
-              <TabsTrigger value="books">{t("activity.filter.books")}</TabsTrigger>
-              <TabsTrigger value="achievements">{t("activity.filter.achievements")}</TabsTrigger>
-              <TabsTrigger value="social">{t("activity.filter.social")}</TabsTrigger>
+              <TabsTrigger value="all">{t("recentActivity.filter.all")}</TabsTrigger>
+              <TabsTrigger value="books">{t("recentActivity.filter.books")}</TabsTrigger>
+              <TabsTrigger value="achievements">{t("recentActivity.filter.achievements")}</TabsTrigger>
+              <TabsTrigger value="social">{t("recentActivity.filter.social")}</TabsTrigger>
             </TabsList>
           </Tabs>
           
           <div className="ms-auto">
             <Select value={period} onValueChange={setPeriod}>
               <SelectTrigger className="w-[130px]">
-                <SelectValue placeholder={t("activity.period.all")} />
+                <SelectValue placeholder={t("recentActivity.period.all")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t("activity.period.all")}</SelectItem>
-                <SelectItem value="week">{t("activity.period.week")}</SelectItem>
-                <SelectItem value="month">{t("activity.period.month")}</SelectItem>
-                <SelectItem value="year">{t("activity.period.year")}</SelectItem>
+                <SelectItem value="all">{t("recentActivity.period.all")}</SelectItem>
+                <SelectItem value="week">{t("recentActivity.period.week")}</SelectItem>
+                <SelectItem value="month">{t("recentActivity.period.month")}</SelectItem>
+                <SelectItem value="year">{t("recentActivity.period.year")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -295,7 +227,7 @@ export default function RecentActivity({ activities = [], currentLanguage = "eng
                   className="space-y-4"
                 >
                   <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                    {t(`activity.${period}`)}
+                    {t(`recentActivity.${period}`)}
                   </h3>
                   
                   <motion.div 
@@ -309,14 +241,13 @@ export default function RecentActivity({ activities = [], currentLanguage = "eng
                         icon: Clock,
                         color: "text-gray-500",
                         bgColor: "bg-gray-100 dark:bg-gray-800",
-                        translations: {
-                          en: "Activity",
-                          he: "פעילות"
-                        }
+                        i18nKey: null
                       };
-                      
+
                       const Icon = activityType.icon;
-                      const activityTitle = activityType.translations[currentLanguage === "hebrew" ? "he" : "en"];
+                      const activityTitle = activityType.i18nKey
+                        ? t(activityType.i18nKey)
+                        : t("recentActivity.title");
 
                       return (
                         <motion.div
@@ -355,10 +286,10 @@ export default function RecentActivity({ activities = [], currentLanguage = "eng
             <div className="text-center py-12">
               <Clock className="h-12 w-12 text-gray-300 mx-auto mb-3" />
               <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300">
-                {t("activity.empty")}
+                {t("recentActivity.empty")}
               </h3>
               <p className="text-gray-500 dark:text-gray-400">
-                {t("activity.empty.description")}
+                {t("recentActivity.emptyDescription")}
               </p>
             </div>
           )}

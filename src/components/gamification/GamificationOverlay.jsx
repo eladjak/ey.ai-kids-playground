@@ -23,9 +23,6 @@ export default function GamificationOverlay({
       <XPToast
         celebration={current}
         onDismiss={onDismiss}
-        isHebrew={isHebrew}
-        isYiddish={isYiddish}
-        isRTL={isRTL}
       />
     );
   }

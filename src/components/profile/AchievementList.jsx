@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Trophy, BookOpen, Star, Award, Users, Calendar, Zap, 
+import {
+  Trophy, BookOpen, Star, Award, Users, Calendar, Zap,
   Heart, MessageCircle, PenTool, Globe, Bookmark, Crown,
   Target, Flame, Sparkles, Lightbulb, Palette,
   Brush, Music, Laptop, Coffee, Gift, Wand2,
   LayoutGrid, // שימוש ב-LayoutGrid במקום Layers
   Filter
 } from "lucide-react";
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
+import {
+  Card,
+  CardContent,
+  CardHeader,
   CardTitle,
-  CardDescription 
+  CardDescription
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,10 +29,11 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import BadgeDisplay from "../gamification/BadgeDisplay";
+import { useI18n } from "@/components/i18n/i18nProvider";
 
-export default function AchievementList({ 
-  achievements = [], 
-  currentLanguage = "english", 
+export default function AchievementList({
+  achievements = [],
+  currentLanguage = "english",
   showCategories = false,
   showProgress = true
 }) {
@@ -40,57 +41,8 @@ export default function AchievementList({
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState("list");
   const [categoryFilter, setCategoryFilter] = useState("all");
-  
-  const isRTL = currentLanguage === "hebrew" || currentLanguage === "yiddish";
 
-  const translations = {
-    english: {
-      "achievements.title": "Achievements",
-      "achievements.search": "Search achievements",
-      "achievements.filter.all": "All",
-      "achievements.filter.unlocked": "Unlocked",
-      "achievements.filter.locked": "In Progress",
-      "achievements.categories.all": "All Categories",
-      "achievements.categories.books": "Books",
-      "achievements.categories.activity": "Activity",
-      "achievements.categories.creativity": "Creativity",
-      "achievements.categories.community": "Community",
-      "achievements.progress": "Progress",
-      "achievements.xpEarned": "XP earned",
-      "achievements.dateLocked": "Unlocked",
-      "achievements.progress.complete": "Complete",
-      "achievements.progress.progress": "In Progress",
-      "achievements.empty": "No achievements found",
-      "achievements.empty.description": "Complete activities to earn achievements",
-      "achievements.unlock": "How to unlock",
-      "achievements.listView": "List",
-      "achievements.categoryView": "Categories"
-    },
-    hebrew: {
-      "achievements.title": "הישגים",
-      "achievements.search": "חיפוש הישגים",
-      "achievements.filter.all": "הכל",
-      "achievements.filter.unlocked": "נפתחו",
-      "achievements.filter.locked": "בתהליך",
-      "achievements.categories.all": "כל הקטגוריות",
-      "achievements.categories.books": "ספרים",
-      "achievements.categories.activity": "פעילות",
-      "achievements.categories.creativity": "יצירתיות",
-      "achievements.categories.community": "קהילה",
-      "achievements.progress": "התקדמות",
-      "achievements.xpEarned": "XP הורווח",
-      "achievements.dateLocked": "נפתח",
-      "achievements.progress.complete": "הושלם",
-      "achievements.progress.progress": "בתהליך",
-      "achievements.empty": "לא נמצאו הישגים",
-      "achievements.empty.description": "השלם פעילויות כדי להרוויח הישגים",
-      "achievements.unlock": "איך לפתוח",
-      "achievements.listView": "רשימה",
-      "achievements.categoryView": "קטגוריות"
-    }
-  };
-
-  const t = (key) => translations[currentLanguage]?.[key] || translations.english[key];
+  const { t, isRTL, language } = useI18n();
   
   const categoryIcons = {
     books: <BookOpen className="h-5 w-5 text-blue-500" />,
@@ -109,8 +61,8 @@ export default function AchievementList({
   
   const filteredAchievements = achievements.filter(achievement => {
     // Search filter
-    const matchesSearch = searchTerm === "" || 
-      (achievement.translations?.[currentLanguage === "hebrew" ? "he" : "en"]?.title || achievement.title)
+    const matchesSearch = searchTerm === "" ||
+      (achievement.translations?.[language === "hebrew" ? "he" : "en"]?.title || achievement.title)
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
     
@@ -138,13 +90,13 @@ export default function AchievementList({
   const formatDate = (dateString) => {
     if (!dateString) return "";
     return new Date(dateString).toLocaleDateString(
-      currentLanguage === "hebrew" ? "he-IL" : "en-US",
+      language === "hebrew" ? "he-IL" : "en-US",
       { year: "numeric", month: "short", day: "numeric" }
     );
   };
-  
+
   const getTranslation = (achievement, field) => {
-    const translationKey = currentLanguage === "hebrew" ? "he" : "en";
+    const translationKey = language === "hebrew" ? "he" : "en";
     return achievement.translations?.[translationKey]?.[field] || achievement[field];
   };
   
@@ -217,7 +169,7 @@ export default function AchievementList({
         {filteredAchievements.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-3">
             {filteredAchievements.map((achievement, index) => {
-              const translationLang = currentLanguage === "hebrew" ? "he" : "en";
+              const translationLang = language === "hebrew" ? "he" : "en";
               const title = achievement.translations?.[translationLang]?.title || achievement.title;
               const description = achievement.translations?.[translationLang]?.description || achievement.description;
               
@@ -250,7 +202,7 @@ export default function AchievementList({
                       
                       {achievement.completed ? (
                         <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                          {t("achievements.progress.complete")}
+                          {t("achievements.progressComplete")}
                         </Badge>
                       ) : showProgress && (
                         <div className="w-full mt-2">
@@ -280,7 +232,7 @@ export default function AchievementList({
           <div className="text-center py-8">
             <Trophy className="h-12 w-12 text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-600 dark:text-gray-400">{t("achievements.empty")}</h3>
-            <p className="text-gray-500 dark:text-gray-500 text-sm mt-1">{t("achievements.empty.description")}</p>
+            <p className="text-gray-500 dark:text-gray-500 text-sm mt-1">{t("achievements.emptyDescription")}</p>
           </div>
         )}
       </CardContent>
