@@ -622,6 +622,10 @@ export default {
     parentApproval: "אישור הורה נדרש",
     parentApprovalDesc: "כדי לפרסם ספר בקהילה, יש להזין את קוד ה-PIN של ההורה.",
     enterPin: "הזן PIN (4-6 ספרות)",
+    reportSubmitted: "הדיווח נשלח. תודה!",
+    incorrectPin: "PIN שגוי. נסה שוב.",
+    parentApprovalCancel: "ביטול",
+    parentApprovalConfirm: "אשר",
     post: {
       readMore: "קרא עוד",
       sharedBy: "שותף על ידי {{name}}",
@@ -1313,6 +1317,7 @@ export default {
     emptyTitle: "אין עדיין רעיונות שמורים",
     emptyDesc: "צור ושמור רעיונות כדי לראות אותם כאן, או נסה ליצור רעיון חדש.",
     newIdea: "צור רעיון חדש",
+    generateNewIdea: "צור רעיון חדש",
     use: "השתמש ברעיון זה",
     recent: "נוצר לאחרונה",
     language: "שפה",
@@ -1344,7 +1349,8 @@ export default {
     title: "רעיון יומי לסיפור",
     subtitle: "מתוך רעיון הסיפור היומי המוצג",
     use: "השתמש ברעיון זה",
-    dismiss: "סגור"
+    dismiss: "סגור",
+    refreshAriaLabel: "רענן רעיון"
   },
   artStyles: {
     title: "בחירת סגנון אמנותי",

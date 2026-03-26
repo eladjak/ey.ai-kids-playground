@@ -623,6 +623,10 @@ export default {
     },
     sharedBooks: "געטיילטע ביכער",
     activeAuthors: "אַקטיווע מחברים",
+    reportSubmitted: "דער באַריכט איז געשיקט. אַ דאַנק!",
+    incorrectPin: "PIN איז פֿאַלש. פּרוּוו ווידעראַמאָל.",
+    parentApprovalCancel: "אָפּזאָגן",
+    parentApprovalConfirm: "באַשטעטיקן",
     featured: {
       badge: "פֿיטשערד",
       sharedBy: "געטיילט דורך",
@@ -1475,6 +1479,7 @@ export default {
     emptyTitle: "נאָך קיין גע-היטענע אידעען",
     emptyDesc: "שאַפֿן און היט אידעען כדי זיי צו זען דאָ, אָדער פּרוּוו שאַפֿן אַ נײַע.",
     newIdea: "שאַפֿן נײַע אידעע",
+    generateNewIdea: "שאַפֿן נײַע אידעע",
     use: "ניצן דעם אידעע",
     recent: "לעצטיקע",
     language: "שפּראַך",
@@ -1506,7 +1511,8 @@ export default {
     title: "טעגלעכע פּראָמפּט",
     subtitle: "פֿון הייַנטיקן פֿיטשערד פּראָמפּט",
     use: "ניצן דעם פּראָמפּט",
-    dismiss: "פֿאַרמאַכן"
+    dismiss: "פֿאַרמאַכן",
+    refreshAriaLabel: "דערפֿרישן אידעע"
   },
   artStyles: {
     title: "קלייַב קונסט סטייל",

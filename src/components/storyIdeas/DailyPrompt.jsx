@@ -29,7 +29,7 @@ export default function DailyPrompt({
               size="icon"
               onClick={onRefresh}
               className="h-8 w-8 text-amber-600 hover:text-amber-800 hover:bg-amber-100"
-              aria-label={isRTL ? "רענן רעיון" : "Refresh prompt"}
+              aria-label={t("dailyPrompt.refreshAriaLabel")}
             >
               <RefreshCw className="h-4 w-4" />
             </Button>

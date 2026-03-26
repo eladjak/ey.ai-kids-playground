@@ -624,6 +624,10 @@ export default {
     parentApproval: "Parental Approval Required",
     parentApprovalDesc: "To publish a book to the community, please enter the parental PIN.",
     enterPin: "Enter PIN (4-6 digits)",
+    reportSubmitted: "Report submitted. Thank you!",
+    incorrectPin: "Incorrect PIN. Please try again.",
+    parentApprovalCancel: "Cancel",
+    parentApprovalConfirm: "Confirm",
     post: {
       readMore: "Read More",
       sharedBy: "Shared by {{name}}",
@@ -1318,6 +1322,7 @@ export default {
     emptyTitle: "No Saved Ideas Yet",
     emptyDesc: "Generate and save some ideas to see them here, or try generating a new one.",
     newIdea: "Create New Idea",
+    generateNewIdea: "Generate new idea",
     use: "Use This Idea",
     recent: "Recent",
     language: "Language",
@@ -1349,7 +1354,8 @@ export default {
     title: "Daily Story Prompt",
     subtitle: "From today's featured story prompt",
     use: "Use this prompt",
-    dismiss: "Dismiss"
+    dismiss: "Dismiss",
+    refreshAriaLabel: "Refresh prompt"
   },
   artStyles: {
     title: "Choose Art Style",

@@ -312,7 +312,7 @@ export default function CommunityPage() {
         setPendingShareData(null);
       }
     } else {
-      setPinError(isRTL ? "PIN שגוי. נסה שוב." : "Incorrect PIN. Please try again.");
+      setPinError(t("community.incorrectPin"));
     }
   };
 
@@ -351,8 +351,8 @@ export default function CommunityPage() {
           {/* Community stats row */}
           <div className={`relative flex flex-wrap gap-3 mb-5 ${isRTL ? 'flex-row-reverse' : ''}`}>
             {[
-              { icon: Globe, label: t("community.sharedBooks") || (isRTL ? "ספרים משותפים" : "Shared Books"), value: String(posts.length) },
-              { icon: Users, label: t("community.activeAuthors") || (isRTL ? "סופרים" : "Authors"), value: String(new Set(posts.map(p => p.user_id)).size) },
+              { icon: Globe, label: t("community.sharedBooks"), value: String(posts.length) },
+              { icon: Users, label: t("community.activeAuthors"), value: String(new Set(posts.map(p => p.user_id)).size) },
             ].map((stat, i) => (
               <motion.div
                 key={i}
@@ -592,7 +592,7 @@ export default function CommunityPage() {
                             if (!reported.includes(postId)) {
                               localStorage.setItem("reportedPosts", JSON.stringify([...reported, postId]));
                             }
-                            toast({ description: isRTL ? "הדיווח נשלח. תודה!" : "Report submitted. Thank you!" });
+                            toast({ description: t("community.reportSubmitted") });
                           }}
                         />
                       </motion.div>
@@ -772,10 +772,10 @@ export default function CommunityPage() {
               setPinInput("");
               setPinError("");
             }}>
-              {isRTL ? "ביטול" : "Cancel"}
+              {t("community.parentApprovalCancel")}
             </Button>
             <Button onClick={handlePinSubmit} className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 rounded-xl">
-              {isRTL ? "אשר" : "Confirm"}
+              {t("community.parentApprovalConfirm")}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -35,7 +35,7 @@ export default function SavedIdeas({
             className="bg-purple-600 hover:bg-purple-700 gap-2 text-base px-8 py-3 h-auto"
           >
             <Lightbulb className="h-5 w-5" />
-            {isRTL ? "צור רעיון חדש" : "Generate new idea"}
+            {t("savedIdeas.generateNewIdea")}
           </Button>
         )}
       </div>

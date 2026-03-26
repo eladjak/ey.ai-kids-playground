@@ -66,7 +66,7 @@ vi.mock("@/components/ui/use-toast", () => ({
 
 vi.mock("@/components/i18n/i18nProvider", () => ({
   useI18n: () => ({
-    t: (key) => {
+    t: (key, vars) => {
       const translations = {
         "wizard.title": "Book Creation Wizard",
         "wizard.subtitle": "Create an amazing children's book in four simple steps",
@@ -106,8 +106,16 @@ vi.mock("@/components/i18n/i18nProvider", () => ({
         "wizard.characters.title": "Choose your characters",
         "wizard.characters.subtitle": "Select characters for your story",
         "wizard.preview.title": "Preview & Edit Your Book",
+        "characterPicker.selectedCount": "Selected Characters ({{count}})",
+        "characterPicker.addCustomButton": "Add your own character",
       };
-      return translations[key] || key;
+      let result = translations[key] || key;
+      if (vars) {
+        Object.entries(vars).forEach(([k, v]) => {
+          result = result.replace(new RegExp(`\\{\\{${k}\\}\\}`, 'g'), v);
+        });
+      }
+      return result;
     },
     language: "english",
     isRTL: false,
