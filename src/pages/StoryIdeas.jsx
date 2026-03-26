@@ -263,7 +263,7 @@ export default function StoryIdeas() {
                         {generatedIdea.plot_points && generatedIdea.plot_points.length > 0 && (
                             <div className="space-y-2">
                                 <p className="text-sm font-semibold text-purple-700 dark:text-purple-300 uppercase tracking-wide">
-                                    {t("storyIdeas.plotPointsLabel") || (isRTL ? 'נקודות עלילה' : 'Plot Points')}
+                                    {t("storyIdeas.plotPointsLabel")}
                                 </p>
                                 <ul className="space-y-1.5">
                                     {generatedIdea.plot_points.slice(0, 3).map((point, i) => (
@@ -281,7 +281,7 @@ export default function StoryIdeas() {
                             <div className="flex items-start gap-2 p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/30">
                                 <Star className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />
                                 <p className="text-sm text-amber-800 dark:text-amber-200">
-                                    <strong>{t("storyIdeas.moralLabel") || (isRTL ? 'מסר:' : 'Lesson:')}</strong> {generatedIdea.moral_lesson}
+                                    <strong>{t("storyIdeas.moralLabel")}:</strong> {generatedIdea.moral_lesson}
                                 </p>
                             </div>
                         )}

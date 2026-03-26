@@ -241,9 +241,7 @@ export default function BookCreation() {
       if (!rateCheck.allowed) {
         toast({
           variant: "destructive",
-          description: isRTL
-            ? `הגעת למגבלה היומית של ${rateCheck.limit} ספרים. נסה שוב מחר!`
-            : `You've reached today's limit of ${rateCheck.limit} books. Try again tomorrow!`,
+          description: t("book.rateLimit", { limit: rateCheck.limit }),
         });
         return;
       }
@@ -365,9 +363,7 @@ export default function BookCreation() {
       if (imageFailureInfo.length > 0) {
         toast({
           variant: "destructive",
-          description: isRTL
-            ? `${imageSuccessCount} מתוך ${newPages.length} איורים נוצרו. ${imageFailureInfo.length} נכשלו — ניתן לנסות שוב בעורך.`
-            : `${imageSuccessCount} of ${newPages.length} images generated. ${imageFailureInfo.length} failed — you can retry in the editor.`
+          description: t("book.imagePartial", { success: imageSuccessCount, total: newPages.length, failed: imageFailureInfo.length }),
         });
       } else {
         toast({
