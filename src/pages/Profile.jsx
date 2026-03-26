@@ -490,7 +490,7 @@ export default function Profile() {
           </div>
 
           <div className="mt-5">
-            <UserStats userData={userData} currentLanguage={currentLanguage} />
+            <UserStats userData={userData} />
           </div>
         </div>
       </motion.div>
@@ -571,7 +571,6 @@ export default function Profile() {
                               size="lg"
                               completed={achievement.completed}
                               inProgress={!achievement.completed && achievement.progress > 0}
-                              currentLanguage={currentLanguage}
                             />
                             <h4 className="font-medium mt-2 text-gray-900 dark:text-gray-100 text-sm">
                               {achievementText.title}
@@ -703,7 +702,6 @@ export default function Profile() {
             <h2 className="text-2xl font-bold">{t("profile.tabs.achievements")}</h2>
             <AchievementList
               achievements={achievements}
-              currentLanguage={currentLanguage}
               showCategories={true}
               showProgress={true}
             />
@@ -753,7 +751,6 @@ export default function Profile() {
               ) : (
                 <RecentActivity
                   activities={recentActivity}
-                  currentLanguage={currentLanguage}
                   showFilters={true}
                 />
               )}
@@ -824,7 +821,6 @@ export default function Profile() {
             onOpenChange={setAvatarEditorOpen}
             currentAvatar={userData.avatar_url}
             onSelectAvatar={handleAvatarUpdate}
-            currentLanguage={currentLanguage}
           />
         </DialogContent>
       </Dialog>

@@ -76,7 +76,7 @@ const activityTypes = {
   }
 };
 
-export default function RecentActivity({ activities = [], currentLanguage = "english", showFilters = false }) {
+export default function RecentActivity({ activities = [], showFilters = false }) {
   const [filter, setFilter] = useState("all");
   const [period, setPeriod] = useState("all");
 

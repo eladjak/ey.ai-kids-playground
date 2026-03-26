@@ -54,7 +54,6 @@ const BadgeDisplay = React.memo(function BadgeDisplay({
   badgeId,
   size = "md",
   showLabel = true,
-  currentLanguage,
   completed = false,
   inProgress = false
 }) {

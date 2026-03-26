@@ -6,51 +6,28 @@ import { BookOpen, Sparkles, CheckCircle2, Loader2, Palette, Users, Tag, AlignLe
 import { useI18n } from "@/components/i18n/i18nProvider";
 
 /**
- * Magical, child-friendly progress labels for book creation.
+ * Threshold percentages for magic progress labels.
+ * Keys map to magicLabels.step1..step8 in locale files.
  */
-const MAGIC_LABELS = {
-  en: [
-    { at: 5, text: "Sprinkling magic dust..." },
-    { at: 10, text: "Opening the storybook..." },
-    { at: 20, text: "Gathering your characters..." },
-    { at: 35, text: "Writing the adventure..." },
-    { at: 50, text: "The magic paintbrush is working..." },
-    { at: 70, text: "Painting beautiful pictures..." },
-    { at: 85, text: "Adding sparkles and stars..." },
-    { at: 95, text: "Almost there! Final touches..." }
-  ],
-  he: [
-    { at: 5, text: "מפזרים אבקת קסם..." },
-    { at: 10, text: "פותחים את ספר הסיפורים..." },
-    { at: 20, text: "אוספים את הדמויות שלך..." },
-    { at: 35, text: "כותבים את ההרפתקה..." },
-    { at: 50, text: "מכחול הקסם עובד..." },
-    { at: 70, text: "מציירים תמונות יפות..." },
-    { at: 85, text: "מוסיפים נצנוצים וכוכבים..." },
-    { at: 95, text: "כמעט שם! נגיעות אחרונות..." }
-  ],
-  yi: [
-    { at: 5, text: "מיר שפּריצן קסם שטויב..." },
-    { at: 10, text: "מיר עפֿענען דעם מעשׂה-ביכל..." },
-    { at: 20, text: "מיר זאַמלען דײַנע פּערזאָנאַזשן..." },
-    { at: 35, text: "מיר שרײַבן דעם אַוואַנטורע..." },
-    { at: 50, text: "דער קסם פּענדזל אַרבעט..." },
-    { at: 70, text: "מיר מאָלן שיינע בילדער..." },
-    { at: 85, text: "מיר לייגן צו פֿונקלען..." },
-    { at: 95, text: "כּמעט דאָ! לעצטע שטריכן..." }
-  ]
-};
+const MAGIC_LABEL_STEPS = [
+  { at: 5, key: "magicLabels.step1" },
+  { at: 10, key: "magicLabels.step2" },
+  { at: 20, key: "magicLabels.step3" },
+  { at: 35, key: "magicLabels.step4" },
+  { at: 50, key: "magicLabels.step5" },
+  { at: 70, key: "magicLabels.step6" },
+  { at: 85, key: "magicLabels.step7" },
+  { at: 95, key: "magicLabels.step8" }
+];
 
-function getMagicLabel(percent, language) {
-  const langKey = language === "hebrew" ? "he" : language === "yiddish" ? "yi" : "en";
-  const labels = MAGIC_LABELS[langKey];
-  let activeLabel = labels[0].text;
-  for (const entry of labels) {
+function getMagicLabel(percent, t) {
+  let activeKey = MAGIC_LABEL_STEPS[0].key;
+  for (const entry of MAGIC_LABEL_STEPS) {
     if (percent >= entry.at) {
-      activeLabel = entry.text;
+      activeKey = entry.key;
     }
   }
-  return activeLabel;
+  return t(activeKey);
 }
 
 const SUMMARY_ICONS = {
@@ -120,7 +97,7 @@ export default function SaveStep({
   ];
 
   const magicLabel = creationProgress
-    ? getMagicLabel(creationProgress.percent, language)
+    ? getMagicLabel(creationProgress.percent, t)
     : null;
 
   return (

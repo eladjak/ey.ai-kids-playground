@@ -245,16 +245,12 @@ const RANDOM_TONES = ["exciting", "funny", "calm", "mysterious", "educational"];
 const RANDOM_LENGTHS = ["short", "medium", "long"];
 const RANDOM_AGES = ["3-5", "5-7", "7-10"];
 
-function getStyleLabel(style, language) {
-  if (language === "hebrew") return style.he;
-  if (language === "yiddish") return style.yi || style.en;
-  return style.en;
+function getStyleLabel(style, t) {
+  return t("illustrationStyles." + style.value + ".name") || style.en;
 }
 
-function getStyleDesc(style, language) {
-  if (language === "hebrew") return style.desc.he;
-  if (language === "yiddish") return style.desc.yi || style.desc.en;
-  return style.desc.en;
+function getStyleDesc(style, t) {
+  return t("illustrationStyles." + style.value + ".desc") || style.desc.en;
 }
 
 /**
@@ -454,9 +450,9 @@ export default function PreviewEditStep({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="english">English</SelectItem>
-                <SelectItem value="hebrew">עברית</SelectItem>
-                <SelectItem value="yiddish">יידיש</SelectItem>
+                <SelectItem value="english">{t("common.languageNames.english")}</SelectItem>
+                <SelectItem value="hebrew">{t("common.languageNames.hebrew")}</SelectItem>
+                <SelectItem value="yiddish">{t("common.languageNames.yiddish")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -486,7 +482,7 @@ export default function PreviewEditStep({
                   onClick={() => onBookDataChange("art_style", style.value)}
                   role="radio"
                   aria-checked={isSelected}
-                  aria-label={getStyleLabel(style, language)}
+                  aria-label={getStyleLabel(style, t)}
                   whileHover={{ scale: 1.04, y: -2 }}
                   whileTap={{ scale: 0.96 }}
                   initial={{ opacity: 0, y: 8 }}
@@ -529,12 +525,12 @@ export default function PreviewEditStep({
 
                     {/* Style name */}
                     <span className={`text-xs font-bold leading-tight ${isSelected ? "text-purple-800 dark:text-purple-200" : "text-gray-800 dark:text-gray-200"}`}>
-                      {getStyleLabel(style, language)}
+                      {getStyleLabel(style, t)}
                     </span>
 
                     {/* Short description */}
                     <span className={`text-xs leading-tight ${isSelected ? "text-purple-600 dark:text-purple-300" : "text-gray-500 dark:text-gray-400"}`}>
-                      {getStyleDesc(style, language)}
+                      {getStyleDesc(style, t)}
                     </span>
                   </div>
                 </motion.button>

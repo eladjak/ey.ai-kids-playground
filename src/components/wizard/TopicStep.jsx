@@ -230,16 +230,8 @@ const surpriseRevealVariants = {
   exit: { scale: 0.5, rotate: 15, opacity: 0, transition: { duration: 0.15 } }
 };
 
-function getTopicLabel(topic, language) {
-  if (language === "hebrew") return topic.he;
-  if (language === "yiddish") return topic.yi || topic.en;
-  return topic.en;
-}
-
-function getSurpriseButtonLabel(language) {
-  if (language === "hebrew") return "הפתע אותי!";
-  if (language === "yiddish") return "אַ השתּאות!";
-  return "Surprise Me!";
+function getTopicLabel(topic, t) {
+  return t("topicNames." + topic.id) || topic.en;
 }
 
 /**
@@ -293,7 +285,7 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
     const randomTopic = TOPIC_CARDS[Math.floor(Math.random() * TOPIC_CARDS.length)];
     const twistList = isYiddish ? SURPRISE_TWISTS.yi : isHebrew ? SURPRISE_TWISTS.he : SURPRISE_TWISTS.en;
     const randomTwist = twistList[Math.floor(Math.random() * twistList.length)];
-    const topicLabel = getTopicLabel(randomTopic, language);
+    const topicLabel = getTopicLabel(randomTopic, t);
 
     let ideaText;
     if (isHebrew) {
@@ -343,7 +335,7 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
           onClick={handleSurpriseMe}
           whileHover={{ scale: 1.06, y: -2 }}
           whileTap={{ scale: 0.95 }}
-          aria-label={getSurpriseButtonLabel(language)}
+          aria-label={t("surpriseMe")}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.4 }}
@@ -363,7 +355,7 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
             aria-hidden="true"
           />
           <Shuffle className="h-5 w-5 relative z-10" aria-hidden="true" />
-          <span className="relative z-10">{getSurpriseButtonLabel(language)}</span>
+          <span className="relative z-10">{t("surpriseMe")}</span>
           <Wand2 className="h-5 w-5 relative z-10" aria-hidden="true" />
         </motion.button>
       </div>
@@ -395,7 +387,7 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
               }}
               role="radio"
               aria-checked={selectedTopic === topic.id}
-              aria-label={getTopicLabel(topic, language)}
+              aria-label={getTopicLabel(topic, t)}
               className={`
                 relative flex flex-col items-center justify-center p-4 md:p-5 rounded-2xl
                 transition-all duration-200 cursor-pointer min-h-[130px] md:min-h-[150px]
@@ -451,7 +443,7 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
               </AnimatePresence>
 
               <span className={`text-sm md:text-base font-bold text-center relative z-10 ${isSelected ? "text-gray-900 dark:text-white" : "text-gray-700 dark:text-gray-200"}`}>
-                {getTopicLabel(topic, language)}
+                {getTopicLabel(topic, t)}
               </span>
 
               {isSelected && !surprisedTopicId && (
@@ -527,12 +519,7 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
               <Textarea
                 value={customIdea || ""}
                 onChange={(e) => onCustomIdeaChange?.(e.target.value)}
-                placeholder={isHebrew
-                  ? "למשל: סיפור על דרקון ידידותי שלומד לבשל..."
-                  : isYiddish
-                  ? "פֿאַרביישפּיל: אַ מעשׂה וועגן אַ פֿרײַנדלעכן דראַקאָן..."
-                  : "e.g., A story about a friendly dragon who learns to cook..."
-                }
+                placeholder={t("ideaPlaceholder")}
                 dir={isRTL ? "rtl" : "ltr"}
                 rows={3}
                 maxLength={500}

@@ -2401,5 +2401,88 @@ export default {
     credits: "Credits per use",
     specialties: "Best for",
     learnMore: "Learn More"
+  },
+  topicNames: {
+    animals: "Animals",
+    space: "Space",
+    family: "Family",
+    fairy_tale: "Fairy Tales",
+    adventure: "Adventure",
+    nature: "Nature",
+    science: "Science",
+    magic: "Magic",
+    friendship: "Friendship",
+    music: "Music",
+    art: "Art",
+    travel: "Travel"
+  },
+  surpriseMe: "Surprise Me!",
+  ideaPlaceholder: "e.g., A story about a friendly dragon who learns to cook...",
+  illustrationStyles: {
+    disney: { name: "Disney Animation", desc: "Colorful & magical" },
+    watercolor: { name: "Watercolor", desc: "Soft & dreamy" },
+    cartoon: { name: "Bright Cartoon", desc: "Fun & playful" },
+    realistic: { name: "Semi-Realistic", desc: "Photo-like detail" },
+    comic: { name: "Comic Book", desc: "Bold & dynamic" },
+    storybook: { name: "Storybook", desc: "Classic & warm" },
+    anime: { name: "Anime/Manga", desc: "Japanese style" },
+    impressionist: { name: "Impressionist", desc: "Artistic & textured" },
+    pixar: { name: "Pixar 3D", desc: "3D & expressive" },
+    minimalist: { name: "Minimalist", desc: "Clean & simple" },
+    vintage: { name: "Vintage", desc: "Nostalgic charm" },
+    fantasy: { name: "Fantasy Art", desc: "Magical & enchanted" },
+    pop_art: { name: "Pop Art", desc: "Bold & colorful" },
+    crayon: { name: "Crayon & Pastel", desc: "Soft & hand-drawn" },
+    collage: { name: "Paper Collage", desc: "Textured & layered" },
+    gouache: { name: "Gouache Painting", desc: "Rich & opaque" },
+    chibi: { name: "Chibi", desc: "Cute & tiny" }
+  },
+  magicLabels: {
+    step1: "Sprinkling magic dust...",
+    step2: "Opening the storybook...",
+    step3: "Gathering your characters...",
+    step4: "Writing the adventure...",
+    step5: "The magic paintbrush is working...",
+    step6: "Painting beautiful pictures...",
+    step7: "Adding sparkles and stars...",
+    step8: "Almost there! Final touches..."
+  },
+  ideaOptions: {
+    themes: {
+      friendship: "friendship",
+      courage: "courage",
+      learning: "learning",
+      kindness: "kindness",
+      discovery: "discovery",
+      magic: "magic",
+      nature: "nature",
+      family: "family",
+      sharing: "sharing",
+      honesty: "honesty"
+    },
+    characters: {
+      dragon: "dragon",
+      wizard: "wizard",
+      talking_animals: "talking animals",
+      robot: "robot",
+      princess: "princess",
+      superhero: "superhero",
+      fairy: "fairy",
+      pirate: "pirate",
+      astronaut: "astronaut",
+      detective: "detective"
+    },
+    settings: {
+      forest: "forest",
+      space: "space",
+      underwater_city: "underwater city",
+      enchanted_castle: "enchanted castle",
+      future_city: "future city",
+      farm: "farm",
+      mountain: "mountain",
+      desert: "desert",
+      jungle: "jungle",
+      arctic: "arctic"
+    }
   }
 };

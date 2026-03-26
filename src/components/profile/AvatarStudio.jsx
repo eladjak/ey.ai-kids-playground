@@ -25,7 +25,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useI18n } from "@/components/i18n/i18nProvider";
 
-export default function AvatarStudio({ currentAvatar, onAvatarSelected, onClose, currentLanguage = "english" }) {
+export default function AvatarStudio({ currentAvatar, onAvatarSelected, onClose }) {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState(currentAvatar);
   const [activeTab, setActiveTab] = useState("presets");

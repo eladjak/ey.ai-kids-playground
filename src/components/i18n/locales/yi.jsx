@@ -2205,5 +2205,88 @@ export default {
     credits: "קרעדיטן פּער נוץ",
     specialties: "פּאַסט פֿאַר",
     learnMore: "לערן מער"
+  },
+  topicNames: {
+    animals: "חיות",
+    space: "חלל",
+    family: "משפּחה",
+    fairy_tale: "מעשׂיות",
+    adventure: "אַוואַנטורעס",
+    nature: "נאַטור",
+    science: "וויסנשאַפֿט",
+    magic: "כּישוף",
+    friendship: "פֿרײַנדשאַפֿט",
+    music: "מוזיק",
+    art: "קונסט",
+    travel: "רײַזן"
+  },
+  surpriseMe: "אַ השתּאות!",
+  ideaPlaceholder: "פֿאַרביישפּיל: אַ מעשׂה וועגן אַ פֿרײַנדלעכן דראַקאָן...",
+  illustrationStyles: {
+    disney: { name: "דיסני אַנימאַציע", desc: "פֿאַרביק און כּישופֿדיק" },
+    watercolor: { name: "וואַסערפֿאַרבן", desc: "ווייך און חלומדיק" },
+    cartoon: { name: "קאַריקאַטור", desc: "שפּאַסיק" },
+    realistic: { name: "האַלב-רעאַליסטיש", desc: "פֿאָטאָ-ווי" },
+    comic: { name: "קאָמיקס", desc: "שטאַרק" },
+    storybook: { name: "מעשׂה-ביכל", desc: "קלאַסיש" },
+    anime: { name: "אַנימע", desc: "יאַפּאַנישער סטיל" },
+    impressionist: { name: "אימפּרעסיאָניסטיש", desc: "קינסטלעריש" },
+    pixar: { name: "פּיקסאַר 3D", desc: "3D" },
+    minimalist: { name: "מינימאַליסטיש", desc: "פּשוט" },
+    vintage: { name: "וינטאַזש", desc: "נאָסטאַלגיש" },
+    fantasy: { name: "פֿאַנטאַזיע", desc: "כּישופֿדיק" },
+    pop_art: { name: "פּאָפּ קונסט", desc: "שטאַרק" },
+    crayon: { name: "פּאַסטעל", desc: "ווייך" },
+    collage: { name: "פּאַפּיר קאָלאַזש", desc: "טעקסטורירט" },
+    gouache: { name: "גואַש", desc: "רייַך" },
+    chibi: { name: "טשיבי", desc: "חמודיק" }
+  },
+  magicLabels: {
+    step1: "מיר שפּריצן קסם שטויב...",
+    step2: "מיר עפֿענען דעם מעשׂה-ביכל...",
+    step3: "מיר זאַמלען דײַנע פּערזאָנאַזשן...",
+    step4: "מיר שרײַבן דעם אַוואַנטורע...",
+    step5: "דער קסם פּענדזל אַרבעט...",
+    step6: "מיר מאָלן שיינע בילדער...",
+    step7: "מיר לייגן צו פֿונקלען...",
+    step8: "כּמעט דאָ! לעצטע שטריכן..."
+  },
+  ideaOptions: {
+    themes: {
+      friendship: "פֿרײַנדשאַפֿט",
+      courage: "מוט",
+      learning: "לערנען",
+      kindness: "גוטסקייט",
+      discovery: "אַנטדעקונג",
+      magic: "כּישוף",
+      nature: "נאַטור",
+      family: "משפּחה",
+      sharing: "טיילן",
+      honesty: "אמת"
+    },
+    characters: {
+      dragon: "דראַקאָן",
+      wizard: "כּישוף-מאַכער",
+      talking_animals: "רעדנדיקע חיות",
+      robot: "ראָבאָט",
+      princess: "פּרינצעסין",
+      superhero: "סופּערהעלד",
+      fairy: "פֿייגעלע",
+      pirate: "פּיראַט",
+      astronaut: "אַסטראָנאַוט",
+      detective: "דעטעקטיוו"
+    },
+    settings: {
+      forest: "וואַלד",
+      space: "חלל",
+      underwater_city: "שטאָט אונטער וואַסער",
+      enchanted_castle: "פֿאַרכּישופֿטע שלאָס",
+      future_city: "צוקונפֿטשטאָט",
+      farm: "פֿאַרם",
+      mountain: "באַרג",
+      desert: "מדבר",
+      jungle: "דזשונגל",
+      arctic: "אַרקטיש"
+    }
   }
 };

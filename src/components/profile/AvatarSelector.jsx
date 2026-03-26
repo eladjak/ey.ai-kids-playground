@@ -22,12 +22,11 @@ import {
 import { GenerateImage, UploadFile } from "@/integrations/Core";
 import { useI18n } from "@/components/i18n/i18nProvider";
 
-export default function AvatarSelector({ 
-  open, 
-  onOpenChange, 
-  currentAvatar, 
+export default function AvatarSelector({
+  open,
+  onOpenChange,
+  currentAvatar,
   onSelectAvatar,
-  currentLanguage = "english"
 }) {
   const [activeTab, setActiveTab] = useState("upload");
   const [previewUrl, setPreviewUrl] = useState(currentAvatar || "");

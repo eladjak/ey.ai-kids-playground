@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import { useI18n } from "@/components/i18n/i18nProvider";
 
-export default function UserStats({ userData, currentLanguage = "english" }) {
+export default function UserStats({ userData }) {
   const { t, isRTL } = useI18n();
 
   const completedBadges = userData.badges?.filter(badge => badge.completed) || [];

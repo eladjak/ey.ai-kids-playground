@@ -33,7 +33,6 @@ import { useI18n } from "@/components/i18n/i18nProvider";
 
 export default function AchievementList({
   achievements = [],
-  currentLanguage = "english",
   showCategories = false,
   showProgress = true
 }) {
@@ -184,12 +183,11 @@ export default function AchievementList({
                 >
                   <CardContent className="p-4">
                     <div className="flex flex-col items-center text-center gap-2">
-                      <BadgeDisplay 
-                        badgeId={achievement.id} 
-                        size="lg" 
+                      <BadgeDisplay
+                        badgeId={achievement.id}
+                        size="lg"
                         completed={achievement.completed}
                         inProgress={!achievement.completed && achievement.progress > 0}
-                        currentLanguage={currentLanguage}
                       />
                       
                       <h3 className="font-semibold mt-2 text-gray-900 dark:text-gray-100">

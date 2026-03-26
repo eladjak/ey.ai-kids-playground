@@ -138,7 +138,6 @@ const UserWelcomeCard = React.memo(function UserWelcomeCard({ userData }) {
               <BadgeDisplay
                 badgeId={badge.id}
                 size="sm"
-                currentLanguage={currentLanguage}
               />
             </motion.div>
           ))}

@@ -2398,5 +2398,88 @@ export default {
     credits: "קרדיטים לשימוש",
     specialties: "מתאים ל",
     learnMore: "למד עוד"
+  },
+  topicNames: {
+    animals: "חיות",
+    space: "חלל",
+    family: "משפחה",
+    fairy_tale: "אגדות",
+    adventure: "הרפתקאות",
+    nature: "טבע",
+    science: "מדע",
+    magic: "קסמים",
+    friendship: "חברות",
+    music: "מוזיקה",
+    art: "אמנות",
+    travel: "טיולים"
+  },
+  surpriseMe: "הפתע אותי!",
+  ideaPlaceholder: "למשל: סיפור על דרקון ידידותי שלומד לבשל...",
+  illustrationStyles: {
+    disney: { name: "אנימציית דיסני", desc: "צבעוני וקסום" },
+    watercolor: { name: "צבעי מים", desc: "עדין וחלומי" },
+    cartoon: { name: "קומיקס צבעוני", desc: "כיפי ושובבי" },
+    realistic: { name: "מציאותי למחצה", desc: "פרטים כמו צילום" },
+    comic: { name: "ספר קומיקס", desc: "נועז ודינמי" },
+    storybook: { name: "ספר ילדים קלאסי", desc: "קלאסי וחמים" },
+    anime: { name: "אנימה/מנגה", desc: "סגנון יפני" },
+    impressionist: { name: "אימפרסיוניסטי", desc: "אמנותי ומרקמי" },
+    pixar: { name: "תלת מימד פיקסאר", desc: "תלת-מימדי ומרגש" },
+    minimalist: { name: "מינימליסטי", desc: "נקי ופשוט" },
+    vintage: { name: "וינטג'", desc: "קסם נוסטלגי" },
+    fantasy: { name: "פנטזיה קסומה", desc: "קסום ומכושף" },
+    pop_art: { name: "פופ ארט", desc: "נועז וצבעוני" },
+    crayon: { name: "צבעי פסטל", desc: "עדין ומצויר ביד" },
+    collage: { name: "קולאז' נייר", desc: "מרקמי ושכבות" },
+    gouache: { name: "גואש", desc: "עשיר ואטום" },
+    chibi: { name: "צ'יבי (מיני אנימה)", desc: "חמוד וזעיר" }
+  },
+  magicLabels: {
+    step1: "מפזרים אבקת קסם...",
+    step2: "פותחים את ספר הסיפורים...",
+    step3: "אוספים את הדמויות שלך...",
+    step4: "כותבים את ההרפתקה...",
+    step5: "מכחול הקסם עובד...",
+    step6: "מציירים תמונות יפות...",
+    step7: "מוסיפים נצנוצים וכוכבים...",
+    step8: "כמעט שם! נגיעות אחרונות..."
+  },
+  ideaOptions: {
+    themes: {
+      friendship: "חברות",
+      courage: "אומץ",
+      learning: "למידה",
+      kindness: "נדיבות",
+      discovery: "תגלית",
+      magic: "קסם",
+      nature: "טבע",
+      family: "משפחה",
+      sharing: "שיתוף",
+      honesty: "כנות"
+    },
+    characters: {
+      dragon: "דרקון",
+      wizard: "קוסם",
+      talking_animals: "חיות מדברות",
+      robot: "רובוט",
+      princess: "נסיכה",
+      superhero: "גיבור-על",
+      fairy: "פיה",
+      pirate: "פיראט",
+      astronaut: "אסטרונאוט",
+      detective: "בלש"
+    },
+    settings: {
+      forest: "יער",
+      space: "חלל",
+      underwater_city: "עיר תת-ימית",
+      enchanted_castle: "טירה מכושפת",
+      future_city: "עיר עתידנית",
+      farm: "חווה",
+      mountain: "הר",
+      desert: "מדבר",
+      jungle: "ג'ונגל",
+      arctic: "הקוטב הצפוני"
+    }
   }
 };
