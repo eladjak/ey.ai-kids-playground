@@ -18,8 +18,8 @@ export default function CelebrationModal({
   const hasFireRef = useRef(false);
   const modalRef = useRef(null);
 
-  const isHebrew = language === "he";
-  const isYiddish = language === "yi";
+  const isHebrew = language === "hebrew";
+  const isYiddish = language === "yiddish";
 
   // Focus trap: keep focus inside modal while open
   const handleKeyDown = useCallback((e) => {

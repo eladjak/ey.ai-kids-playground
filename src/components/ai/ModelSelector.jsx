@@ -548,7 +548,7 @@ export default function ModelSelector({
                 {tier === 'creator' && '⭐'} 
                 {tier === 'pro' && '👑'} 
                 {tier === 'premium' && '💎'} 
-                {t(`model.${tier}`)} Tier
+                {t(`modelSelector.${tier}`)}
               </h3>
               {tier === 'creator' && userTier === 'free' && (
                 <Badge variant="outline" className="text-xs">
