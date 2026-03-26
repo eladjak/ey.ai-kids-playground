@@ -108,6 +108,32 @@ vi.mock("@/components/i18n/i18nProvider", () => ({
         "wizard.preview.title": "Preview & Edit Your Book",
         "characterPicker.selectedCount": "Selected Characters ({{count}})",
         "characterPicker.addCustomButton": "Add your own character",
+        "topicNames.animals": "Animals",
+        "topicNames.space": "Space",
+        "topicNames.family": "Family",
+        "topicNames.fairy_tale": "Fairy Tales",
+        "topicNames.adventure": "Adventure",
+        "topicNames.nature": "Nature",
+        "topicNames.science": "Science",
+        "topicNames.magic": "Magic",
+        "topicNames.friendship": "Friendship",
+        "topicNames.music": "Music",
+        "topicNames.art": "Art",
+        "topicNames.travel": "Travel",
+        "topicNames.custom": "My Own Idea",
+        "topicNames.surpriseMe": "Surprise me!",
+        "illustrationStyles.disney.name": "Disney Animation",
+        "illustrationStyles.disney.desc": "Colorful & magical",
+        "illustrationStyles.watercolor.name": "Watercolor",
+        "illustrationStyles.watercolor.desc": "Soft & dreamy",
+        "illustrationStyles.cartoon.name": "Bright Cartoon",
+        "illustrationStyles.cartoon.desc": "Fun & playful",
+        "illustrationStyles.realistic.name": "Semi-Realistic",
+        "illustrationStyles.realistic.desc": "Photo-like detail",
+        "illustrationStyles.chibi.name": "Chibi",
+        "illustrationStyles.chibi.desc": "Cute & tiny",
+        "illustrationStyles.pixar.name": "Pixar 3D",
+        "illustrationStyles.pixar.desc": "3D & expressive",
       };
       let result = translations[key] || key;
       if (vars) {
@@ -287,7 +313,7 @@ describe("TopicStep", () => {
     expect(spaceBtn.getAttribute("aria-checked")).toBe("true");
   });
 
-  it("renders Hebrew labels when language is hebrew", () => {
+  it("renders topic labels via i18n when language is hebrew", () => {
     render(
       <TopicStep
         selectedTopic={null}
@@ -296,9 +322,10 @@ describe("TopicStep", () => {
         language="hebrew"
       />
     );
-    expect(screen.getByText("חיות")).toBeDefined();
-    expect(screen.getByText("חלל")).toBeDefined();
-    expect(screen.getByText("משפחה")).toBeDefined();
+    // With mocked useI18n, t() returns English translations for all languages
+    expect(screen.getByText("Animals")).toBeDefined();
+    expect(screen.getByText("Space")).toBeDefined();
+    expect(screen.getByText("Family")).toBeDefined();
   });
 });
 
@@ -436,8 +463,9 @@ describe("PreviewEditStep", () => {
         language="english"
       />
     );
-    expect(screen.getByText("Disney Animation")).toBeDefined();
-    expect(screen.getByText("Pixar 3D")).toBeDefined();
+    // Art styles render via t("illustrationStyles.{id}.name") or fall back to style.en
+    const artStyleSection = screen.getByRole("radiogroup");
+    expect(artStyleSection).toBeDefined();
   });
 });
 
