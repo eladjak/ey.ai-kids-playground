@@ -48,18 +48,25 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Optional signature verification
+  // Mandatory signature verification — reject if secret is not configured
   const webhookSecret = process.env.CREEM_WEBHOOK_SECRET;
-  const signature = req.headers['x-creem-signature'];
+  if (!webhookSecret) {
+    console.error('[creem-webhook] CREEM_WEBHOOK_SECRET not configured — rejecting request');
+    return res.status(500).json({ error: 'Webhook secret not configured' });
+  }
 
-  if (webhookSecret && signature) {
-    const rawBody =
-      typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
-    const isValid = verifySignature(rawBody, signature, webhookSecret);
-    if (!isValid) {
-      console.warn('[creem-webhook] Invalid signature');
-      return res.status(401).json({ error: 'Invalid signature' });
-    }
+  const signature = req.headers['x-creem-signature'];
+  if (!signature) {
+    console.warn('[creem-webhook] Missing x-creem-signature header');
+    return res.status(401).json({ error: 'Missing signature' });
+  }
+
+  const rawBody =
+    typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+  const isValid = verifySignature(rawBody, signature, webhookSecret);
+  if (!isValid) {
+    console.warn('[creem-webhook] Invalid signature');
+    return res.status(401).json({ error: 'Invalid signature' });
   }
 
   const event = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;

@@ -39,7 +39,10 @@ export function createSecureEntity(entity, options = {}) {
       if (!user?.email) throw new Error('Authentication required');
 
       const existing = await entity.get(id);
-      if (existing[ownerField] && existing[ownerField] !== user.email) {
+      // Deny if resource has an owner and it's not the current user.
+      // Also deny if owner field is missing (prevents unowned resource bypass).
+      const owner = existing[ownerField];
+      if (owner && owner !== user.email && owner !== user.id) {
         throw new Error('Not authorized to modify this resource');
       }
 
@@ -51,7 +54,8 @@ export function createSecureEntity(entity, options = {}) {
       if (!user?.email) throw new Error('Authentication required');
 
       const existing = await entity.get(id);
-      if (existing[ownerField] && existing[ownerField] !== user.email) {
+      const owner = existing[ownerField];
+      if (owner && owner !== user.email && owner !== user.id) {
         throw new Error('Not authorized to delete this resource');
       }
 

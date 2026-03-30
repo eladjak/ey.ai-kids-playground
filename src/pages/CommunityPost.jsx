@@ -159,7 +159,7 @@ export default function CommunityPost() {
       // Per-user like dedup via localStorage
       const likeKey = `post_liked_${postId}_${user?.email || 'anon'}`;
       if (localStorage.getItem(likeKey)) {
-        toast({ description: t("communityPost.alreadyLiked") || "Already liked!" });
+        toast({ description: t("communityPost.alreadyLiked") });
         return;
       }
 

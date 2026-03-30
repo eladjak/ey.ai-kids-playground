@@ -1,8 +1,10 @@
 import { lazy } from 'react';
-import Home from './pages/Home';
 import __Layout from './Layout.jsx';
 
-// Lazy-loaded pages for code splitting
+// All pages are lazy-loaded for code splitting.
+// Home is included here — it's heavy (gamification, AI hooks, charts) and the auth
+// guard in AuthenticatedApp already shows a spinner before it renders.
+const Home = lazy(() => import('./pages/Home'));
 const Blog = lazy(() => import('./pages/Blog'));
 const BlogPost = lazy(() => import('./pages/BlogPost'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));

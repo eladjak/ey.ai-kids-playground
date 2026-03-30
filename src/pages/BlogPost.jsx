@@ -103,7 +103,7 @@ function AuthorCard({ author, authorName, isRTL, t }) {
       {/* Avatar */}
       <div className="w-14 h-14 rounded-full overflow-hidden bg-purple-200 dark:bg-purple-800 shrink-0 flex items-center justify-center">
         {avatarUrl ? (
-          <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />
+          <img src={avatarUrl} alt={name} className="w-full h-full object-cover" width="56" height="56" loading="lazy" />
         ) : (
           <User className="h-7 w-7 text-purple-500" aria-hidden="true" />
         )}

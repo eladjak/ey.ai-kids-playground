@@ -7,6 +7,17 @@
     <link rel="manifest" href="/manifest.json" />
     <title>Sipurai - יצירת ספרי ילדים עם AI</title>
 
+    <!-- Preconnect to external origins for faster initial requests -->
+    <!-- Clerk auth (custom domain) -->
+    <link rel="preconnect" href="https://clerk.sipurai.ai">
+    <link rel="preconnect" href="https://accounts.sipurai.ai">
+    <link rel="dns-prefetch" href="https://api.clerk.dev">
+    <!-- Supabase DB + Storage -->
+    <link rel="preconnect" href="https://furviizyohryyqubosut.supabase.co" crossorigin>
+    <!-- Sentry + Umami (non-critical, dns-prefetch is enough) -->
+    <link rel="dns-prefetch" href="https://o0.ingest.sentry.io">
+    <link rel="dns-prefetch" href="https://analytics.sipurai.ai">
+
     <!-- Google Fonts: Fredoka (headings) + Nunito (body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -72,11 +83,34 @@
           "browserRequirements": "Requires JavaScript",
           "description": "Create personalized AI-powered children's books in Hebrew, English, and Yiddish. Kids choose characters, style, and language — AI creates a complete illustrated story.",
           "inLanguage": ["he", "en", "yi"],
-          "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD"
-          },
+          "offers": [
+            {
+              "@type": "Offer",
+              "name": "Lite",
+              "description": "חינמי — 3 ספרים לחודש, עם סימן מים",
+              "price": "0",
+              "priceCurrency": "USD",
+              "availability": "https://schema.org/InStock"
+            },
+            {
+              "@type": "Offer",
+              "name": "Premium",
+              "description": "פרמיום — ספרים בלתי מוגבלים, ללא סימן מים, הורדת PDF, עדיפות ביצירה",
+              "price": "9.99",
+              "priceCurrency": "USD",
+              "billingIncrement": "P1M",
+              "availability": "https://schema.org/InStock"
+            },
+            {
+              "@type": "Offer",
+              "name": "Family",
+              "description": "משפחה — עד 5 פרופילים ילדים, ספרים בלתי מוגבלים, כל יתרונות הפרמיום",
+              "price": "19.99",
+              "priceCurrency": "USD",
+              "billingIncrement": "P1M",
+              "availability": "https://schema.org/InStock"
+            }
+          ],
           "audience": {
             "@type": "EducationalAudience",
             "educationalRole": "student",

@@ -44,9 +44,9 @@ function BookCard({ book, viewType = "grid", onDuplicate }) {
   };
   
   const statusIcons = {
-    draft: <Clock className="h-4 w-4 text-yellow-500" />,
-    generating: <RotateCw className="h-4 w-4 text-blue-500 animate-spin" />,
-    complete: <CheckCircle className="h-4 w-4 text-green-500" />
+    draft: <Clock className="h-4 w-4 text-yellow-500" aria-hidden="true" />,
+    generating: <RotateCw className="h-4 w-4 text-blue-500 animate-spin" aria-hidden="true" />,
+    complete: <CheckCircle className="h-4 w-4 text-green-500" aria-hidden="true" />
   };
 
   const statusStyles = {
@@ -292,7 +292,7 @@ function BookCard({ book, viewType = "grid", onDuplicate }) {
                   size="sm"
                   className="gap-1 border-green-200 dark:border-green-900 hover:bg-green-50 dark:hover:bg-green-900/30"
                 >
-                  <Share2 className="h-3.5 w-3.5" />
+                  <Share2 className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>{t("bookCard.share")}</span>
                 </Button>
               )}

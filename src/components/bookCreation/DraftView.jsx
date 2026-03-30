@@ -74,14 +74,14 @@ export default function DraftView({
         </div>
         <div>
           <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
-            {isHebrewLike
-              ? `${t("book.storyOf")} ${book.child_name}`
-              : `${book.child_name}'s Story`}
+            {t("book.storyTitle", { name: book.child_name })}
           </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            {isHebrewLike
-              ? `${t("book.age")}: ${book.child_age} | ${t("book.genre")}: ${translateGenre(book.genre)} | ${t("book.style")}: ${translateArtStyle(book.art_style)}`
-              : `Age: ${book.child_age} | Genre: ${book.genre?.replace(/_/g, " ")} | Style: ${book.art_style?.replace(/_/g, " ")}`}
+            {t("book.bookSummary", {
+              age: book.child_age,
+              genre: isHebrewLike ? translateGenre(book.genre) : (book.genre?.replace(/_/g, " ") ?? ""),
+              style: isHebrewLike ? translateArtStyle(book.art_style) : (book.art_style?.replace(/_/g, " ") ?? "")
+            })}
           </p>
         </div>
       </div>

@@ -297,6 +297,7 @@ export default function Home() {
                   ref={searchInputRef}
                   type="search"
                   placeholder={t("home.search.placeholder")}
+                  aria-label={t("home.search.placeholder")}
                   dir={isRTL ? "rtl" : "ltr"}
                   className={`w-full rounded-2xl border-purple-300 focus:border-purple-500 focus:ring-purple-500/20 ${isRTL ? "pr-10 pl-3" : "pl-10 pr-3"}`}
                   value={searchQuery}
@@ -345,7 +346,7 @@ export default function Home() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
 
               {/* Subtle decorative elements */}
-              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
                 <div className="absolute top-6 left-1/2 w-64 h-64 bg-violet-500/10 rounded-full blur-3xl" />
                 <Sparkles className="absolute top-5 right-6 h-5 w-5 text-white/15" />
                 <BookOpen className="absolute bottom-6 left-6 h-7 w-7 text-white/10" />

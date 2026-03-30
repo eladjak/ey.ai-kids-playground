@@ -236,6 +236,7 @@ export default function Library() {
               placeholder={t("library.search")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label={t("library.search")}
               className={`${isRTL ? 'pr-10' : 'pl-10'} rounded-2xl border-purple-200 dark:border-purple-800 focus:border-purple-500 focus:ring-purple-500/20 dark:bg-gray-800 dark:text-white h-11`}
             />
             {searchQuery && (
@@ -252,6 +253,8 @@ export default function Library() {
           </div>
           <Button
             onClick={() => setShowFilters(!showFilters)}
+            aria-expanded={showFilters}
+            aria-controls="filter-panel"
             className={`rounded-2xl gap-2 ${
               showFilters || hasActiveFilters
                 ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-500/20"
@@ -272,6 +275,7 @@ export default function Library() {
         <AnimatePresence>
           {showFilters && (
             <motion.div
+              id="filter-panel"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
@@ -350,9 +354,9 @@ export default function Library() {
 
         <TabsContent value="grid" className="mt-0">
           {isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5" aria-busy="true" aria-label={t("common.loading") || "Loading books..."}>
               {Array(8).fill(0).map((_, index) => (
-                <Card key={index} className="overflow-hidden border-0 shadow-md rounded-2xl">
+                <Card key={index} className="overflow-hidden border-0 shadow-md rounded-2xl" aria-hidden="true">
                   <div className="aspect-[3/4] bg-gray-100 dark:bg-gray-800">
                     <Skeleton className="h-full w-full" />
                   </div>

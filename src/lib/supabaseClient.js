@@ -1,9 +1,9 @@
 /**
- * Supabase Client — shared instance for Storage, Database, and future Auth.
+ * Supabase Client — shared instance for Storage, Database, and Auth.
  *
- * Phase 2: Used for file/image storage (replacing Base44 UploadFile).
- * Phase 3: Will also handle entity CRUD (replacing Base44 entities).
- * Phase 4: Will handle auth (replacing Base44 auth).
+ * Auth is handled by Clerk. The Clerk JWT token is injected into every
+ * Supabase request via a custom fetch wrapper, so RLS policies can
+ * identify the authenticated user via auth.jwt().
  */
 
 import { createClient } from '@supabase/supabase-js';
@@ -17,9 +17,40 @@ if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KE
   );
 }
 
+// ─── Clerk JWT Integration ──────────────────────────────────────────────────
+// AuthContext calls setClerkTokenGetter() once Clerk is loaded.
+// Every Supabase request then includes the Clerk JWT as Authorization header,
+// enabling RLS policies to use auth.jwt() claims.
+
+let _getToken = null;
+
+/**
+ * Register the Clerk getToken function so all Supabase requests are authenticated.
+ * Called once from AuthContext when Clerk initializes.
+ * @param {((options?: { template?: string }) => Promise<string|null>) | null} fn
+ */
+export function setClerkTokenGetter(fn) {
+  _getToken = fn;
+}
+
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  global: {
+    fetch: async (url, options = {}) => {
+      const headers = new Headers(options?.headers);
+      if (_getToken) {
+        try {
+          const token = await _getToken({ template: 'supabase' });
+          if (token) {
+            headers.set('Authorization', `Bearer ${token}`);
+          }
+        } catch {
+          // Token fetch failed — proceed without auth (anon role)
+        }
+      }
+      return fetch(url, { ...options, headers });
+    },
+  },
   auth: {
-    // Auth is handled by Clerk — Supabase auth features disabled.
     persistSession: false,
     autoRefreshToken: false,
     detectSessionInUrl: false,

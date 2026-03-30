@@ -853,6 +853,8 @@ export default {
     share: "Share",
     createNewBook: "Create New Book",
     loadError: "Failed to load book. Please try again.",
+    readingProgress: "Reading progress",
+    exportingPdf: "Exporting PDF",
     noBook: {
       title: "Book not found",
       description: "The book you're looking for might have been removed or doesn't exist.",
@@ -1237,7 +1239,8 @@ export default {
     commentSuccess: "Comment added successfully!",
     commentError: "Failed to add comment. Please try again.",
     replySuccess: "Reply added successfully!",
-    replyError: "Failed to add reply. Please try again."
+    replyError: "Failed to add reply. Please try again.",
+    alreadyLiked: "You already liked this post!"
   },
   sharing: {
     communityTitle: "Share with Community",
@@ -1534,6 +1537,8 @@ export default {
     },
     hero: {
       badge: "AI-Powered Children's Book Creator",
+      illustrationAlt: "Child creating a personalized storybook with AI magic",
+      sectionLabel: "Introduction",
       titleLine1: "Your Child's Next Book",
       titleLine2: "Created with AI Magic",
       subtitle: "Choose characters, style and genre \u2014 and AI creates a complete children's book with a personalized story and illustrations",
@@ -2386,7 +2391,8 @@ export default {
   nav: {
     blog: "Blog",
     openMenu: "Open menu",
-    closeMenu: "Close menu"
+    closeMenu: "Close menu",
+    changeLanguage: "Change language"
   },
   modelSelector: {
     free: "Free",

@@ -43,6 +43,7 @@ const HeroSection = () => {
     <section
       className="relative min-h-screen flex items-center overflow-hidden"
       dir={isRTL ? 'rtl' : 'ltr'}
+      aria-label={t('landing.hero.sectionLabel') || 'Hero'}
     >
       {/* Background image with overlay */}
       <div className="absolute inset-0">
@@ -68,7 +69,8 @@ const HeroSection = () => {
         transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
       />
 
-      {/* Floating decorative shapes */}
+      {/* Floating decorative shapes — purely decorative, hidden from AT */}
+      <div aria-hidden="true">
       <FloatingShape className="top-20 start-[10%]" delay={0} duration={7}>
         <BookOpen className="h-12 w-12 text-white/20" />
       </FloatingShape>
@@ -99,6 +101,7 @@ const HeroSection = () => {
       <FloatingShape className="bottom-20 end-[50%]" delay={3.5} duration={8}>
         <PenTool className="h-7 w-7 text-purple-200/20" />
       </FloatingShape>
+      </div>
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 w-full">
@@ -198,7 +201,7 @@ const HeroSection = () => {
               <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white/20">
                 <img
                   src="/images/book-wizard.jpg"
-                  alt={t('landing.hero.badge')}
+                  alt={t('landing.hero.illustrationAlt') || 'Child creating a personalized storybook with AI'}
                   className="w-full h-auto object-cover aspect-[3/4]"
                 />
                 {/* Shimmer effect */}

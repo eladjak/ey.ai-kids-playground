@@ -851,6 +851,8 @@ export default {
     share: "שתף",
     createNewBook: "צור ספר חדש",
     loadError: "טעינת הספר נכשלה. נסה שוב.",
+    readingProgress: "התקדמות קריאה",
+    exportingPdf: "מייצא PDF",
     noBook: {
       title: "ספר לא נמצא",
       description: "הספר שאתה מחפש אולי הוסר או לא קיים.",
@@ -1232,7 +1234,8 @@ export default {
     commentSuccess: "התגובה נוספה בהצלחה!",
     commentError: "הוספת התגובה נכשלה. נסה שנית.",
     replySuccess: "התשובה נוספה בהצלחה!",
-    replyError: "הוספת התשובה נכשלה. נסה שנית."
+    replyError: "הוספת התשובה נכשלה. נסה שנית.",
+    alreadyLiked: "כבר אהבת את הפוסט הזה!"
   },
   sharing: {
     communityTitle: "שתף עם הקהילה",
@@ -1529,6 +1532,8 @@ export default {
     },
     hero: {
       badge: "יוצרים ספרי ילדים עם AI",
+      illustrationAlt: "ילד יוצר ספר ילדים מותאם אישית עם עזרת AI",
+      sectionLabel: "מבוא",
       titleLine1: "הסיפור של הילד שלכם",
       titleLine2: "מתחיל כאן",
       subtitle: "בחרו דמויות, סגנון איור ושפה — תוך פחות מדקה תקבלו ספר ילדים שלם עם סיפור מקורי ואיורים מרהיבים",
@@ -2383,7 +2388,8 @@ export default {
   nav: {
     blog: "בלוג",
     openMenu: "פתח תפריט",
-    closeMenu: "סגור תפריט"
+    closeMenu: "סגור תפריט",
+    changeLanguage: "שנה שפה"
   },
   modelSelector: {
     free: "חינמי",

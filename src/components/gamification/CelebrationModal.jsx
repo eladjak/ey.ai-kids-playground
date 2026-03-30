@@ -3,7 +3,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Trophy, Award, Star, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/components/i18n/i18nProvider";
-import confetti from "canvas-confetti";
+// canvas-confetti is loaded on-demand to keep the initial JS bundle smaller.
+// It's only used when a celebration modal is shown (rare event).
+let confettiPromise = null;
+const loadConfetti = () => {
+  if (!confettiPromise) {
+    confettiPromise = import("canvas-confetti").then((m) => m.default);
+  }
+  return confettiPromise;
+};
 
 /**
  * CelebrationModal - Shows level-up and badge unlock celebrations
@@ -69,31 +77,33 @@ export default function CelebrationModal({
     if (!celebration || hasFireRef.current) return;
     hasFireRef.current = true;
 
-    // Fire confetti
+    // Fire confetti — load the library dynamically so it stays out of the main bundle
     const duration = 2000;
     const end = Date.now() + duration;
 
-    const frame = () => {
-      confetti({
-        particleCount: 3,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0, y: 0.6 },
-        colors: ["#9333ea", "#6366f1", "#f59e0b", "#10b981"]
-      });
-      confetti({
-        particleCount: 3,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1, y: 0.6 },
-        colors: ["#9333ea", "#6366f1", "#f59e0b", "#10b981"]
-      });
+    loadConfetti().then((confetti) => {
+      const frame = () => {
+        confetti({
+          particleCount: 3,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0, y: 0.6 },
+          colors: ["#9333ea", "#6366f1", "#f59e0b", "#10b981"]
+        });
+        confetti({
+          particleCount: 3,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1, y: 0.6 },
+          colors: ["#9333ea", "#6366f1", "#f59e0b", "#10b981"]
+        });
 
-      if (Date.now() < end) {
-        requestAnimationFrame(frame);
-      }
-    };
-    frame();
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      };
+      frame();
+    });
 
     return () => {
       hasFireRef.current = false;

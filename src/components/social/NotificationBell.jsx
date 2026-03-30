@@ -69,11 +69,11 @@ export default function NotificationBell() {
     await markAllAsRead();
   }, [markAllAsRead]);
 
-  const labelMarkAll = t('social.markAllRead') || 'Mark all as read';
-  const labelNotifications = t('social.notifications') || 'Notifications';
-  const labelNoNotifications = t('social.noNotifications') || 'No notifications yet';
+  const labelMarkAll = t('social.markAllRead');
+  const labelNotifications = t('social.notifications');
+  const labelNoNotifications = t('social.noNotifications');
   const labelBellAria = unreadCount > 0
-    ? `${labelNotifications} — ${unreadCount} ${t('social.unread') || 'unread'}`
+    ? `${labelNotifications} — ${unreadCount} ${t('social.unread')}`
     : labelNotifications;
 
   return (
@@ -139,7 +139,7 @@ export default function NotificationBell() {
           >
             {isLoading ? (
               <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-                {t('common.loading') || 'Loading...'}
+                {t('common.loading')}
               </div>
             ) : notifications.length === 0 ? (
               <div className="px-4 py-10 text-center" aria-live="polite">

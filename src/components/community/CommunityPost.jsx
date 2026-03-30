@@ -56,10 +56,11 @@ function CommunityPost({ post, onLike, isLiked = false, isOwner = false, onRepor
           <div className="md:w-1/4 lg:w-1/5 bg-gray-100 dark:bg-gray-800 aspect-square md:aspect-auto">
             <Link to={`${createPageUrl("CommunityPost")}?id=${post.id}`}>
               {post.book?.cover_image ? (
-                <img 
-                  src={post.book.cover_image} 
+                <img
+                  src={post.book.cover_image}
                   alt={post.book.title}
                   className="w-full h-full object-cover"
+                  loading="lazy"
                 />
               ) : (
                 <div className="w-full h-full min-h-[140px] flex items-center justify-center">
@@ -83,7 +84,7 @@ function CommunityPost({ post, onLike, isLiked = false, isOwner = false, onRepor
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="text-sm font-medium">{post.user?.full_name || 'Unknown User'}</p>
+                  <p className="text-sm font-medium">{post.user?.full_name || t('common.unknownUser')}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     {formatTimestamp(post.created_date)}
                   </p>

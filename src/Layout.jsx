@@ -221,7 +221,7 @@ export default function Layout({ children, currentPageName }) {
         <aside className={`fixed top-0 ${isRTL ? 'right-0 border-l' : 'left-0 border-r'} h-full w-64 bg-gradient-to-b from-white via-white to-purple-50/30 dark:from-gray-800 dark:via-gray-800 dark:to-purple-950/20 border-gray-200 dark:border-gray-700 flex flex-col transition-transform duration-300 z-50 ${sidebarOpen ? 'translate-x-0' : (isRTL ? 'translate-x-full' : '-translate-x-full')} lg:translate-x-0`}>
           <div className="p-6 flex items-center justify-between border-b border-gray-100 dark:border-gray-700">
             <Link to={createPageUrl("Home")} className="flex items-center gap-3">
-              <img src="/icons/icon-192x192.jpg" alt="Sipurai" className="h-10 w-10 rounded-xl shadow-lg" />
+              <img src="/icons/icon-192x192.jpg" alt="Sipurai" className="h-10 w-10 rounded-xl shadow-lg" width="40" height="40" loading="eager" />
               <span className="font-bold text-xl bg-gradient-to-r from-purple-400 to-indigo-400 dark:from-purple-300 dark:to-indigo-300 bg-clip-text text-transparent">
                 Sipurai
               </span>
@@ -361,7 +361,7 @@ export default function Layout({ children, currentPageName }) {
             </Button>
 
             <Link to={createPageUrl("Home")} className="flex items-center gap-2">
-              <img src="/icons/icon-192x192.jpg" alt="Sipurai" className="h-8 w-8 rounded-lg" />
+              <img src="/icons/icon-192x192.jpg" alt="Sipurai" className="h-8 w-8 rounded-lg" width="32" height="32" loading="eager" />
               <span className="font-bold text-base text-gray-900 dark:text-white">Sipurai</span>
             </Link>
 

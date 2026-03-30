@@ -33,10 +33,16 @@ import TTSControls from "@/components/bookReader/TTSControls";
 import { useTTS } from "@/hooks/useTTS";
 import { exportBookToPDF } from "@/utils/pdfExporter";
 import useGamification from "@/hooks/useGamification";
-import confetti from "canvas-confetti";
 import { updateMeta, resetMeta } from "@/lib/seo";
 import { useAuth } from "@/lib/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
+
+// canvas-confetti loaded on-demand (keeps BookView out of the confetti chunk on initial load)
+let _confettiMod = null;
+const loadConfetti = () => {
+  if (!_confettiMod) _confettiMod = import("canvas-confetti").then((m) => m.default);
+  return _confettiMod;
+};
 
 export default function BookView() {
   const { t, language: i18nLanguage, isRTL: i18nIsRTL } = useI18n();
@@ -152,26 +158,28 @@ export default function BookView() {
 
       const duration = 2500;
       const end = Date.now() + duration;
-      const celebrate = () => {
-        confetti({
-          particleCount: 4,
-          angle: 60,
-          spread: 60,
-          origin: { x: 0, y: 0.7 },
-          colors: ["#9333ea", "#f59e0b", "#10b981", "#6366f1"]
-        });
-        confetti({
-          particleCount: 4,
-          angle: 120,
-          spread: 60,
-          origin: { x: 1, y: 0.7 },
-          colors: ["#9333ea", "#f59e0b", "#10b981", "#6366f1"]
-        });
-        if (Date.now() < end) {
-          requestAnimationFrame(celebrate);
-        }
-      };
-      celebrate();
+      loadConfetti().then((confetti) => {
+        const celebrate = () => {
+          confetti({
+            particleCount: 4,
+            angle: 60,
+            spread: 60,
+            origin: { x: 0, y: 0.7 },
+            colors: ["#9333ea", "#f59e0b", "#10b981", "#6366f1"]
+          });
+          confetti({
+            particleCount: 4,
+            angle: 120,
+            spread: 60,
+            origin: { x: 1, y: 0.7 },
+            colors: ["#9333ea", "#f59e0b", "#10b981", "#6366f1"]
+          });
+          if (Date.now() < end) {
+            requestAnimationFrame(celebrate);
+          }
+        };
+        celebrate();
+      });
     }
   }, [currentPageIndex, pages.length, isGuest]);
 
@@ -386,9 +394,9 @@ export default function BookView() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" role="status" aria-live="polite">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-700 mx-auto" />
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-700 mx-auto" aria-hidden="true" />
           <p className="mt-4 text-gray-600 dark:text-gray-300">
             {t('bookView.loading')}
           </p>
@@ -555,10 +563,18 @@ export default function BookView() {
         {/* PDF progress bar */}
         {isExportingPDF && (
           <div className="px-3 pb-1 max-w-7xl mx-auto">
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
+            <div
+              className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1"
+              role="progressbar"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={pdfProgress}
+              aria-label={t('bookView.exportingPdf') || 'Exporting PDF'}
+            >
               <div
                 className="bg-gradient-to-r from-purple-500 to-indigo-500 h-1 rounded-full transition-all duration-300"
                 style={{ width: `${pdfProgress}%` }}
+                aria-hidden="true"
               />
             </div>
           </div>
@@ -566,7 +582,14 @@ export default function BookView() {
       </header>
 
       {/* Reading progress bar */}
-      <div className="h-1 bg-gray-200 dark:bg-gray-700">
+      <div
+        className="h-1 bg-gray-200 dark:bg-gray-700"
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={pages.length > 1 ? pages.length - 1 : 0}
+        aria-valuenow={currentPageIndex}
+        aria-label={t('bookView.readingProgress') || 'Reading progress'}
+      >
         <motion.div
           className="h-1 bg-gradient-to-r from-purple-500 to-indigo-500"
           initial={false}
@@ -576,6 +599,7 @@ export default function BookView() {
               : "0%"
           }}
           transition={{ duration: 0.3 }}
+          aria-hidden="true"
         />
       </div>
 

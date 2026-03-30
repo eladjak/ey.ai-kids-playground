@@ -31,12 +31,12 @@ export default function FollowButton({ targetEmail, className = '', size = 'md' 
     : 'h-9 px-3 text-sm gap-1.5';
 
   const label = isFollowing
-    ? t('social.following') || 'Following'
-    : t('social.follow') || 'Follow';
+    ? t('social.following')
+    : t('social.follow');
 
   const ariaLabel = isFollowing
-    ? `${t('social.unfollow') || 'Unfollow'} ${targetEmail}`
-    : `${t('social.follow') || 'Follow'} ${targetEmail}`;
+    ? `${t('social.unfollow')} ${targetEmail}`
+    : `${t('social.follow')} ${targetEmail}`;
 
   return (
     <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''} ${className}`}>
@@ -60,7 +60,7 @@ export default function FollowButton({ targetEmail, className = '', size = 'md' 
 
       {followerCount > 0 && (
         <span className="text-xs text-muted-foreground tabular-nums">
-          {followerCount} {t('social.followers') || 'followers'}
+          {followerCount} {t('social.followers')}
         </span>
       )}
     </div>

@@ -3,6 +3,7 @@ import { useUser, useAuth as useClerkAuth, useClerk } from '@clerk/clerk-react';
 import { User } from '@/entities/User';
 import { setUser as setSentryUser } from '@/lib/errorTracking';
 import { identifyUser } from '@/lib/analytics';
+import { setClerkTokenGetter } from '@/lib/supabaseClient';
 
 const AuthContext = createContext();
 
@@ -21,8 +22,19 @@ export const AuthProvider = ({ children }) => {
 
 const ClerkAuthProvider = ({ children }) => {
   const { user: clerkUser, isLoaded: isUserLoaded } = useUser();
-  const { isSignedIn, isLoaded: isAuthLoaded } = useClerkAuth();
+  const { isSignedIn, isLoaded: isAuthLoaded, getToken } = useClerkAuth();
   const clerk = useClerk();
+
+  // Connect Clerk JWT to Supabase client so all DB requests are authenticated.
+  // This enables RLS policies to use auth.jwt() claims.
+  useEffect(() => {
+    if (isSignedIn && getToken) {
+      setClerkTokenGetter(getToken);
+    } else {
+      setClerkTokenGetter(null);
+    }
+    return () => setClerkTokenGetter(null);
+  }, [isSignedIn, getToken]);
 
   // Sync the Clerk user to the imperative User module so
   // secureEntity, useGamification, etc. can call User.me().

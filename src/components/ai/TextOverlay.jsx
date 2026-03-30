@@ -229,11 +229,12 @@ export default function TextOverlay({ imageUrl, onSave, onCancel, currentLanguag
                 className="relative w-full aspect-square overflow-hidden rounded-md border-2 border-dashed border-gray-300 cursor-crosshair"
                 style={{ maxHeight: '500px' }}
               >
-                <img 
-                  src={imageUrl} 
-                  alt="Generated image" 
-                  className="w-full h-full object-cover select-none" 
-                  draggable="false" 
+                <img
+                  src={imageUrl}
+                  alt="Generated image"
+                  className="w-full h-full object-cover select-none"
+                  draggable="false"
+                  loading="lazy"
                 />
                 
                 {textElements.map((element, index) => (

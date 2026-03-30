@@ -77,8 +77,8 @@ const LandingNav = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <BookOpen className={`h-8 w-8 text-purple-600 ${scrolled ? '' : 'text-white'}`} />
+          <Link to="/" aria-label="Sipurai - Go to homepage" className="flex items-center gap-2">
+            <BookOpen className={`h-8 w-8 text-purple-600 ${scrolled ? '' : 'text-white'}`} aria-hidden="true" />
             <span className={`text-xl font-bold ${scrolled ? 'text-gray-900 dark:text-white' : 'text-white'}`}>
               Sipurai
             </span>
@@ -119,15 +119,16 @@ const LandingNav = () => {
             <div className="relative group" ref={langDropdownRef}>
               <button
                 onClick={() => setLangDropdownOpen((prev) => !prev)}
-                aria-haspopup="true"
+                aria-haspopup="listbox"
                 aria-expanded={langDropdownOpen}
+                aria-label={t('nav.changeLanguage') || 'Change language'}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors ${
                   scrolled
                     ? 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
                     : 'text-white/90 hover:bg-white/10'
                 }`}
               >
-                <Globe className="h-4 w-4" />
+                <Globe className="h-4 w-4" aria-hidden="true" />
                 <span>{languages[language]?.name}</span>
               </button>
               <div
@@ -193,8 +194,10 @@ const LandingNav = () => {
               scrolled ? 'text-gray-700 dark:text-gray-300' : 'text-white'
             }`}
             aria-label={mobileMenuOpen ? t('nav.closeMenu') : t('nav.openMenu')}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-menu"
           >
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {mobileMenuOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
           </button>
         </div>
       </div>
@@ -203,6 +206,7 @@ const LandingNav = () => {
       <AnimatePresence>
       {mobileMenuOpen && (
         <motion.div
+          id="mobile-menu"
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}

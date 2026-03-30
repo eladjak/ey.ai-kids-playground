@@ -14,6 +14,10 @@ export default defineConfig({
     },
   },
   build: {
+    // Warn when a chunk exceeds 500 kB (Vite default is 500 kB; explicit for clarity)
+    chunkSizeWarningLimit: 500,
+    // Minify CSS (esbuild is the default and handles this automatically in Vite 5+)
+    cssMinify: true,
     rollupOptions: {
       output: {
         manualChunks: {
@@ -29,6 +33,12 @@ export default defineConfig({
           ],
           'vendor-motion': ['framer-motion'],
           'vendor-query': ['@tanstack/react-query'],
+          // Split Clerk auth into its own chunk — large library, only needed on auth routes
+          'vendor-clerk': ['@clerk/clerk-react', '@clerk/localizations'],
+          // PDF generation is large and only used in BookWizard/BookView
+          'vendor-pdf': ['jspdf'],
+          // Sanity blog is only needed on blog routes
+          'vendor-sanity': ['@sanity/client', '@sanity/image-url'],
         }
       }
     }
