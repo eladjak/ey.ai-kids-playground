@@ -4,7 +4,7 @@
  * Creem sends webhook events when subscription state changes.
  * We upsert the user's subscription in Supabase on relevant events.
  *
- * Verify the x-creem-signature header using CREEM_WEBHOOK_SECRET (optional).
+ * Signature verification via CREEM_WEBHOOK_SECRET is MANDATORY.
  */
 
 import { createClient } from '@supabase/supabase-js';
@@ -147,7 +147,12 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ received: true });
   } catch (error) {
-    console.error('[creem-webhook] Processing error:', error);
+    console.error('[creem-webhook] Processing error:', {
+      message: error.message,
+      eventType,
+      stack: error.stack,
+      timestamp: new Date().toISOString(),
+    });
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
