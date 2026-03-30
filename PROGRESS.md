@@ -1,7 +1,54 @@
 # Sipurai - Progress & Analysis Report
 
-## Status: Active - i18n Complete, QA & Feature Dev
-## Last Updated: 2026-03-26
+## Status: READY FOR LAUNCH — 3 manual steps remaining
+## Last Updated: 2026-03-30
+
+---
+
+## Session 40: Launch Readiness Sprint (Mar 30, 2026)
+
+### SEO — COMPLETE
+- [x] sitemap.xml (13 URLs, hreflang, priorities)
+- [x] robots.txt (disallow /api, /sign-in, /sign-up)
+- [x] JSON-LD WebApplication schema (3 pricing tiers)
+- [x] OpenGraph + Twitter Card meta tags
+- [x] useSEO() hook + canonical URLs in seo.js
+
+### Security — CODE COMPLETE (needs manual DB migration)
+- [x] Clerk JWT → Supabase client integration (custom fetch wrapper)
+- [x] AuthContext passes getToken to all Supabase requests
+- [x] Webhook signature verification now MANDATORY (was optional)
+- [x] secureEntity checks both email and user ID
+- [x] RLS migration SQL ready (`scripts/migrate-rls-clerk.sql`)
+- [ ] **MANUAL: Run RLS SQL in Supabase Dashboard**
+- [ ] **MANUAL: Verify Clerk JWT template includes email claim**
+- [ ] **MANUAL: Verify CREEM_WEBHOOK_SECRET in Vercel env vars**
+
+### Accessibility
+- [x] Skip-to-content link in Layout
+- [x] aria-labels on interactive elements
+- [x] Image alt text improvements
+
+### Performance
+- [x] Vite manual chunks for vendor splitting
+- [x] Lazy loading hints in pages.config.js
+
+### i18n — Additional migrations
+- [x] BookView, Library, CelebrationModal text ternaries → t()
+- [x] Social components (FollowButton, NotificationBell)
+- [x] Landing components (HeroSection, LandingNav)
+
+### Build & Tests
+- [x] Build: clean (exit 0)
+- [x] Tests: 219 passed (11/12 files, 1 OOM = Node infra)
+- [x] Pushed to main: commit 318630f
+
+### Remaining for Full Launch
+1. **CRITICAL:** Run `scripts/migrate-rls-clerk.sql` in Supabase SQL Editor
+2. Verify Clerk JWT template "supabase" includes email claim
+3. Verify CREEM_WEBHOOK_SECRET in Vercel env vars
+4. Blog content (Sanity CMS ready, needs writing)
+5. Demo books for showcase
 
 ---
 
