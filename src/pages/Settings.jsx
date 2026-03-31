@@ -92,9 +92,16 @@ function SettingCard({ title, icon, children, isRTL, className = "" }) {
 function BillingTab({ currentPlan, userEmail, isRTL, toast }) {
   const { t } = useI18n();
   const [upgrading, setUpgrading] = useState(null); // planId being upgraded
+  const [confirmPlan, setConfirmPlan] = useState(null); // plan awaiting confirmation
   const lang = isRTL ? 'he' : 'en';
 
-  const handleUpgrade = async (planId) => {
+  const handleUpgrade = (planId) => {
+    setConfirmPlan(planId);
+  };
+
+  const confirmAndCheckout = async () => {
+    const planId = confirmPlan;
+    setConfirmPlan(null);
     setUpgrading(planId);
     try {
       await openCheckout(planId, userEmail);
@@ -198,6 +205,43 @@ function BillingTab({ currentPlan, userEmail, isRTL, toast }) {
           );
         })}
       </div>
+
+      {/* Hebrew confirmation dialog before redirecting to Creem (English checkout) */}
+      <AlertDialog open={!!confirmPlan} onOpenChange={(open) => !open && setConfirmPlan(null)}>
+        <AlertDialogContent dir={isRTL ? 'rtl' : 'ltr'}>
+          <AlertDialogHeader>
+            <AlertDialogTitle className={isRTL ? 'text-right' : 'text-left'}>
+              {isRTL ? 'מעבר לדף תשלום מאובטח' : 'Redirecting to Secure Checkout'}
+            </AlertDialogTitle>
+            <AlertDialogDescription className={`space-y-2 ${isRTL ? 'text-right' : 'text-left'}`}>
+              <span className="block">
+                {isRTL
+                  ? `את/ה עומד/ת לשדרג לתוכנית ${PLANS[confirmPlan]?.name?.he || ''} (${PLANS[confirmPlan]?.priceDisplay?.he || ''}).`
+                  : `You are about to upgrade to the ${PLANS[confirmPlan]?.name?.en || ''} plan (${PLANS[confirmPlan]?.priceDisplay?.en || ''}).`}
+              </span>
+              <span className="block">
+                {isRTL
+                  ? 'תועבר/י לדף תשלום מאובטח של Creem. דף התשלום מוצג באנגלית — אל דאגה, זה תקין ומאובטח לחלוטין.'
+                  : 'You will be redirected to a secure Creem checkout page.'}
+              </span>
+              <span className="block text-xs text-gray-500">
+                {isRTL
+                  ? '🔒 התשלום מעובד באופן מאובטח. לא נשמרים פרטי כרטיס אשראי.'
+                  : '🔒 Payment is processed securely. No credit card details are stored.'}
+              </span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className={isRTL ? 'flex-row-reverse' : ''}>
+            <AlertDialogCancel>{isRTL ? 'ביטול' : 'Cancel'}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmAndCheckout}
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
+            >
+              {isRTL ? 'המשך לתשלום' : 'Continue to Checkout'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </motion.div>
   );
 }

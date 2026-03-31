@@ -45,7 +45,7 @@ const LandingNav = () => {
     { href: '#features', label: t('landing.nav.features') },
     { href: '#how-it-works', label: t('landing.nav.howItWorks') },
     { href: '#pricing', label: t('landing.nav.pricing') },
-    { href: '/Blog', label: t('landing.footer.blog'), isRoute: true },
+    { href: '/blog', label: t('landing.footer.blog'), isRoute: true },
   ];
 
   const languageOptions = Object.entries(languages).map(([key, lang]) => ({

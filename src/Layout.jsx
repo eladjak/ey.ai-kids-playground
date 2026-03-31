@@ -365,10 +365,15 @@ export default function Layout({ children, currentPageName }) {
               <span className="font-bold text-base text-gray-900 dark:text-white">Sipurai</span>
             </Link>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               <NotificationBell />
+              <Link to={createPageUrl("Settings")} aria-label={t("common.settings")}>
+                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <Settings className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                </Button>
+              </Link>
               <Link to={createPageUrl("Profile")} aria-label="View profile">
-                <Avatar className="h-11 w-11 border-2 border-white dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
+                <Avatar className="h-10 w-10 border-2 border-white dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
                   {user?.avatar_url ? (
                     <AvatarImage src={user.avatar_url} alt={user.full_name} />
                   ) : (
