@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+
 import {
   Trophy, BookOpen, Star, Award, Users, Calendar, Zap,
   Heart, MessageCircle, PenTool, Globe, Bookmark, Crown,

@@ -9,7 +9,7 @@ import { GenerateImage, InvokeLLM } from "@/integrations/Core";
 import { buildSafetyPromptPrefix, sanitizeAIOutput } from "@/utils/content-moderation";
 import { canCreateBook, recordBookCreation } from "@/utils/bookRateLimit";
 import { createPageUrl } from "@/utils";
-import { Edit, Eye, Share2, RotateCw, ArrowLeft, Sparkles } from "lucide-react";
+import { Edit, Eye, Share2, ArrowLeft, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";

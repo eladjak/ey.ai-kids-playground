@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { useI18n } from "@/components/i18n/i18nProvider";
 import { Book } from "@/entities/Book";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { Community } from "@/entities/Community";
 import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
 import { getLevelFromXP } from "@/hooks/useGamification";

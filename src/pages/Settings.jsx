@@ -5,7 +5,7 @@ import { useI18n } from '@/components/i18n/i18nProvider';
 import { useToast } from '@/components/ui/use-toast';
 import { User } from '@/entities/User';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

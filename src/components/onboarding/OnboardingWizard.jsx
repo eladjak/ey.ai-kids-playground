@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { User } from "@/entities/User";
 import { useI18n } from "@/components/i18n/i18nProvider";
 import { motion, AnimatePresence } from "framer-motion";

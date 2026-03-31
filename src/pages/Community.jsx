@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import { useNavigate } from "react-router-dom";
 import { useI18n } from "@/components/i18n/i18nProvider";
 import { Community } from "@/entities/Community";
 import { Book } from "@/entities/Book";
