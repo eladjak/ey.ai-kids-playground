@@ -75,14 +75,14 @@ const DemoBookViewer = ({ book, open, onClose }) => {
         className="max-w-2xl w-[95vw] max-h-[90dvh] p-0 overflow-hidden bg-white dark:bg-gray-900 border-0 rounded-2xl"
         dir={isRTL ? "rtl" : "ltr"}
       >
-        <DialogTitle className="sr-only">{book.title.he}</DialogTitle>
+        <DialogTitle className="sr-only">{language === 'en' ? book.title.en : book.title.he}</DialogTitle>
 
         {/* Top bar */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800 bg-gray-50/80 dark:bg-gray-800/80 backdrop-blur-sm">
           <div className="flex items-center gap-2">
             <BookOpen className="h-4 w-4 text-purple-500" />
             <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 truncate max-w-[200px]">
-              {book.title.he}
+              {language === 'en' ? book.title.en : book.title.he}
             </span>
           </div>
           <div className="flex items-center gap-3">
@@ -176,7 +176,7 @@ const DemoBookViewer = ({ book, open, onClose }) => {
                 {/* Story text */}
                 <div className="flex-1">
                   <p className="text-lg sm:text-xl leading-relaxed text-gray-800 dark:text-gray-200 font-medium">
-                    {page.text}
+                    {language === 'en' && page.textEn ? page.textEn : page.text}
                   </p>
                 </div>
 
