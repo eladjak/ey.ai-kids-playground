@@ -4,109 +4,45 @@
 
   <!-- Landing page (public, highest priority) -->
   <url>
-    <loc>https://sipurai.ai/</loc>
+    <loc>https://www.sipurai.ai/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <lastmod>2026-03-30</lastmod>
-    <xhtml:link rel="alternate" hreflang="he" href="https://sipurai.ai/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://sipurai.ai/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://sipurai.ai/" />
-  </url>
-
-  <!-- Home dashboard (authenticated, core feature) -->
-  <url>
-    <loc>https://sipurai.ai/Home</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-    <lastmod>2026-03-30</lastmod>
-  </url>
-
-  <!-- Book creation wizard (core feature) -->
-  <url>
-    <loc>https://sipurai.ai/BookWizard</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <lastmod>2026-03-30</lastmod>
-  </url>
-
-  <!-- User library -->
-  <url>
-    <loc>https://sipurai.ai/Library</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-    <lastmod>2026-03-30</lastmod>
-  </url>
-
-  <!-- Characters -->
-  <url>
-    <loc>https://sipurai.ai/Characters</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <lastmod>2026-03-30</lastmod>
-  </url>
-
-  <!-- Community -->
-  <url>
-    <loc>https://sipurai.ai/Community</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-    <lastmod>2026-03-30</lastmod>
-  </url>
-
-  <!-- Story ideas generator -->
-  <url>
-    <loc>https://sipurai.ai/StoryIdeas</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2026-03-30</lastmod>
-  </url>
-
-  <!-- Leaderboard -->
-  <url>
-    <loc>https://sipurai.ai/Leaderboard</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2026-03-30</lastmod>
-  </url>
-
-  <!-- Profile -->
-  <url>
-    <loc>https://sipurai.ai/Profile</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-    <lastmod>2026-03-30</lastmod>
+    <lastmod>2026-04-03</lastmod>
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.sipurai.ai/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.sipurai.ai/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.sipurai.ai/" />
   </url>
 
   <!-- Blog (public) -->
   <url>
-    <loc>https://sipurai.ai/blog</loc>
+    <loc>https://www.sipurai.ai/blog</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-    <lastmod>2026-03-30</lastmod>
+    <priority>0.7</priority>
+    <lastmod>2026-04-03</lastmod>
   </url>
 
   <!-- Contact (public) -->
   <url>
-    <loc>https://sipurai.ai/Contact</loc>
+    <loc>https://www.sipurai.ai/contact</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
-    <lastmod>2026-03-30</lastmod>
+    <lastmod>2026-04-03</lastmod>
   </url>
 
   <!-- Privacy Policy (public) -->
   <url>
-    <loc>https://sipurai.ai/privacy</loc>
+    <loc>https://www.sipurai.ai/privacy</loc>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
-    <lastmod>2026-03-30</lastmod>
+    <lastmod>2026-04-03</lastmod>
   </url>
 
   <!-- Terms of Service (public) -->
   <url>
-    <loc>https://sipurai.ai/terms</loc>
+    <loc>https://www.sipurai.ai/terms</loc>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
-    <lastmod>2026-03-30</lastmod>
+    <lastmod>2026-04-03</lastmod>
   </url>
 
 </urlset>

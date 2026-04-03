@@ -16,7 +16,7 @@
 
 import { useEffect } from 'react';
 
-const BASE_URL = 'https://sipurai.ai';
+const BASE_URL = 'https://www.sipurai.ai';
 const DEFAULT_IMAGE = `${BASE_URL}/images/hero-banner.jpg`;
 
 /** Per-route SEO metadata (Hebrew-first). */

@@ -13,4 +13,4 @@ Disallow: /Feedback
 # Crawl delay to be polite to bots
 Crawl-delay: 10
 
-Sitemap: https://sipurai.ai/sitemap.xml
+Sitemap: https://www.sipurai.ai/sitemap.xml
