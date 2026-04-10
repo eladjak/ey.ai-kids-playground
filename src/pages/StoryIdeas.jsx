@@ -62,7 +62,7 @@ export default function StoryIdeas() {
         setSavedIdeas(ideas);
 
       } catch (error) {
-        // silently handled
+        toast({ variant: "destructive", description: t("common.loadError") });
       } finally {
         setIsLoading(false);
       }
