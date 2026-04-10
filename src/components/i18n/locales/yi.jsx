@@ -44,6 +44,9 @@ export default {
     unknownUser: "אומבאַוווּסטן ניצער",
     guest: "גאַסט",
     skipToMainContent: "שפּרינג צו הויפּט אינהאַלט",
+    loadError: "פעלער ביים לאָדן דאַטן",
+    tryAgain: "עפּעס איז שיפגעגאנגען. פּרובירט ווידער שפּעטער.",
+    retry: "פּרובירט ווידער",
     contact: "קאָנטאַקט",
     status: {
       draft: "דראַפֿט",

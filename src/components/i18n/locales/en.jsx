@@ -44,6 +44,9 @@ export default {
     unknownUser: "Unknown User",
     guest: "Guest",
     skipToMainContent: "Skip to main content",
+    loadError: "Failed to load data",
+    tryAgain: "Something went wrong. Please try again later.",
+    retry: "Try again",
     contact: "Contact",
     status: {
       draft: "Draft",

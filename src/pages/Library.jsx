@@ -47,6 +47,7 @@ export default function Library() {
   const [books, setBooks] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
     status: "all",
@@ -73,7 +74,8 @@ export default function Library() {
         setBooks(loadedBooks);
       }
     } catch (error) {
-      // silently handled
+      setLoadError(true);
+      toast({ variant: "destructive", description: t("common.loadError") });
     } finally {
       setIsLoading(false);
     }

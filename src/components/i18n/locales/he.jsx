@@ -44,6 +44,9 @@ export default {
     unknownUser: "משתמש לא ידוע",
     guest: "אורח",
     skipToMainContent: "דלג לתוכן הראשי",
+    loadError: "שגיאה בטעינת הנתונים",
+    tryAgain: "אירעה שגיאה בטעינה. נסו שוב מאוחר יותר.",
+    retry: "נסה שוב",
     contact: "צור קשר",
     status: {
       draft: "טיוטה",

@@ -35,6 +35,7 @@ export default function Characters() {
   const [characters, setCharacters] = useState([]);
   const [filteredCharacters, setFilteredCharacters] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState("grid");
   const [filters, setFilters] = useState({
@@ -60,7 +61,7 @@ export default function Characters() {
         : [];
       setCharacters(userChars);
     } catch (error) {
-      // silently handled
+      setLoadError(true);
     } finally {
       setIsLoading(false);
     }
@@ -249,7 +250,24 @@ export default function Characters() {
       </div>
 
       {/* Characters Display */}
-      {filteredCharacters.length === 0 ? (
+      {loadError ? (
+        <Card className="border-dashed border-red-200 dark:border-red-900/50 bg-gradient-to-br from-red-50 to-orange-50 dark:from-gray-800/50 dark:to-gray-800/30">
+          <CardContent className="p-10 md:p-16 text-center flex flex-col items-center">
+            <div className="rounded-full bg-red-100 dark:bg-red-900/30 p-5 mb-6">
+              <Users2 className="h-12 w-12 text-red-400" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+              {t("common.loadError")}
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-md mx-auto text-base leading-relaxed">
+              {t("common.tryAgain")}
+            </p>
+            <Button size="lg" onClick={() => { setLoadError(false); loadCharacters(); }} className="bg-purple-600 hover:bg-purple-700">
+              {t("common.retry")}
+            </Button>
+          </CardContent>
+        </Card>
+      ) : filteredCharacters.length === 0 ? (
         <Card className="border-dashed border-purple-200 dark:border-gray-700 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-gray-800/50 dark:to-gray-800/30">
           <CardContent className="p-10 md:p-16 text-center flex flex-col items-center">
             <div className="rounded-full bg-purple-100 dark:bg-purple-900/30 p-5 mb-6">
