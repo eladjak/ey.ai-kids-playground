@@ -332,7 +332,7 @@ export default function BlogPost() {
                 const title = typeof cat === "string" ? cat : cat.title;
                 const slug = typeof cat === "string" ? cat : (cat.slug?.current || cat.slug || cat.title);
                 return (
-                  <Link key={slug} to={`/Blog?category=${slug}`}>
+                  <Link key={slug} to={`/blog?category=${slug}`}>
                     <Badge variant="outline" className="text-xs border-purple-200 text-purple-700 dark:border-purple-800 dark:text-purple-300 bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-800/50 transition-colors cursor-pointer">
                       {title}
                     </Badge>

@@ -114,7 +114,7 @@ function BlogSidebar({ categories = [], recentPosts = [], selectedCategory = "",
                 return (
                   <li key={post._id || slug}>
                     <Link
-                      to={`/Blog/${slug}`}
+                      to={`/blog/${slug}`}
                       className="flex gap-3 group items-start"
                     >
                       {/* Thumbnail */}

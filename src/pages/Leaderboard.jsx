@@ -607,15 +607,9 @@ export default function Leaderboard() {
                             </div>
                           </td>
                           <td className="px-4 py-4 text-end whitespace-nowrap">
-                            <Link to={createPageUrl("Profile")}>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-8 text-xs text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-xl"
-                              >
-                                {t("leaderboard.view.profile")}
-                              </Button>
-                            </Link>
+                            <span className="text-xs text-gray-400 dark:text-gray-500">
+                              {entry.totalBooks} {t("leaderboard.books")}
+                            </span>
                           </td>
                         </motion.tr>
                       );
