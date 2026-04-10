@@ -36,7 +36,7 @@ export default defineConfig({
           // Split Clerk auth into its own chunk — large library, only needed on auth routes
           'vendor-clerk': ['@clerk/clerk-react', '@clerk/localizations'],
           // PDF generation is large and only used in BookWizard/BookView
-          'vendor-pdf': ['jspdf'],
+          'vendor-pdf': ['jspdf', 'html2canvas'],
           // Sanity blog is only needed on blog routes
           'vendor-sanity': ['@sanity/client', '@sanity/image-url'],
         }

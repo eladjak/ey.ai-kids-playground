@@ -2208,8 +2208,8 @@ export default {
     messagePlaceholder: "...ספרו לנו כיצד נוכל לעזור",
     send: "שליחת הודעה",
     sending: "...שולח",
-    successTitle: "!ההודעה נשלחה",
-    successText: "תודה על הפנייה. נחזור אליכם תוך 1-2 ימי עסקים.",
+    successTitle: "ההודעה מוכנה לשליחה",
+    successText: "אפליקציית המייל שלכם אמורה להיפתח עם ההודעה. אם היא לא נפתחה, שלחו אימייל ישירות ל-support@sipurai.ai.",
     sendAnother: "שליחת הודעה נוספת",
     responseTime: "אנו בדרך כלל עונים תוך 1-2 ימי עסקים."
   },

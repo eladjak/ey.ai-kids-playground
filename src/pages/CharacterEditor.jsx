@@ -82,6 +82,9 @@ export default function CharacterEditor() {
                     title: t("characterEditor.errorLoad"),
                     variant: "destructive",
                 });
+                // Redirect to Characters list — don't show blank create form
+                navigate(createPageUrl("Characters"));
+                return;
             } finally {
                 setIsLoading(false);
             }

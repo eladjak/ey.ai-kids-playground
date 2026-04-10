@@ -2211,8 +2211,8 @@ export default {
     messagePlaceholder: "Tell us how we can help...",
     send: "Send Message",
     sending: "Sending...",
-    successTitle: "Message Sent!",
-    successText: "Thank you for reaching out. We'll get back to you within 1-2 business days.",
+    successTitle: "Message Ready to Send",
+    successText: "Your email app should open with the message. If it didn't, please email us directly at support@sipurai.ai.",
     sendAnother: "Send Another Message",
     responseTime: "We typically respond within 1-2 business days."
   },

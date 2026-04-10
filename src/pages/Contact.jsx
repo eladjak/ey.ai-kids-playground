@@ -45,14 +45,12 @@ export default function Contact() {
     const body = `Name: ${form.name}\nEmail: ${form.email}\nSubject: ${subjectLabel}\n\n${form.message}`;
     const mailtoUrl = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(`[Sipurai] ${subjectLabel}`)}&body=${encodeURIComponent(body)}`;
 
-    // Open mailto in a new tab so the form stays visible
+    // Open mailto — this launches the user's email client
     window.open(mailtoUrl, '_blank');
 
-    // Brief delay to show "sending" state, then show success
-    setTimeout(() => {
-      setSubmitting(false);
-      setSubmitted(true);
-    }, 600);
+    // Show confirmation that mailto was opened (not that email was sent)
+    setSubmitting(false);
+    setSubmitted(true);
   };
 
   const handleReset = () => {
