@@ -1,7 +1,46 @@
 # Sipurai - Progress & Analysis Report
 
-## Status: LAUNCHED — all blockers resolved
-## Last Updated: 2026-04-01
+## Status: LAUNCHED — comprehensive QA complete
+## Last Updated: 2026-04-10
+
+---
+
+## Session 42: Deep QA Sprint — Multi-Agent Audit (Apr 3-10, 2026)
+
+### CRITICAL Bugs Fixed
+- [x] CSP `font-src` missing `fonts.gstatic.com` — Google Fonts were blocked in production
+- [x] ALL blog post links were 404 (BlogCard + BlogSidebar used `/Blog/slug` instead of `/blog/slug`)
+- [x] CommunityPost like dedup bug — `user` undefined variable, was `hookUser`
+- [x] BlogPost back-to-blog links `/Blog` → `/blog` (3 more occurrences)
+
+### UX Bugs Fixed
+- [x] Home search bar was dead — removed (searchQuery never used to filter anything)
+- [x] BookView showed blank reader on error — now shows proper "book not found" with back link
+- [x] Leaderboard "View Profile" linked to own profile for all entries — replaced with book count
+- [x] Contact form showed false "Message Sent!" — now says "Message Ready to Send" with mailto fallback note
+- [x] CharacterEditor showed blank create form on load failure — now redirects to Characters list
+
+### Error Handling
+- [x] Characters page: silent error → loadError state with retry button
+- [x] Library page: silent error → toast notification
+- [x] Added i18n keys: `common.loadError`, `common.tryAgain`, `common.retry` (he/en/yi)
+
+### SEO & Performance
+- [x] Unified all URLs to `www.sipurai.ai` (seo.js, sitemap.xml, robots.txt)
+- [x] Removed 8 auth-required pages from sitemap (Googlebot was hitting login redirects)
+- [x] Added `html2canvas` to `vendor-pdf` chunk (was 197KB orphan)
+
+### Audit Methodology
+- Ran 5 parallel agents: Dogfood QA, Code Review, SEO Audit, Routing Audit, Page Render Audit
+- Routing audit: verified ALL 60+ `createPageUrl()` calls, ALL `<Link to=...>` elements, ALL `navigate()` calls
+- Page audit: checked all 19 pages for loading/error/empty states, dead buttons, broken imports
+
+### Remaining (non-blocking, future sessions)
+- PWA icons wrong dimensions (1376x768 landscape instead of square PNG)
+- Public images not WebP (~30MB unoptimized)
+- Blog category filter not implemented (link works, filter doesn't)
+- Book-specific OG sharing (needs Edge Function for SSR meta)
+- Duplicate routes for Blog/Privacy/Terms (cosmetic, lowercase routes work)
 
 ---
 
