@@ -405,6 +405,27 @@ export default function BookView() {
     );
   }
 
+  // No book found after loading — show error state
+  if (!book) {
+    return (
+      <div className="min-h-dvh flex flex-col items-center justify-center p-8 text-center bg-gray-50 dark:bg-gray-900" dir={isRTL ? "rtl" : "ltr"}>
+        <BookOpen className="h-16 w-16 text-gray-300 dark:text-gray-600 mb-4" />
+        <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+          {t('bookView.noBook.title')}
+        </h1>
+        <p className="text-gray-500 dark:text-gray-400 mb-6">
+          {t('bookView.noBook.description')}
+        </p>
+        <Link to={createPageUrl("Library")}>
+          <Button className="gap-2 bg-purple-600 hover:bg-purple-700 text-white">
+            {isRTL ? <ArrowRight className="h-4 w-4" /> : <ArrowLeft className="h-4 w-4" />}
+            {t('bookView.backToLibrary')}
+          </Button>
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div
       ref={containerRef}

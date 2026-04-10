@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Book } from "@/entities/Book";
@@ -19,12 +19,10 @@ import {
   BookOpen,
   Sparkles,
   Wand2,
-  Search
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Home() {
@@ -36,8 +34,6 @@ export default function Home() {
     () => !localStorage.getItem("onboarding_complete")
   );
   const [isLoading, setIsLoading] = useState(true);
-  const [showSearch, setShowSearch] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [recentBooks, setRecentBooks] = useState([]);
   const [featuredBooks, setFeaturedBooks] = useState([]);
   const [draftBooks, setDraftBooks] = useState([]);
@@ -55,7 +51,6 @@ export default function Home() {
     notifications: 0
   });
 
-  const searchInputRef = useRef(null);
 
   const createSampleFeaturedBooks = () => [
     {
@@ -288,35 +283,8 @@ export default function Home() {
         <div className="flex flex-col gap-4">
           <UserWelcomeCard userData={userData} />
 
-          {/* Search + Create row */}
-          <div className={`flex items-center gap-2 w-full ${isRTL ? "flex-row-reverse" : ""}`}>
-            {/* Inline search — no absolute positioning */}
-            <div className={`flex-1 relative ${isRTL ? "text-right" : "text-left"}`}>
-              {showSearch ? (
-                <Input
-                  ref={searchInputRef}
-                  type="search"
-                  placeholder={t("home.search.placeholder")}
-                  aria-label={t("home.search.placeholder")}
-                  dir={isRTL ? "rtl" : "ltr"}
-                  className={`w-full rounded-2xl border-purple-300 focus:border-purple-500 focus:ring-purple-500/20 ${isRTL ? "pr-10 pl-3" : "pl-10 pr-3"}`}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onBlur={() => !searchQuery && setShowSearch(false)}
-                  autoFocus
-                />
-              ) : (
-                <Button
-                  variant="outline"
-                  onClick={() => setShowSearch(true)}
-                  className={`w-full rounded-2xl border-purple-200 hover:border-purple-400 hover:bg-purple-50 dark:border-purple-800 dark:hover:bg-purple-900/20 justify-start ${isRTL ? "flex-row-reverse" : ""}`}
-                >
-                  <Search className={`h-4 w-4 text-purple-500 ${isRTL ? 'ms-2' : 'me-2'}`} />
-                  <span className="text-gray-400">{t("home.search.placeholder")}</span>
-                </Button>
-              )}
-            </div>
-
+          {/* Create book CTA */}
+          <div className={`flex items-center gap-2 w-full ${isRTL ? "flex-row-reverse justify-end" : ""}`}>
             <Link to={createPageUrl("BookWizard")} className="flex-shrink-0">
               <Button className="relative bg-gradient-to-r from-purple-600 via-indigo-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white shadow-lg shadow-purple-500/30 rounded-2xl px-5 overflow-hidden group whitespace-nowrap">
                 <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
