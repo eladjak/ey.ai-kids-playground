@@ -279,7 +279,7 @@ export default function BlogPost() {
         <BookOpen className="h-16 w-16 text-gray-300 dark:text-gray-700 mx-auto mb-4" aria-hidden="true" />
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">{t("blog.postNotFound")}</h1>
         <p className="text-gray-500 dark:text-gray-400 mb-6">{t("blog.postNotFoundDesc")}</p>
-        <Link to="/Blog">
+        <Link to="/blog">
           <Button className="gap-2 bg-purple-600 hover:bg-purple-700 text-white">
             {isRTL ? <ArrowRight className="h-4 w-4" aria-hidden="true" /> : <ArrowLeft className="h-4 w-4" aria-hidden="true" />}
             {t("blog.backToBlog")}
@@ -298,7 +298,7 @@ export default function BlogPost() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
         {/* Back link */}
         <Link
-          to="/Blog"
+          to="/blog"
           className="inline-flex items-center gap-1.5 text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-200 transition-colors text-sm font-medium mb-8 group"
         >
           {isRTL ? (
@@ -407,7 +407,7 @@ export default function BlogPost() {
 
         {/* Back to blog CTA */}
         <div className="mt-12 text-center">
-          <Link to="/Blog">
+          <Link to="/blog">
             <Button variant="outline" className="gap-2 border-purple-200 dark:border-purple-800 hover:bg-purple-50 dark:hover:bg-purple-900/30 text-purple-700 dark:text-purple-300">
               {isRTL ? <ArrowRight className="h-4 w-4" aria-hidden="true" /> : <ArrowLeft className="h-4 w-4" aria-hidden="true" />}
               {t("blog.backToBlog")}
