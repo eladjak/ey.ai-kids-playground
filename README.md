@@ -105,3 +105,9 @@ See the in-app Documentation page for the full work plan and roadmap.
 
 **Current Phase:** Story Structure Builder Integration
 **Next:** ShareHub (export/print) + AI Studio (multi-model)
+
+---
+
+⭐ If you find this useful, please star the repo!
+
+*[README בעברית](README.he.md)*
