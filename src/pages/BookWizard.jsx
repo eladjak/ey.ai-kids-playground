@@ -329,11 +329,30 @@ export default function BookWizard() {
 
   // Load user language (book content language) from hook data
   useEffect(() => {
-    const lang = currentUserData?.language || localStorage.getItem("language") || "english";
+    // FALL BACK TO THE LANGUAGE THE PERSON IS READING, not to English.
+    //
+    // Found on 9.8.2026 by creating a book as a visitor. A Hebrew reader with no
+    // saved preference got an English book: this line defaulted the CONTENT
+    // language to "english" while the UI beside it was Hebrew, and the same
+    // value is what tells the AI which language to write in (see the
+    // langInstruction below). "Surprise me" gave it away first, producing
+    // `A story about קסמים who discovers a secret library under the sea` — an
+    // English frame with a Hebrew word inside it, because the topic label and
+    // the sentence frame were each choosing a language independently.
+    //
+    // uiLanguage was available in this component the whole time and already
+    // used a few lines above for the step title. An explicit saved preference
+    // still wins, so anyone deliberately writing in another language is
+    // unaffected.
+    const lang =
+      currentUserData?.language ||
+      localStorage.getItem("language") ||
+      uiLanguage ||
+      "english";
     setCurrentLanguage(lang);
     setBookData((prev) => ({ ...prev, language: lang }));
     setIsLoading(false);
-  }, [currentUserData]);
+  }, [currentUserData, uiLanguage]);
 
   // Navigation
   // 0: topic · 1: characters · 2: structure · 3: preview · 4: save
