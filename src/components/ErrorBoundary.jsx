@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 import { captureError } from "@/lib/errorTracking";
+import { readDisplayLanguageFromEnvironment } from "@/utils/languageResolution";
 
 export default class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -48,10 +49,12 @@ export default class ErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
-      // Detect language from localStorage to determine direction
+      // Was `localStorage.getItem('language') || 'hebrew'`, which showed a
+      // Hebrew RTL crash screen to an English reader whose first visit had not
+      // written localStorage yet. Resolved the same way the UI resolves it.
       const storedLanguage = typeof window !== 'undefined'
-        ? localStorage.getItem('language') || 'hebrew'
-        : 'hebrew';
+        ? readDisplayLanguageFromEnvironment()
+        : 'english';
       const isRTL = storedLanguage === 'hebrew' || storedLanguage === 'yiddish';
       const isHebrew = storedLanguage === 'hebrew';
       const isYiddish = storedLanguage === 'yiddish';

@@ -22,6 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { StoryIdea } from "@/entities/StoryIdea";
 import { useI18n } from "@/components/i18n/i18nProvider";
+import { topicLabelIn } from "@/utils/languageResolution";
 
 /**
  * Topic cards data with icons, colors, and Hebrew/English labels.
@@ -230,6 +231,10 @@ const surpriseRevealVariants = {
   exit: { scale: 0.5, rotate: 15, opacity: 0, transition: { duration: 0.15 } }
 };
 
+/**
+ * The label as the READER sees it on the card grid — UI language.
+ * Correct here: these cards are chrome, not book content.
+ */
 function getTopicLabel(topic, t) {
   return t("topicNames." + topic.id) || topic.en;
 }
@@ -294,7 +299,20 @@ export default function TopicStep({ selectedTopic, onSelectTopic, customIdea, on
     const randomTopic = TOPIC_CARDS[Math.floor(Math.random() * TOPIC_CARDS.length)];
     const twistList = isYiddish ? SURPRISE_TWISTS.yi : isHebrew ? SURPRISE_TWISTS.he : SURPRISE_TWISTS.en;
     const randomTwist = twistList[Math.floor(Math.random() * twistList.length)];
-    const topicLabel = getTopicLabel(randomTopic, t);
+    // The label must come from the BOOK's language, not the UI's.
+    //
+    // This line is where `A story about קסמים who discovers a secret library
+    // under the sea` came from. The frame and the twist above are picked by
+    // `language` — the book content language — while getTopicLabel(…, t) asked
+    // the UI translation function. Two sources choosing for one sentence, and
+    // on a Hebrew UI with an English book they disagreed inside it.
+    //
+    // Fixing BookWizard's default made the two agree in the DEFAULT case, but
+    // reading Hebrew while deliberately writing English is supported, and in
+    // that case this line still produced the mixed sentence. The string is
+    // handed to the AI as the story prompt, so it has to be built entirely in
+    // one language.
+    const topicLabel = topicLabelIn(randomTopic, language);
 
     let ideaText;
     if (isHebrew) {

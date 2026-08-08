@@ -15,6 +15,7 @@
  */
 
 import { useEffect } from 'react';
+import { readDisplayLanguageFromEnvironment } from '@/utils/languageResolution';
 
 const BASE_URL = 'https://www.sipurai.ai';
 const DEFAULT_IMAGE = `${BASE_URL}/images/hero-banner.jpg`;
@@ -125,7 +126,12 @@ export function updateMeta({
   type = 'website',
   locale = 'he_IL',
 }) {
-  const lang = localStorage.getItem('language') || 'hebrew';
+  // Was `localStorage.getItem('language') || 'hebrew'`. On a first visit
+  // localStorage is empty by design — i18nProvider does not write it until the
+  // reader confirms a choice — so this module defaulted to Hebrew while the UI
+  // beside it defaulted to the browser's language. An English first-time
+  // visitor got a Hebrew <title> and Hebrew og: tags on an English page.
+  const lang = readDisplayLanguageFromEnvironment();
   const siteName = lang === 'hebrew' ? 'סיפוראי' : 'Sipurai';
   const defaultTitle =
     lang === 'hebrew'
@@ -180,7 +186,8 @@ export function updateMeta({
  * Reset meta to the platform defaults (used when leaving a specific page).
  */
 export function resetMeta() {
-  const lang = localStorage.getItem('language') || 'hebrew';
+  // Same correction as updateMeta above.
+  const lang = readDisplayLanguageFromEnvironment();
   updateMeta({
     title: '',
     description:

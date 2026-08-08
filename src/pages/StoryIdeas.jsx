@@ -8,6 +8,7 @@ import {
   InvokeLLM
 } from "@/integrations/Core";
 import { createPageUrl } from "@/utils";
+import { resolveContentLanguage } from "@/utils/languageResolution";
 import { moderateInput, buildSafetyPromptPrefix } from "@/utils/content-moderation";
 import {
   Lightbulb,
@@ -89,8 +90,19 @@ export default function StoryIdeas() {
   useEffect(() => {
     const loadUserSettings = async () => {
       try {
-        // currentLanguage is the AI generation language from user profile
-        const storedLanguage = hookUser?.language || localStorage.getItem("language") || "english";
+        // currentLanguage is the AI generation language from user profile.
+        //
+        // This was `hookUser?.language || localStorage.getItem("language") ||
+        // "english"` — the same chain BookWizard carried until 9.8.2026, with
+        // the same consequence: a Hebrew reader with no saved preference got
+        // English story ideas beside a Hebrew UI. `language` from useI18n was
+        // already in this component (line 57) and simply was not consulted.
+        // An explicit preference still wins.
+        const storedLanguage = resolveContentLanguage({
+          profileLanguage: hookUser?.language,
+          storedLanguage: localStorage.getItem("language"),
+          uiLanguage: language,
+        });
         setCurrentLanguage(storedLanguage);
 
         // Load saved ideas
@@ -105,8 +117,12 @@ export default function StoryIdeas() {
     };
 
     loadUserSettings();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hookUser]);
+    // `language` joins the deps because the resolution above now reads it —
+    // switching the UI language must re-resolve the generation language for a
+    // reader who has no explicit preference. With it listed the deps are
+    // complete, so the exhaustive-deps suppression that used to sit here is
+    // gone rather than left behind to hide the next omission.
+  }, [hookUser, language]);
 
   const handleIdeaSaved = async () => {
     // Reload saved ideas

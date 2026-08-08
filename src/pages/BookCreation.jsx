@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useI18n } from "@/components/i18n/i18nProvider";
+import { readDisplayLanguageFromEnvironment, isRTLLanguage } from "@/utils/languageResolution";
 import useGamification from "@/hooks/useGamification";
 import { Book } from "@/entities/Book";
 import { Page } from "@/entities/Page";
@@ -66,12 +67,12 @@ export default function BookCreation() {
 
   // Text styles — default to David for Hebrew, Arial otherwise
   const defaultFontFamily = (() => {
-    try {
-      const lang = localStorage.getItem("language") || "english";
-      return lang === "hebrew" || lang === "yiddish" ? "David" : "Arial";
-    } catch {
-      return "Arial";
-    }
+    // Was `localStorage.getItem("language") || "english"`, so a first-time
+    // Hebrew visitor — whose localStorage i18nProvider has deliberately not
+    // written yet — opened the editor in Arial rather than David. The resolver
+    // consults the browser the same way the UI does.
+    const lang = readDisplayLanguageFromEnvironment();
+    return isRTLLanguage(lang) ? "David" : "Arial";
   })();
   const [textStyles, setTextStyles] = useState({
     fontSize: 18,

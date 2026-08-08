@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useLayoutEffect, useContext } from 'react';
 import { User } from "@/entities/User";
+import { readDisplayLanguageFromEnvironment, detectLanguageFromBrowser, DEFAULT_LANGUAGE } from "@/utils/languageResolution";
 
 // Import translations
 import hebrewTranslations from './locales/he';
@@ -35,13 +36,14 @@ export const LANGUAGES = {
 // already uses the correct language/direction, preventing a flash of LTR
 // content for Hebrew/Yiddish users.
 function getInitialLanguage() {
-  try {
-    const saved = localStorage.getItem('language');
-    if (saved && LANGUAGES[saved]) return saved;
-  } catch {
-    // localStorage not available (SSR / tests)
-  }
-  return 'english';
+  // This used to read localStorage and then return 'english', while the async
+  // effect below detected the browser language and could return 'hebrew' for
+  // the same visitor. Two answers to one question, in one file: the layout
+  // effect painted LTR from this value and the async effect corrected it a
+  // moment later — the exact flash the comment above says this prevents.
+  // Resolving through the shared helper means the first paint and the
+  // correction agree, so for a Hebrew browser there is nothing to correct.
+  return readDisplayLanguageFromEnvironment();
 }
 
 export const I18nProvider = ({ children }) => {
@@ -74,11 +76,10 @@ export const I18nProvider = ({ children }) => {
   }, []);
 
   // Detect browser language for first-time visitors (no saved preference)
+  // Delegates so this and getInitialLanguage above cannot drift apart again.
   const detectBrowserLanguage = () => {
     const browserLang = navigator.language || navigator.userLanguage || '';
-    if (browserLang.startsWith('he')) return 'hebrew';
-    if (browserLang.startsWith('yi')) return 'yiddish';
-    return 'english';
+    return detectLanguageFromBrowser(browserLang) || DEFAULT_LANGUAGE;
   };
 
   // Load user language preference
