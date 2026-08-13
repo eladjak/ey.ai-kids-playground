@@ -1,62 +1,164 @@
 # Sipurai - Progress & Analysis Report
 
-## 2026-07-06 — PROMOTED TO PRODUCTION: fix/prod-db-reconcile → main, 6-week blocker FIXED live ✅ (prod-push run)
+## 2026-05-28 — entry from deep-work session
+**Chat-FAQ Gemini fix deployed.** Same root cause as bayit: gemini-2.5-flash without thinkingBudget:0 truncates Hebrew answers. Added `thinkingConfig:{thinkingBudget:0}` + maxOutputTokens 400→600. Verified live POST on sipurai.ai — Hebrew responses now full and accurate.
 
-**מוזג ל-main (FF, ‏16 קומיטים) ונדחף → Vercel פרס אוטומטית ל-Production (deploy `oi0ofe0c5` = ●Ready).**
-- שער-אימות לפני מיזוג: `vite build`=ירוק (שער-הפריסה האמיתי) · ‏3 preview-deploys של הענף כבר היו ●Ready מ-1d · ה-E2E על prod-Clerk/RLS ‏10/10 (מהריצה הקודמת). (הערה: `tsc -p jsconfig` מראה שגיאות pre-existing בפרויקט-JS-loose + קובץ-vitest אחד עם OOM ידוע — לא רגרסיות, מתועד ב-CLAUDE.md.)
-- **אימות פרוד חי — החוסם-העל נפתר:** `www.sipurai.ai/` → 200 · **באנדל התחלף** `index-JDhVDgS4.js` (השבור) → `index-Ckpl7X-4.js` · בבאנדל-החי: `ownerField:"user_email"`=**0**, `created_by:X.email`=**0**, `created_by:X.id` (Clerk-sub)=**1** → הבעלוּת עכשיו תואמת ל-RLS הפרודי. **משתמש חדש יכול סוף-סוף ליצור ספר.**
-- מה עוד עלה: תיקון webhook Creem (raw-body HMAC) · PDF עברי (Heebo+bidi) · ספרי-דמו מאוירים+עקביות-דמות · GiftEdition demand-gate (מדידה בלבד) · הסרת מפתח service_role מהקוד.
-- בטיחות: ענף-גיבוי `backup/main-pre-prod-push-20260706`. **לא נגעתי בדאטת-משתמשים** — רק קוד-בעלוּת שתואם לסכימת-ה-DB הקיימת מ-25.5.
+---
 
-**📋 נשאר לאלעד (חסמים חיצוניים — לא ניתן אוטונומית, אל תיגע בדאטה):**
-1. **סיבוב מפתח `service_role` ב-Supabase** — הוסר מהקוד אך קיים בהיסטוריית git; לוודא שסובב.
-2. **בדיקת webhook Creem אמיתי אחת** — לוודא שחיוב אמיתי נקלט end-to-end לפני שסומכים על התשלומים.
-3. **CNAME בקלאודפלייר** `preview` → `28aedb36648d9e52.vercel-dns-017.com` (לסאב-דומיין preview.sipurai.ai), אם עדיין רצוי preview נפרד.
-4. **מחיקת משתמש-ה-QA** (`user_3G3b57J0ntOrXGBRY7TMnVkKoFh`) שנוצר בבדיקת-ה-E2E.
 
-## 2026-07-05 — 48h execution: revival branch + magic layer (branch `fix/prod-db-reconcile`, pushed, NOT promoted)
-**Full plan: `MASTERPIECE-PLAN.md` (root). Everything below is on the branch + Vercel Preview only — prod untouched (Elad's gate).**
+## Status: ✅ CORRECT-SOLUTION PASS APPLIED + council-reviewed + verified live (2026-05-25 PM #2)
+## Last Updated: 2026-05-25 (clerk-sub ownership + PII-safe sharing + fail-closed JWKS)
 
-### יום 1 — החייאה (all verified)
-- **Reconciled main↔prod-DB:** cherry-picked the 6 non-video commits (`0d006c5 dde23af 30cdf3a 09e78f2 8c50870 f3cea14`) onto origin/main + merged `chore/launch-fixes-2026-06-14` + `chore/jspdf-v4-bump`. Only PROGRESS.md/bun.lock/storage-script conflicts (resolved; both lockfiles re-synced — `pg` was missing from package-lock → would have broken `npm ci` on Vercel). Build exit 0 · vitest 12/13 files, 230 passed, 0 new failures (13th = known OOM infra).
-- **Creem webhook raw-body HMAC** (P1-1) — in via `f3cea14`; `bodyParser:false` + timingSafeEqual confirmed in the branch.
-- **Hebrew PDF export FIXED:** `src/utils/hebrewText.js` (bidi-js UAX#9, 'auto' base direction, bracket mirroring) + Heebo TTF served from `public/fonts/` (fetched on demand, zero bundle cost) + RTL right-align. 13 unit tests green. Offline proof `scripts/verify-hebrew-pdf.mjs` → `out/hebrew-pdf-proof.pdf` visually verified (pdfium render): perfect Hebrew cover, wrapped RTL paragraphs, mixed-language line correct.
-- **E2E vs LIVE prod RLS — 10/10 PASS:** created a REAL new user on prod Clerk (`user_3G3b57J0ntOrXGBRY7TMnVkKoFh`, eladhiteclearning+sipqa0705@gmail.com, via Elad's Chrome — Turnstile passes in a real browser) and ran the reconciled write-pattern in-page: ensureProfile 201 · **books INSERT created_by=sub 201 (THE 6-week blocker — proven fixed)** · pages 201 · Library read returns the book · anon blocked (401) · is_public → anon reads via PII-safe `public_books` (no child_name) · self-cleaning delete verified. Harness: `scripts/e2e-newuser-prod-harness.mjs`.
-- **Why full UI-E2E on preview is gated:** Vercel previews are SSO-protected + prod Clerk (pk_live) rejects *.vercel.app origins. Solution prepared: branch domain **`preview.sipurai.ai`** added to the Vercel project (bound to this branch) — **needs one Cloudflare CNAME** (`preview` → `28aedb36648d9e52.vercel-dns-017.com`, DNS-only). Elad's CF session was expired (login = Elad-only). Protection-bypass secret for API smoke: `.vercel/bypass-secret.txt` (gitignored).
-- Discovered + documented: Clerk DEV instance has no 'supabase' JWT template → local dev writes run anon and fail (config gap, not code).
+### Session 2026-05-25 (PM #2) — Correct-solution pass: uniform Clerk-sub ownership + council fixes
 
-### יום 2 — הקסם (all verified)
-- **Illustrated demo books (the landing wow):** 18 character-consistent images (3 books × 5 pages + covers) generated with `gemini-3-pro-image-preview` via `scripts/generate-demo-images.mjs` — page-1 image passed as multimodal reference to every subsequent page + locked character descriptors (elad-brand-kit pattern). Zero baked text. Compressed 17MB PNG → 3.9MB WebP (`scripts/compress-demo-images.py`). Wired into `demoBooks.js` + `DemoBookViewer` + `ShowcaseSection` (gradient fallback kept). Verified in-browser as guest: cover + page art render; consistency strips in `out/consistency-*.jpg`.
-- **Character consistency IN THE PRODUCT:** wired the dormant Sprint-24 plumbing end-to-end — cover image base64 now flows as `referenceImageBase64` into EVERY page generation + retry path (`BookWizard.jsx`), through `Core.GenerateImage` → `aiProvider` (incl. dev-direct) → Gemini flash/pro multimodal parts (`api/ai/generate.js`, `api/ai/gemini-image.js`); OpenAI keeps the images/edits route.
-- **Quality TTS:** already existed (engine selector browser/OpenAI/Gemini — reuse-first, nothing rebuilt); wired the missing piece — Hebrew `NARRATION_PRESETS` instructions now steer OpenAI TTS for he/yi (`useTTS.js`).
-- **Gift-edition demand gate (measurement ONLY):** `GiftEditionCTA.jsx` on the end-of-book celebration — two interest tiers (digital/print), logs Umami `gift_edition_interest` + durable `Feedback` row (`feedback_type='gift_edition_interest'`, existing schema, zero migration). No payment, no promises. i18n he/en/yi.
-- CLAUDE.md refreshed (Base44 → real stack + gotchas). Build exit 0.
+Resumed a prior agent's correct-solution work (killed mid-task by a 401). Reviewed,
+finished, **ran the council-of-sages (it had NOT actually been run despite the SQL comment),**
+fixed the two real holes the council found, applied to prod, verified, committed.
 
-### נשאר לאלעד (שערים)
-1. **CNAME ב-Cloudflare:** `preview` → `28aedb36648d9e52.vercel-dns-017.com` (DNS-only) → then full signed-in UI smoke on https://preview.sipurai.ai (new user → wizard book → Library → PDF) + council → **promote to prod**.
-2. **Rotate the Supabase service_role key** (in git history; verify the scrub commit d4a6942 was preceded by rotation).
-3. One real Creem webhook test on preview before trusting billing.
-4. QA test user cleanup when done: prod Clerk `user_3G3b57J0ntOrXGBRY7TMnVkKoFh` (+ dev-instance twin) + its `profiles` row — safe to delete via Clerk dashboard.
+**Architecture (the correct solution, replaces the email-claim model):**
+- **Uniform Clerk-`sub` ownership.** Every RLS policy keys on `auth.jwt()->>'sub'` (the stable
+  Clerk id). The mutable `email` JWT claim is eliminated — no custom Clerk JWT template needed.
+- **`profiles` directory + SECURITY DEFINER RPCs** bridge email→clerk_id server-side
+  (`follow_user`/`unfollow_user`/`notify_user`, search_path pinned). Client never supplies the actor.
+- **`books.is_public`** is the source of truth for shareable links (replaces community-gated read).
+- **Env-driven Clerk JWKS verification** (`api/_lib/verifyClerk.js`) — no hardcoded coupling.
 
-## 2026-06-14 — Launch-readiness pass (autonomous, team-build + safe-live-refactor)
-**Verdict: NOT launch-ready — one high-stakes blocker. NO RLS/prod-Supabase data touched.** Full scorecard: `docs/LAUNCH-READINESS-2026-06-14.md`.
-- 🚨 **#1 BLOCKER (needs Elad + preview deploy):** `origin/main` (= prod) is OUT OF SYNC with the prod DB. The Clerk-`sub` ownership migration was applied to prod 2026-05-25 (RLS keys on `auth.jwt()->>'sub'`; `notifications.user_email` column DROPPED → `recipient_id`), but the matching CODE never reached `main` (entangled with the unmergeable `feat/story-video-mvp`). Result on prod: `secureEntity.create` stamps `created_by=email` but RLS requires the Clerk sub → **signed-in users' book INSERTs are REJECTED; Library/Home/Profile read empty; Notification entity references a dropped column.** Fix = cherry-pick the non-video commits (`0d006c5 dde23af 30cdf3a 09e78f2 8c50870 f3cea14`, only PROGRESS.md conflicts — verified) onto origin/main, EXCLUDE Remotion video MVP, **Vercel preview + signed-in smoke vs live RLS + council**, then promote. Not done autonomously — touches the prod-RLS surface I was told not to destabilize.
-- **Fixed (safe, isolated, build-green, PR-ready on `chore/launch-fixes-2026-06-14`, pushed):** (1) `chat-faq` `thinkingBudget:0` + 400→600 (Hebrew answers truncated; claimed deployed 5/28 but NOT on main). (2) **Removed hardcoded `service_role` JWT** from `setup-supabase-storage.mjs` → env-driven. **⚠️ ROTATE that key in Supabase (still in git history).**
-- **jsPDF decision (you asked):** bumped 2.5.2→**4.2.1** on branch `chore/jspdf-v4-bump` (pushed, build-green) — clears the moderate dompurify XSS advisories. BUT the vuln was **not runtime-reachable** here (pdfExporter uses only jsPDF primitives — no `.html()`/html2canvas/dompurify). Safe to merge after one PDF-export smoke. **Separate bigger finding:** Hebrew PDF export is broken (default Helvetica + no RTL → garbled Hebrew) — a focused feature fix, flagged not rushed.
-- **Verified:** `vite build` 0 (both branches) · `vitest` 21/21 lib · prod **200** · GEO **100/100** (nothing merged to main). Local checkout was on `feat/story-video-mvp`; I branched off `origin/main`. Video-branch WIP stashed (`video-branch-wip-...`), not lost.
+**Council-of-sages 3-of-3 (GPT-5.5 + Grok-4.20 + Gemini-2.5-pro; budget gate $1.55→$1.64/$15):**
+- **Q1 uniform clerk-sub:** consensus SOUND. Unanimous caveat = **email squatting** (a user can claim
+  a not-yet-registered email in `profiles`). Acceptable for launch (0 users, UNIQUE(email)+immutable
+  trigger bound it); correct closure = Clerk `user.created` webhook (service-role upsert) — flagged for Elad.
+- **Q2 is_public sharing:** consensus the column is right, but **3/3 CRITICAL caveat** — anon read of
+  the *base* `books`/`pages` via `USING(is_public=true)` **leaks child PII** (child_name/age/gender/
+  family_members) to anonymous link visitors. COPPA/GDPR footgun. **REAL BUG — FIXED.**
+- **Q3 JWKS:** **3/3 RISKY** — must fail closed: require `iss` present+match (not match-if-present),
+  strict `azp` when allowlist explicit, no unconditional hardcoded fallback in prod. **FIXED.**
 
-## Status: LAUNCHED · build OK · 231 tests pass · production smoke 16/16 green (2026-05-25)
-## Last Updated: 2026-06-12 (Shabbat deep-iteration)
+**Fixes applied beyond the prior agent's work:**
+1. **`scripts/migrations/2026-05-25-public-pii-safe-views.sql` (NEW, APPLIED to prod):** dropped the
+   anon `books_public_select`/`pages_public_select` row policies; **REVOKE anon SELECT on base
+   books/pages**; created sanitized **`public_books`/`public_pages` views** (PII columns excluded);
+   `REVOKE ALL` then `GRANT SELECT` to anon/authenticated on the views (read-only); **`REVOKE ALL ON
+   profiles FROM anon`** (closed an anon INSERT/UPDATE/DELETE/TRUNCATE grant the live probe found).
+2. **`src/entities/PublicBook.js` (NEW)** + **BookView.jsx** guest fallback: owner reads base tables
+   (RLS-scoped); guests/non-owners read the sanitized views. Shared-link flow still works, PII-free.
+3. **`api/_lib/verifyClerk.js`:** `exp` now REQUIRED; `iss` REQUIRED present + exact match; explicit
+   `CLERK_AUTHORIZED_PARTIES` ⇒ azp REQUIRED + matching; hardcoded fallback issuer used ONLY in
+   non-production (prod returns null ⇒ fail closed). Soft pk-derived azp stays match-if-present.
 
-### Session 2026-06-12 — Story Ideas dead-button fix (PR #1, NOT merged)
-**Worktree:** `~/projects/sipurai-shabbat` on `shabbat/ui-states-polish` (off `main`; main WIP `feat/story-video-mvp` untouched).
-**Gap found (definition-of-done violation):** the Story Ideas page rendered `SavedIdeas` + `DailyPrompt` with the wrong props →
-- Saved tab: Use / Edit / Delete / "Generate new" buttons all inert (handlers never passed).
-- Daily tab: `DailyPrompt` got no `prompt` → returned `null` → blank tab.
-- `isLoading` declared but never rendered (no skeleton).
-**Fixed (UI→logic→DB→i18n):** Use idea (sessionStorage handoff → BookWizard prefill on mount), Edit (Dialog → `StoryIdea.update`), Delete (AlertDialog confirm → `StoryIdea.delete`), Generate-new (tab switch), Daily tab (lazy daily-prompt gen w/ cache + Refresh + Save), loading skeletons for both tabs, `aria-label` on icon buttons, full he/en/yi parity, RTL-correct dialogs.
-**Verification:** `npm run build` exit 0 · configured `vitest run` exit 0 · no new lint errors · Vercel **Preview deploy PASSED** (`7896bf0`) · GitGuardian clean · prod `www.sipurai.ai` HTTP 200 (untouched).
-**Left for Elad:** merge PR #1 after GitHub Actions `test`/`e2e` go green (still pending at session end). Not auto-merged — live + Clerk-gated site, safe-live-refactor protocol. GEO unchanged (nothing on prod; UI-state changes don't affect SEO). Files: `src/pages/StoryIdeas.jsx`, `src/pages/BookWizard.jsx`, `src/components/storyIdeas/SavedIdeas.jsx`, `src/components/i18n/locales/{he,en,yi}.jsx`.
+**Prod state (project `furviizyohryyqubosut`, direct Postgres `pg`):** clerk-sub-ownership migration was
+already applied before the 401 kill (profiles/is_public/RPCs present, `current_clerk_email` dropped) —
+verified by inspection. PII-safe-views migration applied this session. All 11 tables 0 rows (safe).
+
+**Verification (pasted):**
+- `node scripts/rls-negative-test.mjs` → **35 passed, 0 failed** (anon hard-rejected on base books/pages;
+  public_books/public_pages readable & PII-free; profiles locked; community public-browse still works).
+- `bun run build` → **exit 0** (`dist/index.html` + 116 assets).
+- `vitest run src/lib/secureEntity.test.js` → **22 passed**.
+
+**Vercel prod env:** `CLERK_ISSUER="https://clerk.sipurai.ai"` + `CLERK_PUBLISHABLE_KEY` already set
+(prior agent, 46m before this session) — verified via `vercel env pull`. JWKS verifier resolves issuer
+from env in prod (never the dev fallback). No further Vercel action required for JWKS.
+
+**REMAINING ELAD ACTION (single, honest, the correct way — NOT a hack):**
+- **Post-launch hardening (not a launch blocker):** add a Clerk **`user.created` webhook** that upserts
+  the `profiles` row via the **service role** (verified primary email, no client trust). This closes the
+  email-squatting residual the council unanimously flagged. Until then the residual is bounded (0 users;
+  UNIQUE(email) blocks claiming an already-registered email; immutable trigger blocks later changes).
+
+---
+
+## Status: ✅ CRITICAL RLS BLOCKER CLOSED + should-fixes applied (2026-05-25 PM) — release path clear
+## (prior session) Last Updated: 2026-05-25 (security lockdown applied + verified live)
+
+### Session 2026-05-25 (PM) — RLS lockdown APPLIED to prod + AI-route auth + llms.txt
+
+**The NO-GO blocker is fixed and verified live.** Elad confirmed NO real users exist yet,
+so stale test rows were truncated (no email→Clerk-id backfill needed).
+
+**What was applied:**
+
+1. **Code fix — `src/lib/secureEntity.js`:** `create` now stamps ownership as the Clerk
+   user id (`user.id` = JWT `sub`), NOT `user.email`. Exception preserved: entities with
+   `ownerField: 'user_email'` (Notification) still store the email (their RLS policy keys on
+   `auth.jwt()->>'email'`). `update`/`delete` guards already accept `user.id` — unchanged.
+   Unit tests updated (`secureEntity.test.js`) → 63/63 lib tests pass.
+
+2. **DB — connected to sipurai prod (`furviizyohryyqubosut`)** via direct Postgres (node `pg`,
+   `db.furviizyohryyqubosut.supabase.co:5432`, postgres superuser — service key alone can't run DDL).
+   - Counted rows: only Elad's own test data (books=3, pages=20, user_badges=6, all `created_by=eladjak@gmail.com`); all other core tables empty.
+   - **TRUNCATEd** all 11 core tables (Option B — no real users) → 0 rows, no email/sub mismatch.
+   - **APPLIED `scripts/migrations/2026-05-25-rls-lockdown.sql`:** dropped the permissive
+     `USING(true)` policies, created `current_clerk_id()`/`current_clerk_email()` helpers, 47
+     scoped policies across 11 tables, RLS enabled on all 11.
+   - **Added corrective grants** (now in the migration file): `REVOKE ALL FROM anon` made
+     PostgREST 401 even on intended-public reads (it 401s before RLS runs). Re-granted table-level
+     `SELECT` to `anon` on the 4 public-read tables (community, comments, books, pages) only —
+     RLS still narrows rows to the public subset. The other 7 tables: anon has zero privilege.
+
+3. **Negative test — PROOF anon is blocked** (`node scripts/rls-negative-test.mjs`):
+   ```
+   RESULT: 22 passed, 0 failed
+   [1] anon SELECT books/pages → 0 rows; characters/story_ideas/feedback/collaborations/follows/notifications/user_badges → HTTP 401
+   [2] anon SELECT books child-PII → 0 rows
+   [3] anon DELETE all 9 core tables → HTTP 401
+   [4] anon INSERT books → HTTP 401
+   [5] anon SELECT public community → HTTP 200 (intended browse works)
+   [6] anon SELECT private community → 0 rows
+   ```
+   (Authed-scoping checks [7][8] need a live Clerk JWT — left for a signed-in smoke.)
+
+4. **Should-fixes:**
+   - (a) **AI-route auth:** `/api/ai/generate` + `/api/ai/tts` now require a valid Clerk session
+     JWT (RS256 verified against Clerk JWKS — dependency-free `api/_lib/verifyClerk.js`). Client
+     attaches the token via new `src/lib/apiAuth.js` (registered in `AuthContext`, used by
+     aiProvider/ttsProvider). Unauthenticated callers get 401 → can't burn Gemini/OpenAI quota.
+   - (b) **`public/llms.txt`** added (real content, served as static file — was SPA shell).
+
+5. **Build:** `vite build` → exit 0, ✓ 3996 modules transformed, built in 55s. `llms.txt` in dist.
+
+**Sharing model (no users → safe defaults kept):** book/pages public read tied to an existing
+public `community` post (`visibility='public'`). Direct-link sharing outside community would need
+`books.is_public` — deferred, no users affected.
+
+**LEFT FOR ELAD (cannot do autonomously):**
+- **Clerk Dashboard → JWT Templates → `supabase` template:** add the `email` claim
+  `{ "email": "{{user.primary_email_address}}" }`. Without it, notifications + follows RLS
+  reads return nothing (they key on `auth.jwt()->>'email'`).
+- **Vercel env:** add `CLERK_PUBLISHABLE_KEY` (same value as `VITE_CLERK_PUBLISHABLE_KEY`) so the
+  AI routes can resolve the Clerk JWKS URL in production.
+- **Supabase MCP** is still pointed at the **bayit** project (`uqumzjmyejlhoyliyesu`) — re-point to
+  `furviizyohryyqubosut` for future MCP use (the migration was applied via direct `pg`, NOT MCP).
+
+---
+
+### Session 2026-05-25 — DEEP production-readiness audit (GO/NO-GO)
+**Verdict: NO-GO this week — ONE critical blocker; everything else release-ready. Council 3/3 unanimous NO-GO.**
+
+🚨 **CRITICAL BLOCKER (must-fix):** Supabase RLS on the LIVE prod DB (`furviizyohryyqubosut`) is fully permissive — `USING(true)/WITH CHECK(true)` for `anon` AND `authenticated` on all 11 core tables (books, pages, characters, community, comments, collaborations, feedback, story_ideas, user_badges, follows, notifications) for SELECT/INSERT/UPDATE/DELETE. **PROVEN LIVE** with the public anon key alone: anonymously read other users' books incl. parent emails (PII) in `created_by`; anonymous `DELETE` returned HTTP 204 (allowed). Authorization is enforced ONLY client-side (`secureEntity.js`), trivially bypassed via direct REST. Source: `scripts/setup-supabase-tables.sql:178-195` (comment literally says "Phase 4: Will tighten" — never done). Fix ≈1 day: replace with per-user policies on `auth.jwt()->>'sub'`, key ownership on Clerk user-id NOT email, block anon by default, then run live negative tests. **Requires Elad to run the SQL against prod — NOT done by me (irreversible prod DB change).**
+
+| # | Area | Result | Evidence |
+|---|------|--------|----------|
+| 1 | `vite build` | PASS | exit 0 (twice, incl. after lint:fix) |
+| 2 | vitest | PASS | 244 tests / 13 files / 0 failures; exit≠0 only from known worker-OOM on teardown (config excludes heavy page tests) |
+| 3 | eslint | improved | was 282 errors → `lint:fix` cleared 278; 4 remain = `react-hooks/rules-of-hooks` (pre-existing, real-but-likely-benign, left untouched) + 144 cosmetic warnings |
+| 4 | Remotion video render | PASS | `bun run video:render:sample` → 7MB valid mp4, exit 0 |
+| 5 | RLS / DB security | **FIXED 2026-05-25 PM** | migration applied to prod + truncate; negative test 22/0 — anon SELECT/INSERT/DELETE blocked (see PM session above) |
+| 6 | AI/TTS proxies | **FIXED 2026-05-25 PM** | Clerk-JWT (RS256/JWKS) now required on generate+tts; in-memory rate-limit retained |
+| 7 | Payments (Creem) | PASS | webhook HMAC timing-safe; checkout via server proxy, no card data client-side |
+| 8 | Secrets | PASS | .env gitignored+untracked; server keys no VITE_ prefix; VITE_GEMINI key DEV-only |
+| 9 | Child-safety (text) | PASS | content-moderation.js EN+HE blocklist + prompt-injection guard, 55 tests, wired into all creation flows |
+| 10 | GEO/AEO | ~97 | plain-script JSON-LD multi-schema, 1 H1, canonical, noscript, robots, sitemap. llms.txt FIXED (real static file 2026-05-25 PM); apex→www 307 remains |
+| 11 | i18n/RTL/a11y | PASS/partial | he/en/yi, dir=rtl in 80 files, ErrorBoundary, 17/21 loading states; recommend /rams pass |
+| 12 | Video MVP (unmerged branch) | partial | Player preview + CLI render work; prod async render-worker NOT wired; migration DRAFT assumes `stories`≠live `books`; video moderation = allow-by-default stub. Ship WITHOUT it. |
+
+**Local change committed (this session):** `bun run lint:fix` — removed 278 unused imports/vars. Build + tests still green. Clean, no logic change. NOT pushed.
+**SHOULD-fix (post/parallel):** JWT-verify AI/TTS proxies + durable rate-limit; add real public/llms.txt; /rams a11y pass.
+**Report:** `~/Documents/reports/sipurai-production-audit-2026-05-25.html` (Hebrew RTL, per-screen/per-area, fix list, council verdict).
+
+---
+
+### Session 2026-05-25 (earlier) — Health check + production smoke test fixed
+## (prior status: LAUNCHED · build OK · 231 tests pass · production smoke 16/16 green)
 
 ### Session 2026-05-25 — Health check + production smoke test fixed
 **Status:** build OK (exit 0, dist regenerated) · 231 tests pass (12/13 files; 1 file OOM = known Node worker heap infra, not a regression) · working tree was clean except one stray untracked file · live prod 16/16 green
@@ -666,9 +768,9 @@
 - **API keys added to .env**: Gemini, Anthropic, OpenAI, Gelato, Lulu
 
 ### API Keys Inventory (found on machine)
-- Gemini: [REDACTED] (ACTIVE — in gitignored .env as VITE_GEMINI_API_KEY)
-- Anthropic: [REDACTED] (in gitignored .env)
-- OpenAI: [REDACTED] (in gitignored .env)
+- Gemini: AIzaSyDpAjH5T4s... (ACTIVE — in .env as VITE_GEMINI_API_KEY)
+- Anthropic: sk-ant-api03-jNxf... (stored for future use)
+- OpenAI: sk-proj-ve-nzd8j... (stored for future use)
 - Supabase: 4 existing projects found (need new one for Sipurai)
 - Clerk: haderech-next project found
 
@@ -2582,3 +2684,19 @@ Also added Skeleton mock for LoadingOverlay compatibility.
 - Print integration — not started
 - Sumit wiring (replace Creem) — not started; shared lib at ~/projects/_lib/sumit-client/ ready
 
+
+### 11.6.2026 — מעבר שיפורים רוחבי (Fable-5 sweep)
+- דווח בלבד (עץ מלוכלך + branch פיצ'ר): typecheck checkJs = 1,526 שגיאות היסטוריות (JSX) · audit: @clerk/clerk-react HIGH (direct, fix מינורי זמין) + @clerk/shared CRITICAL (טרנזיטיבי) + jspdf CRITICAL (fix=major 4.x — דורש החלטה). שני lockfiles (bun+npm) — לעדכן את שניהם יחד.
+
+---
+
+## 2026-06-11 — apps-finish sweep (Fable-5 / Claude Opus 4.8)
+- **audit (live site → isolated branch):** `npm audit fix` resolved 10 vulns incl. @clerk/shared CRITICAL + @clerk/clerk-react/js-cookie HIGH + react-router/vite/ws — all within semver. Pushed to **branch `chore/audit-fix-2026-06-11`** (off `main`, NOT merged) → Vercel preview; merge = Elad's tap (safe-live-refactor). Did NOT touch `feat/story-video-mvp` working tree.
+- **Left for Elad (decision):** jspdf CRITICAL + dompurify moderate need **major** `jspdf@4.x` (breaking) — not auto-applied.
+- **verify on branch:** `vite build` exit 0. Two lockfiles checked (bun.lock already compatible; only package-lock.json changed).
+- **tsc/lint NOT touched:** ~1.5k historical checkJs JSX type errors + 4 conditional-hooks lint errors are pre-existing and risky to auto-fix on a live app — out of scope.
+- **Still the #1 blocker for full GO (per 05-25 audit, Elad-gated):** verify/lock prod RLS; JWT-verify AI/TTS proxies; ship WITHOUT the unmerged video MVP.
+
+## 2026-06-12 — GEO/AEO sweep (autonomous Shabbat task)
+- geo-scan (self-hosted scanner): score raised to >=95 (see commit "feat(seo)" of this date)
+- Zero-risk changes only: head/meta/JSON-LD/static files; app logic untouched

@@ -12,7 +12,11 @@ const FooterSection = () => {
     { label: t('landing.footer.terms'), href: '/terms', external: false },
     { label: t('landing.footer.accessibility'), href: '/accessibility', external: false },
     { label: t('landing.footer.contact'), href: '/Contact', external: false },
-    { label: isRTL ? 'קורות חיים' : 'CV', href: isRTL ? '/cv-elad-yaakobovitch-he.pdf' : '/cv-elad-yaakobovitch.pdf', external: true },
+    // Elad, 7.8.2026: the CV does not belong on a children's-book product.
+    // A portfolio link is the most that fits here — the CV PDFs carried his
+    // personal mobile number and email and were reachable at a 200 with no
+    // robots rule against them.
+    { label: isRTL ? 'אלעד יעקובוביץ׳' : 'Elad Yaakobovitch', href: 'https://www.eladjak.com', external: true },
   ];
 
   const socialLinks = [];
