@@ -134,7 +134,7 @@ const ShowcaseSection = () => {
                     {/* Fix 5: How it was made */}
                     <a
                       href="#how-it-works"
-                      className={`flex items-center gap-1.5 text-xs text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors ${isRTL ? 'flex-row-reverse justify-end' : 'justify-center'}`}
+                      className={`flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-300 hover:text-purple-700 dark:hover:text-purple-300 transition-colors ${isRTL ? 'flex-row-reverse justify-end' : 'justify-center'}`}
                       onClick={(e) => {
                         e.preventDefault();
                         document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
