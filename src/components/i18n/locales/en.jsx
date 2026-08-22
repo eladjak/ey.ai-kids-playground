@@ -2256,6 +2256,13 @@ export default {
     title: "Contact Us",
     subtitle: "We'd love to hear from you. Send us a message and we'll get back to you as soon as possible.",
     emailLabel: "Direct Email",
+    errors: {
+      summary: "The message could not be sent. Please correct the highlighted fields.",
+      name: "Error: please enter your full name.",
+      email: "Error: please enter a valid email address, for example name@example.com.",
+      subject: "Error: please choose a subject.",
+      message: "Error: please enter a message."
+    },
     formTitle: "Send a Message",
     name: "Full Name",
     namePlaceholder: "Your name...",
